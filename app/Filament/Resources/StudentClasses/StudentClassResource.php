@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\BulkActionGroup;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
@@ -39,8 +40,6 @@ class StudentClassResource extends Resource
                     ->description('Enter the basic information about this class or subject.')
                     ->aside()
                     ->schema([
-                        // TODO:: placeholder
-
                         TextInput::make('name')
                             ->required()
                             ->maxLength(255),
@@ -63,7 +62,14 @@ class StudentClassResource extends Resource
                         Textarea::make('description')
                             ->rows(5),
 
-                    ])->columnSpanFull()
+                        Toggle::make('active')
+                            ->label('Active / Archived')
+                            ->offColor('danger')
+                            ->onIcon('heroicon-o-check')
+                            ->offIcon('heroicon-o-lock-closed')
+                            ->default(true)
+
+                    ])->columnSpanFull(),
             ]);
     }
 
