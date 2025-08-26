@@ -13,15 +13,13 @@ return new class extends Migration
     {
         Schema::create('student_classes', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // class name
-            $table->text('description')->nullable(); // optional description
 
-            // TODO:: WIP, TBD
-            $table->string('type')->default('academic'); // academic, vocational, training, seperate model
-
-            $table->json('levels')->nullable();
-            $table->json('tags')->nullable(); // store tags as JSON array
-            $table->boolean('active')->default(true); // status
+            $table->string('name');
+            $table->date('date_start')->nullable();
+            $table->date('date_end')->nullable();
+            $table->json('tags')->nullable();
+            $table->text('description')->nullable();
+            $table->boolean('active')->default(true);
 
             $table->timestamps();
         });
