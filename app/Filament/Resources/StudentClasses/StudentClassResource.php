@@ -2,19 +2,20 @@
 
 namespace App\Filament\Resources\StudentClasses;
 
-use App\Filament\Resources\StudentClasses\Pages\ManageStudentClasses;
-use App\Models\StudentClass;
 use BackedEnum;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Models\StudentClass;
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Resources\Resource;
+use Filament\Actions\DeleteAction;
+use Filament\Support\Icons\Heroicon;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use App\Filament\Resources\StudentClasses\Pages\ManageStudentClasses;
 
 class StudentClassResource extends Resource
 {
@@ -28,9 +29,17 @@ class StudentClassResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+                    Section::make()
+                    ->description('Enter the basic information about this class or subject.')
+                    ->aside()
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+
+
+
+                    ])->columnSpanFull()
             ]);
     }
 
