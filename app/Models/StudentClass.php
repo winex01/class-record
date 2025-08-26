@@ -7,4 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class StudentClass extends Model
 {
     protected $guarded = [];
+
+    protected $casts = [
+        'tags' => 'array',
+    ];
 }
