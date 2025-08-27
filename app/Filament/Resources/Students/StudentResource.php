@@ -53,6 +53,7 @@ class StudentResource extends Resource
                         ->maxLength(255),
 
                     TextInput::make('suffix_name')
+                        ->placeholder('Jr. I, II')
                         ->maxLength(255),
 
                     Field::gender(),
