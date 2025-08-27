@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\StudentClasses;
 
 use BackedEnum;
+use App\Services\Field;
 use Filament\Tables\Table;
 use App\Models\StudentClass;
 use Filament\Schemas\Schema;
@@ -46,13 +47,8 @@ class StudentClassResource extends Resource
 
                         Grid::make(2)
                             ->schema([
-                                DatePicker::make('date_start')
-                                    ->label('Start Date')
-                                    ->native(false),
-
-                                DatePicker::make('date_end')
-                                    ->label('End Date')
-                                    ->native(false),
+                                Field::date('date_start'),
+                                Field::date('date_end'),
                             ]),
 
                         TagsInput::make('tags')
