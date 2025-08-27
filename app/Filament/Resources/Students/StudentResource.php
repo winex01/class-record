@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\Students;
 
 use BackedEnum;
+use App\Enums\Gender;
 use App\Models\Student;
 use App\Services\Field;
+use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -89,6 +91,11 @@ class StudentResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable()
                     ->sortable(),
+
+                Column::enum('gender', Gender::class),
+                Column::text('birth_date'),
+                Column::text('email'),
+                Column::text('contact_number')->label('Contact'),
 
             ])
             ->filters([
