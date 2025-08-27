@@ -28,14 +28,6 @@ class StudentResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'last_name';
 
-    public static function prefixName()
-    {
-        $tenantKey = \Illuminate\Support\Str::kebab(static::id());
-        $timestamp = now()->format('YmdHis');
-
-        return "{$tenantKey}-{$timestamp}-";
-    }
-
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -45,7 +37,8 @@ class StudentResource extends Resource
                 ->aside()
                 ->schema([
                     FileUpload::make('photo')
-                        ->directory('photos')
+                        // TODO:: change this after adding tenant functionalities on this app
+                        ->directory(auth()->id() .'/photos')
                         ->avatar(),
 
                     TextInput::make('last_name')
