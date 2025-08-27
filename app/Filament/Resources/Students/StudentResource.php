@@ -15,7 +15,6 @@ use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\FileUpload;
@@ -70,6 +69,7 @@ class StudentResource extends Resource
             ]);
     }
 
+    // TODO:: add tab for Male/Female
     public static function table(Table $table): Table
     {
         return $table
