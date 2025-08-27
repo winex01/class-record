@@ -37,8 +37,7 @@ class StudentResource extends Resource
                 ->aside()
                 ->schema([
                     FileUpload::make('photo')
-                        // TODO:: change this after adding tenant functionalities on this app
-                        ->directory(auth()->id() .'/photos')
+                        ->directory('student-photos')
                         ->avatar(),
 
                     TextInput::make('last_name')
@@ -50,6 +49,9 @@ class StudentResource extends Resource
                         ->maxLength(255),
 
                     TextInput::make('middle_name')
+                        ->maxLength(255),
+
+                    TextInput::make('suffix_name')
                         ->maxLength(255),
 
                     Field::gender(),
@@ -69,30 +71,24 @@ class StudentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('last_name')
+            ->recordTitleAttribute('full_name')
             ->columns([
                 Column::image('photo'),
 
-                TextColumn::make('last_name')
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('first_name')
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('middle_name')
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable()
-                    ->sortable(),
+                Column::text('full_name')
+                    ->tooltip(fn ($record) => $record->complete_name)
+                    ->sortable(query: function ($query, $direction) {
+                        $query->orderBy('last_name', $direction)
+                            ->orderBy('first_name', $direction)
+                            ->orderBy('middle_name', $direction)
+                            ->orderBy('suffix_name', $direction);
+                    })
+                    ->searchable(['last_name', 'first_name', 'middle_name', 'suffix_name']),
 
                 Column::enum('gender', Gender::class),
                 Column::text('birth_date'),
                 Column::text('email'),
                 Column::text('contact_number')->label('Contact'),
-
             ])
             ->filters([
                 //
