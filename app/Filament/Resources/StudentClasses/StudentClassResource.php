@@ -11,7 +11,6 @@ use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
-use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
@@ -20,7 +19,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\DatePicker;
 use App\Filament\Resources\StudentClasses\Pages\ManageStudentClasses;
 
 class StudentClassResource extends Resource
@@ -85,9 +83,7 @@ class StudentClassResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                DeleteBulkAction::make(),
             ]);
     }
 

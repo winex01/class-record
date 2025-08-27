@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Str;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Support\Enums\IconPosition;
+use Filament\Tables\Columns\ImageColumn;
 
 final class Column
 {
@@ -14,6 +15,16 @@ final class Column
             ->toggleable(isToggledHiddenByDefault: false)
             ->sortable()
             ->searchable();
+    }
+
+    public static function image($name)
+    {
+        return ImageColumn::make($name)
+            ->toggleable(isToggledHiddenByDefault:false)
+            ->circular()
+            ->extraHeaderAttributes([
+                'class' => 'w-8' // fix table column width
+            ]);
     }
 
     public static function enum($name, $enum, $attribute = null)

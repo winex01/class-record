@@ -13,7 +13,6 @@ use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -45,7 +44,9 @@ class StudentResource extends Resource
                 ->description("Fill out the student's full details, including contact information, to create their profile.")
                 ->aside()
                 ->schema([
-                    FileUpload::make('photo')->avatar(),
+                    FileUpload::make('photo')
+                        ->directory('photos')
+                        ->avatar(),
 
                     TextInput::make('last_name')
                         ->required()
@@ -77,6 +78,8 @@ class StudentResource extends Resource
         return $table
             ->recordTitleAttribute('last_name')
             ->columns([
+                Column::image('photo'),
+
                 TextColumn::make('last_name')
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable()
@@ -106,9 +109,7 @@ class StudentResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                DeleteBulkAction::make(),
             ]);
     }
 
