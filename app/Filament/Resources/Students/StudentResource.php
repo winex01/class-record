@@ -39,6 +39,7 @@ class StudentResource extends Resource
                 ->schema([
                     FileUpload::make('photo')
                         ->directory('student-photos')
+                        ->maxSize(10000) // 10 MB
                         ->avatar(),
 
                     TextInput::make('last_name')
