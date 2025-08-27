@@ -10,6 +10,7 @@ use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
@@ -18,6 +19,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Filters\SelectFilter;
 use App\Filament\Resources\Students\Pages\ManageStudents;
 
 class StudentResource extends Resource
@@ -91,9 +93,16 @@ class StudentResource extends Resource
                 Column::text('contact_number')->label('Contact'),
             ])
             ->filters([
-                //
+                SelectFilter::make('gender')
+                    ->options(Gender::class)
+                    ->query(function ($query, array $data) {
+                        return $query->when($data['value'], function ($q) use ($data) {
+                            return $q->where('gender', $data['value']);
+                        });
+                    })
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
