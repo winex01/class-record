@@ -18,6 +18,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -91,6 +92,7 @@ class StudentClassResource extends Resource
                 Column::text('name'),
 
                 TagsColumn::make('tags')
+                    ->toggleable(isToggledHiddenByDefault:false)
                     ->separator(',')
                     ->badge()
                     ->searchable(),
@@ -101,6 +103,11 @@ class StudentClassResource extends Resource
 
                 Column::text('description')
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                IconColumn::make('active')
+                    ->toggleable(isToggledHiddenByDefault:false)
+                    ->boolean()
+                    ->width('1%')
             ])
             ->filters([
                 //
