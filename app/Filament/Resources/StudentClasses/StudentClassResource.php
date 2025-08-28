@@ -48,6 +48,13 @@ class StudentClassResource extends Resource
                             ->required()
                             ->maxLength(255),
 
+                        TagsInput::make('tags')
+                            ->label('Tags')
+                            ->hint('Use Tab key or Enter key to add multiple tags')
+                            ->placeholder('e.g. 1st Year, Section A, Evening Class')
+                            ->separator(',')
+                            ->splitKeys(['Tab']),
+
                         Grid::make(2)
                             ->schema([
                                 Field::date('date_start')
@@ -58,13 +65,6 @@ class StudentClassResource extends Resource
                                     ->label('End Date')
                                     ->placeholder('e.g. ' . Carbon::now()->addMonths(6)->format('M j, Y')), // e.g. Nov 28, 2025
                             ]),
-
-                        TagsInput::make('tags')
-                            ->label('Tags')
-                            ->hint('Use Tab key or Enter key to add multiple tags')
-                            ->placeholder('e.g. 1st Year, Section A, Evening Class')
-                            ->separator(',')
-                            ->splitKeys(['Tab']),
 
                         Textarea::make('description')
                             ->label('Description')
@@ -89,10 +89,18 @@ class StudentClassResource extends Resource
             ->recordTitleAttribute('name')
             ->columns([
                 Column::text('name'),
+
+                TagsColumn::make('tags')
+                    ->separator(',')
+                    ->badge()
+                    ->searchable(),
+
                 Column::text('date_start'),
+
                 Column::text('date_end'),
-                TagsColumn::make('tags')->separator(',')->badge()->searchable(),
-                Column::text('description')->toggleable(isToggledHiddenByDefault: true),
+
+                Column::text('description')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

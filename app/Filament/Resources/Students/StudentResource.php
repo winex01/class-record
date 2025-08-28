@@ -77,7 +77,7 @@ class StudentResource extends Resource
         return $table
             ->recordTitleAttribute('full_name')
             ->columns([
-                Column::image('photo'),
+                Column::image('photo')->width('1%'),
 
                 Column::text('full_name')
                     ->tooltip(fn ($record) => $record->complete_name)
