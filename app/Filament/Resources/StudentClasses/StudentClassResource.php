@@ -91,7 +91,7 @@ class StudentClassResource extends Resource
                 Column::text('name'),
                 Column::text('date_start'),
                 Column::text('date_end'),
-                TagsColumn::make('tags')->separator(',')->badge(),
+                TagsColumn::make('tags')->separator(',')->badge()->searchable(),
                 Column::text('description')->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
