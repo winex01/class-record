@@ -62,7 +62,7 @@ class StudentClassResource extends Resource
                         TagsInput::make('tags')
                             ->label('Tags')
                             ->hint('Use Tab key or Enter key to add multiple tags')
-                            ->placeholder('e.g. Section A, STEM, Evening Class')
+                            ->placeholder('e.g. 1st Year, Section A, Evening Class')
                             ->separator(',')
                             ->splitKeys(['Tab']),
 
