@@ -4,10 +4,13 @@ namespace App\Filament\Resources\StudentClasses;
 
 use BackedEnum;
 use App\Services\Field;
+use App\Services\Column;
 use Filament\Tables\Table;
 use App\Models\StudentClass;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Carbon;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
@@ -15,7 +18,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TagsColumn;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -40,28 +43,41 @@ class StudentClassResource extends Resource
                     ->aside()
                     ->schema([
                         TextInput::make('name')
+                            ->label('Class / Subject Name')
+                            ->placeholder('e.g. Math 101 or ENG-201')
                             ->required()
                             ->maxLength(255),
 
                         Grid::make(2)
                             ->schema([
-                                Field::date('date_start'),
-                                Field::date('date_end'),
+                                Field::date('date_start')
+                                    ->label('Start Date')
+                                    ->placeholder('e.g. ' . Carbon::now()->format('M j, Y')), // e.g. Aug 28, 2025
+
+                                Field::date('date_end')
+                                    ->label('End Date')
+                                    ->placeholder('e.g. ' . Carbon::now()->addMonths(6)->format('M j, Y')), // e.g. Nov 28, 2025
                             ]),
 
                         TagsInput::make('tags')
+                            ->label('Tags')
+                            ->hint('Use Tab key or Enter key to add multiple tags')
+                            ->placeholder('e.g. Section A, STEM, Evening Class')
                             ->separator(',')
                             ->splitKeys(['Tab']),
 
                         Textarea::make('description')
+                            ->label('Description')
+                            ->placeholder('Brief details about this class or subject... (optional)')
                             ->rows(5),
 
                         Toggle::make('active')
                             ->label('Active / Archived')
+                            ->helperText('Active = editable, Archived = read-only')
                             ->offColor('danger')
                             ->onIcon('heroicon-o-check')
                             ->offIcon('heroicon-o-lock-closed')
-                            ->default(true)
+                            ->default(true),
 
                     ])->columnSpanFull(),
             ]);
@@ -72,13 +88,17 @@ class StudentClassResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
+                Column::text('name'),
+                Column::text('date_start'),
+                Column::text('date_end'),
+                TagsColumn::make('tags')->separator(',')->badge(),
+                Column::text('description')->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
