@@ -19,13 +19,13 @@ class Student extends Model
         });
 
         static::updating(function ($student) {
-            if ($student->isDirty('photo')) {
+            if ($student->isDirty('photo') && !empty($student->getOriginal('photo'))) {
                 Storage::delete($student->getOriginal('photo'));
             }
         });
 
         static::deleting(function ($student) {
-            if ($student->photo) {
+            if (!empty($student->photo)) {
                 Storage::delete($student->photo);
             }
         });
