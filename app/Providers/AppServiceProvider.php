@@ -42,8 +42,9 @@ class AppServiceProvider extends ServiceProvider
             foreach ([
                 DeleteAction::class,
                 DeleteBulkAction::class,
-                DetachAction::class,
-                DetachBulkAction::class,
+                // TODO::
+                // DetachAction::class,
+                // DetachBulkAction::class,
             ] as $class) {
                 if ($action instanceof $class) {
                     // Skip alignment for these actions

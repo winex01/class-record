@@ -48,19 +48,16 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 CreateAction::make(),
                 AttachAction::make()
                     ->label('Attach Existing')
-                    ->color('info')
                     ->preloadRecordSelect()
                     ->multiple()
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
-                DetachAction::make(),
-                // DeleteAction::make(),
+                DetachAction::make()->color('warning'),
             ])
             ->toolbarActions([
-                DetachBulkAction::make(), // TODO:: why doesnt worked?
-                // DeleteBulkAction::make(),
+                DetachBulkAction::make()->color('warning')
             ]);
     }
 }

@@ -66,6 +66,6 @@ class Student extends Model
 
     public function schoolClasses()
     {
-        return $this->belongsToMany(related: SchoolClass::class)->withTimestamps();
+        return $this->belongsToMany(SchoolClass::class)->withTimestamps();
     }
 }
