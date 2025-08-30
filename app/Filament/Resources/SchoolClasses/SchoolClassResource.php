@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Resources\StudentClasses;
+namespace App\Filament\Resources\SchoolClasses;
 
 use BackedEnum;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
-use App\Models\StudentClass;
+use App\Models\SchoolClass;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Carbon;
 use Filament\Actions\EditAction;
@@ -23,11 +23,11 @@ use Filament\Tables\Columns\TagsColumn;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use App\Filament\Resources\StudentClasses\Pages\ManageStudentClasses;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 
-class StudentClassResource extends Resource
+class SchoolClassResource extends Resource
 {
-    protected static ?string $model = StudentClass::class;
+    protected static ?string $model = SchoolClass::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
 
@@ -40,11 +40,11 @@ class StudentClassResource extends Resource
         return $schema
             ->components([
                 Section::make()
-                    ->description('Enter the basic information about this class or subject.')
+                    ->description('Enter the basic information about this class or subject name.')
                     ->aside()
                     ->schema([
                         TextInput::make('name')
-                            ->label('Class / Subject Name')
+                            ->label('Class name')
                             ->placeholder('e.g. Math 101 or ENG-201')
                             ->required()
                             ->maxLength(255),
@@ -89,7 +89,7 @@ class StudentClassResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Column::text('name'),
+                Column::text('name')->label('Class name'),
 
                 TagsColumn::make('tags')
                     ->toggleable(isToggledHiddenByDefault:false)
@@ -125,7 +125,7 @@ class StudentClassResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageStudentClasses::route('/'),
+            'index' => ManageSchoolClasses::route('/'),
         ];
     }
 }
