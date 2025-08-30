@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Students;
 
+use UnitEnum;
 use BackedEnum;
 use App\Enums\Gender;
 use App\Models\Student;
@@ -28,6 +29,8 @@ class StudentResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::UserGroup;
 
     protected static ?string $recordTitleAttribute = 'last_name';
+
+    protected static string | UnitEnum | null $navigationGroup = 'Class Management';
 
     public static function form(Schema $schema): Schema
     {
