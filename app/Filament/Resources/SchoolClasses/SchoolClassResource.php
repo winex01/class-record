@@ -117,8 +117,8 @@ class SchoolClassResource extends Resource
             ])
             ->recordActions([
                 ActionGroup::make([
-                    Action::make('manageStudents')
-                        ->label('Manage')
+                    Action::make('manageClass')
+                        ->label('Manage Class')
                         ->color('info')
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
                         ->icon('heroicon-m-users'),
