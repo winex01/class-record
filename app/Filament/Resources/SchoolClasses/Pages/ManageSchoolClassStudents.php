@@ -9,14 +9,9 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DetachAction;
 use Filament\Support\Icons\Heroicon;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DetachBulkAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -37,7 +32,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('last_name')
+            ->recordTitleAttribute('full_name')
             ->columns([
                 ...StudentResource::getColumns()
             ])
@@ -48,8 +43,16 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 CreateAction::make(),
                 AttachAction::make()
                     ->label('Attach Existing')
+                    ->closeModalByClickingAway(false)
                     ->preloadRecordSelect()
                     ->multiple()
+                    ->recordSelectSearchColumns([
+                        'last_name',
+                        'first_name',
+                        'middle_name',
+                        'suffix_name',
+                    ])
+
             ])
             ->recordActions([
                 ViewAction::make(),
