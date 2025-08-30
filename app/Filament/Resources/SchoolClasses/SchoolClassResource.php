@@ -29,7 +29,7 @@ class SchoolClassResource extends Resource
 {
     protected static ?string $model = SchoolClass::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::RectangleGroup;
 
     protected static ?string $recordTitleAttribute = 'name';
 
