@@ -82,13 +82,7 @@ class StudentResource extends Resource
                 ...static::getColumns(),
             ])
             ->filters([
-                SelectFilter::make('gender')
-                    ->options(Gender::class)
-                    ->query(function ($query, array $data) {
-                        return $query->when($data['value'], function ($q) use ($data) {
-                            return $q->where('gender', $data['value']);
-                        });
-                    })
+                ...static::getFilters()
             ])
             ->recordActions([
                 ViewAction::make(),
@@ -98,6 +92,19 @@ class StudentResource extends Resource
             ->toolbarActions([
                 DeleteBulkAction::make(),
             ]);
+    }
+
+    public static function getFilters()
+    {
+        return [
+            SelectFilter::make('gender')
+                ->options(Gender::class)
+                ->query(function ($query, array $data) {
+                    return $query->when($data['value'], function ($q) use ($data) {
+                        return $q->where('gender', $data['value']);
+                    });
+                })
+        ];
     }
 
     public static function getColumns()

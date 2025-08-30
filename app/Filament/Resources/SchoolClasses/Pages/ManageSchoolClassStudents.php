@@ -42,7 +42,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 ...StudentResource::getColumns()
             ])
             ->filters([
-                //
+                ...StudentResource::getFilters()
             ])
             ->headerActions([
                 CreateAction::make(),
