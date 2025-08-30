@@ -7,6 +7,7 @@ use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Carbon;
 use Filament\Actions\EditAction;
@@ -25,6 +26,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 
 class SchoolClassResource extends Resource
 {
@@ -115,6 +117,11 @@ class SchoolClassResource extends Resource
             ])
             ->recordActions([
                 ActionGroup::make([
+                    Action::make('manageStudents')
+                        ->label('Manage')
+                        ->color('info')
+                        ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
+                        ->icon('heroicon-m-users'),
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
@@ -129,6 +136,7 @@ class SchoolClassResource extends Resource
     {
         return [
             'index' => ManageSchoolClasses::route('/'),
+            'students' => ManageSchoolClassStudents::route('/{record}/students'),
         ];
     }
 }

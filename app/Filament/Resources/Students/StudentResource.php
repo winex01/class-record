@@ -74,28 +74,12 @@ class StudentResource extends Resource
             ]);
     }
 
-    // TODO:: add tab for Male/Female
     public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('full_name')
             ->columns([
-                Column::image('photo')->width('1%'),
-
-                Column::text('full_name')
-                    ->tooltip(fn ($record) => $record->complete_name)
-                    ->sortable(query: function ($query, $direction) {
-                        $query->orderBy('last_name', $direction)
-                            ->orderBy('first_name', $direction)
-                            ->orderBy('middle_name', $direction)
-                            ->orderBy('suffix_name', $direction);
-                    })
-                    ->searchable(['last_name', 'first_name', 'middle_name', 'suffix_name']),
-
-                Column::enum('gender', Gender::class),
-                Column::text('birth_date'),
-                Column::text('email'),
-                Column::text('contact_number')->label('Contact'),
+                ...static::getColumns(),
             ])
             ->filters([
                 SelectFilter::make('gender')
@@ -114,6 +98,28 @@ class StudentResource extends Resource
             ->toolbarActions([
                 DeleteBulkAction::make(),
             ]);
+    }
+
+    public static function getColumns()
+    {
+        return [
+            Column::image('photo')->width('1%'),
+
+            Column::text('full_name')
+                ->tooltip(fn ($record) => $record->complete_name)
+                ->sortable(query: function ($query, $direction) {
+                    $query->orderBy('last_name', $direction)
+                        ->orderBy('first_name', $direction)
+                        ->orderBy('middle_name', $direction)
+                        ->orderBy('suffix_name', $direction);
+                })
+                ->searchable(['last_name', 'first_name', 'middle_name', 'suffix_name']),
+
+            Column::enum('gender', Gender::class),
+            Column::text('birth_date'),
+            Column::text('email'),
+            Column::text('contact_number')->label('Contact'),
+        ];
     }
 
     public static function getPages(): array

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -37,7 +39,12 @@ class AppServiceProvider extends ServiceProvider
 
         // align submit buttons of modal to the right
         Action::configureUsing(function (Action $action)  {
-            foreach ([DeleteAction::class, DeleteBulkAction::class] as $class) {
+            foreach ([
+                DeleteAction::class,
+                DeleteBulkAction::class,
+                DetachAction::class,
+                DetachBulkAction::class,
+            ] as $class) {
                 if ($action instanceof $class) {
                     // Skip alignment for these actions
                     return;
