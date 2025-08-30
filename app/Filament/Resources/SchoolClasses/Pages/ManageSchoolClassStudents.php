@@ -57,7 +57,15 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 DetachAction::make()->color('warning'),
             ])
             ->toolbarActions([
-                DetachBulkAction::make()->color('warning')
+                DetachBulkAction::make()
+                    ->color('warning')
+                    ->action(function ($records, $livewire) {
+                        /** @var \Filament\Resources\Pages\ManageRelatedRecords $livewire */
+                        foreach ($records as $record) {
+                            $livewire->getRelationship()->detach($record);
+                        }
+                    })
+
             ]);
     }
 }
