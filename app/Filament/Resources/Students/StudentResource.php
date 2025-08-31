@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\Students;
 
 use UnitEnum;
+use BackedEnum;
 use App\Enums\Gender;
+use App\Services\Icon;
 use App\Models\Student;
 use App\Services\Field;
 use App\Services\Column;
@@ -18,6 +20,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\Students\Pages\ManageStudents;
 
 class StudentResource extends Resource
@@ -28,9 +31,9 @@ class StudentResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Class Management';
 
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
-        return \App\Services\Icon::students() ?? static::$navigationIcon;
+        return Icon::students() ?? static::$navigationIcon;
     }
 
     public static function form(Schema $schema): Schema
