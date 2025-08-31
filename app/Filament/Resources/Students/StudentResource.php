@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Students;
 
 use UnitEnum;
-use BackedEnum;
 use App\Enums\Gender;
 use App\Models\Student;
 use App\Services\Field;
@@ -14,7 +13,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
-use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -26,11 +24,14 @@ class StudentResource extends Resource
 {
     protected static ?string $model = Student::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::UserGroup;
-
     protected static ?string $recordTitleAttribute = 'last_name';
 
     protected static string | UnitEnum | null $navigationGroup = 'Class Management';
+
+    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return \App\Services\Icon::students() ?? static::$navigationIcon;
+    }
 
     public static function form(Schema $schema): Schema
     {

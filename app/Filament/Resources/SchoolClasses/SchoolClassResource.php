@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses;
 
-use BackedEnum;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -16,7 +15,6 @@ use Filament\Resources\Resource;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
-use Filament\Support\Icons\Heroicon;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
@@ -33,11 +31,14 @@ class SchoolClassResource extends Resource
 {
     protected static ?string $model = SchoolClass::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::RectangleGroup;
-
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $modelLabel = 'Class';
+
+    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return \App\Services\Icon::classes() ?? static::$navigationIcon;
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -122,7 +123,7 @@ class SchoolClassResource extends Resource
                         ->label('Manage Class')
                         ->color('info')
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
-                        ->icon('heroicon-m-users'),
+                        ->icon(\App\Services\Icon::students()),
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use BackedEnum;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -10,7 +9,6 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
-use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DetachBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\Students\StudentResource;
@@ -22,7 +20,10 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
 
     protected static string $relationship = 'students';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return \App\Services\Icon::students() ?? static::$navigationIcon;
+    }
 
     public function form(Schema $schema): Schema
     {
