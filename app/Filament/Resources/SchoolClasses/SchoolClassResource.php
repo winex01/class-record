@@ -15,6 +15,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
@@ -138,5 +139,12 @@ class SchoolClassResource extends Resource
             'index' => ManageSchoolClasses::route('/'),
             'students' => ManageSchoolClassStudents::route('/{record}/students'),
         ];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            ManageSchoolClassStudents::class,
+        ]);
     }
 }

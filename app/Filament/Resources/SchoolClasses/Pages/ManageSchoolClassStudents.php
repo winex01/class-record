@@ -7,6 +7,7 @@ use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
@@ -40,7 +41,6 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 ...StudentResource::getFilters()
             ])
             ->headerActions([
-                CreateAction::make(),
                 AttachAction::make()
                     ->label('Attach Existing')
                     ->closeModalByClickingAway(false)
@@ -51,13 +51,16 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                         'first_name',
                         'middle_name',
                         'suffix_name',
-                    ])
+                    ]),
 
+                    CreateAction::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DetachAction::make()->color('warning'),
+                // ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DetachAction::make()->color('warning'),
+                // ])->grouped()
             ])
             ->toolbarActions([
                 DetachBulkAction::make()
