@@ -110,7 +110,7 @@ class StudentResource extends Resource
     public static function getColumns()
     {
         return [
-            Column::image('photo')->width('1%'),
+            Column::image('photo'),
 
             Column::text('full_name')
                 ->tooltip(fn ($record) => $record->complete_name)

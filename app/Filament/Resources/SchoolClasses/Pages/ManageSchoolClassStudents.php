@@ -7,7 +7,6 @@ use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
@@ -35,7 +34,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('full_name')
             ->columns([
-                ...StudentResource::getColumns()
+                ...static::getColumns()
             ])
             ->filters([
                 ...StudentResource::getFilters()
@@ -56,11 +55,9 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                     CreateAction::make(),
             ])
             ->recordActions([
-                // ActionGroup::make([
-                    ViewAction::make(),
-                    EditAction::make(),
-                    DetachAction::make()->color('warning'),
-                // ])->grouped()
+                ViewAction::make(),
+                EditAction::make(),
+                DetachAction::make()->color('warning'),
             ])
             ->toolbarActions([
                 DetachBulkAction::make()
@@ -73,5 +70,23 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                     })
 
             ]);
+    }
+
+    public static function getColumns()
+    {
+        $columns = StudentResource::getColumns();
+
+        foreach ($columns as $key => $col) {
+            if (!in_array($col->getName(), [
+                'photo',
+                'full_name',
+                'gender',
+            ])) {
+                $col = $col->toggleable(isToggledHiddenByDefault:true);
+                $columns[$key] = $col;
+            }
+        }
+
+        return $columns;
     }
 }
