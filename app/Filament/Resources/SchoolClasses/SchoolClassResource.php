@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses;
 
+use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -19,6 +20,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
+use Filament\Navigation\NavigationItem;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Forms\Components\TagsInput;
@@ -146,9 +148,17 @@ class SchoolClassResource extends Resource
 
     public static function getRecordSubNavigation(Page $page): array
     {
-        return $page->generateNavigationItems([
-            ManageSchoolClassStudents::class,
-            ManageSchoolClassAttendances::class,
-        ]);
+        $record = $page->getRecord();
+
+        return [
+            NavigationItem::make('Students')
+                ->url(ManageSchoolClassStudents::getUrl(['record' => $record]))
+                ->icon(Icon::students())
+                ->badge($record->students()->count()),
+
+            NavigationItem::make('Attendances')
+                ->url(ManageSchoolClassAttendances::getUrl(['record' => $record]))
+                ->icon(Icon::attendances()),
+        ];
     }
 }
