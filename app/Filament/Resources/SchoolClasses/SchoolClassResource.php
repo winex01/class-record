@@ -29,6 +29,7 @@ use Filament\Schemas\Components\Section;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAttendances;
 
 class SchoolClassResource extends Resource
 {
@@ -142,6 +143,7 @@ class SchoolClassResource extends Resource
         return [
             'index' => ManageSchoolClasses::route('/'),
             'students' => ManageSchoolClassStudents::route('/{record}/students'),
+            'attendances' => ManageSchoolClassAttendances::route('/{record}/attendances'),
         ];
     }
 
@@ -149,6 +151,7 @@ class SchoolClassResource extends Resource
     {
         return $page->generateNavigationItems([
             ManageSchoolClassStudents::class,
+            ManageSchoolClassAttendances::class,
         ]);
     }
 }

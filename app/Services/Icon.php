@@ -15,4 +15,9 @@ final class Icon
     {
         return Heroicon::Users;
     }
+
+    public static function attendances(): Heroicon|string
+    {
+        return Heroicon::CalendarDays;
+    }
 }
