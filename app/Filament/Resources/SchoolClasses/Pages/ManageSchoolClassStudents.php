@@ -39,8 +39,9 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 ...StudentResource::getFilters()
             ])
             ->headerActions([
+                CreateAction::make(),
                 AttachAction::make()
-                    ->label('Attach Existing')
+                    ->label('Attach students')
                     ->closeModalByClickingAway(false)
                     ->preloadRecordSelect()
                     ->multiple()
@@ -50,8 +51,6 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                         'middle_name',
                         'suffix_name',
                     ]),
-
-                    CreateAction::make(),
             ])
             ->recordActions([
                 ViewAction::make(),
