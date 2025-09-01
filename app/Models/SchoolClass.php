@@ -16,4 +16,9 @@ class SchoolClass extends Model
     {
         return $this->belongsToMany(Student::class)->withTimestamps();
     }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
 }

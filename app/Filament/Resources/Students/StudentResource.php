@@ -27,7 +27,7 @@ class StudentResource extends Resource
 {
     protected static ?string $model = Student::class;
 
-    protected static ?string $recordTitleAttribute = 'last_name';
+    protected static ?string $recordTitleAttribute = 'full_name';
 
     protected static string | UnitEnum | null $navigationGroup = 'Class Management';
 
