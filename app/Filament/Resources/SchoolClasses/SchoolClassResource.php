@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses;
 
-use BackedEnum;
-use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -26,7 +24,6 @@ use Filament\Tables\Columns\TagsColumn;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAttendances;
@@ -39,9 +36,9 @@ class SchoolClassResource extends Resource
 
     protected static ?string $modelLabel = 'Class';
 
-    public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
+    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
-        return Icon::classes() ?? static::$navigationIcon;
+        return \App\Services\Icon::classes();
     }
 
     public static function form(Schema $schema): Schema
