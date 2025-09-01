@@ -29,6 +29,7 @@ class AppPanelProvider extends PanelProvider
             ->id('app')
             ->path('/')
             ->login()
+            ->spa()
             ->defaultThemeMode(ThemeMode::Dark)
             ->colors([
                 // 'primary' => Color::Amber,
