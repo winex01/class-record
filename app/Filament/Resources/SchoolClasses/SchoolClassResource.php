@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses;
 
-use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -153,13 +152,13 @@ class SchoolClassResource extends Resource
         return [
             NavigationItem::make('Students')
                 ->url(ManageSchoolClassStudents::getUrl(['record' => $record]))
-                ->icon(Icon::students())
+                ->icon(\App\Services\Icon::students())
                 ->badge($record->students()->count())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassStudents),
 
             NavigationItem::make('Attendances')
                 ->url(ManageSchoolClassAttendances::getUrl(['record' => $record]))
-                ->icon(Icon::attendances())
+                ->icon(\App\Services\Icon::attendances())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAttendances),
         ];
     }
