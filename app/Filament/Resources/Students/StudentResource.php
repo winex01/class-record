@@ -9,6 +9,7 @@ use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
+use App\Enums\NavigationGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
@@ -26,7 +27,7 @@ class StudentResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Class Management';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::ClassManagement;
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
