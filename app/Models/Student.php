@@ -9,6 +9,18 @@ class Student extends Model
 {
     protected $guarded = [];
 
+    public function schoolClasses()
+    {
+        return $this->belongsToMany(SchoolClass::class)->withTimestamps();
+    }
+
+    public function attendances()
+    {
+        return $this->belongsToMany(Attendance::class)
+            ->withTimestamps()
+            ->withPivot(['present']);
+    }
+
     protected static function booted()
     {
         static::addGlobalScope('ordered', function ($builder) {
@@ -62,10 +74,5 @@ class Student extends Model
         $rest = implode(' ', $nameParts); // join first, middle, suffix
 
         return "{$lastName}, {$rest}";
-    }
-
-    public function schoolClasses()
-    {
-        return $this->belongsToMany(SchoolClass::class)->withTimestamps();
     }
 }

@@ -12,4 +12,11 @@ class Attendance extends Model
     {
         return $this->belongsTo(SchoolClass::class);
     }
+
+    public function students()
+    {
+        return $this->belongsToMany(Student::class)
+            ->withTimestamps()
+            ->withPivot(['present']);
+    }
 }
