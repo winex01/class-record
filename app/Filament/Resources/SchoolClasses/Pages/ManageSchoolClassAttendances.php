@@ -66,6 +66,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     ->label('Take Attendance')
                     ->icon(\App\Services\Icon::students())
                     ->color('info')
+                    ->slideOver()
                     ->relationManager(StudentsRelationManager::make()),
 
                 EditAction::make()->modalWidth(Width::Medium),
