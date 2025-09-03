@@ -121,7 +121,7 @@ class SchoolClassResource extends Resource
             ])
             ->recordActions([
                 ActionGroup::make([
-                    Action::make('manageClass')
+                    Action::make('manage-class')
                         ->label('Manage Class')
                         ->color('info')
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
@@ -134,7 +134,8 @@ class SchoolClassResource extends Resource
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordUrl(fn ($record) => route('filament.app.resources.school-classes.students', $record));
     }
 
     public static function getPages(): array
