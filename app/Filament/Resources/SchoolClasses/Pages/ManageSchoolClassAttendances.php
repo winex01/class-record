@@ -41,13 +41,18 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                 Column::text('date'),
 
                 Column::text('absents')
+                    ->searchable(false)
                     ->badge()
                     ->color('danger')
-                    ->getStateUsing(function ($record) {
-                        return $record->students()
-                            ->wherePivot('present', false)
-                            ->count();
-                    })
+                    ->state(fn ($record) => $record->students()->wherePivot('present', false)->count())
+                    ->label('Absents'),
+
+                Column::text('presents')
+                    ->searchable(false)
+                    ->badge()
+                    ->color('success')
+                    ->state(fn ($record) => $record->students()->wherePivot('present', true)->count())
+                    ->label('Presents'),
 
             ])
             ->filters([
@@ -68,6 +73,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordAction('take-attendance-relation-manager');
     }
 }

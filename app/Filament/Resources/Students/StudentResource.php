@@ -29,6 +29,11 @@ class StudentResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = NavigationGroup::ClassManagement;
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['last_name', 'first_name', 'middle_name', 'suffix_name'];
+    }
+
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
         return \App\Services\Icon::students();
