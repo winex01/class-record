@@ -37,17 +37,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make(),
-                AttachAction::make()
-                    ->label('Attach students')
-                    ->closeModalByClickingAway(false)
-                    ->preloadRecordSelect()
-                    ->multiple()
-                    ->recordSelectSearchColumns([
-                        'last_name',
-                        'first_name',
-                        'middle_name',
-                        'suffix_name',
-                    ]),
+                static::attachAction(),
             ])
             ->recordActions([
                 ViewAction::make(),
@@ -55,16 +45,35 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 DetachAction::make()->color('warning'),
             ])
             ->toolbarActions([
-                DetachBulkAction::make()
-                    ->color('warning')
-                    ->action(function ($records, $livewire) {
-                        /** @var \Filament\Resources\Pages\ManageRelatedRecords $livewire */
-                        foreach ($records as $record) {
-                            $livewire->getRelationship()->detach($record);
-                        }
-                    })
-
+                static::detachBulkAction(),
             ]);
+    }
+
+    public static function attachAction()
+    {
+        return AttachAction::make()
+            ->label('Attach students')
+            ->closeModalByClickingAway(false)
+            ->preloadRecordSelect()
+            ->multiple()
+            ->recordSelectSearchColumns([
+                'last_name',
+                'first_name',
+                'middle_name',
+                'suffix_name',
+            ]);
+    }
+
+    public static function detachBulkAction()
+    {
+        return DetachBulkAction::make()
+                ->color('warning')
+                ->action(function ($records, $livewire) {
+                    /** @var \Filament\Resources\Pages\ManageRelatedRecords $livewire */
+                    foreach ($records as $record) {
+                        $livewire->getRelationship()->detach($record);
+                    }
+                });
     }
 
     public static function getColumns()
