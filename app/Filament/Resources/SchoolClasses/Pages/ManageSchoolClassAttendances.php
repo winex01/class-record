@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use App\Filament\Resources\SchoolClasses\Resources\Attendances\Pages\ManageAttendanceStudents;
+use App\Filament\Resources\SchoolClasses\Resources\Attendances\RelationManagers\StudentsRelationManager;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -14,6 +16,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 
 class ManageSchoolClassAttendances extends ManageRelatedRecords
 {
@@ -46,16 +49,11 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                 CreateAction::make()->modalWidth(Width::Medium),
             ])
             ->recordActions([
-                Action::make('takeAttedance')
+                RelationManagerAction::make('take-attendance-relation-manager')
                     ->label('Take Attendance')
-                    ->color('info')
                     ->icon(\App\Services\Icon::students())
-                    ->url(fn ($record) => route(
-                        'filament.app.resources.school-classes.attendances.attendance-students',
-                        [
-                            'school_class' => $record->school_class_id,
-                            'record' => $record,
-                        ])),
+                    ->color('info')
+                    ->relationManager(StudentsRelationManager::make()),
 
                 EditAction::make()->modalWidth(Width::Medium),
                 DeleteAction::make(),
