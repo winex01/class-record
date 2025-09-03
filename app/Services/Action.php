@@ -4,11 +4,17 @@ namespace App\Services;
 
 final class Action
 {
-    public static function back($resource)
+    public static function back($resource = null)
     {
-        return \Filament\Actions\Action::make('back')
+        $action = \Filament\Actions\Action::make('back')
             ->icon('heroicon-m-arrow-left')
-            ->url($resource::getUrl('index'))
             ->color('gray');
+
+        if ($resource) {
+            $action->url($resource::getUrl('index'));
+        }
+
+        return $action;
     }
+
 }

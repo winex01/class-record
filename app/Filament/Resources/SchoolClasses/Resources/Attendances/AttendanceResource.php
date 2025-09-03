@@ -2,20 +2,19 @@
 
 namespace App\Filament\Resources\SchoolClasses\Resources\Attendances;
 
-use App\Filament\Resources\SchoolClasses\Resources\Attendances\Pages\CreateAttendance;
-use App\Filament\Resources\SchoolClasses\Resources\Attendances\Pages\EditAttendance;
-use App\Filament\Resources\SchoolClasses\Resources\Attendances\Schemas\AttendanceForm;
-use App\Filament\Resources\SchoolClasses\Resources\Attendances\Tables\AttendancesTable;
-use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Models\Attendance;
 use BackedEnum;
+use Filament\Pages\Page;
+use App\Models\Attendance;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Table;
+use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
+use App\Filament\Resources\SchoolClasses\Resources\Attendances\Pages\ManageAttendanceStudents;
 
 class AttendanceResource extends Resource
 {
+    // TODO:: Back button
+
     protected static ?string $model = Attendance::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
@@ -24,27 +23,32 @@ class AttendanceResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'date';
 
-    public static function form(Schema $schema): Schema
-    {
-        return AttendanceForm::configure($schema);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return AttendancesTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
-            'create' => CreateAttendance::route('/create'),
+            'attendance-students' => ManageAttendanceStudents::route('/{record}/students'),
         ];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        $subNavs = [];
+        foreach (SchoolClassResource::getRecordSubNavigation($page) as $key => $subNav) {
+            $record = $page->getRecord();
+
+            // dd($subNav->getUrl());
+
+            if ($key == 'attendances') {
+                $subNav->isActiveWhen(fn () => $page instanceof ManageAttendanceStudents);
+                $subNav->url(ManageSchoolClassStudents::getUrl(['record' => $record->school_class_id]));
+            }else {
+                $subNav->url(ManageSchoolClassStudents::getUrl(['record' => $record]));
+            }
+
+            $subNavs[$key] = $subNav;
+
+        }
+
+        return $subNavs;
     }
 }

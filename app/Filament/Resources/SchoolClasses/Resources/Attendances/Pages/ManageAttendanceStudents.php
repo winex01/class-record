@@ -1,42 +1,36 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Pages;
+namespace App\Filament\Resources\SchoolClasses\Resources\Attendances\Pages;
 
 use Filament\Tables\Table;
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Actions\AttachAction;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\Students\StudentResource;
-use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
+use App\Filament\Resources\SchoolClasses\Resources\Attendances\AttendanceResource;
 
-class ManageSchoolClassStudents extends ManageRelatedRecords
+class ManageAttendanceStudents extends ManageRelatedRecords
 {
-    protected static string $resource = SchoolClassResource::class;
+
+    protected static string $resource = AttendanceResource::class;
 
     protected static string $relationship = 'students';
 
-    public function form(Schema $schema): Schema
-    {
-        return StudentResource::form($schema);
-    }
+    protected static ?string $relatedResource = AttendanceResource::class;
 
     public function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('full_name')
             ->columns([
-                ...static::getColumns()
+                ...ManageSchoolClassStudents::getColumns()
             ])
             ->filters([
                 ...StudentResource::getFilters()
             ])
             ->headerActions([
-                CreateAction::make(),
                 AttachAction::make()
                     ->label('Attach students')
                     ->closeModalByClickingAway(false)
@@ -50,8 +44,8 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                     ]),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                \Filament\Actions\ViewAction::make(),
+                \Filament\Actions\EditAction::make(),
                 DetachAction::make()->color('warning'),
             ])
             ->toolbarActions([
@@ -65,23 +59,5 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                     })
 
             ]);
-    }
-
-    public static function getColumns()
-    {
-        $columns = StudentResource::getColumns();
-
-        foreach ($columns as $key => $col) {
-            if (!in_array($col->getName(), [
-                'photo',
-                'full_name',
-                'gender',
-            ])) {
-                $col = $col->toggleable(isToggledHiddenByDefault:true);
-                $columns[$key] = $col;
-            }
-        }
-
-        return $columns;
     }
 }

@@ -126,6 +126,7 @@ class SchoolClassResource extends Resource
                         ->color('info')
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
                         ->icon(\App\Services\Icon::students()),
+
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
@@ -156,6 +157,7 @@ class SchoolClassResource extends Resource
                 ->badge($record->students()->count())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassStudents),
 
+            'attendances' =>
             NavigationItem::make('Attendances')
                 ->url(ManageSchoolClassAttendances::getUrl(['record' => $record]))
                 ->icon(\App\Services\Icon::attendances())
