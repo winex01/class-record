@@ -3,9 +3,6 @@
 namespace App\Filament\Resources\SchoolClasses\Resources\Attendances\RelationManagers;
 
 use Filament\Tables\Table;
-use Filament\Actions\AttachAction;
-use Filament\Actions\DetachAction;
-use Filament\Actions\DetachBulkAction;
 use Filament\Tables\Columns\ToggleColumn;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
