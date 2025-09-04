@@ -20,4 +20,9 @@ final class Icon
     {
         return Heroicon::CalendarDays;
     }
+
+    public static function myFiles(): Heroicon|string
+    {
+        return Heroicon::ClipboardDocument;
+    }
 }
