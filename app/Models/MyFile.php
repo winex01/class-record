@@ -9,6 +9,7 @@ class MyFile extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'files' => 'array',
         'tags' => 'array',
     ];
 }

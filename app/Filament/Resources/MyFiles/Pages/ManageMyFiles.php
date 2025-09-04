@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\MyFiles\Pages;
 
-use App\Filament\Resources\MyFiles\MyFileResource;
+use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
+use App\Filament\Resources\MyFiles\MyFileResource;
 
 class ManageMyFiles extends ManageRecords
 {
@@ -13,7 +14,9 @@ class ManageMyFiles extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('New upload')
+                ->modalWidth(Width::Medium)
         ];
     }
 }
