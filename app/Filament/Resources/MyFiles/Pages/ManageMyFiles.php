@@ -15,7 +15,8 @@ class ManageMyFiles extends ManageRecords
     {
         return [
             CreateAction::make()
-                ->label('New upload')
+                ->label('Upload file')
+                ->modalHeading('Upload file')
                 ->modalWidth(Width::Medium)
         ];
     }

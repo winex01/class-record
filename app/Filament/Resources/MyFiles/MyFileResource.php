@@ -47,6 +47,7 @@ class MyFileResource extends Resource
                     ->columnSpanFull(),
 
                 FileUpload::make('files')
+                    ->required()
                     ->multiple()
                     ->directory('my-files')
                     ->downloadable()
