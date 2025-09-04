@@ -30,6 +30,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     ->columnSpanFull()
                     ->required()
                     ->date()
+                    ->default(now())
             ]);
     }
 
@@ -59,7 +60,11 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                 //
             ])
             ->headerActions([
-                CreateAction::make()->modalWidth(Width::Medium),
+                CreateAction::make()
+                    ->modalWidth(Width::Medium)
+                    ->after(function ($record, $data, $action) {
+                        $record->students()->sync(SchoolClassResource::getClassStudents($this->getOwnerRecord()));
+                    })
             ])
             ->recordActions([
                 RelationManagerAction::make('take-attendance-relation-manager')

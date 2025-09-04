@@ -165,4 +165,9 @@ class SchoolClassResource extends Resource
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAttendances),
         ];
     }
+
+    public static function getClassStudents($record)
+    {
+        return $record->students()->pluck('students.id')->toArray();
+    }
 }
