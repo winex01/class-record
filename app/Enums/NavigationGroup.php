@@ -7,12 +7,12 @@ use Illuminate\Contracts\Support\Htmlable;
 
 enum NavigationGroup implements HasLabel
 {
-    case ClassManagement;
+    case Group1;
 
     public function getLabel(): string | Htmlable | null
     {
         return match ($this) {
-            self::ClassManagement => 'Class Management',
+            self::Group1 => 'Class Management',
         };
     }
 }

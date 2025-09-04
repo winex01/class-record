@@ -27,7 +27,7 @@ class StudentResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::ClassManagement;
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Group1;
 
     public static function getGloballySearchableAttributes(): array
     {
