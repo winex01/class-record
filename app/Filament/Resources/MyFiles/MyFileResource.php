@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\MyFiles;
 
-use View;
 use UnitEnum;
 use BackedEnum;
 use App\Models\MyFile;
@@ -17,9 +16,9 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
+use App\Filament\Clusters\Documents\DocumentsCluster;
 use App\Filament\Resources\MyFiles\Pages\ManageMyFiles;
 
 class MyFileResource extends Resource
@@ -28,9 +27,9 @@ class MyFileResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Group1;
-
     protected static ?int $navigationSort = 200;
+
+    protected static ?string $cluster = DocumentsCluster::class;
 
     public static function getNavigationIcon(): string | BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
