@@ -16,6 +16,7 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use App\Filament\Clusters\Documents\DocumentsCluster;
@@ -26,8 +27,6 @@ class MyFileResource extends Resource
     protected static ?string $model = MyFile::class;
 
     protected static ?string $recordTitleAttribute = 'name';
-
-    protected static ?int $navigationSort = 200;
 
     protected static ?string $cluster = DocumentsCluster::class;
 
@@ -51,7 +50,11 @@ class MyFileResource extends Resource
                     ->directory('my-files')
                     ->downloadable()
                     ->openable()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->deletable(fn ($operation) => $operation !== 'view')
+                    ->placeholder(fn ($operation) => $operation === 'view'
+                        ? '<strong>Click on the icon to download or view</strong>'
+                        : null)
             ]);
     }
 
@@ -67,7 +70,9 @@ class MyFileResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->modalWidth(Width::Medium),
+                    ->label('View & Download')
+                    ->modalWidth(Width::Medium)
+                    ->color('info'),
                 EditAction::make()
                     ->modalWidth(Width::Medium),
                 DeleteAction::make(),
