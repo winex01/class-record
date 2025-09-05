@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Models\SchoolClass;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(SchoolClass::class)->constrained()->cascadeOnDelete();
             $table->date('date');
             $table->timestamps();

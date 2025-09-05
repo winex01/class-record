@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 
 class SchoolClass extends Model
 {
+    use BelongsToUser;
+
     protected $guarded = [];
 
     protected $casts = [

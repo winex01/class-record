@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Enums\Gender;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->string('photo')->nullable();
             $table->unsignedBigInteger('photo_bytes')->default(0);
             $table->string('last_name');
