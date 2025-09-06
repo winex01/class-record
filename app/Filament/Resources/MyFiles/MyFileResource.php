@@ -44,7 +44,9 @@ class MyFileResource extends Resource
                     ->maxLength(255)
                     ->columnSpanFull(),
 
-                Field::tags('tags')->columnSpanFull(),
+                Field::tags('tags')
+                    ->placeholder('e.g. Lesson, Assessment')
+                    ->columnSpanFull(),
 
                 FileUpload::make('path')
                     ->label('File')
