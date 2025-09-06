@@ -25,9 +25,4 @@ final class Icon
     {
         return Heroicon::ClipboardDocument;
     }
-
-    public static function documents(): Heroicon|string
-    {
-        return Heroicon::OutlinedSquares2x2;
-    }
 }

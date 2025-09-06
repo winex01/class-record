@@ -13,19 +13,19 @@ class MyFile extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'files' => 'array',
+        'path' => 'array',
         'tags' => 'array',
     ];
 
     protected static function booted()
     {
         static::updating(function ($myFile) {
-            if ($myFile->isDirty('files')) {
-                $originalFiles = $myFile->getOriginal('files') ?? [];
+            if ($myFile->isDirty('path')) {
+                $originalFiles = $myFile->getOriginal('path') ?? [];
                 $originalFiles = is_string($originalFiles) ? json_decode($originalFiles, true) : $originalFiles;
 
                 foreach ($originalFiles as $file) {
-                    if (! in_array($file, $myFile->files ?? [])) {
+                    if (! in_array($file, $myFile->path ?? [])) {
                         Storage::delete($file);
                     }
                 }
@@ -33,7 +33,7 @@ class MyFile extends Model
         });
 
         static::deleting(function ($myFile) {
-            foreach ($myFile->files ?? [] as $file) {
+            foreach ($myFile->path ?? [] as $file) {
                 Storage::delete($file);
             }
         });

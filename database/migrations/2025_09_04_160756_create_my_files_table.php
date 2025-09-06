@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->json('files');
+            $table->json('path');
             $table->json('tags')->nullable();
             $table->timestamps();
         });

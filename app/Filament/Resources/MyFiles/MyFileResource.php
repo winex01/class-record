@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\MyFiles;
 
+use UnitEnum;
 use BackedEnum;
 use App\Models\MyFile;
+use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
@@ -16,7 +18,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
-use App\Filament\Clusters\Documents\DocumentsCluster;
 use App\Filament\Resources\MyFiles\Pages\ManageMyFiles;
 
 class MyFileResource extends Resource
@@ -25,7 +26,9 @@ class MyFileResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $cluster = DocumentsCluster::class;
+    protected static string | UnitEnum | null $navigationGroup = \App\Enums\NavigationGroup::Group1;
+
+    protected static ?int $navigationSort = 200;
 
     public static function getNavigationIcon(): string | BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
@@ -41,13 +44,17 @@ class MyFileResource extends Resource
                     ->maxLength(255)
                     ->columnSpanFull(),
 
-                FileUpload::make('files')
+                Field::tags('tags')->columnSpanFull(),
+
+                FileUpload::make('path')
+                    ->label('File')
                     ->required()
                     ->multiple()
                     ->directory('my-files')
                     ->downloadable()
                     ->openable()
                     ->columnSpanFull()
+                    ->columns(12)
                     ->deletable(fn ($operation) => $operation !== 'view')
                     ->placeholder(fn ($operation) => $operation === 'view'
                         ? '<strong>Click on the icon to download or view</strong>'
@@ -61,6 +68,7 @@ class MyFileResource extends Resource
             ->recordTitleAttribute('name')
             ->columns([
                 Column::text('name'),
+                Column::tags('tags'),
             ])
             ->filters([
                 //

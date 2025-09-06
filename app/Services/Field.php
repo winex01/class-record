@@ -4,6 +4,7 @@ namespace  App\Services;
 
 use App\Enums\Gender;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 
@@ -21,6 +22,15 @@ final class Field
     {
         return DatePicker::make($name)
             ->native(false);
+    }
+
+    public static function tags($name)
+    {
+        $lowerName = strtolower($name);
+        return TagsInput::make($name)
+            ->hint('Use Tab key or Enter key to add multiple '.$lowerName)
+            ->separator(',')
+            ->splitKeys(['Tab']);
     }
 
     public static function phone($name)

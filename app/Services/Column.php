@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
+use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Columns\ImageColumn;
@@ -14,6 +15,15 @@ final class Column
         return TextColumn::make($name)
             ->toggleable(isToggledHiddenByDefault: false)
             ->sortable()
+            ->searchable();
+    }
+
+    public static function tags($name = 'tags')
+    {
+        return TagsColumn::make($name)
+            ->toggleable(isToggledHiddenByDefault:false)
+            ->separator(',')
+            ->badge()
             ->searchable();
     }
 

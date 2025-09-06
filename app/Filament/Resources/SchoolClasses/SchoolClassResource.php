@@ -22,7 +22,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Navigation\NavigationItem;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TagsColumn;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
@@ -56,12 +55,8 @@ class SchoolClassResource extends Resource
                             ->required()
                             ->maxLength(255),
 
-                        TagsInput::make('tags')
-                            ->label('Tags')
-                            ->hint('Use Tab key or Enter key to add multiple tags')
-                            ->placeholder('e.g. 1st Year, Section A, Evening Class')
-                            ->separator(',')
-                            ->splitKeys(['Tab']),
+                        Field::tags('tags')
+                            ->placeholder('e.g. 1st Year, Section A, Evening Class'),
 
                         Grid::make(2)
                             ->schema([
@@ -98,11 +93,7 @@ class SchoolClassResource extends Resource
             ->columns([
                 Column::text('name')->label('Class name'),
 
-                TagsColumn::make('tags')
-                    ->toggleable(isToggledHiddenByDefault:false)
-                    ->separator(',')
-                    ->badge()
-                    ->searchable(),
+                Column::tags('tags'),
 
                 Column::text('date_start'),
 
