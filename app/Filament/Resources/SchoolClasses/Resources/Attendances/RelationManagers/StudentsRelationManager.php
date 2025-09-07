@@ -26,7 +26,7 @@ class StudentsRelationManager extends RelationManager
                     $this->getOwnerRecord()->{static::$relationship}()->where('present', true)->count()
                 ),
 
-            'Absent' => Tab::make()
+            'absent' => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('present', false))
                 ->badgeColor('danger')
                 ->badge(fn () =>
