@@ -2,19 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToSchoolClass;
 use App\Models\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 
 class Attendance extends Model
 {
     use BelongsToUser;
+    use BelongsToSchoolClass;
 
     protected $guarded = [];
-
-    public function schoolClass()
-    {
-        return $this->belongsTo(SchoolClass::class);
-    }
 
     public function students()
     {
