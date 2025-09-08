@@ -23,7 +23,7 @@ enum AssessmentStatus: string implements HasLabel, HasColor, HasIcon
     {
         return match ($this) {
             self::COMPLETED => 'success',
-            self::PENDING => 'dark',
+            self::PENDING => 'warning',
         };
     }
 

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->date('date')->nullable();
             $table->string('type')->nullable(); // enum: AssessmentType
-            $table->string('max_score')->nullable();
+            $table->string('points')->nullable();
             $table->text('description')->nullable();
             $table->string('status')->default(AssessmentStatus::PENDING->value);
             $table->timestamps();

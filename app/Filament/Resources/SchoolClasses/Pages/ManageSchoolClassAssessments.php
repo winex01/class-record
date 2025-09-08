@@ -2,12 +2,13 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use App\Enums\AssessmentStatus;
 use BackedEnum;
 use App\Services\Field;
+use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use App\Enums\AssessmentType;
+use App\Enums\AssessmentStatus;
 use Filament\Actions\EditAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
@@ -16,8 +17,8 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
@@ -44,21 +45,23 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ->required()
                     ->searchable(),
 
-                TextInput::make('max_score')
+                TextInput::make('points')
+                    ->hint('Maximum points')
                     ->required()
                     ->placeholder('100')
                     ->numeric(),
 
                 Textarea::make('description')
                     ->rows(2)
-                    ->placeholder('Optional..')
+                    ->placeholder('Optional...')
                     ->autosize(),
 
-                Select::make('status')
+                ToggleButtons::make('status')
                     ->options(AssessmentStatus::class)
                     ->default(AssessmentStatus::PENDING->value)
-                    ->required()
-                    ->searchable()
+                    ->inline()
+                    ->grouped()
+
             ]);
     }
 
@@ -67,8 +70,12 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
+                Column::text('name'),
+                Column::text('date')->width('1%'),
+                Column::enum('type', AssessmentType::class)->badge()->width('1%'),
+                Column::text('points')->color('info')->width('1%'),
+                Column::text('description')->toggleable(isToggledHiddenByDefault:true),
+                Column::enum('status', AssessmentStatus::class)->width('1%')
             ])
             ->filters([
                 //

@@ -16,15 +16,15 @@ use Filament\Resources\Resource;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Navigation\NavigationItem;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TagsColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\ToggleButtons;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAssessments;
@@ -76,14 +76,33 @@ class SchoolClassResource extends Resource
                             ->placeholder('Brief details about this class or subject... (optional)')
                             ->rows(5),
 
-                        Toggle::make('active')
-                            ->label('Active / Archived')
-                            ->helperText('Active = editable, Archived = read-only')
-                            ->offColor('danger')
-                            ->onIcon('heroicon-o-check')
-                            ->offIcon('heroicon-o-lock-closed')
-                            ->default(true),
+                        // Toggle::make('active')
+                        //     ->label('Active / Archived')
+                        //     ->helperText('Active = editable, Archived = read-only')
+                        //     ->offColor('danger')
+                        //     ->onIcon('heroicon-o-check')
+                        //     ->offIcon('heroicon-o-lock-closed')
+                        //     ->default(true),
 
+                        ToggleButtons::make('active')
+                            ->boolean()
+                            ->default(true)
+                            ->inline()
+                            ->grouped()
+                            ->label('Status')
+                            ->helperText('Active = editable, Archived = read-only')
+                            ->options([
+                                true => 'Active',
+                                false => 'Archived',
+                            ])
+                            ->icons([
+                                true => 'heroicon-o-check',
+                                false => 'heroicon-o-lock-closed',
+                            ])
+                            ->colors([
+                                true => 'success',
+                                false => 'warning',
+                            ])
                     ]),
             ]);
     }
@@ -95,7 +114,7 @@ class SchoolClassResource extends Resource
             ->columns([
                 Column::text('name')->label('Class name'),
 
-                Column::tags('tags'),
+                Column::tags('tags')->color('info'),
 
                 Column::text('date_start'),
 
@@ -104,10 +123,13 @@ class SchoolClassResource extends Resource
                 Column::text('description')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                IconColumn::make('active')
-                    ->toggleable(isToggledHiddenByDefault:false)
-                    ->boolean()
+                TextColumn::make('active')
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->width('1%')
+                    ->formatStateUsing(fn($state) => $state ? 'Active' : 'Archived')
+                    ->icon(fn($state) => $state ? 'heroicon-o-check' : 'heroicon-o-lock-closed')
+                    ->color(fn($state) => $state ? 'success' : 'warning')
+                    ->badge()
             ])
             ->filters([
                 // TODO::
