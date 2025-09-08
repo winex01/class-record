@@ -27,7 +27,6 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
         return $schema
             ->components([
                 Field::date('date')
-                    ->columnSpanFull()
                     ->required()
                     ->date()
                     ->default(now())

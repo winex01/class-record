@@ -2,16 +2,17 @@
 
 namespace App\Providers;
 
-use Filament\Actions\DetachAction;
-use Filament\Actions\DetachBulkAction;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\DetachAction;
 use Filament\Support\Enums\Alignment;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DetachBulkAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Filament\Schemas\Components\Component;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -64,6 +65,10 @@ class AppServiceProvider extends ServiceProvider
             $table->persistSortInSession();
             $table->filters([]);
             $table->actionsAlignment('left');
+        });
+
+        Component::configureUsing(function (Component $component): void {
+            $component->columnSpanFull();
         });
     }
 }

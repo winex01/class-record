@@ -2,22 +2,24 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use App\Enums\AssessmentStatus;
 use BackedEnum;
-use Filament\Actions\AssociateAction;
-use Filament\Actions\BulkActionGroup;
+use App\Services\Field;
+use Filament\Tables\Table;
+use Filament\Schemas\Schema;
+use App\Enums\AssessmentType;
+use Filament\Actions\EditAction;
+use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Support\Icons\Heroicon;
+use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\DissociateAction;
-use Filament\Actions\DissociateBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
 class ManageSchoolClassAssessments extends ManageRelatedRecords
 {
@@ -34,6 +36,29 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+
+                Field::date('date'),
+
+                Select::make('type')
+                    ->options(AssessmentType::class)
+                    ->required()
+                    ->searchable(),
+
+                TextInput::make('max_score')
+                    ->required()
+                    ->placeholder('100')
+                    ->numeric(),
+
+                Textarea::make('description')
+                    ->rows(2)
+                    ->placeholder('Optional..')
+                    ->autosize(),
+
+                Select::make('status')
+                    ->options(AssessmentStatus::class)
+                    ->default(AssessmentStatus::PENDING->value)
+                    ->required()
+                    ->searchable()
             ]);
     }
 
@@ -49,19 +74,16 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
-                AssociateAction::make(),
+                CreateAction::make()
+                    ->modalWidth(Width::Medium)
             ])
             ->recordActions([
-                EditAction::make(),
-                DissociateAction::make(),
+                EditAction::make()
+                    ->modalWidth(Width::Medium),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DissociateBulkAction::make(),
-                    DeleteBulkAction::make(),
-                ]),
+                DeleteBulkAction::make(),
             ]);
     }
 }

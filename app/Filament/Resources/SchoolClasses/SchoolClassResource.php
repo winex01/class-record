@@ -84,7 +84,7 @@ class SchoolClassResource extends Resource
                             ->offIcon('heroicon-o-lock-closed')
                             ->default(true),
 
-                    ])->columnSpanFull(),
+                    ]),
             ]);
     }
 

@@ -77,7 +77,7 @@ class StudentResource extends Resource
 
                     Field::phone('contact_number'),
 
-                ])->columnSpanFull(),
+                ]),
             ]);
     }
 

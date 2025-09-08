@@ -41,12 +41,10 @@ class MyFileResource extends Resource
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(255)
-                    ->columnSpanFull(),
+                    ->maxLength(255),
 
                 Field::tags('tags')
-                    ->placeholder('e.g. Lesson, Assessment')
-                    ->columnSpanFull(),
+                    ->placeholder('e.g. Lesson, Assessment'),
 
                 FileUpload::make('path')
                     ->label('File')
@@ -55,7 +53,6 @@ class MyFileResource extends Resource
                     ->directory('my-files')
                     ->downloadable()
                     ->openable()
-                    ->columnSpanFull()
                     ->columns(12)
                     ->deletable(fn ($operation) => $operation !== 'view')
                     ->placeholder(fn ($operation) => $operation === 'view'
