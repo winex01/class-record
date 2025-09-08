@@ -25,4 +25,9 @@ final class Icon
     {
         return Heroicon::ClipboardDocument;
     }
+
+    public static function assessments(): Heroicon|string
+    {
+        return Heroicon::ClipboardDocumentList;
+    }
 }

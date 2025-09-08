@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses;
 
+use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -26,6 +27,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAssessments;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAttendances;
 
 class SchoolClassResource extends Resource
@@ -38,7 +40,7 @@ class SchoolClassResource extends Resource
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
-        return \App\Services\Icon::classes();
+        return Icon::classes();
     }
 
     public static function form(Schema $schema): Schema
@@ -116,7 +118,7 @@ class SchoolClassResource extends Resource
                         ->label('Manage Class')
                         ->color('info')
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
-                        ->icon(\App\Services\Icon::students()),
+                        ->icon(Icon::students()),
 
                     ViewAction::make(),
                     EditAction::make(),
@@ -135,6 +137,7 @@ class SchoolClassResource extends Resource
             'index' => ManageSchoolClasses::route('/'),
             'students' => ManageSchoolClassStudents::route('/{record}/students'),
             'attendances' => ManageSchoolClassAttendances::route('/{record}/attendances'),
+            'assessments' => ManageSchoolClassAssessments::route('/{record}/assessments'),
         ];
     }
 
@@ -143,17 +146,24 @@ class SchoolClassResource extends Resource
         $record = $page->getRecord();
 
         return [
+            'students' =>
             NavigationItem::make('Students')
                 ->url(ManageSchoolClassStudents::getUrl(['record' => $record]))
-                ->icon(\App\Services\Icon::students())
+                ->icon(Icon::students())
                 ->badge($record->students()->count())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassStudents),
 
             'attendances' =>
             NavigationItem::make('Attendances')
                 ->url(ManageSchoolClassAttendances::getUrl(['record' => $record]))
-                ->icon(\App\Services\Icon::attendances())
+                ->icon(Icon::attendances())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAttendances),
+
+            'assessments' =>
+            NavigationItem::make('Assessments')
+                ->url(ManageSchoolClassAssessments::getUrl(['record' => $record]))
+                ->icon(Icon::assessments())
+                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAssessments),
         ];
     }
 
