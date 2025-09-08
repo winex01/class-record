@@ -46,14 +46,14 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ->searchable(),
 
                 TextInput::make('points')
-                    ->hint('Maximum points')
+                    ->helperText('Maximum points')
                     ->required()
                     ->placeholder('100')
                     ->numeric(),
 
                 Textarea::make('description')
                     ->rows(2)
-                    ->placeholder('Optional...')
+                    ->placeholder('Additional notes or instructions...')
                     ->autosize(),
 
                 ToggleButtons::make('status')
