@@ -14,7 +14,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
-use App\Filament\Resources\SchoolClasses\Resources\Attendances\RelationManagers\TakeAttendanceRelationManager;
+use App\Filament\Resources\SchoolClasses\RelationManagers\Attendances\TakeAttendanceRelationManager;
 
 class ManageSchoolClassAttendances extends ManageRelatedRecords
 {

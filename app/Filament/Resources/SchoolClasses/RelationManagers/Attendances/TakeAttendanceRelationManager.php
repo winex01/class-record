@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Resources\Attendances\RelationManagers;
+namespace App\Filament\Resources\SchoolClasses\RelationManagers\Attendances;
 
 use Filament\Tables\Table;
 use Filament\Schemas\Components\Tabs\Tab;
