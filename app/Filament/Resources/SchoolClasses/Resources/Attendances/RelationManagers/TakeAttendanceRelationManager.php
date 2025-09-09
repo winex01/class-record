@@ -10,7 +10,7 @@ use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 
-class StudentsRelationManager extends RelationManager
+class TakeAttendanceRelationManager extends RelationManager
 {
     protected static string $relationship = 'students';
 

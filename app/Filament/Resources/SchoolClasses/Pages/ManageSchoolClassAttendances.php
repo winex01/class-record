@@ -14,7 +14,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
-use App\Filament\Resources\SchoolClasses\Resources\Attendances\RelationManagers\StudentsRelationManager;
+use App\Filament\Resources\SchoolClasses\Resources\Attendances\RelationManagers\TakeAttendanceRelationManager;
 
 class ManageSchoolClassAttendances extends ManageRelatedRecords
 {
@@ -69,7 +69,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     ->icon(\App\Services\Icon::students())
                     ->color('info')
                     ->slideOver()
-                    ->relationManager(StudentsRelationManager::make()),
+                    ->relationManager(TakeAttendanceRelationManager::make()),
 
                 EditAction::make()->modalWidth(Width::Medium),
                 DeleteAction::make(),
