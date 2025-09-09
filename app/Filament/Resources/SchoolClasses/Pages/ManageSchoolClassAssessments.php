@@ -20,6 +20,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use App\Filament\Resources\AssessmentTypes\AssessmentTypeResource;
 
 class ManageSchoolClassAssessments extends ManageRelatedRecords
 {
@@ -43,7 +44,9 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ->relationship( 'assessmentType', 'name')
                     ->required()
                     ->preload()
-                    ->searchable(),
+                    ->searchable()
+                    ->createOptionForm(AssessmentTypeResource::getForm())
+                    ->editOptionForm(AssessmentTypeResource::getForm()),
 
                 TextInput::make('points')
                     ->helperText('Maximum points')

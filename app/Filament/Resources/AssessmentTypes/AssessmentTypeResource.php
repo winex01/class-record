@@ -33,10 +33,17 @@ class AssessmentTypeResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('name')
+                ...static::getForm()
+            ]);
+    }
+
+    public static function getForm()
+    {
+        return [
+            TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-            ]);
+        ];
     }
 
     public static function table(Table $table): Table
