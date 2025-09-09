@@ -36,12 +36,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-
-                Field::date('date'),
-
                 Select::make('assessment_type_id')
                     ->relationship( 'assessmentType', 'name')
                     ->required()
@@ -49,6 +43,12 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ->searchable()
                     ->createOptionForm(AssessmentTypeResource::getForm())
                     ->editOptionForm(AssessmentTypeResource::getForm()),
+
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+
+                Field::date('date'),
 
                 TextInput::make('points')
                     ->helperText('Maximum points')
@@ -91,9 +91,9 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('name')
             ->columns([
+                Column::text('assessmentType.name')->badge()->width('1%')->label('Type'),
                 Column::text('name'),
                 Column::text('date')->width('1%'),
-                // Column::enum('type', AssessmentType::class)->badge()->width('1%'),
                 Column::text('points')->color('info')->width('1%'),
                 Column::text('description')->toggleable(isToggledHiddenByDefault:true),
                 Column::enum('status', AssessmentStatus::class)->width('1%')
