@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AssessmentTypes;
 
+use Filament\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use App\Models\AssessmentType;
@@ -58,9 +59,11 @@ class AssessmentTypeResource extends Resource
                 //
             ])
             ->recordActions([
-                EditAction::make()
-                    ->modalWidth(Width::Medium),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    EditAction::make()
+                        ->modalWidth(Width::Medium),
+                    DeleteAction::make(),
+                ])->grouped()
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
