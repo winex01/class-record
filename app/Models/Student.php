@@ -24,6 +24,13 @@ class Student extends Model
             ->withPivot(['present']);
     }
 
+    public function assessments()
+    {
+        return $this->belongsToMany(Assessment::class)
+            ->withTimestamps()
+            ->withPivot(['score']);
+    }
+
     protected static function booted()
     {
         static::addGlobalScope('ordered', function ($builder) {

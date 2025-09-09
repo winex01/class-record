@@ -22,4 +22,11 @@ class Assessment extends Model
     {
         return $this->belongsTo(MyFile::class);
     }
+
+    public function students()
+    {
+        return $this->belongsToMany(Assessment::class)
+            ->withTimestamps()
+            ->withPivot(['score']);
+    }
 }
