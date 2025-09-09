@@ -39,6 +39,11 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
     {
         return $schema
             ->components([
+                TextInput::make('name')
+                    ->placeholder('e.g., Quiz #1, Midterm Exam, Chapter 5 Test, etc.')
+                    ->required()
+                    ->maxLength(255),
+
                 Select::make('assessment_type_id')
                     ->relationship( 'assessmentType', 'name')
                     ->required()
@@ -46,10 +51,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ->searchable()
                     ->createOptionForm(AssessmentTypeResource::getForm())
                     ->editOptionForm(AssessmentTypeResource::getForm()),
-
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
 
                 Field::date('date'),
 
@@ -94,8 +95,8 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Column::text('assessmentType.name')->badge()->width('1%')->label('Type'),
                 Column::text('name'),
+                Column::text('assessmentType.name')->badge()->width('1%')->label('Type'),
                 Column::text('date')->width('1%'),
                 Column::text('max_score')->label('Max')->color('info')->width('1%')->tooltip('Max score'),
                 Column::text('description')->toggleable(isToggledHiddenByDefault:true),
