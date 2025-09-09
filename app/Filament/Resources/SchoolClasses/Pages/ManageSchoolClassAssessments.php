@@ -11,6 +11,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use App\Enums\AssessmentStatus;
 use Filament\Actions\EditAction;
+use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -113,16 +114,18 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     })
             ])
             ->recordActions([
-                RelationManagerAction::make('recordScoreRelationManager')
-                    ->label('Record Score')
-                    ->icon(Icon::students())
-                    ->color('info')
-                    ->slideOver()
-                    ->relationManager(RecordScoreRelationManager::make()),
+                ActionGroup::make([
+                    RelationManagerAction::make('recordScoreRelationManager')
+                        ->label('Record Score')
+                        ->icon(Icon::students())
+                        ->color('info')
+                        ->slideOver()
+                        ->relationManager(RecordScoreRelationManager::make()),
 
-                EditAction::make()
-                    ->modalWidth(Width::Medium),
-                DeleteAction::make(),
+                    EditAction::make()
+                        ->modalWidth(Width::Medium),
+                    DeleteAction::make(),
+                ])->grouped()
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

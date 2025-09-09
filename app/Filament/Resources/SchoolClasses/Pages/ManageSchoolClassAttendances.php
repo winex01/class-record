@@ -8,6 +8,7 @@ use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
+use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -65,18 +66,21 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     })
             ])
             ->recordActions([
-                RelationManagerAction::make('takeAttendanceRelationManager')
-                    ->label('Take Attendance')
-                    ->icon(Icon::students())
-                    ->color('info')
-                    ->slideOver()
-                    ->relationManager(TakeAttendanceRelationManager::make()),
+                ActionGroup::make([
+                    RelationManagerAction::make('takeAttendanceRelationManager')
+                        ->label('Take Attendance')
+                        ->icon(Icon::students())
+                        ->color('info')
+                        ->slideOver()
+                        ->relationManager(TakeAttendanceRelationManager::make()),
 
-                EditAction::make()->modalWidth(Width::Medium),
-                DeleteAction::make(),
+                    EditAction::make()->modalWidth(Width::Medium),
+                    DeleteAction::make(),
+                ])->grouped()
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordAction('takeAttendanceRelationManager');
     }
 }

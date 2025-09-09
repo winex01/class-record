@@ -6,6 +6,7 @@ use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
@@ -40,9 +41,11 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 static::attachAction(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DetachAction::make()->color('warning'),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DetachAction::make()->color('warning'),
+                ])->grouped()
             ])
             ->toolbarActions([
                 static::detachBulkAction(),
