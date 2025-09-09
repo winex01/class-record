@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\MyFiles;
 
-use UnitEnum;
-use BackedEnum;
 use App\Models\MyFile;
 use App\Services\Field;
 use App\Services\Column;
@@ -26,11 +24,11 @@ class MyFileResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string | UnitEnum | null $navigationGroup = \App\Enums\NavigationGroup::Group1;
+    protected static string | \UnitEnum | null $navigationGroup = \App\Enums\NavigationGroup::Group1;
 
     protected static ?int $navigationSort = 200;
 
-    public static function getNavigationIcon(): string | BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
         return \App\Services\Icon::myFiles();
     }

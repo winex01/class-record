@@ -30,4 +30,9 @@ final class Icon
     {
         return Heroicon::ClipboardDocumentList;
     }
+
+    public static function assessmentTypes(): Heroicon|string
+    {
+        return Heroicon::Square2Stack;
+    }
 }
