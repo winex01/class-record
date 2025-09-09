@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SchoolClasses;
 use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
 use Filament\Actions\Action;
@@ -119,6 +120,7 @@ class SchoolClassResource extends Resource
                     ->width('1%')
                     ->formatStateUsing(fn($state) => $state ? 'Active' : 'Archived')
                     ->icon(fn($state) => $state ? 'heroicon-o-check' : 'heroicon-o-lock-closed')
+                    ->iconPosition(IconPosition::After)
                     ->color(fn($state) => $state ? 'success' : 'warning')
                     ->badge()
             ])
