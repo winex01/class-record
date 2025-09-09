@@ -7,6 +7,7 @@ use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Columns\ImageColumn;
+use Illuminate\Database\Eloquent\Builder;
 
 final class Column
 {
@@ -24,7 +25,9 @@ final class Column
             ->toggleable(isToggledHiddenByDefault:false)
             ->separator(',')
             ->badge()
-            ->searchable();
+            ->searchable(query: function (Builder $query, string $search) use ($name): Builder {
+                return $query->whereRaw('LOWER('. $name .') LIKE ?', ['%' . strtolower($search) . '%']);
+            });
     }
 
     public static function image($name)
