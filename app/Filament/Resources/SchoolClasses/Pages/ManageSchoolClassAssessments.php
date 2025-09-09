@@ -113,7 +113,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ])
             ->recordActions([
                 RelationManagerAction::make('recordScoreRelationManager')
-                    ->label('Score')
+                    ->label('Record Score')
                     ->icon(Icon::students())
                     ->color('info')
                     ->slideOver()
