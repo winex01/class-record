@@ -129,6 +129,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordAction('recordScoreRelationManager');
     }
 }
