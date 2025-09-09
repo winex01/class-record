@@ -20,7 +20,6 @@ use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Navigation\NavigationItem;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -76,21 +75,13 @@ class SchoolClassResource extends Resource
                             ->placeholder('Brief details about this class or subject... (optional)')
                             ->rows(5),
 
-                        // Toggle::make('active')
-                        //     ->label('Active / Archived')
-                        //     ->helperText('Active = editable, Archived = read-only')
-                        //     ->offColor('danger')
-                        //     ->onIcon('heroicon-o-check')
-                        //     ->offIcon('heroicon-o-lock-closed')
-                        //     ->default(true),
-
                         ToggleButtons::make('active')
                             ->boolean()
                             ->default(true)
                             ->inline()
                             ->grouped()
                             ->label('Status')
-                            ->helperText('Active = editable, Archived = read-only')
+                            ->helperText('Active = editable, Archived = view only')
                             ->options([
                                 true => 'Active',
                                 false => 'Archived',
@@ -179,12 +170,14 @@ class SchoolClassResource extends Resource
             NavigationItem::make('Attendances')
                 ->url(ManageSchoolClassAttendances::getUrl(['record' => $record]))
                 ->icon(Icon::attendances())
+                ->badge($record->attendances()->count())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAttendances),
 
             'assessments' =>
             NavigationItem::make('Assessments')
                 ->url(ManageSchoolClassAssessments::getUrl(['record' => $record]))
                 ->icon(Icon::assessments())
+                ->badge($record->assessments()->count())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAssessments),
         ];
     }
