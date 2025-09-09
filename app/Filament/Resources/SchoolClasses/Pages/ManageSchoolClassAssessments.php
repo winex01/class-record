@@ -53,8 +53,8 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
                 Field::date('date'),
 
-                TextInput::make('points')
-                    ->helperText('Maximum points')
+                TextInput::make('max_score')
+                    ->helperText('Highest points')
                     ->required()
                     ->placeholder('100')
                     ->numeric(),
@@ -97,7 +97,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 Column::text('assessmentType.name')->badge()->width('1%')->label('Type'),
                 Column::text('name'),
                 Column::text('date')->width('1%'),
-                Column::text('points')->color('info')->width('1%'),
+                Column::text('max_score')->label('Max')->color('info')->width('1%')->tooltip('Max score'),
                 Column::text('description')->toggleable(isToggledHiddenByDefault:true),
                 Column::enum('status', AssessmentStatus::class)->width('1%')
             ])
@@ -107,6 +107,9 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ->headerActions([
                 CreateAction::make()
                     ->modalWidth(Width::Medium)
+                    ->after(function ($record, $data, $action) {
+                        $record->students()->sync(SchoolClassResource::getClassStudents($this->getOwnerRecord()));
+                    })
             ])
             ->recordActions([
                 RelationManagerAction::make('recordScoreRelationManager')

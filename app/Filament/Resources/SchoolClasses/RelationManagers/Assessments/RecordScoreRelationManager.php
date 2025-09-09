@@ -21,8 +21,8 @@ class RecordScoreRelationManager extends RelationManager
 
                 TextInputColumn::make('score')
                     ->width('1%')
-                    ->placeholder('Max score: ' . ($this->getOwnerRecord()->points ?? 0))
-                    ->rules(['numeric', 'min:0', 'max:' . ($this->getOwnerRecord()->points ?? 0)])
+                    ->placeholder('Max score: ' . ($this->getOwnerRecord()->max_score ?? 0))
+                    ->rules(['numeric', 'min:0', 'max:' . ($this->getOwnerRecord()->max_score ?? 0)])
 
             ])
             ->filters([

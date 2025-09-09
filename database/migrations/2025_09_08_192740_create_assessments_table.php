@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->date('date')->nullable();
             $table->foreignIdFor(AssessmentType::class)->constrained()->cascadeOnDelete();
-            $table->string('points')->nullable();
+            $table->string('max_score')->nullable();
             $table->text('description')->nullable();
             $table->foreignIdFor(MyFile::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('status')->default(AssessmentStatus::PENDING->value);
