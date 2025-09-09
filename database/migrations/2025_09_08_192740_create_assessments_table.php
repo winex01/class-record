@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\MyFile;
 use App\Models\User;
 use App\Models\SchoolClass;
 use App\Models\AssessmentType;
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->foreignIdFor(AssessmentType::class)->constrained()->cascadeOnDelete();
             $table->string('points')->nullable();
             $table->text('description')->nullable();
+            $table->foreignIdFor(MyFile::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('status')->default(AssessmentStatus::PENDING->value);
             $table->timestamps();
         });

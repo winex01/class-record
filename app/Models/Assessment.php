@@ -17,4 +17,9 @@ class Assessment extends Model
     {
         return $this->belongsTo(AssessmentType::class);
     }
+
+    public function myFile()
+    {
+        return $this->belongsTo(MyFile::class);
+    }
 }

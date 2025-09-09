@@ -17,6 +17,11 @@ class MyFile extends Model
         'tags' => 'array',
     ];
 
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class);
+    }
+
     protected static function booted()
     {
         static::updating(function ($myFile) {

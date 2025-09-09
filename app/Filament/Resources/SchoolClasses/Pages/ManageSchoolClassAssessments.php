@@ -6,6 +6,7 @@ use BackedEnum;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use App\Enums\AssessmentStatus;
 use Filament\Actions\EditAction;
@@ -18,6 +19,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
+use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\AssessmentTypes\AssessmentTypeResource;
@@ -53,6 +55,22 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ->required()
                     ->placeholder('100')
                     ->numeric(),
+
+                Select::make('my_file_id')
+                    ->relationship( 'myFile', 'name')
+                    ->helperText('Optional')
+                    ->preload()
+                    ->searchable()
+                    ->editOptionForm(MyFileResource::getForm(true))
+                    ->editOptionAction(function (Action $action) {
+                        return $action
+                            ->icon('heroicon-o-eye')
+                            ->tooltip('View')
+                            ->modalHeading('View File Details')
+                            ->modalWidth(Width::Medium)
+                            ->modalSubmitAction(false)
+                            ->modalCancelActionLabel('Close');
+                    }),
 
                 Textarea::make('description')
                     ->rows(2)

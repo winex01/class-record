@@ -37,26 +37,36 @@ class MyFileResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-
-                Field::tags('tags')
-                    ->placeholder('e.g. Lesson, Assessment'),
-
-                FileUpload::make('path')
-                    ->label('File')
-                    ->required()
-                    ->multiple()
-                    ->directory('my-files')
-                    ->downloadable()
-                    ->openable()
-                    ->columns(12)
-                    ->deletable(fn ($operation) => $operation !== 'view')
-                    ->placeholder(fn ($operation) => $operation === 'view'
-                        ? '<strong>Click on the icon to download or view</strong>'
-                        : null)
+                ...static::getForm()
             ]);
+    }
+
+    public static function getForm($readonly = false)
+    {
+        return [
+            TextInput::make('name')
+                    ->required()
+                    ->maxLength(255)
+                    ->disabled($readonly),
+
+            Field::tags('tags')
+                ->placeholder('e.g. Lesson, Assessment')
+                ->disabled($readonly),
+
+            FileUpload::make('path')
+                ->label('File')
+                ->required()
+                ->multiple()
+                ->directory('my-files')
+                ->downloadable()
+                ->openable()
+                ->columns(12)
+                ->deletable(fn ($operation) => $operation !== 'view')
+                ->placeholder(fn ($operation) => $operation === 'view'
+                    ? '<strong>Click on the icon to download or view</strong>'
+                    : null)
+                ->disabled($readonly),
+        ];
     }
 
     public static function table(Table $table): Table
