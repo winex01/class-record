@@ -10,6 +10,7 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
+use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
@@ -81,13 +82,17 @@ class MyFileResource extends Resource
                 //
             ])
             ->recordActions([
-                ViewAction::make()
-                    ->label('View & Download')
-                    ->modalWidth(Width::Medium)
-                    ->color('info'),
-                EditAction::make()
-                    ->modalWidth(Width::Medium),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    ViewAction::make()
+                        ->label('View & Download')
+                        ->modalWidth(Width::Medium)
+                        ->color('info'),
+
+                    EditAction::make()
+                        ->modalWidth(Width::Medium),
+
+                    DeleteAction::make(),
+                ])->grouped()
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

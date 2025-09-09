@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Students;
 
+use App\Services\Action;
+use Filament\Actions\ActionGroup;
 use UnitEnum;
 use App\Enums\Gender;
 use App\Models\Student;
@@ -92,13 +94,16 @@ class StudentResource extends Resource
                 ...static::getFilters()
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])->grouped()
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordAction('edit');
     }
 
     public static function getFilters()
