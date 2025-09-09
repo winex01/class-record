@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use BackedEnum;
+use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -23,6 +24,8 @@ use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\AssessmentTypes\AssessmentTypeResource;
+use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
+use App\Filament\Resources\SchoolClasses\RelationManagers\Assessments\RecordScoreRelationManager;
 
 class ManageSchoolClassAssessments extends ManageRelatedRecords
 {
@@ -106,6 +109,13 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ->modalWidth(Width::Medium)
             ])
             ->recordActions([
+                RelationManagerAction::make('recordScoreRelationManager')
+                    ->label('Score')
+                    ->icon(Icon::students())
+                    ->color('info')
+                    ->slideOver()
+                    ->relationManager(RecordScoreRelationManager::make()),
+
                 EditAction::make()
                     ->modalWidth(Width::Medium),
                 DeleteAction::make(),

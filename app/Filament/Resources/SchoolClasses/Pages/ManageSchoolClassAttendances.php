@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -64,9 +65,9 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     })
             ])
             ->recordActions([
-                RelationManagerAction::make('take-attendance-relation-manager')
+                RelationManagerAction::make('takeAttendanceRelationManager')
                     ->label('Take Attendance')
-                    ->icon(\App\Services\Icon::students())
+                    ->icon(Icon::students())
                     ->color('info')
                     ->slideOver()
                     ->relationManager(TakeAttendanceRelationManager::make()),
@@ -76,7 +77,6 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ])
-            ->recordAction('take-attendance-relation-manager');
+            ]);
     }
 }
