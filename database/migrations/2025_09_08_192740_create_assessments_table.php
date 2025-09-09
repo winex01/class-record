@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Models\SchoolClass;
+use App\Models\AssessmentType;
 use App\Enums\AssessmentStatus;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -20,7 +21,7 @@ return new class extends Migration
             $table->foreignIdFor(SchoolClass::class)->constrained()->cascadeOnDelete();
             $table->string('name')->nullable();
             $table->date('date')->nullable();
-            $table->string('type')->nullable(); // enum: AssessmentType
+            $table->foreignIdFor(AssessmentType::class)->constrained()->cascadeOnDelete();
             $table->string('points')->nullable();
             $table->text('description')->nullable();
             $table->string('status')->default(AssessmentStatus::PENDING->value);

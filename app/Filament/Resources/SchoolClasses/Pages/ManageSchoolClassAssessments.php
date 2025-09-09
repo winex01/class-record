@@ -7,7 +7,6 @@ use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
-use App\Enums\AssessmentType;
 use App\Enums\AssessmentStatus;
 use Filament\Actions\EditAction;
 use Filament\Support\Enums\Width;
@@ -40,9 +39,10 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
                 Field::date('date'),
 
-                Select::make('type')
-                    ->options(AssessmentType::class)
+                Select::make('assessment_type_id')
+                    ->relationship( 'assessmentType', 'name')
                     ->required()
+                    ->preload()
                     ->searchable(),
 
                 TextInput::make('points')
@@ -72,7 +72,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ->columns([
                 Column::text('name'),
                 Column::text('date')->width('1%'),
-                Column::enum('type', AssessmentType::class)->badge()->width('1%'),
+                // Column::enum('type', AssessmentType::class)->badge()->width('1%'),
                 Column::text('points')->color('info')->width('1%'),
                 Column::text('description')->toggleable(isToggledHiddenByDefault:true),
                 Column::enum('status', AssessmentStatus::class)->width('1%')

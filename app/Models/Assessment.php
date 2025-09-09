@@ -13,4 +13,8 @@ class Assessment extends Model
 
     protected $guarded = [];
 
+    public function assessmentType()
+    {
+        return $this->belongsTo(AssessmentType::class);
+    }
 }
