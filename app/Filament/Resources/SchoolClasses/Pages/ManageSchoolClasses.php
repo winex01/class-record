@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use Filament\Actions\CreateAction;
+use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
@@ -14,6 +16,23 @@ class ManageSchoolClasses extends ManageRecords
     {
         return [
             CreateAction::make(),
+        ];
+    }
+
+    public function getTabs(): array
+    {
+        return [
+            'all' => Tab::make('All'),
+
+            'active' => Tab::make('Active')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('active', true))
+                ->badge(fn () => static::getModel()::where('active', true)->count())
+                ->badgeColor('success'),
+
+            'archived' => Tab::make('Archived')
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('active', false))
+                ->badge(fn () => static::getModel()::where('active', false)->count())
+                ->badgeColor('warning'),
         ];
     }
 }

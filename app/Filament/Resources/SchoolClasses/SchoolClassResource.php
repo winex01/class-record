@@ -5,7 +5,6 @@ namespace App\Filament\Resources\SchoolClasses;
 use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
-use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
 use Filament\Actions\Action;
@@ -24,6 +23,8 @@ use Filament\Navigation\NavigationItem;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Support\Enums\IconPosition;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Forms\Components\ToggleButtons;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
@@ -125,7 +126,12 @@ class SchoolClassResource extends Resource
                     ->badge()
             ])
             ->filters([
-                // TODO::
+                TernaryFilter::make('active')
+                    ->label('Status')
+                    ->placeholder('All')
+                    ->trueLabel('Active')
+                    ->falseLabel('Archived')
+                    ->native(false)
             ])
             ->recordActions([
                 ActionGroup::make([
