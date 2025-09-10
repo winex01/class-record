@@ -12,7 +12,10 @@ use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Tables\Filters\Filter;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
@@ -56,7 +59,31 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
 
             ])
             ->filters([
-                //
+                Filter::make('date')
+                    ->form([
+                        DatePicker::make('date_from')
+                            ->native(false)
+                            ->label('Date From'),
+
+                        DatePicker::make('date_to')
+                            ->native(false)
+                            ->label('Date To'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when($data['date_from'], fn ($q, $date) => $q->whereDate('date', '>=', $date))
+                            ->when($data['date_to'], fn ($q, $date) => $q->whereDate('date', '<=', $date));
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        if (($data['date_from'] ?? null) || ($data['date_to'] ?? null)) {
+                            $from = $data['date_from'] ? \Carbon\Carbon::parse($data['date_from'])->format('M j, Y') : 'Start';
+                            $to = $data['date_to'] ? \Carbon\Carbon::parse($data['date_to'])->format('M j, Y') : 'End';
+
+                            return ["Date: {$from} - {$to}"];
+                        }
+
+                        return [];
+                    })
             ])
             ->headerActions([
                 CreateAction::make()
