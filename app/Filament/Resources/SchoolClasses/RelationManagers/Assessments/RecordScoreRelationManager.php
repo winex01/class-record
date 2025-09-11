@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\SchoolClasses\RelationManagers\Assessments;
 
 use Filament\Tables\Table;
+use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Columns\TextInputColumn;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -12,6 +14,23 @@ class RecordScoreRelationManager extends RelationManager
 {
     protected static string $relationship = 'students';
 
+    public function getTabs(): array
+    {
+            return [
+                'Default' => Tab::make(),
+
+                'Highest Scores' => Tab::make()
+                    ->modifyQueryUsing(fn (Builder $query) =>
+                        $query->orderBy('score', 'DESC')
+                    ),
+
+                'Lowest Scores' => Tab::make()
+                    ->modifyQueryUsing(fn (Builder $query) =>
+                        $query->orderBy('score', 'ASC')
+                    )
+            ];
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -20,7 +39,6 @@ class RecordScoreRelationManager extends RelationManager
                 ...ManageSchoolClassStudents::getColumns(),
 
                 TextInputColumn::make('score')
-                    ->sortable()
                     ->width('1%')
                     ->placeholder('Max score: ' . ($this->getOwnerRecord()->max_score ?? 0))
                     ->rules(['numeric', 'min:0', 'max:' . ($this->getOwnerRecord()->max_score ?? 0)])
@@ -39,6 +57,4 @@ class RecordScoreRelationManager extends RelationManager
                 ManageSchoolClassStudents::detachBulkAction(),
             ]);
     }
-
-    // TODO:: getTab All, Top 10 students, Lowest 10 students
 }
