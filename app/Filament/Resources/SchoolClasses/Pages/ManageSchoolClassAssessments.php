@@ -82,7 +82,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                             ->required()
                             ->preload()
                             ->searchable()
-                            ->default(1)
                             ->createOptionForm(AssessmentTypeResource::getForm())
                             ->editOptionForm(AssessmentTypeResource::getForm()),
 
