@@ -20,6 +20,7 @@ class RecordScoreRelationManager extends RelationManager
                 ...ManageSchoolClassStudents::getColumns(),
 
                 TextInputColumn::make('score')
+                    ->sortable()
                     ->width('1%')
                     ->placeholder('Max score: ' . ($this->getOwnerRecord()->max_score ?? 0))
                     ->rules(['numeric', 'min:0', 'max:' . ($this->getOwnerRecord()->max_score ?? 0)])
