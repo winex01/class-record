@@ -17,7 +17,7 @@ class RecordScoreRelationManager extends RelationManager
     public function getTabs(): array
     {
             return [
-                'Default' => Tab::make(),
+                'Default Order' => Tab::make(),
 
                 'Highest Scores' => Tab::make()
                     ->modifyQueryUsing(fn (Builder $query) =>

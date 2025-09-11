@@ -20,6 +20,9 @@ use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\ToggleButtons;
 use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -35,6 +38,30 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
     protected static string $relationship = 'assessments';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public function getTabs(): array
+    {
+        return [
+            'all' => Tab::make()
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->count()
+                ),
+
+            AssessmentStatus::COMPLETED->getLabel() => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', AssessmentStatus::COMPLETED->value))
+                ->badgeColor('info')
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->where('status', AssessmentStatus::COMPLETED->value)->count()
+                ),
+
+            AssessmentStatus::PENDING->getLabel() => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', AssessmentStatus::PENDING->value))
+                ->badgeColor('danger')
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->where('status', AssessmentStatus::PENDING->value)->count()
+                )
+        ];
+    }
 
     public function form(Schema $schema): Schema
     {
@@ -104,7 +131,12 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 Column::enum('status', AssessmentStatus::class)->width('1%')
             ])
             ->filters([
-                // TODO:: type filter, status filter and status getTab
+                SelectFilter::make('assessmentType')
+                    ->relationship('assessmentType', 'name')
+                    ->multiple(),
+
+                SelectFilter::make('status')
+                    ->options(AssessmentStatus::class)
             ])
             ->headerActions([
                 CreateAction::make()
