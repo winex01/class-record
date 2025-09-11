@@ -17,11 +17,14 @@ class TakeAttendanceRelationManager extends RelationManager
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make(),
+            'all' => Tab::make()
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->count()
+                ),
 
             'present' => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('present', true))
-                ->badgeColor('primary')
+                ->badgeColor('info')
                 ->badge(fn () =>
                     $this->getOwnerRecord()->{static::$relationship}()->where('present', true)->count()
                 ),

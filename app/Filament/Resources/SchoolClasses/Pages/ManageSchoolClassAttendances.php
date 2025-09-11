@@ -45,17 +45,17 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->columns([
                 Column::text('date'),
 
+                Column::text('present')
+                    ->searchable(false)
+                    ->badge()
+                    ->color('info')
+                    ->state(fn ($record) => $record->students()->wherePivot('present', true)->count()),
+
                 Column::text('absent')
                     ->searchable(false)
                     ->badge()
                     ->color('danger')
                     ->state(fn ($record) => $record->students()->wherePivot('present', false)->count()),
-
-                Column::text('present')
-                    ->searchable(false)
-                    ->badge()
-                    ->color('success')
-                    ->state(fn ($record) => $record->students()->wherePivot('present', true)->count()),
 
             ])
             ->filters([

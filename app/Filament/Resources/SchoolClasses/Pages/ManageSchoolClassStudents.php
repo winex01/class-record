@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use App\Enums\Gender;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -11,6 +12,8 @@ use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
+use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -20,6 +23,30 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
     protected static string $resource = SchoolClassResource::class;
 
     protected static string $relationship = 'students';
+
+    public function getTabs(): array
+    {
+        return [
+            'all' => Tab::make()
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->count()
+                ),
+
+            'Male' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('gender', Gender::MALE->value))
+                ->badgeColor(Gender::MALE->getColor())
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->where('gender', Gender::MALE->value)->count()
+                ),
+
+            'Female' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('gender', Gender::FEMALE->value))
+                ->badgeColor(Gender::FEMALE->getColor())
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->where('gender', Gender::FEMALE->value)->count()
+                )
+        ];
+    }
 
     public function form(Schema $schema): Schema
     {
