@@ -20,12 +20,14 @@ use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\ToggleButtons;
 use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\AssessmentTypes\AssessmentTypeResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
@@ -67,55 +69,77 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->placeholder('e.g., Quiz #1, Midterm Exam, Chapter 5 Test, etc.')
-                    ->required()
-                    ->maxLength(255),
 
-                Select::make('assessment_type_id')
-                    ->relationship( 'assessmentType', 'name')
-                    ->required()
-                    ->preload()
-                    ->searchable()
-                    ->createOptionForm(AssessmentTypeResource::getForm())
-                    ->editOptionForm(AssessmentTypeResource::getForm()),
+                Section::make('Assessment Details')
+                    ->schema([
+                        TextInput::make('name')
+                            ->placeholder('e.g., Quiz #1, Midterm Exam, Chapter 5 Test, etc.')
+                            ->required()
+                            ->maxLength(255),
 
-                Field::date('date'),
+                        Select::make('assessment_type_id')
+                            ->relationship('assessmentType', 'name')
+                            ->required()
+                            ->preload()
+                            ->searchable()
+                            ->default(1)
+                            ->createOptionForm(AssessmentTypeResource::getForm())
+                            ->editOptionForm(AssessmentTypeResource::getForm()),
 
-                TextInput::make('max_score')
-                    ->helperText('Highest points')
-                    ->required()
-                    ->placeholder('100')
-                    ->numeric(),
+                        Field::date('date'),
 
-                Select::make('my_file_id')
-                    ->relationship( 'myFile', 'name')
-                    ->helperText('Optional')
-                    ->preload()
-                    ->searchable()
-                    ->editOptionForm(MyFileResource::getForm(true))
-                    ->editOptionAction(function (Action $action) {
-                        return $action
-                            ->icon('heroicon-o-eye')
-                            ->tooltip('View')
-                            ->modalHeading('View File Details')
-                            ->modalWidth(Width::Medium)
-                            ->modalSubmitAction(false)
-                            ->modalCancelActionLabel('Close');
-                    }),
+                        TextInput::make('max_score')
+                            ->helperText('Highest points')
+                            ->required()
+                            ->placeholder('100')
+                            ->numeric(),
 
-                Textarea::make('description')
-                    ->rows(2)
-                    ->placeholder('Additional notes or instructions...')
-                    ->autosize(),
+                        Textarea::make('description')
+                            ->rows(2)
+                            ->placeholder('Additional notes or instructions...')
+                            ->autosize(),
+                    ])
+                    ->columnSpan(1),
 
-                ToggleButtons::make('status')
-                    ->options(AssessmentStatus::class)
-                    ->default(AssessmentStatus::PENDING->value)
-                    ->inline()
-                    ->grouped()
+                Section::make('File & Status')
+                    ->schema([
+                        Select::make('my_file_id')
+                            ->relationship('myFile', 'name')
+                            ->helperText('Optional')
+                            ->preload()
+                            ->searchable()
+                            ->editOptionForm(MyFileResource::getForm(true))
+                            ->editOptionAction(function (Action $action) {
+                                return $action
+                                    ->icon('heroicon-o-eye')
+                                    ->tooltip('View')
+                                    ->modalHeading('View File Details')
+                                    ->modalWidth(Width::Medium)
+                                    ->modalSubmitAction(false)
+                                    ->modalCancelActionLabel('Close');
+                            }),
 
-            ]);
+                        ToggleButtons::make('status')
+                            ->options(AssessmentStatus::class)
+                            ->default(AssessmentStatus::PENDING->value)
+                            ->inline()
+                            ->grouped(),
+                    ])
+                    ->columnSpan(1),
+
+                Section::make('Select Students')
+                    ->label('Only students in this class are listed.')
+                    ->schema([
+                        StudentResource::selectRelationship(SchoolClassResource::getClassStudents($this->getOwnerRecord()))
+                            ->helperText('For group assessment just select the students')
+                            ->placeholder('Leave blank to include all students')
+                    ])
+                    ->collapsible()
+                    ->collapsed(fn ($operation) => $operation == 'create' ? false : true)
+                    ->columnSpan(2),
+
+            ])
+            ->columns(2);
     }
 
     public function table(Table $table): Table
@@ -140,10 +164,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->modalWidth(Width::Medium)
-                    ->after(function ($record, $data, $action) {
-                        $record->students()->sync(SchoolClassResource::getClassStudents($this->getOwnerRecord()));
-                    })
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -154,8 +174,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                         ->slideOver()
                         ->relationManager(RecordScoreRelationManager::make()),
 
-                    EditAction::make()
-                        ->modalWidth(Width::Medium),
+                    EditAction::make(),
                     DeleteAction::make(),
                 ])->grouped()
             ])

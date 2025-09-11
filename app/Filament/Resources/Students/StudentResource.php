@@ -2,12 +2,11 @@
 
 namespace App\Filament\Resources\Students;
 
-use App\Services\Action;
-use Filament\Actions\ActionGroup;
 use UnitEnum;
 use App\Enums\Gender;
 use App\Models\Student;
 use App\Services\Field;
+use App\Services\Action;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
@@ -15,7 +14,9 @@ use App\Enums\NavigationGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -147,5 +148,25 @@ class StudentResource extends Resource
         return [
             'index' => ManageStudents::route('/'),
         ];
+    }
+
+    public static function selectRelationship($studentIds = [])
+    {
+        return Select::make('student_id')
+            ->multiple()
+            ->preload()
+            ->placeholder('Choose students...')
+            ->searchable(['students.first_name', 'students.last_name', 'students.middle_name', 'students.suffix_name'])
+            ->getOptionLabelFromRecordUsing(fn ($record) => $record->full_name)
+            ->relationship(
+                name: 'students',
+                modifyQueryUsing: fn ($query) => $query->whereIn('students.id', $studentIds)
+            )
+            ->saveRelationshipsUsing(function ($record, $state) use ($studentIds) {
+                $studentIds = ! empty($state) ?
+                    $state : $studentIds;
+
+                $record->students()->sync($studentIds);
+            });
     }
 }
