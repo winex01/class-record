@@ -66,7 +66,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make(),
-                static::attachAction($this->getOwnerRecord()),
+                static::attachAction(),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -80,9 +80,9 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ]);
     }
 
-    public static function attachAction($ownerRecord)
+    public static function attachAction($ownerRecord = null)
     {
-        return AttachAction::make()
+        $attachAction = AttachAction::make()
             ->label('Attach students')
             ->closeModalByClickingAway(false)
             ->preloadRecordSelect()
@@ -92,10 +92,15 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 'first_name',
                 'middle_name',
                 'suffix_name',
-            ])
-            ->recordSelectOptionsQuery(function ($query) use ($ownerRecord) {
+            ]);
+
+        if ($ownerRecord) {
+            $attachAction->recordSelectOptionsQuery(function ($query) use ($ownerRecord) {
                 return $query->whereIn('students.id', SchoolClassResource::getClassStudents($ownerRecord->school_class_id));
             });
+        }
+
+        return $attachAction;
     }
 
     public static function detachBulkAction()
