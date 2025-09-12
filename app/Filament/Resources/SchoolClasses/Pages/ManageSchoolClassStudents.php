@@ -91,7 +91,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 'first_name',
                 'middle_name',
                 'suffix_name',
-            ]);
+            ]); // TODO:: add where clause to query to only show students on this class
     }
 
     public static function detachBulkAction()

@@ -127,11 +127,10 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ->columnSpan(1),
 
                 Section::make('Select Students')
-                    ->label('Only students in this class are listed.')
                     ->schema([
                         StudentResource::selectRelationship(SchoolClassResource::getClassStudents($this->getOwnerRecord()))
-                            ->helperText('For group assessment just select the students')
                             ->placeholder('Leave blank to include all students')
+                            ->helperText('Only students in this class are listed.')
                     ])
                     ->collapsible()
                     ->collapsed(fn ($operation) => $operation == 'create' ? false : true)
