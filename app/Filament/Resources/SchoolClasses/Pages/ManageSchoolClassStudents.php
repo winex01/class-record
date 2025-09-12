@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Enums\Gender;
+use App\Models\SchoolClass;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -65,7 +66,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make(),
-                static::attachAction(),
+                static::attachAction($this->getOwnerRecord()),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -79,7 +80,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ]);
     }
 
-    public static function attachAction()
+    public static function attachAction($ownerRecord)
     {
         return AttachAction::make()
             ->label('Attach students')
@@ -91,7 +92,10 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 'first_name',
                 'middle_name',
                 'suffix_name',
-            ]); // TODO:: add where clause to query to only show students on this class
+            ])
+            ->recordSelectOptionsQuery(function ($query) use ($ownerRecord) {
+                return $query->whereIn('students.id', SchoolClassResource::getClassStudents($ownerRecord->school_class_id));
+            });
     }
 
     public static function detachBulkAction()

@@ -48,7 +48,7 @@ class RecordScoreRelationManager extends RelationManager
                 ...StudentResource::getFilters()
             ])
             ->headerActions([
-                ManageSchoolClassStudents::attachAction(),
+                ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
             ])
             ->recordActions([
                 //

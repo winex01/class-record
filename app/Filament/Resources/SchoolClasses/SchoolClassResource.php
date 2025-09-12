@@ -190,8 +190,12 @@ class SchoolClassResource extends Resource
         ];
     }
 
-    public static function getClassStudents($record)
+    public static function getClassStudents($recordOrId)
     {
+        $record = null;
+        if (!$recordOrId instanceof SchoolClass) {
+            $record = SchoolClass::findOrFail($recordOrId)->first();
+        }
         return $record->students()->pluck('students.id')->toArray();
     }
 }
