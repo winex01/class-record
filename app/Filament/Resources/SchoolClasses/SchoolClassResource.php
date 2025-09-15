@@ -116,14 +116,13 @@ class SchoolClassResource extends Resource
                 Column::text('description')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('active')
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->width('1%')
-                    ->formatStateUsing(fn($state) => $state ? 'Active' : 'Archived')
-                    ->icon(fn($state) => $state ? 'heroicon-o-check' : 'heroicon-o-lock-closed')
-                    ->iconPosition(IconPosition::After)
-                    ->color(fn($state) => $state ? 'success' : 'warning')
-                    ->badge()
+                Column::boolean(
+                    name: 'active',
+                    trueLabel: 'Active',
+                    falseLabel: 'Archived',
+                    falseIcon: 'heroicon-o-lock-closed',
+                    falseColor: 'warning'
+                )
             ])
             ->filters([
                 TernaryFilter::make('active')

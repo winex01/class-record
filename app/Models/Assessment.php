@@ -13,6 +13,10 @@ class Assessment extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'can_group_students' => 'boolean',
+    ];
+
     public function assessmentType()
     {
         return $this->belongsTo(AssessmentType::class);

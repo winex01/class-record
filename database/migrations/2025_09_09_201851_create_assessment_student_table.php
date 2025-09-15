@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(Assessment::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Student::class)->constrained()->cascadeOnDelete();
             $table->string('score')->nullable();
+            $table->string('group')->nullable();
             $table->timestamps();
         });
     }

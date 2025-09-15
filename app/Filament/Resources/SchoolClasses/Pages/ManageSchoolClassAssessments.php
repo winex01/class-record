@@ -100,7 +100,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ])
                     ->columnSpan(1),
 
-                Section::make('File & Status')
+                Section::make('')
                     ->schema([
                         Select::make('my_file_id')
                             ->relationship('myFile', 'name')
@@ -117,6 +117,11 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                                     ->modalSubmitAction(false)
                                     ->modalCancelActionLabel('Close');
                             }),
+
+                        ToggleButtons::make('can_group_students')
+                            ->inline()
+                            ->default(false)
+                            ->boolean(),
 
                         ToggleButtons::make('status')
                             ->options(AssessmentStatus::class)
@@ -149,6 +154,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 Column::text('date')->width('1%'),
                 Column::text('max_score')->label('Max')->color('info')->width('1%')->tooltip('Max score'),
                 Column::text('description')->toggleable(isToggledHiddenByDefault:true),
+                Column::boolean('can_group_students')->label('Can group')->toggleable(isToggledHiddenByDefault:true),
                 Column::enum('status', AssessmentStatus::class)->width('1%')
             ])
             ->filters([

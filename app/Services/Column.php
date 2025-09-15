@@ -19,6 +19,24 @@ final class Column
             ->searchable();
     }
 
+    public static function boolean(
+        string $name,
+        string $trueLabel = 'Yes',
+        string $falseLabel = 'No',
+        string $trueIcon = 'heroicon-o-check',
+        string $falseIcon = 'heroicon-o-x-mark',
+        string $trueColor = 'success',
+        string $falseColor = 'danger',
+    ): TextColumn {
+        return TextColumn::make($name)
+            ->toggleable(isToggledHiddenByDefault: false)
+            ->width('1%')
+            ->formatStateUsing(fn($state) => $state ? $trueLabel : $falseLabel)
+            ->icon(fn($state) => $state ? $trueIcon : $falseIcon)
+            ->color(fn($state) => $state ? $trueColor : $falseColor)
+            ->badge();
+    }
+
     public static function tags($name = 'tags')
     {
         return TagsColumn::make($name)
