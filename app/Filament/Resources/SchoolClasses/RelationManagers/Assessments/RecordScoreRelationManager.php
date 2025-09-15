@@ -39,7 +39,6 @@ class RecordScoreRelationManager extends RelationManager
                         return $baseOptions;
                     })
                     ->disablePlaceholderSelection()
-                    ->searchableOptions()
                     ->afterStateUpdated(function ($state, $record) {
                         // If the state is null or empty, set it to '-'
                         if (empty($state)) {
@@ -47,7 +46,7 @@ class RecordScoreRelationManager extends RelationManager
                             $record->pivot->save();
                         }
                     })
-                    ->rules([])
+                    ->native(false)
                     ->visible($this->getOwnerRecord()->can_group_students),
 
                 TextInputColumn::make('score')
