@@ -22,13 +22,23 @@ class RecordScoreRelationManager extends RelationManager
 
                 SelectColumn::make('group')
                     ->placeholder('-')
-                    ->options([
-                        '-' => '-',
-                        // TODO:: add group? also change the table grid
-                        'draft' => 'Draft',
-                        'reviewing' => 'Reviewing',
-                        'published' => 'Published',
-                    ])
+                    ->options(function ($record) {
+                        $baseOptions = [
+                            '-' => '-',
+                            'draft' => 'Draft',
+                            'reviewing' => 'Reviewing',
+                            'published' => 'Published',
+                        ];
+
+                        // Get current value and add it if it doesn't exist
+                        $currentValue = $record->pivot->group ?? null;
+                        if ($currentValue && !array_key_exists($currentValue, $baseOptions)) {
+                            $baseOptions[$currentValue] = $currentValue;
+                        }
+
+                        return $baseOptions;
+                    })
+                    ->disablePlaceholderSelection()
                     ->searchableOptions()
                     ->afterStateUpdated(function ($state, $record) {
                         // If the state is null or empty, set it to '-'
@@ -37,6 +47,7 @@ class RecordScoreRelationManager extends RelationManager
                             $record->pivot->save();
                         }
                     })
+                    ->rules([])
                     ->visible($this->getOwnerRecord()->can_group_students),
 
                 TextInputColumn::make('score')
