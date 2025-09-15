@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\RelationManagers\Assessments;
 
 use Filament\Tables\Table;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -18,6 +19,25 @@ class RecordScoreRelationManager extends RelationManager
             ->recordTitleAttribute('full_name')
             ->columns([
                 ...ManageSchoolClassStudents::getColumns(),
+
+                SelectColumn::make('group')
+                    ->placeholder('-')
+                    ->options([
+                        '-' => '-',
+                        // TODO:: add group? also change the table grid
+                        'draft' => 'Draft',
+                        'reviewing' => 'Reviewing',
+                        'published' => 'Published',
+                    ])
+                    ->searchableOptions()
+                    ->afterStateUpdated(function ($state, $record) {
+                        // If the state is null or empty, set it to '-'
+                        if (empty($state)) {
+                            $record->pivot->group = '-';
+                            $record->pivot->save();
+                        }
+                    })
+                    ->visible($this->getOwnerRecord()->can_group_students),
 
                 TextInputColumn::make('score')
                     ->width('1%')

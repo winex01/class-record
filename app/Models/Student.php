@@ -28,7 +28,7 @@ class Student extends Model
     {
         return $this->belongsToMany(Assessment::class)
             ->withTimestamps()
-            ->withPivot(['score']);
+            ->withPivot(['score', 'group']);
     }
 
     protected static function booted()
