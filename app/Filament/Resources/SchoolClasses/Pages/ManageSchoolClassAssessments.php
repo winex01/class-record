@@ -126,16 +126,15 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ])
                     ->columnSpan(1),
 
-                Section::make('Select Students')
-                    ->schema([
-                        StudentResource::selectRelationship(SchoolClassResource::getClassStudents($this->getOwnerRecord()))
-                            ->placeholder('Leave blank to include all students')
-                            ->helperText('Only students in this class are listed.')
-                    ])
-                    ->collapsible()
-                    ->collapsed(fn ($operation) => $operation == 'create' ? false : true)
-                    ->columnSpan(2),
-
+                // Section::make('Select Students')
+                //     ->schema([
+                //         StudentResource::selectRelationship(SchoolClassResource::getClassStudents($this->getOwnerRecord()))
+                //             ->placeholder('Leave blank to include all students')
+                //             ->helperText('Only students in this class are listed.')
+                //     ])
+                //     ->collapsible()
+                //     ->collapsed(fn ($operation) => $operation == 'create' ? false : true)
+                //     ->columnSpan(2)
             ])
             ->columns(2);
     }
@@ -162,6 +161,9 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->after(function ($record, $data, $action) {
+                        $record->students()->sync(SchoolClassResource::getClassStudents($this->getOwnerRecord()));
+                    })
             ])
             ->recordActions([
                 ActionGroup::make([
