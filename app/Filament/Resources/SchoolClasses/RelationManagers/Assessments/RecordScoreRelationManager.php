@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources\SchoolClasses\RelationManagers\Assessments;
 
+use App\Filament\Resources\Groups\GroupResource;
 use App\Models\Group;
 use Filament\Tables\Table;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Columns\TextInputColumn;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -14,6 +17,28 @@ use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 class RecordScoreRelationManager extends RelationManager
 {
     protected static string $relationship = 'students';
+
+    public function getTabs(): array
+    {
+        if (!$this->getOwnerRecord()->can_group_students) {
+            return [];
+        }
+
+        $tabs['all'] = Tab::make()
+            ->badge(fn () =>
+                $this->getOwnerRecord()->{static::$relationship}()->count()
+            );
+
+        foreach (GroupResource::selectOptions() as $item) {
+            $tabs[($item === '-' ? 'No Group' : $item)] = Tab::make()
+                        ->modifyQueryUsing(fn (Builder $query) => $query->where('group', $item))
+                        ->badge(fn () =>
+                            $this->getOwnerRecord()->{static::$relationship}()->where('group', $item)->count()
+                );
+        }
+
+        return $tabs;
+    }
 
     public function table(Table $table): Table
     {
@@ -26,9 +51,7 @@ class RecordScoreRelationManager extends RelationManager
                 SelectColumn::make('group')
                     ->placeholder('-')
                     ->options(function ($record) {
-                        $baseOptions = Group::all()->pluck('name', 'name')
-                                ->prepend('-', '-')
-                                ->toArray();
+                        $baseOptions = GroupResource::selectOptions();
 
                         // Get current value and add it if it doesn't exist
                         $currentValue = $record->pivot->group ?? null;
@@ -62,11 +85,8 @@ class RecordScoreRelationManager extends RelationManager
                 SelectFilter::make('group')
                     ->searchable()
                     ->multiple()
-                    ->options(options:
-                        Group::all()
-                        ->pluck('name', 'name')
-                        ->toArray()
-                    ),
+                    ->options(GroupResource::selectOptions())
+                    ->visible($this->getOwnerRecord()->can_group_students),
 
                 ...StudentResource::getFilters()
             ])

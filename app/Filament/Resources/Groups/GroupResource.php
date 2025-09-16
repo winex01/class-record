@@ -66,4 +66,12 @@ class GroupResource extends Resource
             'index' => ManageGroups::route('/'),
         ];
     }
+
+    public static function selectOptions()
+    {
+        return Group::all()
+            ->pluck('name', 'name')
+            ->prepend('-', '-')
+            ->toArray();
+    }
 }
