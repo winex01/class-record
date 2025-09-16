@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SchoolClasses\RelationManagers\Assessments;
 use App\Models\Group;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\TextInputColumn;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -45,6 +46,8 @@ class RecordScoreRelationManager extends RelationManager
                             $record->pivot->save();
                         }
                     })
+                    ->sortable()
+                    ->searchable()
                     ->native(false)
                     ->visible($this->getOwnerRecord()->can_group_students),
 
@@ -56,6 +59,15 @@ class RecordScoreRelationManager extends RelationManager
 
             ])
             ->filters([
+                SelectFilter::make('group')
+                    ->searchable()
+                    ->multiple()
+                    ->options(options:
+                        Group::all()
+                        ->pluck('name', 'name')
+                        ->toArray()
+                    ),
+
                 ...StudentResource::getFilters()
             ])
             ->headerActions([
