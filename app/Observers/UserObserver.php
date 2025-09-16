@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\User;
-use App\Services\TenantSeeder;
+use Database\Seeders\TenantSeeder;
 
 class UserObserver
 {
