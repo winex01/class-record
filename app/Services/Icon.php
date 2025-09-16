@@ -35,4 +35,9 @@ final class Icon
     {
         return Heroicon::Square2Stack;
     }
+
+    public static function groups(): Heroicon|string
+    {
+        return Heroicon::Cube;
+    }
 }

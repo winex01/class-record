@@ -1,50 +1,42 @@
 <?php
 
-namespace App\Filament\Resources\AssessmentTypes;
+namespace App\Filament\Resources\Groups;
 
+use App\Models\Group;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
-use App\Models\AssessmentType;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Resources\AssessmentTypes\Pages\ManageAssessmentTypes;
+use App\Filament\Resources\Groups\Pages\ManageGroups;
 
-class AssessmentTypeResource extends Resource
+class GroupResource extends Resource
 {
-    protected static ?string $model = AssessmentType::class;
+    protected static ?string $model = Group::class;
 
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static string | \UnitEnum | null $navigationGroup = \App\Enums\NavigationGroup::Group1;
 
-    protected static ?int $navigationSort = 400;
+    protected static ?int $navigationSort = 300;
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
-        return \App\Services\Icon::assessmentTypes();
+        return \App\Services\Icon::groups();
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                ...static::getForm()
-            ]);
-    }
-
-    public static function getForm()
-    {
-        return [
-            TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-        ];
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -59,11 +51,9 @@ class AssessmentTypeResource extends Resource
                 //
             ])
             ->recordActions([
-                ActionGroup::make([
-                    EditAction::make()
-                        ->modalWidth(Width::Medium),
-                    DeleteAction::make(),
-                ])->grouped()
+                EditAction::make()
+                    ->modalWidth(Width::Medium),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
@@ -73,7 +63,7 @@ class AssessmentTypeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageAssessmentTypes::route('/'),
+            'index' => ManageGroups::route('/'),
         ];
     }
 }
