@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses\RelationManagers\Assessments;
 
+use App\Models\Group;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -24,12 +25,9 @@ class RecordScoreRelationManager extends RelationManager
                 SelectColumn::make('group')
                     ->placeholder('-')
                     ->options(function ($record) {
-                        $baseOptions = [
-                            '-' => '-',
-                            'draft' => 'Draft',
-                            'reviewing' => 'Reviewing',
-                            'published' => 'Published',
-                        ];
+                        $baseOptions = Group::all()->pluck('name', 'name')
+                                ->prepend('-', '-')
+                                ->toArray();
 
                         // Get current value and add it if it doesn't exist
                         $currentValue = $record->pivot->group ?? null;
