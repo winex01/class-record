@@ -17,6 +17,7 @@ class RecordScoreRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('full_name')
+            ->defaultSort('full_name', 'asc')
             ->columns([
                 ...ManageSchoolClassStudents::getColumns(),
 

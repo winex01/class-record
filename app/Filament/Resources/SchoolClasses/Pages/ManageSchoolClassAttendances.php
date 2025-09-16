@@ -42,6 +42,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
     {
         return $table
             ->recordTitleAttribute('date')
+            ->defaultSort('date', 'desc')
             ->columns([
                 Column::text('date'),
 
