@@ -2,13 +2,11 @@
 
 namespace App\Filament\Resources\SchoolClasses\RelationManagers\Assessments;
 
-use App\Models\Group;
+use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Columns\TextInputColumn;
 use App\Filament\Resources\Groups\GroupResource;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -46,20 +44,18 @@ class RecordScoreRelationManager extends RelationManager
             ->columns([
                 ...ManageSchoolClassStudents::getColumns(),
 
-                SelectColumn::make('group')
-                    ->placeholder('-')
+                Column::select('group')
                     ->options(function ($record) {
                         $baseOptions = GroupResource::selectOptions();
 
                         // Get current value and add it if it doesn't exist
                         $currentValue = $record->pivot->group ?? null;
-                        if ($currentValue && !array_key_exists($currentValue, $baseOptions)) {
-                            $baseOptions[$currentValue] = $currentValue;
-                        }
+                            if ($currentValue && !array_key_exists($currentValue, $baseOptions)) {
+                                $baseOptions[$currentValue] = $currentValue;
+                            }
 
                         return $baseOptions;
                     })
-                    ->disablePlaceholderSelection()
                     ->afterStateUpdated(function ($state, $record) {
                         // If the state is null or empty, set it to '-'
                         if (empty($state)) {
@@ -67,17 +63,11 @@ class RecordScoreRelationManager extends RelationManager
                             $record->pivot->save();
                         }
                     })
-                    ->sortable()
-                    ->searchable()
-                    ->native(false)
                     ->visible($this->getOwnerRecord()->can_group_students),
 
-                TextInputColumn::make('score')
-                    ->width('1%')
-                    ->sortable()
-                    ->placeholder('Max score: ' . ($this->getOwnerRecord()->max_score ?? 0))
+                Column::textInput('score')
+                    ->placeholder('Max: ' . ($this->getOwnerRecord()->max_score ?? 0))
                     ->rules(['numeric', 'min:0', 'max:' . ($this->getOwnerRecord()->max_score ?? 0)])
-
             ])
             ->filters([
                 SelectFilter::make('group')

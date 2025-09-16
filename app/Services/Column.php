@@ -7,10 +7,31 @@ use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SelectColumn;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Columns\TextInputColumn;
 
 final class Column
 {
+    public static function select($name)
+    {
+        return SelectColumn::make($name)
+            ->placeholder('-')
+            ->disablePlaceholderSelection()
+            ->sortable()
+            ->searchable()
+            ->native(false)
+            ->extraAttributes(['style' => 'min-width: 130px; ']);
+    }
+
+    public static function textInput($name)
+    {
+        return TextInputColumn::make($name)
+            ->sortable()
+            ->searchable()
+            ->extraAttributes(['style' => 'min-width: 120px; max-width: 120px;']);
+    }
+
     public static function text($name)
     {
         return TextColumn::make($name)
