@@ -12,7 +12,7 @@ enum NavigationGroup implements HasLabel
     public function getLabel(): string | Htmlable | null
     {
         return match ($this) {
-            self::Group1 => 'Class Management',
+            self::Group1 => 'Settings',
         };
     }
 }

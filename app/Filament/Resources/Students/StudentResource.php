@@ -2,15 +2,12 @@
 
 namespace App\Filament\Resources\Students;
 
-use UnitEnum;
 use App\Enums\Gender;
 use App\Models\Student;
 use App\Services\Field;
-use App\Services\Action;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
-use App\Enums\NavigationGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
@@ -29,8 +26,6 @@ class StudentResource extends Resource
     protected static ?string $model = Student::class;
 
     protected static ?string $recordTitleAttribute = 'full_name';
-
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Group1;
 
     public static function getGloballySearchableAttributes(): array
     {
