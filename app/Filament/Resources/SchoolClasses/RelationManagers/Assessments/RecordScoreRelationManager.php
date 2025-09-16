@@ -101,6 +101,9 @@ class RecordScoreRelationManager extends RelationManager
                 $this->getOwnerRecord()->can_group_students
                     ? [\Filament\Tables\Grouping\Group::make('group')]
                     : []
+            )
+            ->defaultGroup(
+                $this->getOwnerRecord()->can_group_students ? 'group' : null
             );
     }
 }
