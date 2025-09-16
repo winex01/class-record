@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\RelationManagers\Assessments;
 
-use App\Filament\Resources\Groups\GroupResource;
 use App\Models\Group;
 use Filament\Tables\Table;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -10,6 +9,7 @@ use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Columns\TextInputColumn;
+use App\Filament\Resources\Groups\GroupResource;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
@@ -29,13 +29,11 @@ class RecordScoreRelationManager extends RelationManager
                 $this->getOwnerRecord()->{static::$relationship}()->count()
             );
 
-        foreach (GroupResource::selectOptions() as $item) {
-            $tabs[($item === '-' ? 'No Group' : $item)] = Tab::make()
-                        ->modifyQueryUsing(fn (Builder $query) => $query->where('group', $item))
-                        ->badge(fn () =>
-                            $this->getOwnerRecord()->{static::$relationship}()->where('group', $item)->count()
-                );
-        }
+        $tabs['No Group'] = Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('group', '-'))
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->where('group', '-')->count()
+        );
 
         return $tabs;
     }
@@ -98,6 +96,11 @@ class RecordScoreRelationManager extends RelationManager
             ])
             ->toolbarActions([
                 ManageSchoolClassStudents::detachBulkAction(),
-            ]);
+            ])
+            ->groups(
+                $this->getOwnerRecord()->can_group_students
+                    ? [\Filament\Tables\Grouping\Group::make('group')]
+                    : []
+            );
     }
 }
