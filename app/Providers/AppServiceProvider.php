@@ -38,8 +38,12 @@ class AppServiceProvider extends ServiceProvider
         // align submit buttons of page to the right
         Page::formActionsAlignment(Alignment::Right);
 
-        // align submit buttons of modal to the right
         Action::configureUsing(function (Action $action)  {
+            // Auto-refresh navigation after all successful actions
+            $action->after(function (\Livewire\Component $livewire) {
+                $livewire->dispatch('refresh-sidebar');
+            });
+
             foreach ([
                 DeleteAction::class,
                 DeleteBulkAction::class,
