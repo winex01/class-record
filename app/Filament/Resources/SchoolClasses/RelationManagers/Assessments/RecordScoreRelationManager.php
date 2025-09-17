@@ -18,20 +18,18 @@ class RecordScoreRelationManager extends RelationManager
 
     public function getTabs(): array
     {
-        if (!$this->getOwnerRecord()->can_group_students) {
-            return [];
-        }
-
         $tabs['all'] = Tab::make()
             ->badge(fn () =>
                 $this->getOwnerRecord()->{static::$relationship}()->count()
             );
 
-        $tabs['No Group'] = Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('group', '-'))
-                ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->where('group', '-')->count()
-        );
+        if ($this->getOwnerRecord()->can_group_students) {
+            $tabs['No Group'] = Tab::make()
+                    ->modifyQueryUsing(fn (Builder $query) => $query->where('group', '-'))
+                    ->badge(fn () =>
+                        $this->getOwnerRecord()->{static::$relationship}()->where('group', '-')->count()
+            );
+        }
 
         return $tabs;
     }

@@ -14,6 +14,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use Coolsam\Flatpickr\Forms\Components\Flatpickr;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -26,6 +27,16 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
     protected static string $resource = SchoolClassResource::class;
 
     protected static string $relationship = 'attendances';
+
+    public function getTabs(): array
+    {
+        return [
+            'all' => Tab::make()
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->count()
+                ),
+        ];
+    }
 
     public function form(Schema $schema): Schema
     {

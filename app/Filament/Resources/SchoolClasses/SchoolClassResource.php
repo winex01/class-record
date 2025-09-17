@@ -170,21 +170,21 @@ class SchoolClassResource extends Resource
             NavigationItem::make('Students')
                 ->url(ManageSchoolClassStudents::getUrl(['record' => $record]))
                 ->icon(Icon::students())
-                ->badge($record->students()->count())
+                // ->badge($record->students()->count())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassStudents),
 
             'attendances' =>
             NavigationItem::make('Attendances')
                 ->url(ManageSchoolClassAttendances::getUrl(['record' => $record]))
                 ->icon(Icon::attendances())
-                ->badge($record->attendances()->count())
+                // ->badge($record->attendances()->count())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAttendances),
 
             'assessments' =>
             NavigationItem::make('Assessments')
                 ->url(ManageSchoolClassAssessments::getUrl(['record' => $record]))
                 ->icon(Icon::assessments())
-                ->badge($record->assessments()->count())
+                // ->badge($record->assessments()->count())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAssessments),
         ];
     }
