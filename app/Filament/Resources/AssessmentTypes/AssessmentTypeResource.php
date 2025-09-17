@@ -7,7 +7,6 @@ use Filament\Schemas\Schema;
 use App\Models\AssessmentType;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -59,11 +58,9 @@ class AssessmentTypeResource extends Resource
                 //
             ])
             ->recordActions([
-                ActionGroup::make([
-                    EditAction::make()
-                        ->modalWidth(Width::Medium),
-                    DeleteAction::make(),
-                ])->grouped()
+                EditAction::make()
+                    ->modalWidth(Width::Medium),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
