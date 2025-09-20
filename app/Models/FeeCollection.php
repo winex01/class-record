@@ -12,4 +12,11 @@ class FeeCollection extends Model
     use BelongsToSchoolClass;
 
     protected $guarded = [];
+
+    public function students()
+    {
+        return $this->belongsToMany(Student::class)
+            ->withTimestamps()
+            ->withPivot(['amount', 'status']);
+    }
 }

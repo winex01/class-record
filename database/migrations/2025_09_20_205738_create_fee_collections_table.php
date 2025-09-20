@@ -17,6 +17,11 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(SchoolClass::class)->constrained()->cascadeOnDelete();
+            $table->string('name')->nullable();
+            $table->decimal('amount')->unsigned()->nullable();
+            $table->date('date')->nullable();
+            $table->text('description')->nullable();
+            $table->boolean('is_collected')->default(false);
             $table->timestamps();
         });
     }

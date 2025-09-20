@@ -31,6 +31,13 @@ class Student extends Model
             ->withPivot(['score', 'group']);
     }
 
+    public function feeCollections()
+    {
+        return $this->belongsToMany(FeeCollection::class)
+            ->withTimestamps()
+            ->withPivot(['amount', 'status']);
+    }
+
     protected static function booted()
     {
         static::addGlobalScope('ordered', function ($builder) {
