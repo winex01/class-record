@@ -20,16 +20,15 @@ use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Navigation\NavigationItem;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Forms\Components\ToggleButtons;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAssessments;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAttendances;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassFeeCollections;
 
 class SchoolClassResource extends Resource
 {
@@ -158,6 +157,7 @@ class SchoolClassResource extends Resource
             'students' => ManageSchoolClassStudents::route('/{record}/students'),
             'attendances' => ManageSchoolClassAttendances::route('/{record}/attendances'),
             'assessments' => ManageSchoolClassAssessments::route('/{record}/assessments'),
+            'fee-collections' => ManageSchoolClassFeeCollections::route('/{record}/fee-collections'),
         ];
     }
 
@@ -186,6 +186,12 @@ class SchoolClassResource extends Resource
                 ->icon(Icon::assessments())
                 // ->badge($record->assessments()->count())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAssessments),
+
+            'feeCollections' =>
+            NavigationItem::make('Fee Collections')
+                ->url(ManageSchoolClassFeeCollections::getUrl(['record' => $record]))
+                ->icon(Icon::feeCollections())
+                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassFeeCollections),
         ];
     }
 

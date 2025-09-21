@@ -40,4 +40,9 @@ final class Icon
     {
         return Heroicon::Cube;
     }
+
+    public static function feeCollections(): Heroicon|string
+    {
+        return Heroicon::CircleStack;
+    }
 }
