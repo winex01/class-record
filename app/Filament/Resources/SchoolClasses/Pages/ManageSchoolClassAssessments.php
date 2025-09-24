@@ -166,10 +166,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ->options(AssessmentStatus::class)
             ])
             ->headerActions([
-                CreateAction::make()
-                    ->after(function ($record, $data, $action) {
-                        $record->students()->sync(SchoolClassResource::getClassStudents($this->getOwnerRecord()));
-                    })
+                SchoolClassResource::createAction($this->getOwnerRecord())
             ])
             ->recordActions([
                 ActionGroup::make([

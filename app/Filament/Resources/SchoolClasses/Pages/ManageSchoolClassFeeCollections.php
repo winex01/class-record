@@ -107,7 +107,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 TernaryFilter::make('is_collected')->label('Collected')
             ])
             ->headerActions([
-                CreateAction::make(),
+                SchoolClassResource::createAction($this->getOwnerRecord()),
             ])
             ->recordActions([
                 ActionGroup::make([

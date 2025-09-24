@@ -103,11 +103,8 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     })
             ])
             ->headerActions([
-                CreateAction::make()
-                    ->modalWidth(Width::Medium)
-                    ->after(function ($record, $data, $action) {
-                        $record->students()->sync(SchoolClassResource::getClassStudents($this->getOwnerRecord()));
-                    })
+                SchoolClassResource::createAction($this->getOwnerRecord())
+                    ->modalWidth(Width::Medium),
             ])
             ->recordActions([
                 ActionGroup::make([

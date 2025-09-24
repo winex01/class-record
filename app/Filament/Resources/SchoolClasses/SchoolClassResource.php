@@ -204,4 +204,12 @@ class SchoolClassResource extends Resource
 
         return $record->students()->pluck('students.id')->toArray();
     }
+
+    public static function createAction($getOwnerRecord)
+    {
+        return \Filament\Actions\CreateAction::make()
+            ->after(function ($record) use ($getOwnerRecord) {
+                $record->students()->sync(static::getClassStudents($getOwnerRecord));
+            });
+    }
 }
