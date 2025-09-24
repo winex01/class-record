@@ -15,6 +15,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -31,27 +32,37 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+                Section::make()->schema([
+                    TextInput::make('name')
+                        ->required()
+                        ->maxLength(255),
 
-                TextInput::make('amount')
-                    ->required()
-                    ->numeric(),
+                    TextInput::make('amount')
+                        ->required()
+                        ->numeric(),
 
-                Field::date('date'),
+                    Field::date('date'),
 
-                Textarea::make('description')
-                    ->rows(2)
-                    ->placeholder('Additional details...')
-                    ->autosize(),
+                ])->columnSpan(1),
 
-                ToggleButtons::make('is_collected')
-                    ->label('Collected')
-                    ->inline()
-                    ->default(false)
-                    ->boolean(),
-            ]);
+                Section::make()->schema([
+
+                    Textarea::make('description')
+                        ->rows(2)
+                        ->placeholder('Additional details...')
+                        ->autosize(),
+
+                    ToggleButtons::make('is_collected')
+                        ->label('Collected')
+                        ->inline()
+                        ->default(false)
+                        ->boolean(),
+
+                ])->columnSpan(1),
+
+
+            ])
+            ->columns(2);
     }
 
     public function table(Table $table): Table

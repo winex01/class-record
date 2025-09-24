@@ -70,7 +70,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
         return $schema
             ->components([
 
-                Section::make('Assessment Details')
+                Section::make()
                     ->schema([
                         TextInput::make('name')
                             ->placeholder('e.g., Quiz #1, Midterm Exam, Chapter 5 Test, etc.')
@@ -100,7 +100,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ])
                     ->columnSpan(1),
 
-                Section::make('')
+                Section::make()
                     ->schema([
                         Select::make('my_file_id')
                             ->relationship('myFile', 'name')
