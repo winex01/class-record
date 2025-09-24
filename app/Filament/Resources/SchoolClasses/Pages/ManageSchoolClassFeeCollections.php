@@ -9,7 +9,6 @@ use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
@@ -22,6 +21,8 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
+use App\Filament\Resources\SchoolClasses\RelationManagers\TakeFeeCollectionRelationManager;
 
 class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 {
@@ -111,12 +112,20 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ])
             ->recordActions([
                 ActionGroup::make([
+                    RelationManagerAction::make('takeFeeCollectionRelationManager')
+                        ->label('Take Fee')
+                        ->icon(\App\Services\Icon::students())
+                        ->color('info')
+                        ->slideOver()
+                        ->relationManager(TakeFeeCollectionRelationManager::make()),
+
                     EditAction::make(),
                     DeleteAction::make(),
                 ])->grouped()
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordAction('takeFeeCollectionRelationManager');;
     }
 }
