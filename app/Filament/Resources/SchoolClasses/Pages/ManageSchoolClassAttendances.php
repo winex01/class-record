@@ -10,7 +10,6 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Actions\DeleteBulkAction;
@@ -20,7 +19,7 @@ use Coolsam\Flatpickr\Forms\Components\Flatpickr;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
-use App\Filament\Resources\SchoolClasses\RelationManagers\Attendances\TakeAttendanceRelationManager;
+use App\Filament\Resources\SchoolClasses\RelationManagers\TakeAttendanceRelationManager;
 
 class ManageSchoolClassAttendances extends ManageRelatedRecords
 {

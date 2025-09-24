@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\RelationManagers\Assessments;
+namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
 use App\Services\Column;
 use Filament\Tables\Table;
