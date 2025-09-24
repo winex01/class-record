@@ -9,15 +9,15 @@ use Filament\Support\Contracts\HasLabel;
 enum FeeCollectionStatus: string implements HasLabel, HasColor, HasIcon
 {
     case PAID = 'PAID';
-    case UNPAID = 'UNPAID';
     case PARTIAL = 'PARTIAL';
+    case UNPAID = 'UNPAID';
 
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::PAID => 'Completed',
-            self::UNPAID => 'Unpaid',
+            self::PAID => 'Paid',
             self::PARTIAL => 'Partial',
+            self::UNPAID => 'Unpaid',
         };
     }
 
@@ -25,8 +25,8 @@ enum FeeCollectionStatus: string implements HasLabel, HasColor, HasIcon
     {
         return match ($this) {
             self::PAID => 'success',
-            self::UNPAID => 'warning',
             self::PARTIAL => 'info',
+            self::UNPAID => 'warning',
         };
     }
 
@@ -34,8 +34,8 @@ enum FeeCollectionStatus: string implements HasLabel, HasColor, HasIcon
     {
         return match ($this) {
             self::PAID => 'heroicon-m-check',
-            self::UNPAID => 'heroicon-m-x-circle',
             self::PARTIAL => 'heroicon-m-exclamation-circle',
+            self::UNPAID => 'heroicon-m-x-circle',
         };
     }
 }
