@@ -98,9 +98,10 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ->recordTitleAttribute('name')
             ->columns([
                 Column::text('name'),
-                Column::text('date'),
+                Column::amount('amount'),
+                Column::text('date')->width('1%'),
                 Column::text('description')->toggleable(isToggledHiddenByDefault: true),
-                Column::boolean('is_collected')->label('Collected'),
+                Column::boolean('is_collected')->label('Collected')->width('1%'),
             ])
             ->filters([
                 TernaryFilter::make('is_collected')->label('Collected')

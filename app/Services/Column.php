@@ -13,6 +13,14 @@ use Filament\Tables\Columns\TextInputColumn;
 
 final class Column
 {
+    public static function amount($name)
+    {
+        return static::text($name)
+            ->prefix('₱')
+            ->width('1%')
+            ->badge();
+    }
+
     public static function select($name)
     {
         return SelectColumn::make($name)
