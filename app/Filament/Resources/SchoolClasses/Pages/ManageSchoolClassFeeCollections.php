@@ -66,6 +66,8 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                         ->maxLength(255),
 
                     TextInput::make('amount')
+                        ->default(0)
+                        ->helperText('Enter 0 to let them decide the amount.')
                         ->required()
                         ->numeric(),
 
