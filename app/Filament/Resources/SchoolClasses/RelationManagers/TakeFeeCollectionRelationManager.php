@@ -26,17 +26,28 @@ class TakeFeeCollectionRelationManager extends RelationManager
 
                 Column::textInput('amount')
                     ->placeholder('Fee ₱' . ($this->getOwnerRecord()->amount ?? 0))
-                    ->rules(['numeric', 'min:0', 'max:' . ($this->getOwnerRecord()->amount ?? 0)]),
+                    ->rules(function () {
+                        $amount = $this->getOwnerRecord()->amount ?? 0;
+
+                        return $amount > 0
+                            ? ['numeric', 'min:0', 'max:' . $amount]
+                            : ['numeric', 'min:0'];
+                    }),
 
                 Column::select('status')
                     ->options(FeeCollectionStatus::class)
-                    ->afterStateUpdated(function ($state, $record, $livewire) {
+                    ->afterStateUpdated(function ($state, $record) {
                         if ($state === FeeCollectionStatus::PAID->value) {
-                            $record->feeCollections()
-                                ->updateExistingPivot(
-                                    $this->getOwnerRecord()->getKey(), // parent id
-                                    ['amount' => $this->getOwnerRecord()->amount]
-                                );
+                            // check pivot amount first
+                            $currentAmount = $record->pivot?->amount;
+
+                            if (empty($currentAmount) || $currentAmount == 0) {
+                                $record->feeCollections()
+                                    ->updateExistingPivot(
+                                        $this->getOwnerRecord()->getKey(),
+                                        ['amount' => $this->getOwnerRecord()->amount]
+                                    );
+                            }
                         } elseif ($state === FeeCollectionStatus::UNPAID->value) {
                             $record->feeCollections()
                                 ->updateExistingPivot(
@@ -45,6 +56,7 @@ class TakeFeeCollectionRelationManager extends RelationManager
                                 );
                         }
                     })
+
 
             ])
             ->filters([
