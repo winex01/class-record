@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use App\Services\Column;
 use BackedEnum;
 use App\Services\Field;
+use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -14,9 +14,11 @@ use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -28,6 +30,30 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
     protected static string $relationship = 'feeCollections';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public function getTabs(): array
+    {
+        return [
+            'all' => Tab::make()
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->count()
+                ),
+
+            'Collected' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_collected', true))
+                ->badgeColor('info')
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->where('is_collected', true)->count()
+                ),
+
+            'Uncollected' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_collected', false))
+                ->badgeColor('danger')
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->where('is_collected', false)->count()
+                )
+        ];
+    }
 
     public function form(Schema $schema): Schema
     {
@@ -77,7 +103,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 Column::boolean('is_collected')->label('Collected'),
             ])
             ->filters([
-                //
+                TernaryFilter::make('is_collected')->label('Collected')
             ])
             ->headerActions([
                 CreateAction::make(),
