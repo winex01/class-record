@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use App\Services\Column;
 use BackedEnum;
 use App\Services\Field;
 use Filament\Tables\Table;
@@ -54,12 +55,12 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
                     ToggleButtons::make('is_collected')
                         ->label('Collected')
+                        ->helperText('Marks the fee collection as completed once done.')
                         ->inline()
                         ->default(false)
                         ->boolean(),
 
                 ])->columnSpan(1),
-
 
             ])
             ->columns(2);
@@ -70,9 +71,10 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                // TODO::
-                TextColumn::make('name')
-                    ->searchable(),
+                Column::text('name'),
+                Column::text('date'),
+                Column::text('description')->toggleable(isToggledHiddenByDefault: true),
+                Column::boolean('is_collected')->label('Collected'),
             ])
             ->filters([
                 //
