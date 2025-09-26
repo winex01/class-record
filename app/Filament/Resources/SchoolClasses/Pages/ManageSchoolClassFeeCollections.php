@@ -67,7 +67,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
                     TextInput::make('amount')
                         ->default(0)
-                        ->helperText('Enter 0 to let them decide the amount.')
+                        // ->helperText('Enter 0 to let them decide the amount.')
                         ->required()
                         ->numeric(),
 

@@ -6,7 +6,6 @@ use App\Services\Column;
 use Filament\Tables\Table;
 use App\Enums\FeeCollectionStatus;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Tables\Columns\SelectColumn;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -15,6 +14,27 @@ use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 class TakeFeeCollectionRelationManager extends RelationManager
 {
     protected static string $relationship = 'students';
+
+    public function getTabs(): array
+    {
+        $tabs = [
+            'all' => Tab::make()
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->count()
+                ),
+        ];
+
+        foreach (FeeCollectionStatus::cases() as $tab) {
+            $tabs[$tab->getLabel()] = Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', $tab->value))
+                ->badgeColor($tab->getColor())
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->where('status', $tab->value)->count()
+                );
+        }
+
+        return $tabs;
+    }
 
     public function table(Table $table): Table
     {
