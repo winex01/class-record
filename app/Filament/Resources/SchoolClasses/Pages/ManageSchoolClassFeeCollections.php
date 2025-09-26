@@ -79,16 +79,9 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 Section::make()->schema([
 
                     Textarea::make('description')
-                        ->rows(2)
+                        ->rows(5)
                         ->placeholder('Additional details...')
                         ->autosize(),
-
-                    ToggleButtons::make('is_collected')
-                        ->label('Collected')
-                        ->helperText('Marks the fee collection as completed once done.')
-                        ->inline()
-                        ->default(false)
-                        ->boolean(),
 
                 ])->columnSpan(1),
 
@@ -108,9 +101,15 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                     ->width('1%'),
                 Column::text('description')
                     ->toggleable(isToggledHiddenByDefault: true),
-                Column::boolean('is_collected')
+
+                Column::select('is_collected')
                     ->label('Collected')
-                    ->width('1%'),
+                    ->extraAttributes(['style' => 'min-width: 10px; '])
+                    ->options([
+                        true => 'Yes',
+                        false => 'No',
+                    ]),
+
                 Column::amount('total')
                     ->state(fn ($record) => $record->students()->sum('amount'))
                     ->tooltip('Total collected'),

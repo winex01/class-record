@@ -29,6 +29,8 @@ final class Column
             ->disablePlaceholderSelection()
             ->sortable()
             ->searchable()
+            ->native(false)
+            ->width('1%')
             ->extraAttributes(['style' => 'min-width: 130px; ']);
     }
 
