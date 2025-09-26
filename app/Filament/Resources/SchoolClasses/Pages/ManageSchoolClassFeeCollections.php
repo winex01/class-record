@@ -106,7 +106,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 Column::text('date')->width('1%'),
                 Column::text('description')->toggleable(isToggledHiddenByDefault: true),
                 Column::boolean('is_collected')->label('Collected')->width('1%'),
-                Column::amount('total')->state(fn ($record) => $record->students()->sum('amount')),
+                Column::amount('total')->state(fn ($record) => $record->students()->sum('amount'))->tooltip('Total collected'),
             ])
             ->filters([
                 TernaryFilter::make('is_collected')->label('Collected')
