@@ -68,7 +68,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
                     TextInput::make('amount')
                         ->default(0)
-                        ->helperText('Fee must collect.')
+                        ->helperText('Fee amount.')
                         ->required()
                         ->numeric(),
 
