@@ -68,7 +68,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
                     TextInput::make('amount')
                         ->default(0)
-                        // ->helperText('Enter 0 to let them decide the amount.')
+                        ->helperText('Fee must collect.')
                         ->required()
                         ->numeric(),
 
@@ -102,11 +102,18 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ->recordTitleAttribute('name')
             ->columns([
                 Column::text('name'),
-                Column::amount('amount')->color('info'),
-                Column::text('date')->width('1%'),
-                Column::text('description')->toggleable(isToggledHiddenByDefault: true),
-                Column::boolean('is_collected')->label('Collected')->width('1%'),
-                Column::amount('total')->state(fn ($record) => $record->students()->sum('amount'))->tooltip('Total collected'),
+                Column::amount('amount')
+                    ->color('info'),
+                Column::text('date')
+                    ->width('1%'),
+                Column::text('description')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Column::boolean('is_collected')
+                    ->label('Collected')
+                    ->width('1%'),
+                Column::amount('total')
+                    ->state(fn ($record) => $record->students()->sum('amount'))
+                    ->tooltip('Total collected'),
             ])
             ->filters([
                 TernaryFilter::make('is_collected')->label('Collected')

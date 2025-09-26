@@ -18,8 +18,8 @@ final class Column
         return static::text($name)
             ->prefix('₱')
             ->width('1%')
-            ->formatStateUsing(fn ($state) => number_format($state, 2))
-            ->badge();
+            ->color('primary')
+            ->formatStateUsing(fn ($state) => number_format($state, 2));
     }
 
     public static function select($name)
