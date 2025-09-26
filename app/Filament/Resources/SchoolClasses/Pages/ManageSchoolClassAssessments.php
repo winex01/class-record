@@ -11,6 +11,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use App\Enums\AssessmentStatus;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
@@ -175,6 +176,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                         ->slideOver()
                         ->relationManager(RecordScoreRelationManager::make()),
 
+                    ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
                 ])->grouped()

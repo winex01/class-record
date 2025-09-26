@@ -18,6 +18,7 @@ final class Column
         return static::text($name)
             ->prefix('₱')
             ->width('1%')
+            ->formatStateUsing(fn ($state) => number_format($state, 2))
             ->badge();
     }
 

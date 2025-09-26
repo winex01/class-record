@@ -8,6 +8,7 @@ use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
@@ -101,10 +102,11 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ->recordTitleAttribute('name')
             ->columns([
                 Column::text('name'),
-                Column::amount('amount'),
+                Column::amount('amount')->color('info'),
                 Column::text('date')->width('1%'),
                 Column::text('description')->toggleable(isToggledHiddenByDefault: true),
                 Column::boolean('is_collected')->label('Collected')->width('1%'),
+                Column::amount('total')->state(fn ($record) => $record->students()->sum('amount')),
             ])
             ->filters([
                 TernaryFilter::make('is_collected')->label('Collected')
@@ -121,6 +123,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                         ->slideOver()
                         ->relationManager(TakeFeeCollectionRelationManager::make()),
 
+                    ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
                 ])->grouped()
