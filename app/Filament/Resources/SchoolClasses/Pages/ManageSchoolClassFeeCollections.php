@@ -7,6 +7,7 @@ use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
+use App\Services\SelectOption;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
@@ -19,7 +20,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
@@ -105,10 +105,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 Column::select('is_collected')
                     ->label('Collected')
                     ->extraAttributes(['style' => 'min-width: 10px; '])
-                    ->options([
-                        true => 'Yes',
-                        false => 'No',
-                    ]),
+                    ->options(SelectOption::yesOrNo()),
 
                 Column::amount('total')
                     ->state(fn ($record) => $record->students()->sum('amount'))
