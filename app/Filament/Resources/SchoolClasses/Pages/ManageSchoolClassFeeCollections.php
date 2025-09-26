@@ -20,6 +20,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
@@ -79,9 +80,16 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 Section::make()->schema([
 
                     Textarea::make('description')
-                        ->rows(5)
+                        ->rows(2)
                         ->placeholder('Additional details...')
                         ->autosize(),
+
+                    ToggleButtons::make('is_collected')
+                        ->label('Collected')
+                        ->helperText('Marks the fee collection as completed once done')
+                        ->inline()
+                        ->default(false)
+                        ->boolean(),
 
                 ])->columnSpan(1),
 
