@@ -12,6 +12,11 @@ class Meeting extends Model implements Eventable
     use BelongsToUser;
     protected $guarded = [];
 
+    protected $casts = [
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+    ];
+
     // This is where you map your model into a calendar object
     public function toCalendarEvent(): CalendarEvent
     {
@@ -20,6 +25,7 @@ class Meeting extends Model implements Eventable
             ->title($this->name)
             ->start($this->starts_at)
             ->end($this->ends_at)
+            // ->action('edit')
             ;
     }
 }
