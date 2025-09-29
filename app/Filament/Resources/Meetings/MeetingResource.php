@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Meetings;
 
 use BackedEnum;
 use App\Models\Meeting;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -46,6 +47,7 @@ class MeetingResource extends Resource
                 //
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

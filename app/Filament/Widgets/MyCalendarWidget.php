@@ -48,4 +48,13 @@ class MyCalendarWidget extends CalendarWidget
             $this->createMeetingAction(),
         ];
     }
+
+    protected function getEventClickContextMenuActions(): array
+    {
+        return [
+            $this->viewAction(),
+            $this->editAction(),
+            $this->deleteAction(),
+        ];
+    }
 }
