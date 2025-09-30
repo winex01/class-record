@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\Meetings\Pages;
 
-use App\Filament\Resources\Meetings\MeetingResource;
+use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
+use App\Filament\Resources\Meetings\MeetingResource;
 
 class ManageMeetings extends ManageRecords
 {
@@ -13,7 +14,8 @@ class ManageMeetings extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->modalWidth(Width::Medium)
         ];
     }
 }

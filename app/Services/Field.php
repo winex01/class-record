@@ -7,9 +7,19 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 
 final class Field
 {
+    public static function timestmap($name)
+    {
+        return DateTimePicker::make($name)
+            ->extraInputAttributes([
+                'onclick' => 'this.showPicker && this.showPicker()',
+            ])
+            ->seconds(false);
+    }
+
     public static function gender($name = 'gender')
     {
         return Select::make($name)

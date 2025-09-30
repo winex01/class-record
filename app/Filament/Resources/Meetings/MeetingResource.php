@@ -4,15 +4,19 @@ namespace App\Filament\Resources\Meetings;
 
 use BackedEnum;
 use App\Models\Meeting;
-use Filament\Actions\ViewAction;
+use App\Services\Field;
+use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\Meetings\Pages\ManageMeetings;
@@ -29,10 +33,29 @@ class MeetingResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('name')
+                ...static::getForm()
+            ]);
+    }
+
+    public static function getForm()
+    {
+        return [
+            TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-            ]);
+
+            Textarea::make('description'),
+
+            Field::tags('tags'),
+
+            Field::timestmap('starts_at')
+                // ->default(now()->startOfDay())
+                ->required(),
+
+            Field::timestmap('ends_at')
+                // ->default(now()->endOfDay())
+                ->required(),
+        ];
     }
 
     public static function table(Table $table): Table
@@ -48,13 +71,11 @@ class MeetingResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()->modalWidth(Width::Medium),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                DeleteBulkAction::make(),
             ]);
     }
 

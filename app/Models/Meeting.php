@@ -15,6 +15,7 @@ class Meeting extends Model implements Eventable
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
+        'tags' => 'array',
     ];
 
     // This is where you map your model into a calendar object
@@ -25,7 +26,6 @@ class Meeting extends Model implements Eventable
             ->title($this->name)
             ->start($this->starts_at)
             ->end($this->ends_at)
-            // ->action('edit')
             ;
     }
 }

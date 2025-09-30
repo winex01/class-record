@@ -3,31 +3,71 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Meeting;
-use Guava\Calendar\ValueObjects\DateClickInfo;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Guava\Calendar\ValueObjects\FetchInfo;
 use Guava\Calendar\Filament\CalendarWidget;
+use Guava\Calendar\Contracts\ContextualInfo;
+use Guava\Calendar\ValueObjects\DateClickInfo;
+use Guava\Calendar\ValueObjects\EventDropInfo;
+use Guava\Calendar\ValueObjects\DateSelectInfo;
 use Guava\Calendar\Filament\Actions\CreateAction;
 
 class MyCalendarWidget extends CalendarWidget
 {
     protected bool $dateClickEnabled = true;
-    protected bool $eventClickEnabled = true;
     protected bool $dateSelectEnabled = true;
-
+    protected bool $eventClickEnabled = true;
+    protected bool $eventDragEnabled = true;
 
     protected function getEvents(FetchInfo $info): Collection | array | Builder
     {
-        return Meeting::query()
-            ->whereDate('ends_at', '>=', $info->start)
-            ->whereDate('starts_at', '<=', $info->end);
+        return collect()
+            ->push(...Meeting::query()->get())
+            ;
+    }
+
+    public function getHeaderActions(): array
+    {
+        return [
+            $this->createMeetingAction()
+        ];
     }
 
     public function createMeetingAction(): CreateAction
     {
-        // You can use our helper method
-        return $this->createAction(Meeting::class);
+        return $this->createAction(Meeting::class)
+            ->mountUsing(function ($form, ?ContextualInfo $info) {
+                if ($info instanceof DateClickInfo) {
+                    $form->fill([
+                        'starts_at' => $info->date->startOfDay(),
+                        'ends_at'   => $info->date->endOfDay(),
+                    ]);
+                }
+
+                if ($info instanceof DateSelectInfo) {
+                    $form->fill([
+                        'starts_at' => $info->start,
+                        'ends_at'   => $info->end->subDay(),
+                    ]);
+                }
+            });
+    }
+
+    protected function onEventDrop(EventDropInfo $info, Model $event): bool
+    {
+        try {
+            $event->update([
+                'starts_at' => $info->event->getStart(), // ✅ getter
+                'ends_at'   => $info->event->getEnd(),   // ✅ getter
+            ]);
+
+            return true;
+        } catch (\Throwable $e) {
+            report($e);
+            return false;
+        }
     }
 
     public function onDateClick(DateClickInfo $info): void
