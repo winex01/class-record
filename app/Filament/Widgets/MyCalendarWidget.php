@@ -2,7 +2,9 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Meetings\MeetingResource;
 use App\Models\Meeting;
+use Filament\Support\Enums\Width;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,7 +54,8 @@ class MyCalendarWidget extends CalendarWidget
                         'ends_at'   => $info->end->subDay(),
                     ]);
                 }
-            });
+            })
+            ->modalWidth(Width::Medium);
     }
 
     protected function onEventDrop(EventDropInfo $info, Model $event): bool
@@ -86,8 +89,8 @@ class MyCalendarWidget extends CalendarWidget
     protected function getEventClickContextMenuActions(): array
     {
         return [
-            $this->viewAction(),
-            $this->editAction(),
+            $this->viewAction()->schema(MeetingResource::getForm())->modalWidth(Width::Medium),
+            $this->editAction()->modalWidth(Width::Medium),
             $this->deleteAction(),
         ];
     }
