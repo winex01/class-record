@@ -37,6 +37,12 @@ class MyCalendarWidget extends CalendarWidget
     //     ];
     // }
 
+    // public function onDateClick(DateClickInfo $info): void
+    // {
+    //     // $this->mountAction('createMeeting');
+    //     // $th
+    // }
+
     public function createMeetingAction(): CreateAction
     {
         return $this->createAction(Meeting::class)
@@ -51,7 +57,7 @@ class MyCalendarWidget extends CalendarWidget
                 if ($info instanceof DateSelectInfo) {
                     $form->fill([
                         'starts_at' => $info->start,
-                        'ends_at'   => $info->end->subDay(),
+                        'ends_at'   => $info->end,
                     ]);
                 }
             })
@@ -65,12 +71,6 @@ class MyCalendarWidget extends CalendarWidget
             'ends_at'   => $info->event->getEnd(),
         ]);
     }
-
-    // public function onDateClick(DateClickInfo $info): void
-    // {
-    //     // $this->mountAction('createMeeting');
-    //     // $th
-    // }
 
     protected function getDateClickContextMenuActions(): array
     {
