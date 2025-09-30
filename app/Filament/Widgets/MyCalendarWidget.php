@@ -57,17 +57,10 @@ class MyCalendarWidget extends CalendarWidget
 
     protected function onEventDrop(EventDropInfo $info, Model $event): bool
     {
-        try {
-            $event->update([
-                'starts_at' => $info->event->getStart(), // ✅ getter
-                'ends_at'   => $info->event->getEnd(),   // ✅ getter
-            ]);
-
-            return true;
-        } catch (\Throwable $e) {
-            report($e);
-            return false;
-        }
+        return $event->update([
+            'starts_at' => $info->event->getStart(),
+            'ends_at'   => $info->event->getEnd(),
+        ]);
     }
 
     public function onDateClick(DateClickInfo $info): void
