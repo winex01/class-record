@@ -28,12 +28,12 @@ class MyCalendarWidget extends CalendarWidget
             ;
     }
 
-    public function getHeaderActions(): array
-    {
-        return [
-            $this->createMeetingAction()
-        ];
-    }
+    // public function getHeaderActions(): array
+    // {
+    //     return [
+    //         $this->createMeetingAction()
+    //     ];
+    // }
 
     public function createMeetingAction(): CreateAction
     {
@@ -63,10 +63,11 @@ class MyCalendarWidget extends CalendarWidget
         ]);
     }
 
-    public function onDateClick(DateClickInfo $info): void
-    {
-        $this->mountAction('createMeeting');
-    }
+    // public function onDateClick(DateClickInfo $info): void
+    // {
+    //     // $this->mountAction('createMeeting');
+    //     // $th
+    // }
 
     protected function getDateClickContextMenuActions(): array
     {
