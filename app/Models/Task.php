@@ -7,7 +7,7 @@ use Guava\Calendar\Contracts\Eventable;
 use Illuminate\Database\Eloquent\Model;
 use Guava\Calendar\ValueObjects\CalendarEvent;
 
-class Meeting extends Model implements Eventable
+class Task extends Model implements Eventable
 {
     use BelongsToUser;
     protected $guarded = [];
@@ -16,12 +16,11 @@ class Meeting extends Model implements Eventable
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'tags' => 'array',
+        'checklists' => 'array',
     ];
 
-    // This is where you map your model into a calendar object
     public function toCalendarEvent(): CalendarEvent
     {
-        // For eloquent models, make sure to pass the model to the constructor
         return CalendarEvent::make($this)
             ->title($this->name)
             ->start($this->starts_at)

@@ -48,7 +48,8 @@ class MeetingResource extends Resource
                     ->required()
                     ->maxLength(255),
 
-            Textarea::make('description'),
+            Textarea::make('description')
+                ->placeholder('Optional...'),
 
             Field::tags('tags'),
 
