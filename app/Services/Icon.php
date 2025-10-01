@@ -45,4 +45,9 @@ final class Icon
     {
         return Heroicon::CircleStack;
     }
+
+    public static function events(): Heroicon|string
+    {
+        return Heroicon::CalendarDateRange;
+    }
 }

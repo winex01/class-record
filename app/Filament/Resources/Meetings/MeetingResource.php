@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Meetings;
 
-use BackedEnum;
 use App\Models\Meeting;
 use App\Services\Field;
 use App\Services\Column;
@@ -13,7 +12,6 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
-use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -23,9 +21,16 @@ class MeetingResource extends Resource
 {
     protected static ?string $model = Meeting::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static string | \UnitEnum | null $navigationGroup = \App\Enums\NavigationGroup::Group2;
+
+    protected static ?int $navigationSort = 250;
+
+    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return \App\Services\Icon::events();
+    }
 
     public static function form(Schema $schema): Schema
     {
