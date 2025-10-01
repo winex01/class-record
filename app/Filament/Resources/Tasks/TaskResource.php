@@ -65,7 +65,7 @@ class TaskResource extends Resource
                             ->columnSpan(1)
 
                     ])
-                    ->defaultItems(1)
+                    ->defaultItems(0)
                     ->columns(3)
             ]);
     }
