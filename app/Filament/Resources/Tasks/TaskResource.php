@@ -3,13 +3,17 @@
 namespace App\Filament\Resources\Tasks;
 
 use App\Models\Task;
+use App\Services\Field;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\Tasks\Pages\ManageTasks;
@@ -35,6 +39,34 @@ class TaskResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+
+                Textarea::make('description')
+                    ->placeholder('Optional...'),
+
+                Field::tags('tags'),
+
+                Field::timestmap('starts_at')
+                    ->default(now()->startOfDay())
+                    ->required(),
+
+                Field::timestmap('ends_at')
+                    ->default(now()->endOfDay())
+                    ->required(),
+
+                Repeater::make('checklists')
+                    ->schema([
+                        TextInput::make('name')
+                            ->placeholder('Subtask name')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpan(2),
+
+                        Field::toggleBoolean('complete')
+                            ->columnSpan(1)
+
+                    ])
+                    ->defaultItems(1)
+                    ->columns(3)
             ]);
     }
 
@@ -50,7 +82,7 @@ class TaskResource extends Resource
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()->modalWidth(Width::Large),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

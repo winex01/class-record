@@ -7,10 +7,29 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\DateTimePicker;
 
 final class Field
 {
+    public static function toggleBoolean($name)
+    {
+        return ToggleButtons::make($name)
+                    ->boolean()
+                    ->default(false)
+                    ->inline()
+                    ->grouped()
+                    ->options(SelectOption::yesOrNo())
+                    ->icons([
+                        true => 'heroicon-o-check',
+                        false => 'heroicon-o-x-mark',
+                    ])
+                    ->colors([
+                        true => 'success',
+                        false => 'danger',
+                    ]);
+    }
+
     public static function timestmap($name)
     {
         return DateTimePicker::make($name)

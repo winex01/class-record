@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\Tasks\Pages;
 
-use App\Filament\Resources\Tasks\TaskResource;
+use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
+use App\Filament\Resources\Tasks\TaskResource;
 
 class ManageTasks extends ManageRecords
 {
@@ -13,7 +14,8 @@ class ManageTasks extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->modalWidth(Width::Large)
         ];
     }
 }

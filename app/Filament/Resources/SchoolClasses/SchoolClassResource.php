@@ -23,7 +23,6 @@ use Filament\Navigation\NavigationItem;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Tables\Filters\TernaryFilter;
-use Filament\Forms\Components\ToggleButtons;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAssessments;
@@ -76,11 +75,8 @@ class SchoolClassResource extends Resource
                             ->placeholder('Brief details about this class or subject... (optional)')
                             ->rows(5),
 
-                        ToggleButtons::make('active')
-                            ->boolean()
+                        Field::toggleBoolean('active')
                             ->default(true)
-                            ->inline()
-                            ->grouped()
                             ->label('Status')
                             ->helperText('Active = editable, Archived = view only')
                             ->options([
