@@ -14,10 +14,8 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\Meetings\Pages\ManageMeetings;
 
@@ -49,11 +47,11 @@ class MeetingResource extends Resource
             Field::tags('tags'),
 
             Field::timestmap('starts_at')
-                // ->default(now()->startOfDay())
+                ->default(now()->startOfDay())
                 ->required(),
 
             Field::timestmap('ends_at')
-                // ->default(now()->endOfDay())
+                ->default(now()->endOfDay())
                 ->required(),
         ];
     }
@@ -63,14 +61,19 @@ class MeetingResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
+                Column::text('name'),
+                Column::text('description')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Column::tags('tags'),
+                Column::timestamp('starts_at'),
+                Column::timestamp('ends_at'),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
+                ViewAction::make()->modalWidth(Width::Medium),
                 EditAction::make()->modalWidth(Width::Medium),
                 DeleteAction::make(),
             ])

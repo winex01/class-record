@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Support\Enums\IconPosition;
@@ -48,6 +49,13 @@ final class Column
             ->toggleable(isToggledHiddenByDefault: false)
             ->sortable()
             ->searchable();
+    }
+
+    public static function timestamp($name)
+    {
+        return static::text($name)
+            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format('d M Y h:i a'));
+
     }
 
     public static function boolean(
