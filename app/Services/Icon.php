@@ -50,4 +50,9 @@ final class Icon
     {
         return Heroicon::CalendarDateRange;
     }
+
+    public static function tasks(): Heroicon|string
+    {
+        return Heroicon::ClipboardDocumentList;
+    }
 }
