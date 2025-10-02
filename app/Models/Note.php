@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Concerns\HasCalendarRange;
 use Guava\Calendar\ValueObjects\CalendarEvent;
 
-class Meeting extends Model implements Eventable
+class Note extends Model implements Eventable
 {
     use BelongsToUser;
     use HasCalendarRange;
@@ -21,14 +21,13 @@ class Meeting extends Model implements Eventable
         'tags' => 'array',
     ];
 
-    // This is where you map your model into a calendar object
     public function toCalendarEvent(): CalendarEvent
     {
-        // For eloquent models, make sure to pass the model to the constructor
         return CalendarEvent::make($this)
-            ->title($this->name)
+            ->title($this->note)
             ->start($this->starts_at)
             ->end($this->ends_at)
+            ->backgroundColor(Color::Amber[500])
             ;
     }
 }
