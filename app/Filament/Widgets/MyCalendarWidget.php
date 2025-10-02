@@ -2,22 +2,24 @@
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Resources\Notes\NoteResource;
 use App\Models\Note;
 use App\Models\Task;
 use App\Models\Meeting;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Guava\Calendar\Enums\CalendarViewType;
 use Guava\Calendar\ValueObjects\FetchInfo;
 use Guava\Calendar\Filament\CalendarWidget;
 use Guava\Calendar\Contracts\ContextualInfo;
+use App\Filament\Resources\Notes\NoteResource;
 use App\Filament\Resources\Tasks\TaskResource;
 use Guava\Calendar\ValueObjects\DateClickInfo;
 use Guava\Calendar\ValueObjects\EventDropInfo;
 use Guava\Calendar\ValueObjects\DateSelectInfo;
+use Guava\Calendar\ValueObjects\EventResizeInfo;
 use App\Filament\Resources\Meetings\MeetingResource;
 
 class MyCalendarWidget extends CalendarWidget
@@ -26,6 +28,7 @@ class MyCalendarWidget extends CalendarWidget
     protected bool $dateSelectEnabled = true;
     protected bool $eventClickEnabled = true;
     protected bool $eventDragEnabled = true;
+    protected bool $eventResizeEnabled = true;
 
     protected CalendarViewType $calendarView = CalendarViewType::DayGridMonth;
 
@@ -51,12 +54,48 @@ class MyCalendarWidget extends CalendarWidget
     //     ];
     // }
 
+    public function onEventResize(EventResizeInfo $info, Model $event): bool
+    {
+        $calendarEvent = $info->event;
+        $newStart = $calendarEvent->getStart();
+        $newEnd = $calendarEvent->getEnd();
+
+        if ($newEnd->lessThanOrEqualTo($newStart)) {
+            Notification::make()
+                ->title('End date must be after start date')
+                ->danger()
+                ->send();
+            return false;
+        }
+
+        // Update the event in the database
+        $updated = $event->update([
+            'starts_at' => $newStart,
+            'ends_at' => $newEnd,
+        ]);
+
+        if ($updated) {
+            $this->updatedSuccessfully();
+            return true;
+        }
+
+        return false;
+    }
+
+
     protected function onEventDrop(EventDropInfo $info, Model $event): bool
     {
-        return $event->update([
+        $updated =$event->update([
             'starts_at' => $info->event->getStart(),
             'ends_at'   => $info->event->getEnd(),
         ]);
+
+        if ($updated) {
+            $this->updatedSuccessfully();
+            return true;
+        }
+
+        return false;
     }
 
     private function defaultCreateAction($model)
@@ -134,6 +173,14 @@ class MyCalendarWidget extends CalendarWidget
 
             return Width::Medium;
         };
+    }
+
+    private function updatedSuccessfully()
+    {
+        return Notification::make()
+            ->title('Saved')
+            ->success()
+            ->send();
     }
 
 }
