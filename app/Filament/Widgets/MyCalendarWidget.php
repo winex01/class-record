@@ -8,6 +8,7 @@ use Filament\Support\Enums\Width;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Guava\Calendar\Enums\CalendarViewType;
 use Guava\Calendar\ValueObjects\FetchInfo;
 use Guava\Calendar\Filament\CalendarWidget;
 use Guava\Calendar\Contracts\ContextualInfo;
@@ -23,6 +24,8 @@ class MyCalendarWidget extends CalendarWidget
     protected bool $dateSelectEnabled = true;
     protected bool $eventClickEnabled = true;
     protected bool $eventDragEnabled = true;
+
+    protected CalendarViewType $calendarView = CalendarViewType::DayGridMonth;
 
     protected function getEvents(FetchInfo $info): Collection | array | Builder
     {
