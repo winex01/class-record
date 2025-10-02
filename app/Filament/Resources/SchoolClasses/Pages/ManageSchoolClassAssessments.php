@@ -129,16 +129,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                             ->grouped(),
                     ])
                     ->columnSpan(1),
-
-                // Section::make('Select Students')
-                //     ->schema([
-                //         StudentResource::selectRelationship(SchoolClassResource::getClassStudents($this->getOwnerRecord()))
-                //             ->placeholder('Leave blank to include all students')
-                //             ->helperText('Only students in this class are listed.')
-                //     ])
-                //     ->collapsible()
-                //     ->collapsed(fn ($operation) => $operation == 'create' ? false : true)
-                //     ->columnSpan(2)
             ])
             ->columns(2);
     }
