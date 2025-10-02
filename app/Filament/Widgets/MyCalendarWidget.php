@@ -2,6 +2,8 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Notes\NoteResource;
+use App\Models\Note;
 use App\Models\Task;
 use App\Models\Meeting;
 use Filament\Support\Enums\Width;
@@ -35,7 +37,11 @@ class MyCalendarWidget extends CalendarWidget
             )
             ->merge(
                 Task::withinCalendarRange($info)->get()->map->toCalendarEvent()
-            );
+            )
+            ->merge(
+                Note::withinCalendarRange($info)->get()->map->toCalendarEvent()
+            )
+            ;
     }
 
     // public function getHeaderActions(): array
@@ -78,8 +84,8 @@ class MyCalendarWidget extends CalendarWidget
     {
         return [
             $this->defaultCreateAction(Meeting::class),
-            $this->defaultCreateAction(Task::class)
-                ->modalWidth(Width::Large),
+            $this->defaultCreateAction(Task::class)->modalWidth(Width::Large),
+            $this->defaultCreateAction(Note::class),
         ];
     }
 
@@ -104,6 +110,10 @@ class MyCalendarWidget extends CalendarWidget
 
                     if ($record instanceof Task) {
                         return TaskResource::getForm();
+                    }
+
+                    if ($record instanceof Note) {
+                        return NoteResource::getForm();
                     }
 
                     return []; // fallback if neither
