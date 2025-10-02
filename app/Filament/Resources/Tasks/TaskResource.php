@@ -37,38 +37,45 @@ class TaskResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('name')
+                ...static::getForm(),
+            ]);
+    }
+
+    public static function getForm()
+    {
+        return [
+            TextInput::make('name')
                     ->required()
                     ->maxLength(255),
 
-                Textarea::make('description')
-                    ->placeholder('Optional...'),
+            Textarea::make('description')
+                ->placeholder('Optional...'),
 
-                Field::tags('tags'),
+            Field::tags('tags'),
 
-                Field::timestmap('starts_at')
-                    ->default(now()->startOfDay())
-                    ->required(),
+            Field::timestmap('starts_at')
+                ->default(now()->startOfDay())
+                ->required(),
 
-                Field::timestmap('ends_at')
-                    ->default(now()->endOfDay())
-                    ->required(),
+            Field::timestmap('ends_at')
+                ->default(now()->endOfDay())
+                ->required(),
 
-                Repeater::make('checklists')
-                    ->schema([
-                        TextInput::make('name')
-                            ->placeholder('Subtask name')
-                            ->required()
-                            ->maxLength(255)
-                            ->columnSpan(2),
+            Repeater::make('checklists')
+                ->schema([
+                    TextInput::make('name')
+                        ->placeholder('Subtask name')
+                        ->required()
+                        ->maxLength(255)
+                        ->columnSpan(2),
 
-                        Field::toggleBoolean('complete')
-                            ->columnSpan(1)
+                    Field::toggleBoolean('complete')
+                        ->columnSpan(1)
 
-                    ])
-                    ->defaultItems(0)
-                    ->columns(3)
-            ]);
+                ])
+                ->defaultItems(0)
+                ->columns(3)
+        ];
     }
 
     public static function table(Table $table): Table

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Filament\Support\Colors\Color;
 use App\Models\Concerns\BelongsToUser;
 use Guava\Calendar\Contracts\Eventable;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,7 @@ class Task extends Model implements Eventable
         return CalendarEvent::make($this)
             ->title($this->name)
             ->start($this->starts_at)
-            ->end($this->ends_at);
+            ->end($this->ends_at)
+            ->backgroundColor(Color::Blue[500]);
     }
 }

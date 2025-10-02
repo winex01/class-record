@@ -2,7 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Resources\Meetings\MeetingResource;
+use App\Filament\Resources\Tasks\TaskResource;
+use App\Models\Task;
 use App\Models\Meeting;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Collection;
@@ -15,6 +16,7 @@ use Guava\Calendar\ValueObjects\DateClickInfo;
 use Guava\Calendar\ValueObjects\EventDropInfo;
 use Guava\Calendar\ValueObjects\DateSelectInfo;
 use Guava\Calendar\Filament\Actions\CreateAction;
+use App\Filament\Resources\Meetings\MeetingResource;
 
 class MyCalendarWidget extends CalendarWidget
 {
@@ -27,6 +29,7 @@ class MyCalendarWidget extends CalendarWidget
     {
         return collect()
             ->push(...Meeting::query()->get())
+            ->push(...Task::query()->get())
             ;
     }
 
@@ -64,6 +67,12 @@ class MyCalendarWidget extends CalendarWidget
             ->modalWidth(Width::Medium);
     }
 
+    public function createTaskAction(): CreateAction
+    {
+        return $this->createMeetingAction()
+            ->model(Task::class);
+    }
+
     protected function onEventDrop(EventDropInfo $info, Model $event): bool
     {
         return $event->update([
@@ -72,26 +81,55 @@ class MyCalendarWidget extends CalendarWidget
         ]);
     }
 
-    protected function getDateClickContextMenuActions(): array
+    private function getActions()
     {
         return [
             $this->createMeetingAction(),
+            $this->createTaskAction(),
         ];
+    }
+
+    protected function getDateClickContextMenuActions(): array
+    {
+        return $this->getActions();
     }
 
     protected function getDateSelectContextMenuActions(): array
     {
-        return [
-            $this->createMeetingAction(),
-        ];
+        return $this->getActions();
     }
 
     protected function getEventClickContextMenuActions(): array
     {
         return [
-            $this->viewAction()->schema(MeetingResource::getForm())->modalWidth(Width::Medium),
-            $this->editAction()->modalWidth(Width::Medium),
+            $this->viewAction()
+                ->schema(function ($record) {
+                    if ($record instanceof Meeting) {
+                        return MeetingResource::getForm();
+                    }
+
+                    if ($record instanceof Task) {
+                        return TaskResource::getForm();
+                    }
+
+                    return []; // fallback if neither
+                })
+                ->modalWidth($this->modalWidth()),
+
+            $this->editAction()->modalWidth($this->modalWidth()),
             $this->deleteAction(),
         ];
     }
+
+    private function modalWidth()
+    {
+        return function ($record) {
+            if ($record instanceof Task) {
+                return Width::Large;
+            }
+
+            return Width::Medium;
+        };
+    }
+
 }
