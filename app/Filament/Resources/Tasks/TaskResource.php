@@ -33,6 +33,16 @@ class TaskResource extends Resource
         return \App\Services\Icon::tasks();
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        return '◉';
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'info';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema

@@ -33,6 +33,16 @@ class MeetingResource extends Resource
         return \App\Services\Icon::events();
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        return '◉';
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'success'; // Filament will use emerald background
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
