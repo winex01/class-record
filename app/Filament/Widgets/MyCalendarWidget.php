@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Resources\Tasks\TaskResource;
 use App\Models\Task;
 use App\Models\Meeting;
 use Filament\Support\Enums\Width;
@@ -12,10 +11,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Guava\Calendar\ValueObjects\FetchInfo;
 use Guava\Calendar\Filament\CalendarWidget;
 use Guava\Calendar\Contracts\ContextualInfo;
+use App\Filament\Resources\Tasks\TaskResource;
 use Guava\Calendar\ValueObjects\DateClickInfo;
 use Guava\Calendar\ValueObjects\EventDropInfo;
 use Guava\Calendar\ValueObjects\DateSelectInfo;
-use Guava\Calendar\Filament\Actions\CreateAction;
 use App\Filament\Resources\Meetings\MeetingResource;
 
 class MyCalendarWidget extends CalendarWidget
@@ -28,9 +27,12 @@ class MyCalendarWidget extends CalendarWidget
     protected function getEvents(FetchInfo $info): Collection | array | Builder
     {
         return collect()
-            ->push(...Meeting::query()->get())
-            ->push(...Task::query()->get())
-            ;
+            ->merge(
+                Meeting::withinCalendarRange($info)->get()->map->toCalendarEvent()
+            )
+            ->merge(
+                Task::withinCalendarRange($info)->get()->map->toCalendarEvent()
+            );
     }
 
     // public function getHeaderActions(): array
@@ -40,15 +42,17 @@ class MyCalendarWidget extends CalendarWidget
     //     ];
     // }
 
-    // public function onDateClick(DateClickInfo $info): void
-    // {
-    //     // $this->mountAction('createMeeting');
-    //     // $th
-    // }
-
-    public function createMeetingAction(): CreateAction
+    protected function onEventDrop(EventDropInfo $info, Model $event): bool
     {
-        return $this->createAction(Meeting::class)
+        return $event->update([
+            'starts_at' => $info->event->getStart(),
+            'ends_at'   => $info->event->getEnd(),
+        ]);
+    }
+
+    private function defaultCreateAction($model)
+    {
+        return $this->createAction($model)
             ->mountUsing(function ($form, ?ContextualInfo $info) {
                 if ($info instanceof DateClickInfo) {
                     $form->fill([
@@ -67,25 +71,12 @@ class MyCalendarWidget extends CalendarWidget
             ->modalWidth(Width::Medium);
     }
 
-    public function createTaskAction(): CreateAction
-    {
-        return $this->createMeetingAction()
-            ->model(Task::class);
-    }
-
-    protected function onEventDrop(EventDropInfo $info, Model $event): bool
-    {
-        return $event->update([
-            'starts_at' => $info->event->getStart(),
-            'ends_at'   => $info->event->getEnd(),
-        ]);
-    }
-
     private function getActions()
     {
         return [
-            $this->createMeetingAction(),
-            $this->createTaskAction(),
+            $this->defaultCreateAction(Meeting::class),
+            $this->defaultCreateAction(Task::class)
+                ->modalWidth(Width::Large),
         ];
     }
 

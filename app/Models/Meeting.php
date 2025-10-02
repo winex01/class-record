@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToUser;
+use App\Models\Concerns\HasCalendarRange;
 use Guava\Calendar\Contracts\Eventable;
 use Illuminate\Database\Eloquent\Model;
 use Guava\Calendar\ValueObjects\CalendarEvent;
@@ -10,6 +11,7 @@ use Guava\Calendar\ValueObjects\CalendarEvent;
 class Meeting extends Model implements Eventable
 {
     use BelongsToUser;
+    use HasCalendarRange;
     protected $guarded = [];
 
     protected $casts = [
