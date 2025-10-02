@@ -108,7 +108,7 @@ final class Column
             ->sortable()
             ->searchable()
             ->label(Str::headline($attribute))
-            ->iconPosition(IconPosition::After)
+            ->badge()
             ->icon(function ($state) use ($enum) {
                 if (is_object($state) && method_exists($state, 'getIcon')) {
                     return $state->getIcon();
