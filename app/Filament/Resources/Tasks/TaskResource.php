@@ -4,17 +4,19 @@ namespace App\Filament\Resources\Tasks;
 
 use App\Models\Task;
 use App\Services\Field;
+use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
+use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\Tasks\Pages\ManageTasks;
 
@@ -75,15 +77,23 @@ class TaskResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
+                Column::text('name'),
+                Column::text('description')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Column::tags('tags'),
+                Column::timestamp('starts_at'),
+                Column::timestamp('ends_at'),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                EditAction::make()->modalWidth(Width::Large),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    ViewAction::make()->modalWidth(Width::Large),
+                    EditAction::make()->modalWidth(Width::Large),
+                    DeleteAction::make(),
+                ])->grouped()
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
