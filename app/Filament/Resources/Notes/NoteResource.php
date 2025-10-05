@@ -29,7 +29,7 @@ class NoteResource extends Resource
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
-        return \App\Services\Icon::events();
+        return \App\Services\Icon::notes();
     }
 
     public static function getNavigationBadge(): ?string

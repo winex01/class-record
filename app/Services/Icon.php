@@ -56,8 +56,13 @@ final class Icon
         return Heroicon::ClipboardDocumentList;
     }
 
+    public static function notes(): Heroicon|string
+    {
+        return Heroicon::Clipboard;
+    }
+
     public static function recurrings(): Heroicon|string
     {
-        return Heroicon::Calendar;
+        return Heroicon::QueueList;
     }
 }
