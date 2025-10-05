@@ -17,11 +17,18 @@ class Recurring extends Model implements Eventable
 
     protected $casts = [
         'tags' => 'array',
-        'weekdays' => 'array',
+        'monday' => 'array',
+        'tuesday' => 'array',
+        'wednesday' => 'array',
+        'thursday' => 'array',
+        'friday' => 'array',
+        'saturday' => 'array',
+        'sunday' => 'array',
     ];
 
     public function toCalendarEvent(): CalendarEvent
     {
+        // TODO::
         return CalendarEvent::make($this)
             ->title($this->name)
             ->start($this->starts_at)

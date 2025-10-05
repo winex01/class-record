@@ -14,11 +14,10 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\TimePicker;
+use Filament\Schemas\Components\Section;
 use App\Filament\Resources\Recurrings\Pages\ManageRecurrings;
 
 class RecurringResource extends Resource
@@ -61,7 +60,7 @@ class RecurringResource extends Resource
                     ->helperText('Takes effect starting on this date.')
                     ->default(now()),
 
-                Repeater::make('weekdays')
+                Section::make('Weekdays')
                     ->schema([
                         ...static::dayField('monday'),
                         ...static::dayField('tuesday'),
@@ -71,19 +70,16 @@ class RecurringResource extends Resource
                         ...static::dayField('saturday'),
                         ...static::dayField('sunday'),
                     ])
-                    ->maxItems(7)
-                    ->addable(false)
-                    ->deletable(false)
                     ->columns(3),
             ]);
     }
 
-    // TODO:: fix this much be each repeat or maybe we can create each column json for days of week
     public static function dayField($day)
     {
         return [
             TextInput::make($day)
                 ->label('Day')
+                ->hiddenLabel(($day === 'monday' ? false : true))
                 ->default(ucfirst($day))
                 ->readOnly()
                 ->columnSpan(1),
@@ -92,11 +88,13 @@ class RecurringResource extends Resource
                 ->schema([
                     Field::timePicker($day.'_'.'starts_at')
                         ->label('Starts at')
+                        ->hiddenLabel(($day === 'monday' ? false : true))
                         ->default(now()->startOfDay())
                         ->columnSpan(1),
 
                     Field::timePicker($day.'_'.'ends_at')
                         ->label('Ends at')
+                        ->hiddenLabel(($day === 'monday' ? false : true))
                         ->default(now()->endOfDay())
                         ->columnSpan(1),
                 ])
