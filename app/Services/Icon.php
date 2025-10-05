@@ -55,4 +55,9 @@ final class Icon
     {
         return Heroicon::ClipboardDocumentList;
     }
+
+    public static function recurrings(): Heroicon|string
+    {
+        return Heroicon::Calendar;
+    }
 }
