@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\Recurrings\Pages;
 
-use App\Filament\Resources\Recurrings\RecurringResource;
+use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
+use App\Filament\Resources\Recurrings\RecurringResource;
 
 class ManageRecurrings extends ManageRecords
 {
@@ -13,7 +14,8 @@ class ManageRecurrings extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->modalWidth(Width::ExtraLarge)
         ];
     }
 }

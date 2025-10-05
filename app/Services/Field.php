@@ -7,6 +7,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\DateTimePicker;
 
@@ -30,7 +31,15 @@ final class Field
                     ]);
     }
 
-    public static function timestmap($name)
+    public static function timePicker($name)
+    {
+        return TimePicker::make($name)
+            ->extraInputAttributes([
+                'onclick' => 'this.showPicker && this.showPicker()',
+            ]);
+    }
+
+    public static function dateTimePicker($name)
     {
         return DateTimePicker::make($name)
             ->extraInputAttributes([

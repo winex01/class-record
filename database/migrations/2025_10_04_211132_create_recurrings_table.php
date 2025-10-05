@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->text('description')->nullable();
             $table->json('tags')->nullable();
-            $table->json('days');
+            $table->json('weekdays');
             $table->date('effectivity_date');
             $table->timestamps();
         });

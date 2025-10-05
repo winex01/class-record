@@ -17,7 +17,7 @@ class Recurring extends Model implements Eventable
 
     protected $casts = [
         'tags' => 'array',
-        'effectivity_date' => 'array',
+        'weekdays' => 'array',
     ];
 
     public function toCalendarEvent(): CalendarEvent

@@ -59,11 +59,11 @@ class NoteResource extends Resource
 
             Field::tags('tags'),
 
-            Field::timestmap('starts_at')
+            Field::dateTimePicker('starts_at')
                 ->default(now()->startOfDay())
                 ->required(),
 
-            Field::timestmap('ends_at')
+            Field::dateTimePicker('ends_at')
                 ->default(now()->endOfDay())
                 ->required(),
         ];
