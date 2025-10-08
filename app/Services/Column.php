@@ -79,7 +79,9 @@ final class Column
 
     public static function timestamp($name)
     {
-        return static::text($name)->dateTime();
+        return static::text($name)
+            ->dateTime()
+            ->tooltip(fn ($record) => ('Search: '.$record->{$name}));
     }
 
     public static function boolean(
