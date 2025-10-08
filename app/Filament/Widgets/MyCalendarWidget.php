@@ -57,6 +57,7 @@ class MyCalendarWidget extends CalendarWidget
             ->merge(
                 Note::withinCalendarRange($info)->get()->map->toCalendarEvent()
             )
+            // TODO:: add Recurring classs here
             ;
     }
 
