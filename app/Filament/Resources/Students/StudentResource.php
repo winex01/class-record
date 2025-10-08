@@ -23,6 +23,8 @@ use App\Filament\Resources\Students\Pages\ManageStudents;
 
 class StudentResource extends Resource
 {
+
+
     protected static ?string $model = Student::class;
 
     protected static ?string $recordTitleAttribute = 'full_name';
