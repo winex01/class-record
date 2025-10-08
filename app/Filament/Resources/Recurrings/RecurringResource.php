@@ -15,12 +15,12 @@ use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs\Tab;
 use App\Filament\Resources\Recurrings\Pages\ManageRecurrings;
 
 class RecurringResource extends Resource
@@ -50,26 +50,31 @@ class RecurringResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+                Tabs::make('Tabs')
+                ->tabs([
+                    Tab::make('Details')
+                        ->schema([
+                            TextInput::make('name')
+                                ->required()
+                                ->maxLength(255),
 
-                Textarea::make('description')
-                    ->placeholder('Optional...'),
+                            Textarea::make('description')
+                                ->placeholder('Optional...'),
 
-                Field::tags('tags'),
+                            Field::tags('tags'),
+                        ]),
 
-                Field::date('effectivity_date')
-                    ->helperText('Takes effect starting on this date.')
-                    ->default(now()),
+                    Tab::make('Weekdays')
+                        ->schema([
+                            Field::date('effectivity_date')
+                                ->helperText('Takes effect starting on this date.')
+                                ->default(now()),
 
-                Section::make('Weekdays')
-                    ->schema(
-                        collect(Helper::weekDays())
-                            ->flatMap(fn ($day) => static::dayField($day))
-                            ->toArray()
-                    )
-                    ->columns(3),
+                            ...collect(Helper::weekDays())
+                                ->flatMap(fn ($day) => static::dayField($day))
+                                ->toArray()
+                        ]),
+                ])
             ]);
     }
 
