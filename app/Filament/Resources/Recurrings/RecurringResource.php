@@ -107,7 +107,7 @@ class RecurringResource extends Resource
 
                 Column::tags('tags'),
 
-                Column::text('effectivity_date'),
+                Column::date('effectivity_date'),
 
                 // ...collect(Helper::weekDays())
                 //     ->map(fn ($day) => Column::timePickerFromAndTo($day))

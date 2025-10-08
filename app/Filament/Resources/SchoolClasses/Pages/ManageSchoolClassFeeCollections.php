@@ -105,7 +105,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 Column::text('name'),
                 Column::amount('amount')
                     ->color('info'),
-                Column::text('date')
+                Column::date('date')
                     ->width('1%'),
                 Column::text('description')
                     ->toggleable(isToggledHiddenByDefault: true),

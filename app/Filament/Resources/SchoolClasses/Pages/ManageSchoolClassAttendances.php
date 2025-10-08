@@ -54,7 +54,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->recordTitleAttribute('date')
             ->defaultSort('date', 'desc')
             ->columns([
-                Column::text('date'),
+                Column::date('date'),
 
                 Column::text('present')
                     ->searchable(false)

@@ -76,8 +76,8 @@ class NoteResource extends Resource
             ->columns([
                 Column::text('note'),
                 Column::tags('tags'),
-                Column::timestamp('starts_at'),
-                Column::timestamp('ends_at'),
+                Column::timestamp('starts_at')->dateTime(),
+                Column::timestamp('ends_at')->dateTime(),
             ])
             ->filters([
                 //

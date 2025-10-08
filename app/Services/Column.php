@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\SelectColumn;
 use Illuminate\Database\Eloquent\Builder;
@@ -71,11 +70,16 @@ final class Column
             ->searchable();
     }
 
-    public static function timestamp($name)
+    public static function date($name)
     {
         return static::text($name)
-            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format('d M Y h:i a'));
+            ->date()
+            ->tooltip(fn ($record) => ('Search: '.$record->{$name}));
+    }
 
+    public static function timestamp($name)
+    {
+        return static::text($name)->dateTime();
     }
 
     public static function boolean(

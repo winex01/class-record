@@ -104,9 +104,9 @@ class SchoolClassResource extends Resource
 
                 Column::tags('tags')->color('info'),
 
-                Column::text('date_start'),
+                Column::date('date_start'),
 
-                Column::text('date_end'),
+                Column::date('date_end'),
 
                 Column::text('description')
                     ->toggleable(isToggledHiddenByDefault: true),

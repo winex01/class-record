@@ -74,5 +74,12 @@ class AppServiceProvider extends ServiceProvider
         Component::configureUsing(function (Component $component): void {
             $component->columnSpanFull();
         });
+
+        Table::configureUsing(function (Table $table): void {
+        // for date (no time)
+        $table->defaultDateDisplayFormat('M d, Y');          // e.g. “Sep 30, 2025”
+        // for datetime (with time)
+        $table->defaultDateTimeDisplayFormat('M d, Y h:i A'); // e.g. “Sep 30, 2025 05:30 PM”
+    });
     }
 }
