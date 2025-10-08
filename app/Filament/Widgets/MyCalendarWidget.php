@@ -5,10 +5,12 @@ namespace App\Filament\Widgets;
 use App\Models\Note;
 use App\Models\Task;
 use App\Models\Meeting;
+use App\Services\Field;
 use App\Services\Helper;
 use App\Models\Recurring;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Collection;
+use Filament\Forms\Components\Repeater;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
@@ -100,6 +102,7 @@ class MyCalendarWidget extends CalendarWidget
         return false;
     }
 
+    // TODO:: recurring fields
     private function getActions()
     {
         return [
@@ -107,7 +110,16 @@ class MyCalendarWidget extends CalendarWidget
             $this->defaultCreateAction(Task::class)->modalWidth(Width::Large),
             $this->defaultCreateAction(Note::class),
             $this->defaultCreateAction(Recurring::class)
-                ->form(RecurringResource::getForm(true)) // TODO:: show only weekday that is click or selected
+                ->form([
+                    ...RecurringResource::getForm(),
+
+                    Field::date('effectivity_date')
+                                ->helperText('Takes effect starting on this date.')
+                                ->default(now())->hidden(true),
+
+                    Field::timePicker('monday.starts_at')->hidden(true),
+                    // Field::timePicker('monday.ends_at'),
+                ])
         ];
     }
 
@@ -116,22 +128,18 @@ class MyCalendarWidget extends CalendarWidget
         return $this->createAction($model)
             ->mountUsing(function ($form, ?ContextualInfo $info) use ($model) {
 
-                if ((new $model) instanceof Recurring) {
+                if ($info instanceof DateClickInfo) {
+                    $form->fill([
+                        'starts_at' => $info->date->startOfDay(),
+                        'ends_at'   => $info->date->endOfDay(),
+                    ]);
+                }
 
-                }else {
-                    if ($info instanceof DateClickInfo) {
-                        $form->fill([
-                            'starts_at' => $info->date->startOfDay(),
-                            'ends_at'   => $info->date->endOfDay(),
-                        ]);
-                    }
-
-                    if ($info instanceof DateSelectInfo) {
-                        $form->fill([
-                            'starts_at' => $info->start,
-                            'ends_at'   => $info->end,
-                        ]);
-                    }
+                if ($info instanceof DateSelectInfo) {
+                    $form->fill([
+                        'starts_at' => $info->start,
+                        'ends_at'   => $info->end,
+                    ]);
                 }
             })
             ->modalWidth(Width::Medium);
@@ -163,10 +171,6 @@ class MyCalendarWidget extends CalendarWidget
                     if ($record instanceof Note) {
                         return NoteResource::getForm();
                     }
-
-                    // if ($record instanceof Recurring) {
-                    //     return RecurringResource::getForm();
-                    // }
 
                     return []; // fallback if neither
                 })

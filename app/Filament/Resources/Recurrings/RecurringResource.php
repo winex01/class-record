@@ -50,25 +50,18 @@ class RecurringResource extends Resource
     {
         return $schema
             ->components([
-                ...static::getForm(false)
+                ...static::getForm()
             ]);
     }
 
-    public static function getForm($weekdayRepeaterSetting = true)
+    public static function getForm()
     {
         return [
             Tabs::make('Tabs')
                 ->tabs([
                     Tab::make('Details')
                         ->schema([
-                            TextInput::make('name')
-                                ->required()
-                                ->maxLength(255),
-
-                            Textarea::make('description')
-                                ->placeholder('Optional...'),
-
-                            Field::tags('tags'),
+                            ...static::detailsField()
                         ]),
 
                     Tab::make('Weekdays')
@@ -78,14 +71,28 @@ class RecurringResource extends Resource
                                 ->default(now()),
 
                             ...collect(Helper::weekDays())
-                                ->flatMap(fn ($day) => static::dayField($day, $weekdayRepeaterSetting))
+                                ->flatMap(fn ($day) => static::dayField($day))
                                 ->toArray()
                         ]),
                 ])
         ];
     }
 
-    public static function dayField($day, $addableDeletable = true)
+    public static function detailsField()
+    {
+        return [
+            TextInput::make('name')
+                ->required()
+                ->maxLength(255),
+
+            Textarea::make('description')
+                ->placeholder('Optional...'),
+
+            Field::tags('tags'),
+        ];
+    }
+
+    public static function dayField($day)
     {
         return [
             Repeater::make($day)
@@ -95,17 +102,14 @@ class RecurringResource extends Resource
                             Field::timePicker('starts_at')
                                 ->columnSpan(1),
 
-                                Field::timePicker('ends_at')
+                            Field::timePicker('ends_at')
                                 ->columnSpan(1),
                         ])
                 ])
                 ->columns(3)
                 ->orderable(false)
-                ->minItems(1)
-                ->maxItems(1)
-                ->defaultItems(1)
-                ->addable($addableDeletable)
-                ->deletable($addableDeletable)
+                ->addable(false)
+                ->deletable(false)
             ];
     }
 
