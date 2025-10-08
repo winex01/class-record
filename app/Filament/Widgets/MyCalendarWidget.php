@@ -7,11 +7,13 @@ use App\Models\Task;
 use App\Models\Meeting;
 use App\Services\Field;
 use App\Services\Helper;
+use Carbon\CarbonPeriod;
 use App\Models\Recurring;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Collection;
-use Filament\Forms\Components\Repeater;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Guava\Calendar\Enums\CalendarViewType;
@@ -34,7 +36,6 @@ class MyCalendarWidget extends CalendarWidget
     protected bool $eventClickEnabled = true;
     protected bool $eventDragEnabled = true;
     protected bool $eventResizeEnabled = true;
-
     protected CalendarViewType $calendarView = CalendarViewType::DayGridMonth;
 
     // public function getHeaderActions(): array
@@ -102,32 +103,20 @@ class MyCalendarWidget extends CalendarWidget
         return false;
     }
 
-    // TODO:: recurring fields
     private function getActions()
     {
         return [
             $this->defaultCreateAction(Meeting::class),
             $this->defaultCreateAction(Task::class)->modalWidth(Width::Large),
             $this->defaultCreateAction(Note::class),
-            $this->defaultCreateAction(Recurring::class)
-                ->form([
-                    ...RecurringResource::getForm(),
-
-                    Field::date('effectivity_date')
-                                ->helperText('Takes effect starting on this date.')
-                                ->default(now())->hidden(true),
-
-                    Field::timePicker('monday.starts_at')->hidden(true),
-                    // Field::timePicker('monday.ends_at'),
-                ])
+            $this->recurringCreateAction(Recurring::class),
         ];
     }
 
-    private function defaultCreateAction($model)
+    public function defaultCreateAction($model)
     {
         return $this->createAction($model)
-            ->mountUsing(function ($form, ?ContextualInfo $info) use ($model) {
-
+            ->mountUsing(function ($form, ?ContextualInfo $info)  {
                 if ($info instanceof DateClickInfo) {
                     $form->fill([
                         'starts_at' => $info->date->startOfDay(),
@@ -143,6 +132,43 @@ class MyCalendarWidget extends CalendarWidget
                 }
             })
             ->modalWidth(Width::Medium);
+    }
+
+    public function recurringCreateAction($model)
+    {
+        return $this->defaultCreateAction($model)
+            ->mountUsing(function ($form, ?ContextualInfo $info)  {
+                if ($info instanceof DateClickInfo) {
+                    $form->fill([
+                        'effectivity_date' => $info->date,
+                        strtolower($info->date->dayName) => [['starts_at' => now()->startOfDay(), 'ends_at' => now()->endOfDay()]],
+                    ]);
+                }
+
+                if ($info instanceof DateSelectInfo) {
+                    $period = CarbonPeriod::create($info->start, $info->end->subDay());
+
+                    $clickedDays = collect($period)
+                        ->map(fn ($date) => strtolower($date->dayName))
+                        ->unique()   // keep only unique weekdays
+                        ->values()
+                        ->toArray();
+
+                    $form->fill([
+                        'effectivity_date' => $info->start,
+                        ...collect($clickedDays)
+                            ->mapWithKeys(fn ($day) => [
+                                $day => [
+                                    [
+                                        'starts_at' => now()->startOfDay(),
+                                        'ends_at'   => now()->endOfDay(),
+                                    ]
+                                ]
+                            ])
+                            ->toArray()
+                    ]);
+                }
+            });
     }
 
     protected function getDateClickContextMenuActions(): array
@@ -181,7 +207,7 @@ class MyCalendarWidget extends CalendarWidget
         ];
     }
 
-    private function modalWidth()
+    public function modalWidth()
     {
         return function ($record) {
             if ($record instanceof Task) {
@@ -192,7 +218,7 @@ class MyCalendarWidget extends CalendarWidget
         };
     }
 
-    private function updatedSuccessfully()
+    public function updatedSuccessfully()
     {
         return Notification::make()
             ->title('Saved')
