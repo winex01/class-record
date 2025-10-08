@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Recurrings;
 
 use App\Services\Field;
 use App\Models\Recurring;
+use Filament\Forms\Components\Repeater;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -77,28 +78,23 @@ class RecurringResource extends Resource
     public static function dayField($day)
     {
         return [
-            TextInput::make($day)
-                ->label('Day')
-                ->hiddenLabel(($day === 'monday' ? false : true))
-                ->default(ucfirst($day))
-                ->readOnly()
-                ->columnSpan(1),
-
-            Grid::make()
+            Repeater::make($day)
                 ->schema([
-                    Field::timePicker($day.'_'.'starts_at')
-                        ->label('Starts at')
-                        ->hiddenLabel(($day === 'monday' ? false : true))
-                        ->default(now()->startOfDay())
-                        ->columnSpan(1),
+                    Grid::make()
+                        ->schema([
+                            Field::timePicker('starts_at')
+                                ->default(now()->startOfDay())
+                                ->columnSpan(1),
 
-                    Field::timePicker($day.'_'.'ends_at')
-                        ->label('Ends at')
-                        ->hiddenLabel(($day === 'monday' ? false : true))
-                        ->default(now()->endOfDay())
-                        ->columnSpan(1),
+                            Field::timePicker('ends_at')
+                                ->default(now()->endOfDay())
+                                ->columnSpan(1),
+                        ])
                 ])
-                ->columnSpan(2),
+                ->columns(3)
+                ->addable(false)
+                ->deletable(false)
+                ->orderable(false)
             ];
     }
 
