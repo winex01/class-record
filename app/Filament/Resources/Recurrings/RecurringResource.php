@@ -50,7 +50,14 @@ class RecurringResource extends Resource
     {
         return $schema
             ->components([
-                Tabs::make('Tabs')
+                ...static::getForm(false)
+            ]);
+    }
+
+    public static function getForm($weekdayRepeaterSetting = true)
+    {
+        return [
+            Tabs::make('Tabs')
                 ->tabs([
                     Tab::make('Details')
                         ->schema([
@@ -71,14 +78,14 @@ class RecurringResource extends Resource
                                 ->default(now()),
 
                             ...collect(Helper::weekDays())
-                                ->flatMap(fn ($day) => static::dayField($day))
+                                ->flatMap(fn ($day) => static::dayField($day, $weekdayRepeaterSetting))
                                 ->toArray()
                         ]),
                 ])
-            ]);
+        ];
     }
 
-    public static function dayField($day)
+    public static function dayField($day, $addableDeletable = true)
     {
         return [
             Repeater::make($day)
@@ -86,18 +93,19 @@ class RecurringResource extends Resource
                     Grid::make()
                         ->schema([
                             Field::timePicker('starts_at')
-                                ->default(now()->startOfDay())
                                 ->columnSpan(1),
 
-                            Field::timePicker('ends_at')
-                                ->default(now()->endOfDay())
+                                Field::timePicker('ends_at')
                                 ->columnSpan(1),
                         ])
                 ])
                 ->columns(3)
-                ->addable(false)
-                ->deletable(false)
                 ->orderable(false)
+                ->minItems(1)
+                ->maxItems(1)
+                ->defaultItems(1)
+                ->addable($addableDeletable)
+                ->deletable($addableDeletable)
             ];
     }
 
@@ -111,12 +119,7 @@ class RecurringResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Column::tags('tags'),
-
                 Column::date('effectivity_date'),
-
-                // ...collect(Helper::weekDays())
-                //     ->map(fn ($day) => Column::timePickerFromAndTo($day))
-                //     ->toArray(),
             ])
             ->filters([
                 //

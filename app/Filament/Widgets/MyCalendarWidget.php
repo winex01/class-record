@@ -5,6 +5,8 @@ namespace App\Filament\Widgets;
 use App\Models\Note;
 use App\Models\Task;
 use App\Models\Meeting;
+use App\Services\Helper;
+use App\Models\Recurring;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +23,7 @@ use Guava\Calendar\ValueObjects\EventDropInfo;
 use Guava\Calendar\ValueObjects\DateSelectInfo;
 use Guava\Calendar\ValueObjects\EventResizeInfo;
 use App\Filament\Resources\Meetings\MeetingResource;
+use App\Filament\Resources\Recurrings\RecurringResource;
 
 class MyCalendarWidget extends CalendarWidget
 {
@@ -31,6 +34,13 @@ class MyCalendarWidget extends CalendarWidget
     protected bool $eventResizeEnabled = true;
 
     protected CalendarViewType $calendarView = CalendarViewType::DayGridMonth;
+
+    // public function getHeaderActions(): array
+    // {
+    //     return [
+    //         $this->createMeetingAction()
+    //     ];
+    // }
 
     protected function getEvents(FetchInfo $info): Collection | array | Builder
     {
@@ -46,13 +56,6 @@ class MyCalendarWidget extends CalendarWidget
             )
             ;
     }
-
-    // public function getHeaderActions(): array
-    // {
-    //     return [
-    //         $this->createMeetingAction()
-    //     ];
-    // }
 
     public function onEventResize(EventResizeInfo $info, Model $event): bool
     {
@@ -82,7 +85,6 @@ class MyCalendarWidget extends CalendarWidget
         return false;
     }
 
-
     protected function onEventDrop(EventDropInfo $info, Model $event): bool
     {
         $updated =$event->update([
@@ -98,34 +100,41 @@ class MyCalendarWidget extends CalendarWidget
         return false;
     }
 
-    private function defaultCreateAction($model)
-    {
-        return $this->createAction($model)
-            ->mountUsing(function ($form, ?ContextualInfo $info) {
-                if ($info instanceof DateClickInfo) {
-                    $form->fill([
-                        'starts_at' => $info->date->startOfDay(),
-                        'ends_at'   => $info->date->endOfDay(),
-                    ]);
-                }
-
-                if ($info instanceof DateSelectInfo) {
-                    $form->fill([
-                        'starts_at' => $info->start,
-                        'ends_at'   => $info->end,
-                    ]);
-                }
-            })
-            ->modalWidth(Width::Medium);
-    }
-
     private function getActions()
     {
         return [
             $this->defaultCreateAction(Meeting::class),
             $this->defaultCreateAction(Task::class)->modalWidth(Width::Large),
             $this->defaultCreateAction(Note::class),
+            $this->defaultCreateAction(Recurring::class)
+                ->form(RecurringResource::getForm(true)) // TODO:: show only weekday that is click or selected
         ];
+    }
+
+    private function defaultCreateAction($model)
+    {
+        return $this->createAction($model)
+            ->mountUsing(function ($form, ?ContextualInfo $info) use ($model) {
+
+                if ((new $model) instanceof Recurring) {
+
+                }else {
+                    if ($info instanceof DateClickInfo) {
+                        $form->fill([
+                            'starts_at' => $info->date->startOfDay(),
+                            'ends_at'   => $info->date->endOfDay(),
+                        ]);
+                    }
+
+                    if ($info instanceof DateSelectInfo) {
+                        $form->fill([
+                            'starts_at' => $info->start,
+                            'ends_at'   => $info->end,
+                        ]);
+                    }
+                }
+            })
+            ->modalWidth(Width::Medium);
     }
 
     protected function getDateClickContextMenuActions(): array
@@ -154,6 +163,10 @@ class MyCalendarWidget extends CalendarWidget
                     if ($record instanceof Note) {
                         return NoteResource::getForm();
                     }
+
+                    // if ($record instanceof Recurring) {
+                    //     return RecurringResource::getForm();
+                    // }
 
                     return []; // fallback if neither
                 })
