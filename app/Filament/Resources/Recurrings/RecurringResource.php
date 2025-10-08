@@ -3,8 +3,9 @@
 namespace App\Filament\Resources\Recurrings;
 
 use App\Services\Field;
+use App\Services\Column;
+use App\Services\Helper;
 use App\Models\Recurring;
-use Filament\Forms\Components\Repeater;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -15,6 +16,7 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -62,15 +64,11 @@ class RecurringResource extends Resource
                     ->default(now()),
 
                 Section::make('Weekdays')
-                    ->schema([
-                        ...static::dayField('monday'),
-                        ...static::dayField('tuesday'),
-                        ...static::dayField('wednesday'),
-                        ...static::dayField('thursday'),
-                        ...static::dayField('friday'),
-                        ...static::dayField('saturday'),
-                        ...static::dayField('sunday'),
-                    ])
+                    ->schema(
+                        collect(Helper::weekDays())
+                            ->flatMap(fn ($day) => static::dayField($day))
+                            ->toArray()
+                    )
                     ->columns(3),
             ]);
     }
@@ -103,8 +101,17 @@ class RecurringResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
+                Column::text('name'),
+                Column::text('description')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Column::tags('tags'),
+
+                Column::text('effectivity_date'),
+
+                // ...collect(Helper::weekDays())
+                //     ->map(fn ($day) => Column::timePickerFromAndTo($day))
+                //     ->toArray(),
             ])
             ->filters([
                 //

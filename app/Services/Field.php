@@ -3,6 +3,7 @@
 namespace  App\Services;
 
 use App\Enums\Gender;
+use Illuminate\Support\Carbon;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -34,6 +35,7 @@ final class Field
     public static function timePicker($name)
     {
         return TimePicker::make($name)
+            ->seconds(false)
             ->extraInputAttributes([
                 'onclick' => 'this.showPicker && this.showPicker()',
             ]);

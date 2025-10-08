@@ -31,9 +31,9 @@ class Recurring extends Model implements Eventable
         // TODO::
         return CalendarEvent::make($this)
             ->title($this->name)
-            ->start($this->starts_at)
-            ->end($this->ends_at)
-            ->backgroundColor(Color::Blue[500])
+            // ->start($this->starts_at)
+            // ->end($this->ends_at)
+            ->backgroundColor('pink')
             ;
     }
 }

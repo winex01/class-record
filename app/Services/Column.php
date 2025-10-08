@@ -14,6 +14,26 @@ use Filament\Tables\Columns\TextInputColumn;
 
 final class Column
 {
+    public static function timePickerFromAndTo($name, $starts_at = 'starts_at', $ends_at = 'ends_at')
+    {
+        return TextColumn::make($name)
+            ->formatStateUsing(function ($state) use ($starts_at, $ends_at) {
+                if (!is_array($state)) {
+                    return '-';
+                }
+
+                $start = isset($state[$starts_at])
+                    ? Carbon::parse($state[$starts_at])->format('g:i a')
+                    : '-';
+
+                $end = isset($state[$ends_at])
+                    ? Carbon::parse($state[$ends_at])->format('g:i a')
+                    : '-';
+
+                return "{$start} - {$end}";
+            });
+    }
+
     public static function amount($name)
     {
         return static::text($name)
