@@ -66,8 +66,12 @@ class RecurringResource extends Resource
 
                     Tab::make('Weekdays')
                         ->schema([
-                            Field::date('effectivity_date')
-                                ->helperText('Takes effect starting on this date.')
+                            Field::date('date_start')
+                                ->helperText('The recurring event becomes active starting on this date.')
+                                ->default(now()),
+
+                            Field::date('date_end')
+                                ->helperText('The recurring event will stop or end on this date.')
                                 ->default(now()),
 
                             ...collect(Helper::weekDays())
@@ -123,7 +127,8 @@ class RecurringResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Column::tags('tags'),
-                Column::date('effectivity_date'),
+                Column::date('date_start'),
+                Column::date('date_end'),
             ])
             ->filters([
                 //

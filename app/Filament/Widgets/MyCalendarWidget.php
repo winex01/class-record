@@ -11,6 +11,7 @@ use Carbon\CarbonPeriod;
 use App\Models\Recurring;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
+use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
@@ -22,6 +23,7 @@ use Guava\Calendar\Filament\CalendarWidget;
 use Guava\Calendar\Contracts\ContextualInfo;
 use App\Filament\Resources\Notes\NoteResource;
 use App\Filament\Resources\Tasks\TaskResource;
+use Guava\Calendar\ValueObjects\CalendarEvent;
 use Guava\Calendar\ValueObjects\DateClickInfo;
 use Guava\Calendar\ValueObjects\EventDropInfo;
 use Guava\Calendar\ValueObjects\DateSelectInfo;
@@ -47,18 +49,32 @@ class MyCalendarWidget extends CalendarWidget
 
     protected function getEvents(FetchInfo $info): Collection | array | Builder
     {
-        return collect()
-            ->merge(
-                Meeting::withinCalendarRange($info)->get()->map->toCalendarEvent()
-            )
-            ->merge(
-                Task::withinCalendarRange($info)->get()->map->toCalendarEvent()
-            )
-            ->merge(
-                Note::withinCalendarRange($info)->get()->map->toCalendarEvent()
-            )
-            // TODO:: add Recurring classs here
-            ;
+        return [
+            ...Meeting::withinCalendarRange($info)->get()->map->toCalendarEvent(),
+            ...Task::withinCalendarRange($info)->get()->map->toCalendarEvent(),
+            ...Note::withinCalendarRange($info)->get()->map->toCalendarEvent(),
+            ...$this->recurringEvents($info),
+        ];
+    }
+
+    // TODO::
+    public function recurringEvents($info)
+    {
+        $events = [];
+
+        foreach (Recurring::get() as $item) {
+            $period = CarbonPeriod::create($item->date_start, $item->date_end);
+
+            $events[] = CalendarEvent::make()
+                ->model(Recurring::class)
+                ->key($item->getKey())
+                ->title($item->name)
+                ->start(now())
+                ->end(now()->addHours(2))
+                ->backgroundColor(Color::Pink[500]);
+        }
+
+        return $events;
     }
 
     public function onEventResize(EventResizeInfo $info, Model $event): bool
@@ -127,8 +143,8 @@ class MyCalendarWidget extends CalendarWidget
 
                 if ($info instanceof DateSelectInfo) {
                     $form->fill([
-                        'starts_at' => $info->start,
-                        'ends_at'   => $info->end,
+                        'starts_at' => $info->start->startOfDay(),
+                        'ends_at'   => $info->end->endOfDay(),
                     ]);
                 }
             })
@@ -141,7 +157,8 @@ class MyCalendarWidget extends CalendarWidget
             ->mountUsing(function ($form, ?ContextualInfo $info)  {
                 if ($info instanceof DateClickInfo) {
                     $form->fill([
-                        'effectivity_date' => $info->date,
+                        'date_start' => $info->date->startOfDay(),
+                        'date_end' => $info->date->endOfDay(),
                         strtolower($info->date->dayName) => [['starts_at' => now()->startOfDay(), 'ends_at' => now()->endOfDay()]],
                     ]);
                 }
@@ -156,7 +173,8 @@ class MyCalendarWidget extends CalendarWidget
                         ->toArray();
 
                     $form->fill([
-                        'effectivity_date' => $info->start,
+                        'date_start' => $info->start->startOfDay(),
+                        'date_end' => $info->start->endOfCentury(),
                         ...collect($clickedDays)
                             ->mapWithKeys(fn ($day) => [
                                 $day => [

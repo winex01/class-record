@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Filament\Support\Colors\Color;
 use App\Models\Concerns\BelongsToUser;
-use Guava\Calendar\Contracts\Eventable;
 use Illuminate\Database\Eloquent\Model;
-use Guava\Calendar\ValueObjects\CalendarEvent;
 
-class Recurring extends Model implements Eventable
+class Recurring extends Model
 {
     use BelongsToUser;
     protected $guarded = [];
@@ -24,14 +21,6 @@ class Recurring extends Model implements Eventable
         'sunday' => 'array',
     ];
 
-    public function toCalendarEvent(): CalendarEvent
-    {
-        // TODO::
-        return CalendarEvent::make($this)
-            ->title($this->name)
-            ->start($this->created_at)
-            ->end($this->updated_at)
-            // ->backgroundColor('pink')
-            ;
-    }
+    // NOTE:: check MyCalendarWidget
+    // public function toCalendarEvent(): CalendarEvent
 }

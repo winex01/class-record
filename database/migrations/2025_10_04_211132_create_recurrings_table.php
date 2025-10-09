@@ -25,7 +25,8 @@ return new class extends Migration
             $table->json('friday')->nullable();
             $table->json('saturday')->nullable();
             $table->json('sunday')->nullable();
-            $table->date('effectivity_date');
+            $table->date('date_start');
+            $table->date('date_end');
             $table->timestamps();
         });
     }
