@@ -3,6 +3,7 @@
 namespace  App\Services;
 
 use App\Enums\Gender;
+use Filament\Actions\Action;
 use Illuminate\Support\Carbon;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -38,7 +39,13 @@ final class Field
             ->seconds(false)
             ->extraInputAttributes([
                 'onclick' => 'this.showPicker && this.showPicker()',
-            ]);
+            ])
+            ->suffixAction(
+            Action::make('clear')
+                    ->icon('heroicon-o-x-mark')
+                    ->tooltip('Clear')
+                    ->action(fn ($set) => $set($name, null))
+            );
     }
 
     public static function dateTimePicker($name)
