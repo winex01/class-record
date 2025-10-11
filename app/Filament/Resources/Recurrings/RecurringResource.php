@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Radio;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Actions\DeleteBulkAction;
@@ -66,13 +67,41 @@ class RecurringResource extends Resource
 
                     Tab::make('Weekdays')
                         ->schema([
-                            Field::date('date_start')
-                                ->helperText('The recurring event becomes active starting on this date.')
-                                ->default(now()),
+                            // TextInput::make('Note')
+                            Radio::make('Weekdays')
+                                ->hiddenLabel(true)
+                                ->default(true)
+                                ->options([
+                                    true => 'Weekdays'
+                                ])
+                                ->afterStateHydrated(fn ($set) => $set('Weekdays', true))
+                                ->markAsRequired()
+                                ->dehydrated(false)
+                                ->rules([
+                                    fn ($get) => function (string $attribute, $value, $fail) use ($get) {
+                                        $error = true;
 
-                            Field::date('date_end')
-                                ->helperText('The recurring event will stop or end on this date.')
-                                ->default(now()),
+                                        foreach (Helper::weekDays() as $day) {
+                                            $dayValue = $get($day) ?? [];
+
+                                            if (!empty($dayValue)) {
+                                                foreach ($dayValue as $item) {
+                                                    if (
+                                                        !empty($item['starts_at'] ?? null) ||
+                                                        !empty($item['ends_at'] ?? null)
+                                                    ) {
+                                                        $error = false;
+                                                        break 2; // break both loops
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        if ($error) {
+                                            $fail('At least one weekday must have a start and end time.');
+                                        }
+                                    },
+                                ]),
 
                             ...collect(Helper::weekDays())
                                 ->flatMap(fn ($day) => static::dayField($day))
@@ -93,6 +122,14 @@ class RecurringResource extends Resource
                 ->placeholder('Optional...'),
 
             Field::tags('tags'),
+
+            Field::date('date_start')
+                ->helperText('The recurring event becomes active starting on this date.')
+                ->default(now()),
+
+            Field::date('date_end')
+                ->helperText('The recurring event will stop or end on this date.')
+                ->default(now()),
         ];
     }
 
@@ -104,9 +141,11 @@ class RecurringResource extends Resource
                     Grid::make()
                         ->schema([
                             Field::timePicker('starts_at')
+                                ->requiredWith('ends_at')
                                 ->columnSpan(1),
 
                             Field::timePicker('ends_at')
+                                ->requiredWith('starts_at')
                                 ->columnSpan(1),
                         ])
                 ])

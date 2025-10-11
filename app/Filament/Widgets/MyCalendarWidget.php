@@ -65,6 +65,21 @@ class MyCalendarWidget extends CalendarWidget
         foreach (Recurring::get() as $item) {
             $period = CarbonPeriod::create($item->date_start, $item->date_end);
 
+            $weekDays = [];
+            foreach ($period as $date) {
+                if ($date->lessThan($info->start) || $date->greaterThan($info->end)) {
+                    continue;
+                }
+
+                $day = Helper::getDayName($date);
+
+                if (! in_array($day, $weekDays)) {
+                    $weekDays[] = $day;
+                }
+            }
+
+            dd($weekDays);
+
             $events[] = CalendarEvent::make()
                 ->model(Recurring::class)
                 ->key($item->getKey())
