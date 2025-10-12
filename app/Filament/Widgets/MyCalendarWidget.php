@@ -116,6 +116,7 @@ class MyCalendarWidget extends CalendarWidget
             Notification::make()
                 ->title('You cannot resize this event, but you can modify it using the edit action')
                 ->warning()
+                ->iconColor('pink')
                 ->send();
             return false;
         }
@@ -140,6 +141,7 @@ class MyCalendarWidget extends CalendarWidget
             Notification::make()
                 ->title('You cannot drag this event to another date, but you can modify it using the edit action')
                 ->warning()
+                ->iconColor('pink')
                 ->send();
             return false;
         }
