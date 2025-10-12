@@ -112,6 +112,14 @@ class MyCalendarWidget extends CalendarWidget
             return false;
         }
 
+        if ($event instanceof Recurring) {
+            Notification::make()
+                ->title('You cannot resize this event, but you can modify it using the edit action')
+                ->warning()
+                ->send();
+            return false;
+        }
+
         // Update the event in the database
         $updated = $event->update([
             'starts_at' => $newStart,
@@ -128,6 +136,14 @@ class MyCalendarWidget extends CalendarWidget
 
     protected function onEventDrop(EventDropInfo $info, Model $event): bool
     {
+        if ($event instanceof Recurring) {
+            Notification::make()
+                ->title('You cannot drag this event to another date, but you can modify it using the edit action')
+                ->warning()
+                ->send();
+            return false;
+        }
+
         $updated =$event->update([
             'starts_at' => $info->event->getStart(),
             'ends_at'   => $info->event->getEnd(),
@@ -147,7 +163,7 @@ class MyCalendarWidget extends CalendarWidget
             $this->defaultCreateAction(Meeting::class),
             $this->defaultCreateAction(Task::class)->modalWidth(Width::Large),
             $this->defaultCreateAction(Note::class),
-            $this->recurringCreateAction(Recurring::class),
+            $this->recurringCreateAction(Recurring::class)->modalWidth(Width::ExtraLarge),
         ];
     }
 
@@ -194,8 +210,8 @@ class MyCalendarWidget extends CalendarWidget
                         ->toArray();
 
                     $form->fill([
-                        'date_start' => $info->start->startOfDay(),
-                        'date_end' => $info->start->endOfCentury(),
+                        'date_start' => $info->start,
+                        'date_end' => $info->end->subDay(),
                         ...collect($clickedDays)
                             ->mapWithKeys(fn ($day) => [
                                 $day => [
@@ -238,7 +254,11 @@ class MyCalendarWidget extends CalendarWidget
                         return NoteResource::getForm();
                     }
 
-                    return []; // fallback if neither
+                    if ($record instanceof Recurring) {
+                        return RecurringResource::getForm();
+                    }
+
+                    return [];
                 })
                 ->modalWidth($this->modalWidth()),
 
@@ -251,6 +271,10 @@ class MyCalendarWidget extends CalendarWidget
     {
         return function ($record) {
             if ($record instanceof Task) {
+                return Width::Large;
+            }
+
+            if ($record instanceof Recurring) {
                 return Width::Large;
             }
 
