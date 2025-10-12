@@ -10,6 +10,7 @@ use App\Services\Helper;
 use Carbon\CarbonPeriod;
 use App\Models\Recurring;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Carbon;
 use Filament\Support\Enums\Width;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
@@ -49,6 +50,7 @@ class MyCalendarWidget extends CalendarWidget
 
     protected function getEvents(FetchInfo $info): Collection | array | Builder
     {
+        // TODO:: order by hour ascending
         return [
             ...Meeting::withinCalendarRange($info)->get()->map->toCalendarEvent(),
             ...Task::withinCalendarRange($info)->get()->map->toCalendarEvent(),
@@ -57,36 +59,40 @@ class MyCalendarWidget extends CalendarWidget
         ];
     }
 
-    // TODO::
     public function recurringEvents($info)
     {
         $events = [];
 
         foreach (Recurring::get() as $item) {
-            $period = CarbonPeriod::create($item->date_start, $item->date_end);
+            $infoPeriod = CarbonPeriod::create($item->date_start, $item->date_end);
 
-            $weekDays = [];
-            foreach ($period as $date) {
-                if ($date->lessThan($info->start) || $date->greaterThan($info->end)) {
+            foreach ($infoPeriod as $periodDate) {
+                if ($periodDate->lessThan($info->start) || $periodDate->greaterThan($info->end)) {
                     continue;
                 }
 
-                $day = Helper::getDayName($date);
+                $day = Helper::getDayName($periodDate);
+                $dayValue = $item->{$day} ?? [];
+                if (!empty($dayValue)) {
+                    foreach ($dayValue as $time) {
+                        if (
+                            !empty($time['starts_at'] ?? null) &&
+                            !empty($time['ends_at'] ?? null)
+                        ) {
+                            $startsAt = Carbon::parse($periodDate)->setTimeFromTimeString($time['starts_at']);
+                            $endsAt = Carbon::parse($periodDate)->setTimeFromTimeString($time['ends_at']);
 
-                if (! in_array($day, $weekDays)) {
-                    $weekDays[] = $day;
+                            $events[] = CalendarEvent::make()
+                                ->model(Recurring::class)
+                                ->key($item->getKey())
+                                ->title($item->name)
+                                ->start($startsAt)
+                                ->end($endsAt)
+                                ->backgroundColor(Color::Pink[500]);
+                        }
+                    }
                 }
             }
-
-            dd($weekDays);
-
-            $events[] = CalendarEvent::make()
-                ->model(Recurring::class)
-                ->key($item->getKey())
-                ->title($item->name)
-                ->start(now())
-                ->end(now()->addHours(2))
-                ->backgroundColor(Color::Pink[500]);
         }
 
         return $events;
