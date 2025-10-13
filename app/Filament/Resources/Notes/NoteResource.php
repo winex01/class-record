@@ -61,10 +61,12 @@ class NoteResource extends Resource
 
             Field::dateTimePicker('starts_at')
                 ->default(now()->startOfDay())
+                ->beforeOrEqual('ends_at')
                 ->required(),
 
             Field::dateTimePicker('ends_at')
                 ->default(now()->endOfDay())
+                ->afterOrEqual('starts_at')
                 ->required(),
         ];
     }

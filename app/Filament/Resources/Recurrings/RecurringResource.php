@@ -123,14 +123,14 @@ class RecurringResource extends Resource
 
             Field::tags('tags'),
 
-            // TODO:: validation lessthan date_end
             Field::date('date_start')
                 ->helperText('The recurring event becomes active starting on this date.')
+                ->beforeOrEqual('date_end')
                 ->default(now()),
 
-            // TODO:: validation greater than date_start
             Field::date('date_end')
                 ->helperText('The recurring event will stop or end on this date.')
+                ->afterOrEqual('date_start')
                 ->default(now()),
         ];
     }
