@@ -24,8 +24,16 @@ class RecordScoreRelationManager extends RelationManager
             );
 
         if ($this->getOwnerRecord()->can_group_students) {
+            $tabs['With Group'] = Tab::make()
+                    ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('group', '-'))
+                    ->badgeColor('info')
+                    ->badge(fn () =>
+                        $this->getOwnerRecord()->{static::$relationship}()->whereNot('group', '-')->count()
+            );
+
             $tabs['No Group'] = Tab::make()
                     ->modifyQueryUsing(fn (Builder $query) => $query->where('group', '-'))
+                    ->badgeColor('danger')
                     ->badge(fn () =>
                         $this->getOwnerRecord()->{static::$relationship}()->where('group', '-')->count()
             );
