@@ -101,6 +101,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
     {
         return $table
             ->recordTitleAttribute('name')
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Column::text('name'),
                 Column::amount('amount')

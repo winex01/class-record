@@ -68,7 +68,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
     {
         return $schema
             ->components([
-
                 Section::make()
                     ->schema([
                         TextInput::make('name')
@@ -137,6 +136,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
     {
         return $table
             ->recordTitleAttribute('name')
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Column::text('name'),
                 Column::text('assessmentType.name')->badge()->width('1%')->label('Type'),
