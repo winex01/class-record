@@ -29,11 +29,6 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
     protected static string $relationship = 'feeCollections';
 
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
-    {
-        return \App\Services\Icon::feeCollections();
-    }
-
     public function getTabs(): array
     {
         return [

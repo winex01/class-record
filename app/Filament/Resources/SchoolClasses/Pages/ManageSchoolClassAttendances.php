@@ -26,11 +26,6 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
 
     protected static string $relationship = 'attendances';
 
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
-    {
-        return \App\Services\Icon::attendances();
-    }
-
     public function getTabs(): array
     {
         return [

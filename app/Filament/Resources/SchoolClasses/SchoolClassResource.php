@@ -19,6 +19,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
+use Filament\Navigation\NavigationItem;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Tables\Filters\TernaryFilter;
@@ -174,26 +175,37 @@ class SchoolClassResource extends Resource
         ];
     }
 
-    // public static function getRecordSubNavigationtTEST(Page $page): array
-    // {
-    //     $record = $page->getRecord();
-    //     return [
-    //         'students' =>
-    //         NavigationItem::make('Students')
-    //             ->url(ManageSchoolClassStudents::getUrl(['record' => $record]))
-    //             ->icon(Icon::students())
-    //             ->badge($record->students()->count())
-    //             ->isActiveWhen(fn () => $page instanceof ManageSchoolClassStudents),
-    //     ];
-    // }
-
     public static function getRecordSubNavigation(Page $page): array
     {
-        return $page->generateNavigationItems([
-            ManageSchoolClassStudents::class,
-            ManageSchoolClassAttendances::class,
-            ManageSchoolClassAssessments::class,
-            ManageSchoolClassFeeCollections::class,
-        ]);
+        $record = $page->getRecord();
+
+        return [
+            'students' =>
+            NavigationItem::make('Students')
+                ->url(ManageSchoolClassStudents::getUrl(['record' => $record]))
+                ->icon(Icon::students())
+                // ->badge($record->students()->count())
+                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassStudents),
+
+            'attendances' =>
+            NavigationItem::make('Attendances')
+                ->url(ManageSchoolClassAttendances::getUrl(['record' => $record]))
+                ->icon(Icon::attendances())
+                // ->badge($record->attendances()->count())
+                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAttendances),
+
+            'assessments' =>
+            NavigationItem::make('Assessments')
+                ->url(ManageSchoolClassAssessments::getUrl(['record' => $record]))
+                ->icon(Icon::assessments())
+                // ->badge($record->assessments()->count())
+                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAssessments),
+
+            'feeCollections' =>
+            NavigationItem::make('Fee Collections')
+                ->url(ManageSchoolClassFeeCollections::getUrl(['record' => $record]))
+                ->icon(Icon::feeCollections())
+                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassFeeCollections),
+        ];
     }
 }

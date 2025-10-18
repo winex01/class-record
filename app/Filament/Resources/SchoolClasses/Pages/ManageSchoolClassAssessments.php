@@ -35,11 +35,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
     protected static string $relationship = 'assessments';
 
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
-    {
-        return \App\Services\Icon::assessments();
-    }
-
     public function getTabs(): array
     {
         return [
