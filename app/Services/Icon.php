@@ -68,6 +68,6 @@ final class Icon
 
     public static function grades(): Heroicon|string
     {
-        return Heroicon::Trophy;
+        return Heroicon::ClipboardDocumentCheck;
     }
 }
