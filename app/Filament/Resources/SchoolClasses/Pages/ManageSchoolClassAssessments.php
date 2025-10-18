@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use BackedEnum;
 use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
@@ -15,7 +14,6 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
-use Filament\Support\Icons\Heroicon;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
@@ -38,7 +36,10 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
     protected static string $relationship = 'assessments';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return Icon::assessments();
+    }
 
     public function getTabs(): array
     {

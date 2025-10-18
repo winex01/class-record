@@ -25,6 +25,11 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
 
     protected static string $relationship = 'students';
 
+    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return \App\Services\Icon::students();
+    }
+
     public function getTabs(): array
     {
         return [

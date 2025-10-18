@@ -146,51 +146,6 @@ class SchoolClassResource extends Resource
             ->recordUrl(fn ($record) => route('filament.app.resources.school-classes.students', $record));
     }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ManageSchoolClasses::route('/'),
-            'students' => ManageSchoolClassStudents::route('/{record}/students'),
-            'attendances' => ManageSchoolClassAttendances::route('/{record}/attendances'),
-            'assessments' => ManageSchoolClassAssessments::route('/{record}/assessments'),
-            'fee-collections' => ManageSchoolClassFeeCollections::route('/{record}/fee-collections'),
-        ];
-    }
-
-    public static function getRecordSubNavigation(Page $page): array
-    {
-        $record = $page->getRecord();
-
-        return [
-            'students' =>
-            NavigationItem::make('Students')
-                ->url(ManageSchoolClassStudents::getUrl(['record' => $record]))
-                ->icon(Icon::students())
-                // ->badge($record->students()->count())
-                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassStudents),
-
-            'attendances' =>
-            NavigationItem::make('Attendances')
-                ->url(ManageSchoolClassAttendances::getUrl(['record' => $record]))
-                ->icon(Icon::attendances())
-                // ->badge($record->attendances()->count())
-                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAttendances),
-
-            'assessments' =>
-            NavigationItem::make('Assessments')
-                ->url(ManageSchoolClassAssessments::getUrl(['record' => $record]))
-                ->icon(Icon::assessments())
-                // ->badge($record->assessments()->count())
-                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAssessments),
-
-            'feeCollections' =>
-            NavigationItem::make('Fee Collections')
-                ->url(ManageSchoolClassFeeCollections::getUrl(['record' => $record]))
-                ->icon(Icon::feeCollections())
-                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassFeeCollections),
-        ];
-    }
-
     public static function getClassStudents($recordOrId)
     {
         $record = $recordOrId;
@@ -207,5 +162,39 @@ class SchoolClassResource extends Resource
             ->after(function ($record) use ($getOwnerRecord) {
                 $record->students()->sync(static::getClassStudents($getOwnerRecord));
             });
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ManageSchoolClasses::route('/'),
+            'students' => ManageSchoolClassStudents::route('/{record}/students'),
+            'attendances' => ManageSchoolClassAttendances::route('/{record}/attendances'),
+            'assessments' => ManageSchoolClassAssessments::route('/{record}/assessments'),
+            'fee-collections' => ManageSchoolClassFeeCollections::route('/{record}/fee-collections'),
+        ];
+    }
+
+    // public static function getRecordSubNavigationtTEST(Page $page): array
+    // {
+    //     $record = $page->getRecord();
+    //     return [
+    //         'students' =>
+    //         NavigationItem::make('Students')
+    //             ->url(ManageSchoolClassStudents::getUrl(['record' => $record]))
+    //             ->icon(Icon::students())
+    //             ->badge($record->students()->count())
+    //             ->isActiveWhen(fn () => $page instanceof ManageSchoolClassStudents),
+    //     ];
+    // }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            ManageSchoolClassStudents::class,
+            ManageSchoolClassAttendances::class,
+            ManageSchoolClassAssessments::class,
+            ManageSchoolClassFeeCollections::class,
+        ]);
     }
 }

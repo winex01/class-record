@@ -2,17 +2,14 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use BackedEnum;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
-use App\Services\SelectOption;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -32,7 +29,10 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
     protected static string $relationship = 'feeCollections';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return \App\Services\Icon::feeCollections();
+    }
 
     public function getTabs(): array
     {
