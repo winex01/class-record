@@ -38,6 +38,13 @@ class Student extends Model
             ->withPivot(['amount', 'status']);
     }
 
+    public function grades()
+    {
+        return $this->belongsToMany(Grade::class)
+            ->withTimestamps();
+            // ->withPivot(['amount', 'status']);
+    }
+
     protected static function booted()
     {
         static::addGlobalScope('ordered', function ($builder) {
