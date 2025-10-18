@@ -34,4 +34,9 @@ class SchoolClass extends Model
     {
         return $this->hasMany(FeeCollection::class);
     }
+
+    public function grades()
+    {
+        return $this->hasMany(Grade::class);
+    }
 }

@@ -65,4 +65,9 @@ final class Icon
     {
         return Heroicon::QueueList;
     }
+
+    public static function grades(): Heroicon|string
+    {
+        return Heroicon::Trophy;
+    }
 }
