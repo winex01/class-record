@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -38,7 +37,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
-        return Icon::assessments();
+        return \App\Services\Icon::assessments();
     }
 
     public function getTabs(): array
@@ -162,7 +161,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 ActionGroup::make([
                     RelationManagerAction::make('recordScoreRelationManager')
                         ->label('Record Score')
-                        ->icon(Icon::students())
+                        ->icon(\App\Services\Icon::students())
                         ->color('info')
                         ->slideOver()
                         ->relationManager(RecordScoreRelationManager::make()),

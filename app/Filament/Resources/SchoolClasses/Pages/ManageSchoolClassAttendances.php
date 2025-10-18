@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -114,7 +113,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                 ActionGroup::make([
                     RelationManagerAction::make('takeAttendanceRelationManager')
                         ->label('Take Attendance')
-                        ->icon(Icon::students())
+                        ->icon(\App\Services\Icon::students())
                         ->color('info')
                         ->slideOver()
                         ->relationManager(TakeAttendanceRelationManager::make()),
