@@ -37,7 +37,7 @@ class SchoolClassResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $modelLabel = 'Class Subject';
+    protected static ?string $modelLabel = 'Subject';
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
@@ -49,7 +49,7 @@ class SchoolClassResource extends Resource
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Class Subject')
+                    ->label('Subject')
                     ->placeholder('e.g. Math 101 or ENG-201')
                     ->required()
                     ->maxLength(255),
@@ -70,7 +70,7 @@ class SchoolClassResource extends Resource
 
                 Textarea::make('description')
                     ->label('Description')
-                    ->placeholder('Brief details about this class or subject... (optional)')
+                    ->placeholder('Brief details about this subject... (optional)')
                     ->rows(5),
 
                 Field::toggleBoolean('active')
@@ -97,7 +97,7 @@ class SchoolClassResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Column::text('name')->label('Class Subject'),
+                Column::text('name')->label('Subject'),
 
                 Column::tags('tags'),
 
@@ -126,8 +126,8 @@ class SchoolClassResource extends Resource
             ])
             ->recordActions([
                 ActionGroup::make([
-                    Action::make('manage-class')
-                        ->label('Manage Class')
+                    Action::make('manageSubject')
+                        ->label('Manage Subject')
                         ->color('info')
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
                         ->icon(Icon::students()),
