@@ -37,7 +37,7 @@ class SchoolClassResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $modelLabel = 'Subject';
+    protected static ?string $modelLabel = 'Class';
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
@@ -126,8 +126,8 @@ class SchoolClassResource extends Resource
             ])
             ->recordActions([
                 ActionGroup::make([
-                    Action::make('manageSubject')
-                        ->label('Manage Subject')
+                    Action::make('manageClass')
+                        ->label('Manage Class')
                         ->color('info')
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
                         ->icon(Icon::students()),

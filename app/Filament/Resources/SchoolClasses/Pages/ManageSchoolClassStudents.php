@@ -8,6 +8,7 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\Width;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
@@ -65,7 +66,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 ...StudentResource::getFilters()
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()->modalWidth(Width::Large),
                 static::attachAction(),
             ])
             ->recordActions([

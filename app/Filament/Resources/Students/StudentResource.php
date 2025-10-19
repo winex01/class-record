@@ -12,6 +12,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
@@ -43,41 +44,35 @@ class StudentResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('Student Information')
-                ->description("Fill out the student's full details, including contact information, to create their profile.")
-                ->aside()
-                ->schema([
-                    FileUpload::make('photo')
-                        ->directory('student-photos')
-                        ->maxSize(10000) // 10 MB
-                        ->avatar(),
+                FileUpload::make('photo')
+                    ->directory('student-photos')
+                    ->maxSize(10000) // 10 MB
+                    ->avatar(),
 
-                    TextInput::make('last_name')
-                        ->required()
-                        ->maxLength(255),
+                TextInput::make('last_name')
+                    ->required()
+                    ->maxLength(255),
 
-                    TextInput::make('first_name')
-                        ->required()
-                        ->maxLength(255),
+                TextInput::make('first_name')
+                    ->required()
+                    ->maxLength(255),
 
-                    TextInput::make('middle_name')
-                        ->maxLength(255),
+                TextInput::make('middle_name')
+                    ->maxLength(255),
 
-                    TextInput::make('suffix_name')
-                        ->placeholder('Jr. I, II')
-                        ->maxLength(255),
+                TextInput::make('suffix_name')
+                    ->placeholder('Jr. I, II')
+                    ->maxLength(255),
 
-                    Field::gender(),
+                Field::gender(),
 
-                    Field::date('birth_date'),
+                Field::date('birth_date'),
 
-                    TextInput::make('email')
-                        ->label('Email address')
-                        ->email(),
+                TextInput::make('email')
+                    ->label('Email address')
+                    ->email(),
 
-                    Field::phone('contact_number'),
-
-                ]),
+                Field::phone('contact_number'),
             ]);
     }
 
@@ -93,8 +88,8 @@ class StudentResource extends Resource
             ])
             ->recordActions([
                 ActionGroup::make([
-                    ViewAction::make(),
-                    EditAction::make(),
+                    ViewAction::make()->modalWidth(Width::Large),
+                    EditAction::make()->modalWidth(Width::Large),
                     DeleteAction::make(),
                 ])->grouped()
             ])
