@@ -183,6 +183,7 @@ class MyCalendarWidget extends CalendarWidget
                     ]);
                 }
             })
+            ->after(fn() => $this->refreshRecords())
             ->modalWidth(Width::Medium);
     }
 
@@ -222,7 +223,8 @@ class MyCalendarWidget extends CalendarWidget
                             ->toArray()
                     ]);
                 }
-            });
+            })
+            ->after(fn() => $this->refreshRecords());
     }
 
     protected function getDateClickContextMenuActions(): array
