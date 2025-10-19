@@ -71,7 +71,7 @@ final class Field
             ->native(false);
     }
 
-    public static function tags($name)
+    public static function tags($name = 'tags')
     {
         $lowerName = strtolower($name);
         return TagsInput::make($name)

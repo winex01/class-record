@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use App\Services\Field;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -20,6 +22,11 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     protected static string $resource = SchoolClassResource::class;
 
     protected static string $relationship = 'grades';
+    // protected string $view = 'filament-panels::pages.page';
+    // public function getView(): string
+    // {
+    //     return 'filament.resources.school-classes.pages.manage-school-class-grades';
+    // }
 
     public function form(Schema $schema): Schema
     {
@@ -28,6 +35,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+
+                Field::tags('tags'),
             ]);
     }
 
@@ -43,7 +52,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()->modalWidth(Width::ExtraLarge),
             ])
             ->recordActions([
                 ActionGroup::make([
