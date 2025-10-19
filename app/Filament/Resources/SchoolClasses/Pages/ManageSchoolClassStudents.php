@@ -71,8 +71,8 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ])
             ->recordActions([
                 ActionGroup::make([
-                    ViewAction::make(),
-                    EditAction::make(),
+                    ViewAction::make()->modalWidth(Width::Large),
+                    EditAction::make()->modalWidth(Width::Large),
                     DetachAction::make()->color('warning'),
                 ])->grouped()
             ])
