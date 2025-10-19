@@ -5,17 +5,14 @@ namespace App\Filament\Widgets;
 use App\Models\Note;
 use App\Models\Task;
 use App\Models\Meeting;
-use App\Services\Field;
 use App\Services\Helper;
 use Carbon\CarbonPeriod;
 use App\Models\Recurring;
-use Filament\Schemas\Schema;
 use Illuminate\Support\Carbon;
 use Filament\Support\Enums\Width;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Guava\Calendar\Enums\CalendarViewType;
@@ -50,7 +47,6 @@ class MyCalendarWidget extends CalendarWidget
 
     protected function getEvents(FetchInfo $info): Collection | array | Builder
     {
-        // TODO:: order by hour ascending
         return [
             ...Meeting::withinCalendarRange($info)->get()->map->toCalendarEvent(),
             ...Task::withinCalendarRange($info)->get()->map->toCalendarEvent(),
