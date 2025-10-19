@@ -37,56 +37,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                 Field::tags('tags'),
 
-                CheckboxList::make('assessment_ids')
-                    ->label('Assign Assessments')
-                    ->options(function ($record) {
-                        $query = Assessment::query()->whereNull('grade_id');
-
-                        if ($record && $record->id) {
-                            $query->orWhere('grade_id', $record->id);
-                        }
-
-                        return $query->pluck('name', 'id')->mapWithKeys(fn($name, $id) => [(int) $id => $name])->toArray();
-                    })
-                    ->columns(2)
-                    ->bulkToggleable()
-                    ->searchable()
-                    ->required()
-                    ->dehydrated(false)
-                    ->afterStateHydrated(function (CheckboxList $component, $record) {
-                        if ($record && $record->id) {
-                            $ids = $record->assessments()->pluck('id')->map(fn($id) => (int) $id)->toArray();
-                            $component->state($ids);
-                        }
-                    })
-                    ->saveRelationshipsUsing(function (CheckboxList $component, $state, $record) {
-                        if (!$record || !$record->id) return;
-
-                        $state = array_map('intval', $state ?? []);
-
-                        // Unassign unchecked ones
-                        Assessment::where('grade_id', $record->id)
-                            ->whereNotIn('id', $state)
-                            ->update(['grade_id' => null]);
-
-                        // Assign newly checked ones
-                        if (!empty($state)) {
-                            Assessment::whereIn('id', $state)->update(['grade_id' => $record->id]);
-                        }
-                    })
-                    ->descriptions(function ($record) {
-                        $query = Assessment::query()->whereNull('grade_id');
-
-                        if ($record && $record->id) {
-                            $query->orWhere('grade_id', $record->id);
-                        }
-
-                        return $query->with('assessmentType')->get()->mapWithKeys(function ($assessment) {
-                            return [
-                                (int) $assessment->id => "Type: {$assessment->assessmentType->name}, Max Score: {$assessment->max_score}"
-                            ];
-                        })->toArray();
-                    })
             ]);
     }
 

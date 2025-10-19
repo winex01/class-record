@@ -12,6 +12,28 @@ class Student extends Model
 
     protected $guarded = [];
 
+    protected static function booted()
+    {
+        static::addGlobalScope('ordered', function ($builder) {
+            $builder->orderBy('last_name')
+                    ->orderBy('first_name')
+                    ->orderBy('middle_name')
+                    ->orderBy('suffix_name');
+        });
+
+        static::updating(function ($student) {
+            if ($student->isDirty('photo') && !empty($student->getOriginal('photo'))) {
+                Storage::delete($student->getOriginal('photo'));
+            }
+        });
+
+        static::deleting(function ($student) {
+            if (!empty($student->photo)) {
+                Storage::delete($student->photo);
+            }
+        });
+    }
+
     public function schoolClasses()
     {
         return $this->belongsToMany(SchoolClass::class)->withTimestamps();
@@ -36,35 +58,6 @@ class Student extends Model
         return $this->belongsToMany(FeeCollection::class)
             ->withTimestamps()
             ->withPivot(['amount', 'status']);
-    }
-
-    public function grades()
-    {
-        return $this->belongsToMany(Grade::class)
-            ->withTimestamps();
-            // ->withPivot(['amount', 'status']);
-    }
-
-    protected static function booted()
-    {
-        static::addGlobalScope('ordered', function ($builder) {
-            $builder->orderBy('last_name')
-                    ->orderBy('first_name')
-                    ->orderBy('middle_name')
-                    ->orderBy('suffix_name');
-        });
-
-        static::updating(function ($student) {
-            if ($student->isDirty('photo') && !empty($student->getOriginal('photo'))) {
-                Storage::delete($student->getOriginal('photo'));
-            }
-        });
-
-        static::deleting(function ($student) {
-            if (!empty($student->photo)) {
-                Storage::delete($student->photo);
-            }
-        });
     }
 
     public function getFullNameAttribute(): string

@@ -16,16 +16,4 @@ class Grade extends Model
     protected $casts = [
         'tags' => 'array',
     ];
-
-    public function students()
-    {
-        return $this->belongsToMany(Student::class)
-            ->withTimestamps();
-            // ->withPivot(['score', 'group']);
-    }
-
-    public function assessments()
-    {
-        return $this->hasMany(Assessment::class);
-    }
 }
