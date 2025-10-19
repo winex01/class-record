@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses;
 
-use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
 use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
@@ -15,6 +14,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Grid;
@@ -25,6 +25,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Tables\Filters\TernaryFilter;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAssessments;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAttendances;
@@ -36,7 +37,7 @@ class SchoolClassResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $modelLabel = 'Class';
+    protected static ?string $modelLabel = 'Class Subject';
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
@@ -47,52 +48,47 @@ class SchoolClassResource extends Resource
     {
         return $schema
             ->components([
-                Section::make()
-                    ->description('Enter the basic information about this class or subject name.')
-                    ->aside()
+                TextInput::make('name')
+                    ->label('Class Subject')
+                    ->placeholder('e.g. Math 101 or ENG-201')
+                    ->required()
+                    ->maxLength(255),
+
+                Field::tags('tags')
+                    ->placeholder('e.g. 1st Year, Section A, Evening Class'),
+
+                Grid::make(2)
                     ->schema([
-                        TextInput::make('name')
-                            ->label('Class name')
-                            ->placeholder('e.g. Math 101 or ENG-201')
-                            ->required()
-                            ->maxLength(255),
+                        Field::date('date_start')
+                            ->label('Start Date')
+                            ->placeholder('e.g. ' . Carbon::now()->format('M j, Y')), // e.g. Aug 28, 2025
 
-                        Field::tags('tags')
-                            ->placeholder('e.g. 1st Year, Section A, Evening Class'),
-
-                        Grid::make(2)
-                            ->schema([
-                                Field::date('date_start')
-                                    ->label('Start Date')
-                                    ->placeholder('e.g. ' . Carbon::now()->format('M j, Y')), // e.g. Aug 28, 2025
-
-                                Field::date('date_end')
-                                    ->label('End Date')
-                                    ->placeholder('e.g. ' . Carbon::now()->addMonths(6)->format('M j, Y')), // e.g. Nov 28, 2025
-                            ]),
-
-                        Textarea::make('description')
-                            ->label('Description')
-                            ->placeholder('Brief details about this class or subject... (optional)')
-                            ->rows(5),
-
-                        Field::toggleBoolean('active')
-                            ->default(true)
-                            ->label('Status')
-                            ->helperText('Active = editable, Archived = view only')
-                            ->options([
-                                true => 'Active',
-                                false => 'Archived',
-                            ])
-                            ->icons([
-                                true => 'heroicon-o-check',
-                                false => 'heroicon-o-lock-closed',
-                            ])
-                            ->colors([
-                                true => 'success',
-                                false => 'warning',
-                            ])
+                        Field::date('date_end')
+                            ->label('End Date')
+                            ->placeholder('e.g. ' . Carbon::now()->addMonths(6)->format('M j, Y')), // e.g. Nov 28, 2025
                     ]),
+
+                Textarea::make('description')
+                    ->label('Description')
+                    ->placeholder('Brief details about this class or subject... (optional)')
+                    ->rows(5),
+
+                Field::toggleBoolean('active')
+                    ->default(true)
+                    ->label('Status')
+                    ->helperText('Active = editable, Archived = view only')
+                    ->options([
+                        true => 'Active',
+                        false => 'Archived',
+                    ])
+                    ->icons([
+                        true => 'heroicon-o-check',
+                        false => 'heroicon-o-lock-closed',
+                    ])
+                    ->colors([
+                        true => 'success',
+                        false => 'warning',
+                    ])
             ]);
     }
 
@@ -101,7 +97,7 @@ class SchoolClassResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Column::text('name')->label('Class name'),
+                Column::text('name')->label('Class Subject'),
 
                 Column::tags('tags'),
 
@@ -136,8 +132,8 @@ class SchoolClassResource extends Resource
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
                         ->icon(Icon::students()),
 
-                    ViewAction::make(),
-                    EditAction::make(),
+                    ViewAction::make()->modalWidth(Width::Large),
+                    EditAction::make()->modalWidth(Width::Large),
                     DeleteAction::make(),
                 ])->grouped()
             ])

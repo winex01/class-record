@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,7 +16,8 @@ class ManageSchoolClasses extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->modalWidth(Width::Large),
         ];
     }
 
