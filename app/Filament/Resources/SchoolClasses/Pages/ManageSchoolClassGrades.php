@@ -31,6 +31,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->helperText('e.g., 1st Quarter, 1st Grading, Semi-Final, Final, etc.')
                     ->required()
                     ->maxLength(255),
 
@@ -47,9 +48,10 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                         return $query->pluck('name', 'id')->mapWithKeys(fn($name, $id) => [(int) $id => $name])->toArray();
                     })
-                    // ->columns(2)
+                    ->columns(2)
                     ->bulkToggleable()
                     ->searchable()
+                    ->required()
                     ->dehydrated(false)
                     ->afterStateHydrated(function (CheckboxList $component, $record) {
                         if ($record && $record->id) {
@@ -102,12 +104,12 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 //
             ])
             ->headerActions([
-                CreateAction::make()->modalWidth(Width::ExtraLarge),
+                CreateAction::make()->modalWidth(Width::TwoExtraLarge),
             ])
             ->recordActions([
                 ActionGroup::make([
-                    ViewAction::make()->modalWidth(Width::ExtraLarge),
-                    EditAction::make()->modalWidth(Width::ExtraLarge),
+                    ViewAction::make()->modalWidth(Width::TwoExtraLarge),
+                    EditAction::make()->modalWidth(Width::TwoExtraLarge),
                     DeleteAction::make(),
                 ])->grouped()
             ])
