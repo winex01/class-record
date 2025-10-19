@@ -103,7 +103,7 @@ class SchoolClassResource extends Resource
             ->columns([
                 Column::text('name')->label('Class name'),
 
-                Column::tags('tags')->color('info'),
+                Column::tags('tags'),
 
                 Column::date('date_start'),
 
