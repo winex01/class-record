@@ -12,6 +12,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use App\Enums\FeeCollectionStatus;
 use Filament\Actions\DeleteAction;
+use App\Enums\CompletedPendingStatus;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -37,8 +38,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                     $this->getOwnerRecord()->{static::$relationship}()->count()
                 ),
 
-            // TODO:: tab
-            'Collected' => Tab::make()
+            CompletedPendingStatus::COMPLETED->getLabel() => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) =>
                     $query->whereDoesntHave('students', function ($q) {
                         $q->where('status', '!=', FeeCollectionStatus::PAID->value);
@@ -54,7 +54,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                         ->count()
                 ),
 
-            'Uncollected' => Tab::make()
+            CompletedPendingStatus::PENDING->getLabel() => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) =>
                     $query->whereHas('students', function ($q) {
                         $q->where('status', '!=', FeeCollectionStatus::PAID->value);
@@ -126,7 +126,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                             ->where('status', '!=', FeeCollectionStatus::PAID->value)
                             ->exists();
 
-                        return $hasUnpaid ? 'Not Collected' : 'Collected';
+                        return $hasUnpaid ? CompletedPendingStatus::PENDING->getLabel() : CompletedPendingStatus::COMPLETED->getLabel();
                     })
             ])
             ->filters([

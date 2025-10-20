@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use App\Enums\AssessmentStatus;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -13,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
+use App\Enums\CompletedPendingStatus;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
@@ -43,7 +43,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     $this->getOwnerRecord()->{static::$relationship}()->count()
                 ),
 
-           AssessmentStatus::COMPLETED->getLabel() => Tab::make()
+           CompletedPendingStatus::COMPLETED->getLabel() => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) =>
                     // No student with a null score => all students have scores
                     $query->whereDoesntHave('students', function ($q) {
@@ -60,7 +60,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                         ->count()
                 ),
 
-            AssessmentStatus::PENDING->getLabel() => Tab::make()
+            CompletedPendingStatus::PENDING->getLabel() => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) =>
                     $query->whereHas('students', function ($q) {
                         $q->whereNull('score'); // pivot score is null
@@ -164,7 +164,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                             ->whereNull('score')
                             ->exists();
 
-                        return $status ? 'Pending' : 'Completed';
+                        return $status ? CompletedPendingStatus::PENDING->getLabel() : CompletedPendingStatus::COMPLETED->getLabel();
                     })
 
             ])
