@@ -24,7 +24,10 @@ class ManageSchoolClasses extends ManageRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make('All'),
+            'all' => Tab::make('All')
+                ->badge(fn () =>
+                    static::getModel()::count()
+                ),
 
             'active' => Tab::make('Active')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('active', true))

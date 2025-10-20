@@ -22,7 +22,6 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Navigation\NavigationItem;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
 use Filament\Tables\Filters\TernaryFilter;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
@@ -98,23 +97,18 @@ class SchoolClassResource extends Resource
             ->recordTitleAttribute('name')
             ->columns([
                 Column::text('name')->label('Subject'),
-
                 Column::tags('tags'),
-
                 Column::date('date_start'),
-
                 Column::date('date_end'),
-
                 Column::text('description')
                     ->toggleable(isToggledHiddenByDefault: true),
-
                 Column::boolean(
                     name: 'active',
                     trueLabel: 'Active',
                     falseLabel: 'Archived',
                     falseIcon: 'heroicon-o-lock-closed',
                     falseColor: 'warning'
-                )
+                )->label('Status')
             ])
             ->filters([
                 TernaryFilter::make('active')
