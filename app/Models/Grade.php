@@ -16,4 +16,9 @@ class Grade extends Model
     protected $casts = [
         'tags' => 'array',
     ];
+
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class);
+    }
 }
