@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use App\Enums\AssessmentStatus;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -19,6 +20,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\ToggleButtons;
 use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -41,20 +43,38 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     $this->getOwnerRecord()->{static::$relationship}()->count()
                 ),
 
-                // TODO:: tab
-            // AssessmentStatus::COMPLETED->getLabel() => Tab::make()
-            //     ->modifyQueryUsing(fn (Builder $query) => $query->where('status', AssessmentStatus::COMPLETED->value))
-            //     ->badgeColor('info')
-            //     ->badge(fn () =>
-            //         $this->getOwnerRecord()->{static::$relationship}()->where('status', AssessmentStatus::COMPLETED->value)->count()
-            //     ),
+           AssessmentStatus::COMPLETED->getLabel() => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) =>
+                    // No student with a null score => all students have scores
+                    $query->whereDoesntHave('students', function ($q) {
+                        $q->whereNull('score');
+                    })
+                )
+                ->badgeColor('info')
+                ->badge(fn () =>
+                    $this->getOwnerRecord()
+                        ->{static::$relationship}()
+                        ->whereDoesntHave('students', function ($q) {
+                            $q->whereNull('score');
+                        })
+                        ->count()
+                ),
 
-            // AssessmentStatus::PENDING->getLabel() => Tab::make()
-            //     ->modifyQueryUsing(fn (Builder $query) => $query->where('status', AssessmentStatus::PENDING->value))
-            //     ->badgeColor('danger')
-            //     ->badge(fn () =>
-            //         $this->getOwnerRecord()->{static::$relationship}()->where('status', AssessmentStatus::PENDING->value)->count()
-            //     )
+            AssessmentStatus::PENDING->getLabel() => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) =>
+                    $query->whereHas('students', function ($q) {
+                        $q->whereNull('score'); // pivot score is null
+                    })
+                )
+                ->badgeColor('danger')
+                ->badge(fn () =>
+                    $this->getOwnerRecord()
+                        ->{static::$relationship}()
+                        ->whereHas('students', function ($q) {
+                            $q->whereNull('score');
+                        })
+                        ->count()
+                ),
         ];
     }
 
@@ -152,8 +172,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 SelectFilter::make('assessmentType')
                     ->relationship('assessmentType', 'name')
                     ->multiple(),
-
-                // TODO:: status
             ])
             ->headerActions([
                 SchoolClassResource::createAction($this->getOwnerRecord())

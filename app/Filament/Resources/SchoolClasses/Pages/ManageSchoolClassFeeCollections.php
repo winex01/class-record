@@ -16,6 +16,8 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
@@ -36,19 +38,38 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 ),
 
             // TODO:: tab
-            // 'Collected' => Tab::make()
-            //     ->modifyQueryUsing(fn (Builder $query) => $query->where('is_collected', true))
-            //     ->badgeColor('info')
-            //     ->badge(fn () =>
-            //         $this->getOwnerRecord()->{static::$relationship}()->where('is_collected', true)->count()
-            //     ),
+            'Collected' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) =>
+                    $query->whereDoesntHave('students', function ($q) {
+                        $q->where('status', '!=', FeeCollectionStatus::PAID->value);
+                    })
+                )
+                ->badgeColor('info')
+                ->badge(fn () =>
+                    $this->getOwnerRecord()
+                        ->feeCollections()
+                        ->whereDoesntHave('students', function ($q) {
+                            $q->where('status', '!=', FeeCollectionStatus::PAID->value);
+                        })
+                        ->count()
+                ),
 
-            // 'Uncollected' => Tab::make()
-            //     ->modifyQueryUsing(fn (Builder $query) => $query->where('is_collected', false))
-            //     ->badgeColor('danger')
-            //     ->badge(fn () =>
-            //         $this->getOwnerRecord()->{static::$relationship}()->where('is_collected', false)->count()
-            //     )
+            'Uncollected' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) =>
+                    $query->whereHas('students', function ($q) {
+                        $q->where('status', '!=', FeeCollectionStatus::PAID->value);
+                    })
+                )
+                ->badgeColor('danger')
+                ->badge(fn () =>
+                    $this->getOwnerRecord()
+                        ->{static::$relationship}()
+                        ->whereHas('students', function ($q) {
+                            $q->where('status', '!=', FeeCollectionStatus::PAID->value);
+                        })
+                        ->count()
+                ),
+
         ];
     }
 
@@ -109,8 +130,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                     })
             ])
             ->filters([
-                // TernaryFilter::make('is_collected')->label('Collected')
-                // TODO:: status
+                //
             ])
             ->headerActions([
                 SchoolClassResource::createAction($this->getOwnerRecord())->modalWidth(Width::Large),
