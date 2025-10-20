@@ -4,6 +4,8 @@ namespace App\Services;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
+use Filament\Support\Colors\Color;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -13,6 +15,17 @@ use Filament\Tables\Columns\TextInputColumn;
 
 final class Column
 {
+    public static function icon($name)
+    {
+        return IconColumn::make($name)
+            ->width('1%')
+            ->alignCenter()
+            ->trueIcon('heroicon-o-x-circle')
+            ->falseIcon('heroicon-o-check-circle')
+            ->trueColor(Color::Rose)
+            ->falseColor(Color::Emerald);
+    }
+
     public static function timePickerFromAndTo($name, $starts_at = 'starts_at', $ends_at = 'ends_at')
     {
         return TextColumn::make($name)

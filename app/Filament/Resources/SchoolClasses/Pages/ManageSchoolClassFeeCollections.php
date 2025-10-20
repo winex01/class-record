@@ -9,9 +9,13 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\Width;
+use App\Enums\FeeCollectionStatus;
 use Filament\Actions\DeleteAction;
+use Filament\Support\Colors\Color;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -57,39 +61,24 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
     {
         return $schema
             ->components([
-                Section::make()->schema([
-                    TextInput::make('name')
-                        ->required()
-                        ->maxLength(255),
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
 
-                    TextInput::make('amount')
-                        ->default(0)
-                        ->helperText('Fee amount.')
-                        ->required()
-                        ->numeric(),
+                TextInput::make('amount')
+                    ->default(0)
+                    ->helperText('Fee amount.')
+                    ->required()
+                    ->numeric(),
 
-                    Field::date('date'),
+                Field::date('date'),
 
-                ])->columnSpan(1),
-
-                Section::make()->schema([
-
-                    Textarea::make('description')
+                Textarea::make('description')
                         ->rows(2)
                         ->placeholder('Additional details...')
                         ->autosize(),
 
-                    ToggleButtons::make('is_collected')
-                        ->label('Collected')
-                        ->helperText('Marks the fee collection as completed once done.')
-                        ->inline()
-                        ->default(false)
-                        ->boolean(),
-
-                ])->columnSpan(1),
-
-            ])
-            ->columns(2);
+            ]);
     }
 
     public function table(Table $table): Table
@@ -106,18 +95,29 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 Column::text('description')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Column::boolean('is_collected')
-                    ->label('Collected'),
-
                 Column::amount('total')
                     ->state(fn ($record) => $record->students()->sum('amount'))
                     ->tooltip('Total collected'),
+
+                Column::icon('status')
+                    ->getStateUsing(fn ($record) =>
+                        $record->students()
+                            ->where('status', '!=', FeeCollectionStatus::PAID->value)
+                            ->exists()
+                    )
+                    ->tooltip(function ($record) {
+                        $hasUnpaid = $record->students()
+                            ->where('status', '!=', FeeCollectionStatus::PAID->value)
+                            ->exists();
+
+                        return $hasUnpaid ? 'Not Collected' : 'Collected';
+                    })
             ])
             ->filters([
                 TernaryFilter::make('is_collected')->label('Collected')
             ])
             ->headerActions([
-                SchoolClassResource::createAction($this->getOwnerRecord()),
+                SchoolClassResource::createAction($this->getOwnerRecord())->modalWidth(Width::Large),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -128,8 +128,8 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                         ->slideOver()
                         ->relationManager(TakeFeeCollectionRelationManager::make()),
 
-                    ViewAction::make(),
-                    EditAction::make(),
+                    ViewAction::make()->modalWidth(Width::Large),
+                    EditAction::make()->modalWidth(Width::Large),
                     DeleteAction::make(),
                 ])->grouped()
             ])

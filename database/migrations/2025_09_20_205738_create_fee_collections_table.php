@@ -21,7 +21,6 @@ return new class extends Migration
             $table->decimal('amount')->unsigned()->nullable();
             $table->date('date')->nullable();
             $table->text('description')->nullable();
-            $table->boolean('is_collected')->default(false);
             $table->timestamps();
         });
     }
