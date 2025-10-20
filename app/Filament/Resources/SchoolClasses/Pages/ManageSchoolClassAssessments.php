@@ -16,6 +16,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -43,19 +44,20 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     $this->getOwnerRecord()->{static::$relationship}()->count()
                 ),
 
-            AssessmentStatus::COMPLETED->getLabel() => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', AssessmentStatus::COMPLETED->value))
-                ->badgeColor('info')
-                ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->where('status', AssessmentStatus::COMPLETED->value)->count()
-                ),
+                // TODO::
+            // AssessmentStatus::COMPLETED->getLabel() => Tab::make()
+            //     ->modifyQueryUsing(fn (Builder $query) => $query->where('status', AssessmentStatus::COMPLETED->value))
+            //     ->badgeColor('info')
+            //     ->badge(fn () =>
+            //         $this->getOwnerRecord()->{static::$relationship}()->where('status', AssessmentStatus::COMPLETED->value)->count()
+            //     ),
 
-            AssessmentStatus::PENDING->getLabel() => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', AssessmentStatus::PENDING->value))
-                ->badgeColor('danger')
-                ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->where('status', AssessmentStatus::PENDING->value)->count()
-                )
+            // AssessmentStatus::PENDING->getLabel() => Tab::make()
+            //     ->modifyQueryUsing(fn (Builder $query) => $query->where('status', AssessmentStatus::PENDING->value))
+            //     ->badgeColor('danger')
+            //     ->badge(fn () =>
+            //         $this->getOwnerRecord()->{static::$relationship}()->where('status', AssessmentStatus::PENDING->value)->count()
+            //     )
         ];
     }
 
@@ -115,12 +117,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                             ->inline()
                             ->default(false)
                             ->boolean(),
-
-                        ToggleButtons::make('status')
-                            ->options(AssessmentStatus::class)
-                            ->default(AssessmentStatus::PENDING->value)
-                            ->inline()
-                            ->grouped(),
                     ])
                     ->columnSpan(1),
             ])
@@ -139,15 +135,26 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 Column::text('max_score')->label('Max')->color('info')->width('1%')->tooltip('Max score'),
                 Column::text('description')->toggleable(isToggledHiddenByDefault:true),
                 Column::boolean('can_group_students')->label('Can group')->toggleable(isToggledHiddenByDefault:true),
-                Column::enum('status', AssessmentStatus::class)->width('1%')
+
+                Column::icon('status')
+                    ->getStateUsing(fn ($record) =>
+                        $record->students()
+                            ->whereNull('score')
+                            ->exists()
+                    )
+                    ->tooltip(function ($record) {
+                        $status = $record->students()
+                            ->whereNull('score')
+                            ->exists();
+
+                        return $status ? 'Pending' : 'Completed';
+                    })
+
             ])
             ->filters([
                 SelectFilter::make('assessmentType')
                     ->relationship('assessmentType', 'name')
                     ->multiple(),
-
-                SelectFilter::make('status')
-                    ->options(AssessmentStatus::class)
             ])
             ->headerActions([
                 SchoolClassResource::createAction($this->getOwnerRecord())

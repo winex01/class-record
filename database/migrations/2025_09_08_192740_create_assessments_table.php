@@ -26,7 +26,6 @@ return new class extends Migration
             $table->string('max_score')->nullable();
             $table->text('description')->nullable();
             $table->foreignIdFor(MyFile::class)->nullable()->constrained()->cascadeOnDelete();
-            $table->string('status')->default(AssessmentStatus::PENDING->value);
             $table->boolean('can_group_students')->nullable()->default(false);
             $table->timestamps();
         });
