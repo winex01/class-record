@@ -36,7 +36,7 @@ class SchoolClassResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $modelLabel = 'Class Subject';
+    protected static ?string $modelLabel = 'Class';
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
