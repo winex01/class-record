@@ -41,19 +41,20 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                     $this->getOwnerRecord()->{static::$relationship}()->count()
                 ),
 
-            'Collected' => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_collected', true))
-                ->badgeColor('info')
-                ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->where('is_collected', true)->count()
-                ),
+            // TODO:: tab
+            // 'Collected' => Tab::make()
+            //     ->modifyQueryUsing(fn (Builder $query) => $query->where('is_collected', true))
+            //     ->badgeColor('info')
+            //     ->badge(fn () =>
+            //         $this->getOwnerRecord()->{static::$relationship}()->where('is_collected', true)->count()
+            //     ),
 
-            'Uncollected' => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_collected', false))
-                ->badgeColor('danger')
-                ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->where('is_collected', false)->count()
-                )
+            // 'Uncollected' => Tab::make()
+            //     ->modifyQueryUsing(fn (Builder $query) => $query->where('is_collected', false))
+            //     ->badgeColor('danger')
+            //     ->badge(fn () =>
+            //         $this->getOwnerRecord()->{static::$relationship}()->where('is_collected', false)->count()
+            //     )
         ];
     }
 
@@ -114,7 +115,8 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                     })
             ])
             ->filters([
-                TernaryFilter::make('is_collected')->label('Collected')
+                // TernaryFilter::make('is_collected')->label('Collected')
+                // TODO:: status
             ])
             ->headerActions([
                 SchoolClassResource::createAction($this->getOwnerRecord())->modalWidth(Width::Large),
