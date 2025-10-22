@@ -33,4 +33,9 @@ class Assessment extends Model
             ->withTimestamps()
             ->withPivot(['score', 'group']);
     }
+
+    public function component()
+    {
+        return $this->belongsTo(Component::class);
+    }
 }

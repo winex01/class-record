@@ -12,4 +12,9 @@ class Component extends Model
     use BelongsToSchoolClass;
 
     protected $guarded = [];
+
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class);
+    }
 }
