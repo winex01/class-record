@@ -14,6 +14,7 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\CheckboxList;
@@ -37,7 +38,12 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                 Field::tags('tags'),
 
-
+                // TODO::
+                Repeater::make('components')
+                ->relationship()
+                ->schema([
+                     TextInput::make('name')->required(),
+                ])
             ]);
     }
 
