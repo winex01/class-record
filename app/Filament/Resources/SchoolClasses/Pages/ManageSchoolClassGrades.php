@@ -33,9 +33,18 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->helperText('e.g., 1st Quarter, 1st Grading, Semi-Final, Final, etc.')
+                    ->placeholder('Enter grading period...')
+                    ->helperText('You can type or pick from suggestions.')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->datalist([
+                        '1st Quarter',
+                        '2nd Quarter',
+                        '3rd Quarter',
+                        '4th Quarter',
+                        'Semi Finals',
+                        'Finals',
+                    ]),
 
                 Field::tags('tags'),
 
@@ -46,10 +55,19 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             ->schema([
                                 TextInput::make('component_name')
                                     ->label('Component Name')
-                                    ->helperText('e.g., Written Works, Performance, Midterm, Finals, etc.')
+                                    // ->helperText('e.g., Written Works, Performance, Midterm, Finals, etc.')
+                                    ->placeholder('Enter component name...')
+                                    ->helperText('You can type or pick from suggestions.')
                                     ->required()
                                     ->maxLength(255)
                                     ->distinct()
+                                    ->datalist([
+                                        'Written Works',
+                                        'Performance Tasks',
+                                        'Quarterly Assessment',
+                                        'Semi Finals',
+                                        'Finals',
+                                    ])
                                     ->columnSpan(2),
 
                                 TextInput::make('weighted_score')
