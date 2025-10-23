@@ -39,7 +39,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                 Field::tags('tags'),
 
-                // TODO::
                 Repeater::make('components')
                     ->live()
                     ->schema([
