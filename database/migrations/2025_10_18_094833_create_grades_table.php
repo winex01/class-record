@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(SchoolClass::class)->constrained()->cascadeOnDelete();
             $table->string('name')->nullable();
             $table->json('tags')->nullable();
+            $table->json('components')->nullable();
             $table->timestamps();
         });
     }

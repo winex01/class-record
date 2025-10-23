@@ -15,5 +15,6 @@ class Grade extends Model
 
     protected $casts = [
         'tags' => 'array',
+        'components' => 'array',
     ];
 }
