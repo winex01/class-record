@@ -48,15 +48,20 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                 Field::tags('tags'),
 
-                // TODO:: dont assessment option if its already added in different record of grade row repeater
+                // TODO:: dont show assessment option if its already added in different record of grade row repeater
                 Repeater::make('components')
                     ->live()
+                    ->collapsible()
+                    ->itemLabel(fn (array $state): ?string =>
+                        isset($state['component_name'], $state['weighted_score'])
+                            ? "{$state['component_name']} ({$state['weighted_score']}%)"
+                            : ($state['component_name'] ?? 'New Component')
+                    )
                     ->schema([
                         Grid::make(3)
                             ->schema([
                                 TextInput::make('component_name')
                                     ->label('Component Name')
-                                    // ->helperText('e.g., Written Works, Performance, Midterm, Finals, etc.')
                                     ->placeholder('Enter component name...')
                                     ->helperText('You can type or pick from suggestions.')
                                     ->required()
