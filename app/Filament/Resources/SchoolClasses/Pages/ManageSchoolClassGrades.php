@@ -42,12 +42,13 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         '2nd Quarter',
                         '3rd Quarter',
                         '4th Quarter',
-                        'Semi Finals',
+                        'Midterm',
                         'Finals',
                     ]),
 
                 Field::tags('tags'),
 
+                // TODO:: dont assessment option if its already added in different record of grade row repeater
                 Repeater::make('components')
                     ->live()
                     ->schema([
@@ -65,8 +66,9 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                         'Written Works',
                                         'Performance Tasks',
                                         'Quarterly Assessment',
-                                        'Semi Finals',
-                                        'Finals',
+                                        'Quiz',
+                                        'Exam',
+                                        'Oral',
                                     ])
                                     ->columnSpan(2),
 
