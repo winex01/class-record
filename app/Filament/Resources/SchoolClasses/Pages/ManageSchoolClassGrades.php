@@ -158,6 +158,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ->hiddenLabel()
                 ->live()
                 ->collapsible()
+                ->collapsed(fn () => $this->getOwnerRecord()?->gradingComponents()->exists())
                 ->minItems(1) // validation 1 item
                 ->itemLabel(fn (array $state): ?string =>
                     isset($state['name'], $state['weighted_score'])
