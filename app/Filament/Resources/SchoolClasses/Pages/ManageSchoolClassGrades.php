@@ -32,6 +32,17 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
     public $defaultAction = 'gradingComponents';
 
+    public function mount(int|string $record): void
+{
+    parent::mount($record);
+
+    $owner = $this->getOwnerRecord();
+
+    if (! empty($owner->grading_components)) {
+        $this->defaultAction = null;
+    }
+}
+
     public function form(Schema $schema): Schema
     {
         return $schema
