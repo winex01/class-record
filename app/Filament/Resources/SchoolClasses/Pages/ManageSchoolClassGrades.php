@@ -6,6 +6,7 @@ use App\Services\Field;
 use App\Services\Column;
 use App\Models\Assessment;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -18,6 +19,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -27,6 +29,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     protected static string $resource = SchoolClassResource::class;
 
     protected static string $relationship = 'grades';
+
+    public $defaultAction = 'gradingComponents';
 
     public function form(Schema $schema): Schema
     {
@@ -78,5 +82,95 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 DeleteBulkAction::make(),
             ])
             ->recordAction('edit');
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('gradingComponents')
+                ->label('Settings')
+                ->icon('heroicon-o-cog-6-tooth')
+                ->modalWidth(Width::ExtraLarge)
+                ->color('gray')
+                ->form($this->gradingComponentsForm())
+                ->mountUsing(function ($form, $livewire) {
+                    $owner = $this->getOwnerRecord();
+
+                    // Fill the form with existing grading_components data
+                    $form->fill([
+                        'components' => !empty($owner->grading_components)
+                            ? $owner->grading_components
+                            : [['component_name' => '', 'weighted_score' => null]], // default one item
+                    ]);
+                })
+                ->action(function (array $data): void {
+                    $owner = $this->getOwnerRecord();
+
+                    // Save the updated components
+                    $owner->grading_components = $data['components'] ?? [];
+                    $owner->save();
+
+                    Notification::make()
+                        ->title('Saved')
+                        ->success()
+                        ->send();
+                })
+        ];
+    }
+
+    public function gradingComponentsForm()
+    {
+        return [
+            Repeater::make('components')
+                ->live()
+                ->collapsible()
+                ->itemLabel(fn (array $state): ?string =>
+                    isset($state['component_name'], $state['weighted_score'])
+                        ? "{$state['component_name']} ({$state['weighted_score']}%)"
+                        : ($state['component_name'] ?? 'New Component')
+                )
+                ->schema([
+                    Grid::make(3)
+                        ->schema([
+                            TextInput::make('component_name')
+                                ->label('Component Name')
+                                ->placeholder('Enter component name...')
+                                ->helperText('You can type or pick from suggestions.')
+                                ->required()
+                                ->maxLength(255)
+                                ->distinct()
+                                ->datalist([
+                                    'Written Works',
+                                    'Performance Tasks',
+                                    'Quarterly Assessment',
+                                    'Quiz',
+                                    'Exam',
+                                    'Oral',
+                                ])
+                                ->columnSpan(2),
+
+                            TextInput::make('weighted_score')
+                                ->label('Weighted Score')
+                                ->helperText('Enter a value between 1 and 100')
+                                ->numeric()
+                                ->required()
+                                ->minValue(1)
+                                ->maxValue(100)
+                                ->step(0.01)
+                                ->suffix('%')
+                                ->columnSpan(1),
+                    ]),
+                ])
+                ->rules([
+                    fn ($get)=> function (string $attribute, $value, $fail) use ($get) {
+                        // $value = the current components repeater array
+                        $total = collect($get('components'))->sum('weighted_score');
+
+                        if ($total != 100) {
+                            $fail("The total weighted score of all components must equal 100%. Current total: {$total}%");
+                        }
+                    },
+                ])
+        ];
     }
 }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->json('tags')->nullable();
             $table->text('description')->nullable();
             $table->boolean('active')->default(true);
+            $table->json('grading_components')->nullable();
             $table->timestamps();
         });
     }

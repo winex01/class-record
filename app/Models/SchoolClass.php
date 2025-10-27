@@ -13,6 +13,7 @@ class SchoolClass extends Model
 
     protected $casts = [
         'tags' => 'array',
+        'grading_components' => 'array',
     ];
 
     public function students()
