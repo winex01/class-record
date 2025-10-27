@@ -13,7 +13,6 @@ class SchoolClass extends Model
 
     protected $casts = [
         'tags' => 'array',
-        'grading_components' => 'array',
     ];
 
     public function students()
@@ -39,5 +38,11 @@ class SchoolClass extends Model
     public function grades()
     {
         return $this->hasMany(Grade::class);
+    }
+
+    // ClassSetting
+    public function setting()
+    {
+        return $this->hasOne(ClassSetting::class);
     }
 }

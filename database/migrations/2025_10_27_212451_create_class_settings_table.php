@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\SchoolClass;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -12,15 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('school_classes', function (Blueprint $table) {
+        Schema::create('class_settings', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
-            $table->string('name');
-            $table->date('date_start')->nullable();
-            $table->date('date_end')->nullable();
-            $table->json('tags')->nullable();
-            $table->text('description')->nullable();
-            $table->boolean('active')->default(true);
+            $table->foreignIdFor(SchoolClass::class)->constrained()->cascadeOnDelete();
+            $table->json('components')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('school_classes');
+        Schema::dropIfExists('class_settings');
     }
 };

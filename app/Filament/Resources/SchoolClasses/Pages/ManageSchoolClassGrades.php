@@ -29,18 +29,16 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
     protected static string $relationship = 'grades';
 
-    public $defaultAction = 'gradingComponents';
+    public $defaultAction = 'classSettings';
 
     public function mount(int|string $record): void
-{
-    parent::mount($record);
+    {
+        parent::mount($record);
 
-    $owner = $this->getOwnerRecord();
-
-    if (! empty($owner->grading_components)) {
-        $this->defaultAction = null;
+        if (! empty($this->getOwnerRecord()->setting->components)) {
+            $this->defaultAction = null;
+        }
     }
-}
 
     public function form(Schema $schema): Schema
     {
@@ -114,28 +112,36 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('gradingComponents')
+            Action::make('classSettings')
                 ->label('Settings')
                 ->icon('heroicon-o-cog-6-tooth')
                 ->modalWidth(Width::ExtraLarge)
                 ->color('gray')
-                ->form($this->gradingComponentsForm())
+                ->form($this->classSettingsForm())
                 ->mountUsing(function ($form, $livewire) {
-                    $owner = $this->getOwnerRecord();
+                    $schoolClass = $this->getOwnerRecord();
+                    $classSetting = $schoolClass->setting;
 
-                    // Fill the form with existing grading_components data
                     $form->fill([
-                        'components' => !empty($owner->grading_components)
-                            ? $owner->grading_components
-                            : [['component_name' => '', 'weighted_score' => null]], // default one item
+                        'components' => !empty($classSetting?->components)
+                            ? $classSetting->components
+                            : [['name' => '', 'weighted_score' => null]], // default one item
                     ]);
                 })
                 ->action(function (array $data): void {
-                    $owner = $this->getOwnerRecord();
+                    $schoolClass = $this->getOwnerRecord();
+                    $classSetting = $schoolClass->setting; // ✅ access the related model
 
-                    // Save the updated components
-                    $owner->grading_components = $data['components'] ?? [];
-                    $owner->save();
+                    // If setting doesn't exist yet, create it
+                    if (! $classSetting) {
+                        $classSetting = $schoolClass->setting()->create([
+                            'components' => $data['components'] ?? [],
+                        ]);
+                    } else {
+                        $classSetting->update([
+                            'components' => $data['components'] ?? [],
+                        ]);
+                    }
 
                     Notification::make()
                         ->title('Saved')
@@ -145,22 +151,22 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         ];
     }
 
-    public function gradingComponentsForm()
+    public function classSettingsForm()
     {
         return [
             Repeater::make('components')
                 ->live()
                 ->collapsible()
+                ->minItems(1)
                 ->itemLabel(fn (array $state): ?string =>
-                    isset($state['component_name'], $state['weighted_score'])
-                        ? "{$state['component_name']} ({$state['weighted_score']}%)"
-                        : ($state['component_name'] ?? 'New Component')
+                    isset($state['name'], $state['weighted_score'])
+                        ? "{$state['name']} ({$state['weighted_score']}%)"
+                        : ($state['name'] ?? 'New Component')
                 )
                 ->schema([
                     Grid::make(3)
                         ->schema([
-                            TextInput::make('component_name')
-                                ->label('Component Name')
+                            TextInput::make('name')
                                 ->placeholder('Enter component name...')
                                 ->helperText('You can type or pick from suggestions.')
                                 ->required()
