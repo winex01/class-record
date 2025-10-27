@@ -29,7 +29,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
     protected static string $relationship = 'grades';
 
-    public $defaultAction = 'gradingComponent';
+    public $defaultAction = 'gradingComponents';
 
     public function mount(int|string $record): void
     {
@@ -107,8 +107,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('gradingComponent')
-                ->label('Settings')
+            Action::make('gradingComponents')
+                ->label('Grading Components')
                 ->icon('heroicon-o-cog-6-tooth')
                 ->modalWidth(Width::ExtraLarge)
                 ->color('gray')
@@ -155,6 +155,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     {
         return [
             Repeater::make('components')
+                ->hiddenLabel()
                 ->live()
                 ->collapsible()
                 ->minItems(1) // validation 1 item
