@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(SchoolClass::class)->constrained()->cascadeOnDelete();
-            $table->string('name')->nullable();
+            $table->string('grading_period')->nullable();
             $table->json('tags')->nullable();
             $table->timestamps();
         });

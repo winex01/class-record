@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use App\Models\Grade;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -45,7 +46,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     {
         return $schema
             ->components([
-                TextInput::make('name')
+                TextInput::make('grading_period')
                     ->placeholder('Enter grading period...')
                     ->helperText('You can type or pick from suggestions.')
                     ->required()
@@ -57,6 +58,20 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         '4th Quarter',
                         'Midterm',
                         'Finals',
+                    ])
+                    ->rules([
+                        fn ($record) => function (string $attribute, $value, $fail) use ($record) {
+                            $schoolClassId = $this->getOwnerRecord()->id;
+
+                            $exists = Grade::where('school_class_id', $schoolClassId)
+                                ->where('grading_period', $value)
+                                ->when($record, fn ($q) => $q->where('id', '!=', $record->id))
+                                ->exists();
+
+                            if ($exists) {
+                                $fail("The grading period '{$value}' already exists for this class.");
+                            }
+                        },
                     ]),
 
                 Field::tags('tags'),
@@ -67,10 +82,11 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('name')
+            ->recordTitleAttribute('grading_period')
             ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
+                TextColumn::make('grading_period')
+                    ->searchable()
+                    ->sortable(),
 
                 Column::tags('tags'),
             ])
@@ -78,7 +94,9 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 //
             ])
             ->headerActions([
-                CreateAction::make()->modalWidth(Width::TwoExtraLarge),
+                CreateAction::make()
+                    ->modalWidth(Width::TwoExtraLarge)
+                    // ->visible(fn () => ! empty($this->getOwnerRecord()->grading_components))
             ])
             ->recordActions([
                 ActionGroup::make([
