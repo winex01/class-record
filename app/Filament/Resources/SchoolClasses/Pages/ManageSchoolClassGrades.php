@@ -4,7 +4,6 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Services\Field;
 use App\Services\Column;
-use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -20,7 +19,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
