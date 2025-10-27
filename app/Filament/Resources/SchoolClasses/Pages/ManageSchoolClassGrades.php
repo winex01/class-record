@@ -160,7 +160,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                             TextInput::make('weighted_score')
                                 ->label('Weighted Score')
-                                ->helperText('Enter a value between 1 and 100')
+                                ->helperText('Value between 1-100')
                                 ->numeric()
                                 ->required()
                                 ->minValue(1)
