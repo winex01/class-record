@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('class_settings', function (Blueprint $table) {
+        Schema::create('grading_components', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(SchoolClass::class)->constrained()->cascadeOnDelete();
-            $table->json('components')->nullable();
+            $table->string('name');
+            $table->decimal('weighted_score', 5, 2);
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('class_settings');
+        Schema::dropIfExists('grading_components');
     }
 };

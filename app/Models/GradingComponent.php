@@ -6,14 +6,10 @@ use App\Models\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Concerns\BelongsToSchoolClass;
 
-class ClassSetting extends Model
+class GradingComponent extends Model
 {
     use BelongsToUser;
     use BelongsToSchoolClass;
 
     protected $guarded = [];
-
-    protected $casts = [
-        'components' => 'array',
-    ];
 }

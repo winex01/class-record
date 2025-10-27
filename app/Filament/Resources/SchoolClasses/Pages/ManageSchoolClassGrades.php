@@ -29,13 +29,13 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
     protected static string $relationship = 'grades';
 
-    public $defaultAction = 'classSettings';
+    public $defaultAction = 'gradingComponent';
 
     public function mount(int|string $record): void
     {
         parent::mount($record);
 
-        if (! empty($this->getOwnerRecord()->setting->components)) {
+        if ($this->getOwnerRecord()->gradingComponents()->exists()) {
             $this->defaultAction = null;
         }
     }
@@ -88,13 +88,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                 Column::tags('tags'),
             ])
-            ->filters([
-                //
-            ])
             ->headerActions([
-                CreateAction::make()
-                    ->modalWidth(Width::TwoExtraLarge)
-                    // ->visible(fn () => ! empty($this->getOwnerRecord()->grading_components))
+                CreateAction::make()->modalWidth(Width::TwoExtraLarge)
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -112,52 +107,57 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('classSettings')
+            Action::make('gradingComponent')
                 ->label('Settings')
                 ->icon('heroicon-o-cog-6-tooth')
                 ->modalWidth(Width::ExtraLarge)
                 ->color('gray')
-                ->form($this->classSettingsForm())
+                ->form($this->gradingComponentForm())
                 ->mountUsing(function ($form, $livewire) {
                     $schoolClass = $this->getOwnerRecord();
-                    $classSetting = $schoolClass->setting;
 
+                    // Fetch related grading components
+                    $components = $schoolClass->gradingComponents()
+                        ->get(['name', 'weighted_score'])
+                        ->toArray();
+
+                    // Fill the form
                     $form->fill([
-                        'components' => !empty($classSetting?->components)
-                            ? $classSetting->components
+                        'components' => !empty($components)
+                            ? $components
                             : [['name' => '', 'weighted_score' => null]], // default one item
                     ]);
                 })
                 ->action(function (array $data): void {
                     $schoolClass = $this->getOwnerRecord();
-                    $classSetting = $schoolClass->setting; // ✅ access the related model
 
-                    // If setting doesn't exist yet, create it
-                    if (! $classSetting) {
-                        $classSetting = $schoolClass->setting()->create([
-                            'components' => $data['components'] ?? [],
-                        ]);
-                    } else {
-                        $classSetting->update([
-                            'components' => $data['components'] ?? [],
+                    // Clear existing grading components for this class
+                    $schoolClass->gradingComponents()->delete();
+
+                    // Reinsert all components from form
+                    foreach ($data['components'] as $component) {
+                        $schoolClass->gradingComponents()->create([
+                            'name' => $component['name'],
+                            'weighted_score' => $component['weighted_score'],
                         ]);
                     }
 
                     Notification::make()
-                        ->title('Saved')
+                        ->title('Grading components saved successfully!')
                         ->success()
                         ->send();
                 })
+
         ];
     }
 
-    public function classSettingsForm()
+    public function gradingComponentForm()
     {
         return [
             Repeater::make('components')
                 ->live()
                 ->collapsible()
-                ->minItems(1)
+                ->minItems(1) // validation 1 item
                 ->itemLabel(fn (array $state): ?string =>
                     isset($state['name'], $state['weighted_score'])
                         ? "{$state['name']} ({$state['weighted_score']}%)"

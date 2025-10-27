@@ -40,9 +40,8 @@ class SchoolClass extends Model
         return $this->hasMany(Grade::class);
     }
 
-    // ClassSetting
-    public function setting()
+    public function gradingComponents()
     {
-        return $this->hasOne(ClassSetting::class);
+        return $this->hasMany(GradingComponent::class);
     }
 }
