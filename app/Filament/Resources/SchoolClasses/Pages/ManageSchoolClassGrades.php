@@ -77,6 +77,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->hiddenLabel()
                     ->deletable(false)
                     ->orderable(false)
+                    ->addable(false)
                     ->live()
                     ->default(function () {
                         $record = $this->getOwnerRecord();
@@ -86,7 +87,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         }
 
                         return $record->gradingComponents
-                            ->map(fn($c) => ['assessment_id' => $c->id])
+                            ->map(fn($c) => ['grading_component_id' => $c->id])
                             ->toArray();
                     })
                     ->itemLabel(function (array $state): ?string {
@@ -97,16 +98,17 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         }
 
                         $component = $record->gradingComponents
-                            ->firstWhere('id', $state['assessment_id'] ?? null);
+                            ->firstWhere('id', $state['grading_component_id'] ?? null);
 
                         return $component
                             ? "{$component->name} (" . (int) round(floatval($component->weighted_score)) . "%)"
                             : null;
                     })
                     ->schema([
-                        Hidden::make('assessment_id')
+                        Hidden::make('grading_component_id')
                             ->required(),
                     ])
+
 
             ]);
     }
