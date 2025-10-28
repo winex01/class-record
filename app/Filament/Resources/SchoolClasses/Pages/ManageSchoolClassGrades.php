@@ -79,6 +79,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->deletable(false)
                     ->orderable(false)
                     ->addable(false)
+                    ->collapsible()
                     ->live()
                     ->default(function () {
                         $record = $this->getOwnerRecord();
@@ -109,10 +110,58 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         Hidden::make('grading_component_id')
                             ->required(),
 
-                        // TODO:: checkbox
+                        CheckboxList::make('assessment_ids')
+                            ->hiddenLabel()
+                            ->options(function (callable $get, $record, $set) {
+                                // Get all selected IDs from all repeater items
+                                $allSelected = collect($get('../../components'))
+                                    ->pluck('assessment_ids')
+                                    ->flatten()
+                                    ->filter()
+                                    ->all();
+
+                                // Get current item selected IDs (to exclude them from filtering)
+                                $currentSelected = collect($get('assessment_ids'))->all();
+
+                                // Compute the IDs that are selected in siblings (exclude current)
+                                $selectedInSiblings = array_diff($allSelected, $currentSelected);
+
+                                // Return only available options
+                                return Assessment::query()
+                                    ->whereNotIn('id', $selectedInSiblings)
+                                    ->pluck('name', 'id')
+                                    ->mapWithKeys(fn($name, $id) => [(int) $id => $name])
+                                    ->toArray();
+                            })
+                            ->columns(2)
+                            ->bulkToggleable()
+                            ->searchable()
+                            ->required()
+                            ->descriptions(function ($record, $get) {
+                                // Get available assessments for descriptions
+                                $allSelected = collect($get('../../components'))
+                                    ->pluck('assessment_ids')
+                                    ->flatten()
+                                    ->filter()
+                                    ->all();
+
+                                $currentSelected = collect($get('assessment_ids'))->all();
+                                $selectedInSiblings = array_diff($allSelected, $currentSelected);
+
+                                return Assessment::query()
+                                    ->whereNotIn('id', $selectedInSiblings)
+                                    ->with('assessmentType')
+                                    ->get()
+                                    ->mapWithKeys(function ($assessment) {
+                                        return [
+                                            (int) $assessment->id => "{$assessment->assessmentType->name} ({$assessment->max_score})"
+                                        ];
+                                    })
+                                    ->toArray();
+                            })
+                            ->live()
+
                     ])
-
-
             ]);
     }
 
