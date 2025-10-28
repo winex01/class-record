@@ -17,7 +17,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
@@ -77,12 +77,12 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('grading_period')
             ->columns([
-                Split::make([
+                Stack::make([
                     TextColumn::make('grading_period')
                         ->searchable()
                         ->sortable()
                         ->badge()
-                        ->color('warning'),
+                        ->color('warning')
                 ])
             ])
             ->contentGrid([
@@ -92,6 +92,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 'xl' => 2,
             ])
             ->paginated(false)
+            ->actionsAlignment('start')
             ->headerActions([
                 CreateAction::make()->modalWidth(Width::TwoExtraLarge),
             ])
@@ -100,7 +101,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 EditAction::make()->modalWidth(Width::TwoExtraLarge),
                 DeleteAction::make(),
             ])
-            ->actionsAlignment('start')
             ->toolbarActions([
                 DeleteBulkAction::make(),
             ])
