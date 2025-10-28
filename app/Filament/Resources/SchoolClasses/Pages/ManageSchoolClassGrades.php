@@ -3,8 +3,6 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Grade;
-use App\Services\Field;
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -71,9 +69,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             }
                         },
                     ]),
-
-                Field::tags('tags'),
-
             ]);
     }
 
@@ -85,8 +80,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 TextColumn::make('grading_period')
                     ->searchable()
                     ->sortable(),
-
-                Column::tags('tags'),
             ])
             ->headerActions([
                 CreateAction::make()->modalWidth(Width::TwoExtraLarge)
