@@ -8,7 +8,6 @@ use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -18,6 +17,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Tables\Columns\Layout\Split;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
@@ -77,20 +77,30 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('grading_period')
             ->columns([
-                TextColumn::make('grading_period')
-                    ->searchable()
-                    ->sortable(),
+                Split::make([
+                    TextColumn::make('grading_period')
+                        ->searchable()
+                        ->sortable()
+                        ->badge()
+                        ->color('warning'),
+                ])
             ])
+            ->contentGrid([
+                'xs' => 1,
+                'sm' => 2,
+                'md' => 2,
+                'xl' => 2,
+            ])
+            ->paginated(false)
             ->headerActions([
-                CreateAction::make()->modalWidth(Width::TwoExtraLarge)
+                CreateAction::make()->modalWidth(Width::TwoExtraLarge),
             ])
             ->recordActions([
-                ActionGroup::make([
-                    ViewAction::make()->modalWidth(Width::TwoExtraLarge),
-                    EditAction::make()->modalWidth(Width::TwoExtraLarge),
-                    DeleteAction::make(),
-                ])->grouped()
+                ViewAction::make()->modalWidth(Width::TwoExtraLarge),
+                EditAction::make()->modalWidth(Width::TwoExtraLarge),
+                DeleteAction::make(),
             ])
+            ->actionsAlignment('start')
             ->toolbarActions([
                 DeleteBulkAction::make(),
             ])
