@@ -11,6 +11,8 @@ use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
@@ -69,6 +71,43 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             }
                         },
                     ]),
+
+
+                Repeater::make('assessments')
+                    ->hiddenLabel()
+                    ->deletable(false)
+                    ->orderable(false)
+                    ->live()
+                    ->default(function () {
+                        $record = $this->getOwnerRecord();
+
+                        if (! $record || ! $record->gradingComponents) {
+                            return [];
+                        }
+
+                        return $record->gradingComponents
+                            ->map(fn($c) => ['assessment_id' => $c->id])
+                            ->toArray();
+                    })
+                    ->itemLabel(function (array $state): ?string {
+                        $record = $this->getOwnerRecord();
+
+                        if (! $record || ! $record->gradingComponents) {
+                            return null;
+                        }
+
+                        $component = $record->gradingComponents
+                            ->firstWhere('id', $state['assessment_id'] ?? null);
+
+                        return $component
+                            ? "{$component->name} (" . (int) round(floatval($component->weighted_score)) . "%)"
+                            : null;
+                    })
+                    ->schema([
+                        Hidden::make('assessment_id')
+                            ->required(),
+                    ])
+
             ]);
     }
 
