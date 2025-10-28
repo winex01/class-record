@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Grade;
+use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -12,7 +13,6 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
@@ -20,6 +20,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\Layout\Stack;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
@@ -73,7 +74,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ]),
 
 
-                Repeater::make('assessments')
+                Repeater::make('components')
                     ->hiddenLabel()
                     ->deletable(false)
                     ->orderable(false)
@@ -107,6 +108,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->schema([
                         Hidden::make('grading_component_id')
                             ->required(),
+
+                        // TODO:: checkbox
                     ])
 
 
