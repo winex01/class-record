@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Grade;
+use App\Services\Column;
 use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -19,7 +20,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Tables\Columns\Layout\Stack;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -201,20 +201,22 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     {
         return $table
             ->recordTitleAttribute('grading_period')
+            ->searchable(false)
             ->columns([
-                Stack::make([
-                    TextColumn::make('grading_period')
-                        ->searchable()
-                        ->sortable()
+                TextColumn::make('grading_period')
+                        ->label('Grading Period')
                         ->badge()
                         ->color('warning')
-                ])
-            ])
-            ->contentGrid([
-                'xs' => 1,
-                'sm' => 2,
-                'md' => 2,
-                'xl' => 2,
+                        ->sortable()
+                        ->searchable(),
+
+                    Column::boolean(
+                        name: 'status',
+                        trueLabel: 'Up to Date',
+                        falseLabel: 'Needs Assignment',
+                        trueDesc: 'All grading components already have assigned assessments.',
+                        falseDesc: 'There are new grading components without assigned assessments.'
+                    )
             ])
             ->paginated(false)
             ->actionsAlignment('start')

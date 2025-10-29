@@ -16,4 +16,18 @@ class Grade extends Model
     protected $casts = [
         'components' => 'array',
     ];
+
+    public function getStatusAttribute()
+    {
+        $schoolClass = $this->schoolClass; // if relationship exists
+        $gradingComponentIds = $schoolClass?->gradingComponents()->pluck('id')->toArray() ?? [];
+        $components = collect($this->components ?? [])
+            ->pluck('grading_component_id')
+            ->filter()
+            ->toArray();
+
+        $missing = array_diff($gradingComponentIds, $components);
+
+        return !empty($missing) ? false : true;
+    }
 }

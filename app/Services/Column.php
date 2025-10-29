@@ -105,6 +105,8 @@ final class Column
         string $falseIcon = 'heroicon-o-x-mark',
         string $trueColor = 'success',
         string $falseColor = 'danger',
+        string $trueDesc = null,
+        string $falseDesc = null,
     ): TextColumn {
         return TextColumn::make($name)
             ->toggleable(isToggledHiddenByDefault: false)
@@ -112,6 +114,7 @@ final class Column
             ->formatStateUsing(fn($state) => $state ? $trueLabel : $falseLabel)
             ->icon(fn($state) => $state ? $trueIcon : $falseIcon)
             ->color(fn($state) => $state ? $trueColor : $falseColor)
+            ->description(fn($state) => $state ? $trueDesc : $falseDesc)
             ->badge();
     }
 
