@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(SchoolClass::class)->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->decimal('weighted_score', 5, 2);
+            $table->unsignedInteger('sort')->default(0);
             $table->timestamps();
         });
     }

@@ -30,7 +30,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
     protected static string $relationship = 'grades';
 
-    public $defaultAction = 'gradingComponents';
+    public $defaultAction = 'manageComponents';
 
     public function mount(int|string $record): void
     {
@@ -105,6 +105,38 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         return $component
                             ? "{$component->name} (" . (int) round(floatval($component->weighted_score)) . "%)"
                             : null;
+                    })
+                    ->afterStateHydrated(function (callable $set, callable $get, $state, $record) {
+                        $class = $this->getOwnerRecord(); // SchoolClass model
+
+                        if (! $class) {
+                            return;
+                        }
+
+                        $components = collect($get('components'));
+
+                        // 1️⃣ Get all grading components of the SchoolClass ordered by sort
+                        $gradingComponents = $class->gradingComponents()
+                            ->orderBy('sort', 'asc')
+                            ->get();
+
+                        if ($gradingComponents->isEmpty()) {
+                            return;
+                        }
+
+                        // 2️⃣ Build a new, synced list
+                        $reordered = $gradingComponents->map(function ($component) use ($components) {
+                            // find if this component already exists in the repeater
+                            $existing = $components->firstWhere('grading_component_id', $component->id);
+
+                            return [
+                                'grading_component_id' => $component->id,
+                                'assessment_ids' => $existing['assessment_ids'] ?? [],
+                            ];
+                        })->values()->toArray();
+
+                        // 3️⃣ Replace repeater state
+                        $set('components', $reordered);
                     })
                     ->schema([
                         Hidden::make('grading_component_id')
@@ -203,105 +235,90 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('gradingComponents')
-                ->label('Grading Components')
-                ->icon('heroicon-o-cog-6-tooth')
-                ->modalWidth(Width::ExtraLarge)
+            Action::make('manageComponents')
+                ->label('Manage Components')
+                ->icon('heroicon-o-adjustments-horizontal')
                 ->color('gray')
-                ->form($this->gradingComponentForm())
-                ->mountUsing(function ($form, $livewire) {
-                    $schoolClass = $this->getOwnerRecord();
+                ->modalWidth(Width::Large)
+                ->model(fn () => $this->getOwnerRecord()) // ✅ bind to current SchoolClass model
+                ->fillForm(fn ($record) => [
+                    'gradingComponents' => $record->gradingComponents()
+                        ->get(['id', 'name', 'weighted_score'])
+                        ->map(fn ($item) => [
+                            'id' => $item->id,
+                            'name' => $item->name,
+                            'weighted_score' => $item->weighted_score,
+                        ])
+                        ->toArray(),
+                ])
+                ->form([
+                    Repeater::make('gradingComponents')
+                        ->relationship('gradingComponents') // ✅ repeater tied to hasMany relation
+                        ->hiddenLabel()
+                        ->collapsible()
+                        ->orderable()
+                        ->collapsed(fn () => $this->getOwnerRecord()?->gradingComponents()->exists())
+                        ->minItems(1)
+                        ->afterStateHydrated(function ($component, $state) {
+                            // When editing: if no data is loaded, create 1 empty row.
+                            if (blank($state)) {
+                                $component->state([[]]);
+                            }
+                        })
+                        ->itemLabel(fn (array $state): ?string =>
+                            isset($state['name'], $state['weighted_score'])
+                                ? "{$state['name']} ({$state['weighted_score']}%)"
+                                : ($state['name'] ?? 'New Component')
+                        )
+                        ->schema([
+                            Grid::make(3)
+                                ->schema([
+                                    TextInput::make('name')
+                                        ->placeholder('Enter component name...')
+                                        ->helperText('You can type or pick from suggestions.')
+                                        ->required()
+                                        ->maxLength(255)
+                                        ->datalist([
+                                            'Written Works',
+                                            'Performance Tasks',
+                                            'Quarterly Assessment',
+                                            'Quiz',
+                                            'Exam',
+                                            'Oral',
+                                        ])
+                                        ->columnSpan(2),
 
-                    // Fetch related grading components
-                    $components = $schoolClass->gradingComponents()
-                        ->get(['name', 'weighted_score'])
-                        ->toArray();
-
-                    // Fill the form
-                    $form->fill([
-                        'components' => !empty($components)
-                            ? $components
-                            : [['name' => '', 'weighted_score' => null]], // default one item
-                    ]);
-                })
-                ->action(function (array $data): void {
-                    $schoolClass = $this->getOwnerRecord();
-
-                    // Clear existing grading components for this class
-                    $schoolClass->gradingComponents()->delete();
-
-                    // Reinsert all components from form
-                    foreach ($data['components'] as $component) {
-                        $schoolClass->gradingComponents()->create([
-                            'name' => $component['name'],
-                            'weighted_score' => $component['weighted_score'],
-                        ]);
-                    }
-
+                                    TextInput::make('weighted_score')
+                                        ->label('Weighted Score')
+                                        ->helperText('Value between 1-100')
+                                        ->numeric()
+                                        ->required()
+                                        ->minValue(1)
+                                        ->maxValue(100)
+                                        ->step(0.01)
+                                        ->suffix('%')
+                                        ->columnSpan(1),
+                                ]),
+                        ])
+                        ->rules([
+                            fn ($get) => function (string $attribute, $value, $fail) use ($get) {
+                                $total = collect($get('gradingComponents'))->sum('weighted_score');
+                                if ($total != 100) {
+                                    $fail("The total weighted score of all components must equal 100%. Current total: {$total}%");
+                                }
+                            },
+                        ]),
+                ])
+                ->action(function ($data, $record) {
+                    // 🎯 No need to handle saving manually — Filament will sync the relationship automatically
                     Notification::make()
                         ->title('Grading components saved successfully!')
                         ->success()
                         ->send();
-                })
-
+                }),
         ];
     }
 
-    public function gradingComponentForm()
-    {
-        return [
-            Repeater::make('components')
-                ->hiddenLabel()
-                ->live()
-                ->collapsible()
-                ->collapsed(fn () => $this->getOwnerRecord()?->gradingComponents()->exists())
-                ->minItems(1) // validation 1 item
-                ->itemLabel(fn (array $state): ?string =>
-                    isset($state['name'], $state['weighted_score'])
-                        ? "{$state['name']} ({$state['weighted_score']}%)"
-                        : ($state['name'] ?? 'New Component')
-                )
-                ->schema([
-                    Grid::make(3)
-                        ->schema([
-                            TextInput::make('name')
-                                ->placeholder('Enter component name...')
-                                ->helperText('You can type or pick from suggestions.')
-                                ->required()
-                                ->maxLength(255)
-                                ->distinct()
-                                ->datalist([
-                                    'Written Works',
-                                    'Performance Tasks',
-                                    'Quarterly Assessment',
-                                    'Quiz',
-                                    'Exam',
-                                    'Oral',
-                                ])
-                                ->columnSpan(2),
 
-                            TextInput::make('weighted_score')
-                                ->label('Weighted Score')
-                                ->helperText('Value between 1-100')
-                                ->numeric()
-                                ->required()
-                                ->minValue(1)
-                                ->maxValue(100)
-                                ->step(0.01)
-                                ->suffix('%')
-                                ->columnSpan(1),
-                    ]),
-                ])
-                ->rules([
-                    fn ($get)=> function (string $attribute, $value, $fail) use ($get) {
-                        // $value = the current components repeater array
-                        $total = collect($get('components'))->sum('weighted_score');
 
-                        if ($total != 100) {
-                            $fail("The total weighted score of all components must equal 100%. Current total: {$total}%");
-                        }
-                    },
-                ])
-        ];
-    }
 }
