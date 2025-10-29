@@ -142,7 +142,10 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         Hidden::make('grading_component_id')
                             ->required(),
 
-                        // TODO:: BUG: already have record and remove all grading components and create again
+                        // TODO:: BUG: if we have record and remove all grading components and create again = new id, then it wont show some of the assessments
+                        // perhaps it gets filter on my options, so we need to make sure not to do that
+                        // SOLUTION: or we can make so that if the gradingComponents/ManageComponents modal get modified we always make sure
+                        // in actions to remove all item that has grading_component_id not exist on the gradingComponent pluck id
                         CheckboxList::make('assessment_ids')
                             ->hiddenLabel()
                             ->columns(2)
