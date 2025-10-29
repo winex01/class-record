@@ -145,42 +145,11 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                         CheckboxList::make('assessment_ids')
                             ->hiddenLabel()
-                            ->options(function (callable $get, $record, $set, $operation) {
-                                // ✅ If we’re in "view" mode, show only the currently selected items
-                                if ($operation === 'view') {
-                                    $selectedIds = collect($get('assessment_ids'))->filter()->all();
-
-                                    return Assessment::query()
-                                        ->whereIn('id', $selectedIds)
-                                        ->pluck('name', 'id')
-                                        ->mapWithKeys(fn($name, $id) => [(int) $id => $name])
-                                        ->toArray();
-                                }
-
-                                // Get all selected IDs from all repeater items
-                                $allSelected = collect($get('../../components'))
-                                    ->pluck('assessment_ids')
-                                    ->flatten()
-                                    ->filter()
-                                    ->all();
-
-                                // Get current item selected IDs (to exclude them from filtering)
-                                $currentSelected = collect($get('assessment_ids'))->all();
-
-                                // Compute the IDs that are selected in siblings (exclude current)
-                                $selectedInSiblings = array_diff($allSelected, $currentSelected);
-
-                                // Return only available options
-                                return Assessment::query()
-                                    ->whereNotIn('id', $selectedInSiblings)
-                                    ->pluck('name', 'id')
-                                    ->mapWithKeys(fn($name, $id) => [(int) $id => $name])
-                                    ->toArray();
-                            })
                             ->columns(2)
                             ->bulkToggleable()
-                            ->searchable(fn ($operation) => $operation === 'view' ? false : true)
                             ->required()
+                            ->live()
+                            ->searchable(fn ($operation) => $operation === 'view' ? false : true)
                             ->descriptions(function ($record, $get) {
                                 // Get available assessments for descriptions
                                 $allSelected = collect($get('../../components'))
@@ -203,7 +172,58 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                     })
                                     ->toArray();
                             })
-                            ->live()
+                            ->options(function (callable $get, $record, $set, $operation) {
+                                // ✅ If we’re in "view" mode, show only the currently selected items
+                                if ($operation === 'view') {
+                                    $selectedIds = collect($get('assessment_ids'))->filter()->all();
+
+                                    return Assessment::query()
+                                        ->whereIn('id', $selectedIds)
+                                        ->pluck('name', 'id')
+                                        ->mapWithKeys(fn($name, $id) => [(int) $id => $name])
+                                        ->toArray();
+                                }
+
+                                // ✅ 1️⃣ Collect all assessments assigned in other Grade records under the same SchoolClass
+                                $grades = $this->getOwnerRecord()->grades()->get();
+                                $assignedInOtherGrades = [];
+
+                                if ($grades->isNotEmpty()) {
+                                    $assignedInOtherGrades = $grades
+                                        ->when($record && $record->id, fn($q) => $q->where('id', '!=', $record->id)) // exclude current Grade only if editing
+                                        ->pluck('components') // get JSON column from each grade
+                                        ->flatten(1)
+                                        ->filter()
+                                        ->flatMap(fn($component) => $component['assessment_ids'] ?? [])
+                                        ->filter()
+                                        ->unique()
+                                        ->values()
+                                        ->toArray();
+                                }
+
+                                // ✅ 2️⃣ Collect all selected IDs from this Grade’s repeater items
+                                $allSelected = collect($get('../../components'))
+                                    ->pluck('assessment_ids')
+                                    ->flatten()
+                                    ->filter()
+                                    ->all();
+
+                                // ✅ 3️⃣ Exclude current item’s selections
+                                $currentSelected = collect($get('assessment_ids'))->all();
+                                $selectedInSiblings = array_diff($allSelected, $currentSelected);
+
+                                // ✅ 4️⃣ Merge everything to exclude globally assigned + sibling selections
+                                $excludeIds = array_unique(array_merge($assignedInOtherGrades, $selectedInSiblings));
+
+                                // ✅ 5️⃣ Return only available options
+                                return Assessment::query()
+                                    ->whereNotIn('id', $excludeIds)
+                                    ->pluck('name', 'id')
+                                    ->mapWithKeys(fn($name, $id) => [(int) $id => $name])
+                                    ->toArray();
+                            })
+
+
 
                     ])
             ]);
