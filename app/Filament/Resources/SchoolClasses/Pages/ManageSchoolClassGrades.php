@@ -145,7 +145,18 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                         CheckboxList::make('assessment_ids')
                             ->hiddenLabel()
-                            ->options(function (callable $get, $record, $set) {
+                            ->options(function (callable $get, $record, $set, $operation) {
+                                // ✅ If we’re in "view" mode, show only the currently selected items
+                                if ($operation === 'view') {
+                                    $selectedIds = collect($get('assessment_ids'))->filter()->all();
+
+                                    return Assessment::query()
+                                        ->whereIn('id', $selectedIds)
+                                        ->pluck('name', 'id')
+                                        ->mapWithKeys(fn($name, $id) => [(int) $id => $name])
+                                        ->toArray();
+                                }
+
                                 // Get all selected IDs from all repeater items
                                 $allSelected = collect($get('../../components'))
                                     ->pluck('assessment_ids')
@@ -168,7 +179,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             })
                             ->columns(2)
                             ->bulkToggleable()
-                            ->searchable()
+                            ->searchable(fn ($operation) => $operation === 'view' ? false : true)
                             ->required()
                             ->descriptions(function ($record, $get) {
                                 // Get available assessments for descriptions
