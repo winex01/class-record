@@ -209,7 +209,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ->badge()
                         ->color('warning')
                         ->sortable()
-                        ->searchable(),
+                        ->searchable()
+                        ->toggleable(false),
 
                     Column::boolean(
                         name: 'status',
@@ -217,7 +218,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         falseLabel: 'Needs Assignment',
                         trueDesc: 'All grading components already have assigned assessments.',
                         falseDesc: 'There are grading components without assigned assessments.'
-                    )
+                    )->toggleable(false)
             ])
             ->paginated(false)
             ->actionsAlignment('start')
