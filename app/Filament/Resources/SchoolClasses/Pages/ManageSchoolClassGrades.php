@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -212,7 +213,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                     Column::boolean(
                         name: 'status',
-                        trueLabel: 'Up to Date',
+                        trueLabel: 'Fully Assigned',
                         falseLabel: 'Needs Assignment',
                         trueDesc: 'All grading components already have assigned assessments.',
                         falseDesc: 'There are new grading components without assigned assessments.'
@@ -224,9 +225,11 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 CreateAction::make()->modalWidth(Width::TwoExtraLarge),
             ])
             ->recordActions([
-                ViewAction::make()->modalWidth(Width::TwoExtraLarge),
-                EditAction::make()->modalWidth(Width::TwoExtraLarge),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    ViewAction::make()->modalWidth(Width::TwoExtraLarge),
+                    EditAction::make()->modalWidth(Width::TwoExtraLarge),
+                    DeleteAction::make(),
+                ])->grouped()
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
