@@ -216,7 +216,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         trueLabel: 'Fully Assigned',
                         falseLabel: 'Needs Assignment',
                         trueDesc: 'All grading components already have assigned assessments.',
-                        falseDesc: 'There are new grading components without assigned assessments.'
+                        falseDesc: 'There are grading components without assigned assessments.'
                     )
             ])
             ->paginated(false)
