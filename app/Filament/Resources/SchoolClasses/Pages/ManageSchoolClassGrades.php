@@ -81,7 +81,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->orderable(false)
                     ->addable(false)
                     ->collapsible()
-                    ->live()
                     ->default(function () {
                         $record = $this->getOwnerRecord();
 
@@ -143,6 +142,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         Hidden::make('grading_component_id')
                             ->required(),
 
+                        // TODO:: BUG: already have record and remove all grading components and create again
                         CheckboxList::make('assessment_ids')
                             ->hiddenLabel()
                             ->columns(2)
@@ -266,7 +266,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->toolbarActions([
                 DeleteBulkAction::make(),
             ])
-            ->recordAction('edit');
+            ->recordAction('view');
     }
 
     protected function getHeaderActions(): array
