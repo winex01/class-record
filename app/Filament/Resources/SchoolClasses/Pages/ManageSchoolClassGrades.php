@@ -142,10 +142,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         Hidden::make('grading_component_id')
                             ->required(),
 
-                        // TODO:: BUG: if we have record and remove all grading components and create again = new id, then it wont show some of the assessments
-                        // perhaps it gets filter on my options, so we need to make sure not to do that
-                        // SOLUTION: or we can make so that if the gradingComponents/ManageComponents modal get modified we always make sure
-                        // in actions to remove all item that has grading_component_id not exist on the gradingComponent pluck id
                         CheckboxList::make('assessment_ids')
                             ->hiddenLabel()
                             ->columns(2)
@@ -351,6 +347,20 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ])
                 ->action(function ($data, $record) {
                     // 🎯 No need to handle saving manually — Filament will sync the relationship automatically
+
+                    // Remove repeater items in Grade component repeater items if grading_component_id record no longer exists
+                    $gradingComponentIds = $record->gradingComponents->pluck('id')->toArray();
+                    $record->grades->each(function ($grade) use ($gradingComponentIds) {
+                        $components = collect($grade->components)
+                            ->filter(function ($item) use ($gradingComponentIds) {
+                                return in_array($item['grading_component_id'], $gradingComponentIds);
+                            })
+                            ->values()
+                            ->toArray();
+
+                        $grade->update(['components' => $components]);
+                    });
+
                     Notification::make()
                         ->title('Grading components saved successfully!')
                         ->success()
