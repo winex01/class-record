@@ -30,12 +30,4 @@ class SchoolClassFactory extends Factory
             'tags'       => $this->faker->words(3),
         ];
     }
-
-    /**
-     * Allow overriding user_id when needed.
-     */
-    public function forUser(int $userId): static
-    {
-        return $this->state(fn () => ['user_id' => $userId]);
-    }
 }

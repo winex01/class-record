@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Student;
 use App\Models\SchoolClass;
+use Faker\Factory as Faker;
+use App\Models\AssessmentType;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -31,6 +33,8 @@ class DatabaseSeeder extends Seeder
 
     public function testData()
     {
+        $faker = Faker::create();
+
         // create 10 students for user 1
         Student::factory()
             ->count(10)
@@ -68,5 +72,37 @@ class DatabaseSeeder extends Seeder
 
             $attendance->students()->attach($attachData);
         }
+
+        // create assessments
+        for ($i = 0; $i < 15; $i++) {
+            $date = Carbon::today()->subDays($i);
+
+            // random AssessmentType
+            $assessmentTypeId = AssessmentType::where('user_id', 1)->inRandomOrder()->value('id');
+
+            // random max_score between 15–100 (multiples of 5)
+            $maxScore = collect(range(15, 100, 5))->random();
+
+            // create assessment
+            $assessment = $class->assessments()->create([
+                'user_id' => $class->user_id,
+                'name' => ucfirst($faker->words(2, true)), // e.g., "Grammar Quiz"
+                'date' => $date,
+                'assessment_type_id' => $assessmentTypeId,
+                'max_score' => $maxScore,
+            ]);
+
+            // attach students with random scores ≤ max_score
+            $pivotData = $class->students->mapWithKeys(function ($student) use ($assessment) {
+                return [
+                    $student->id => [
+                        'score' => rand(0, $assessment->max_score),
+                    ],
+                ];
+            });
+
+            $assessment->students()->attach($pivotData);
+        }
+
     }
 }
