@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SchoolClass extends Model
 {
+    use HasFactory;
     use BelongsToUser;
 
     protected $guarded = [];

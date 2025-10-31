@@ -245,8 +245,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     Column::boolean(
                         name: 'status',
                         trueLabel: 'Fully Assigned',
-                        falseLabel: 'Needs Assignment',
                         trueDesc: 'All grading components already have assigned assessments.',
+                        falseLabel: 'Needs Assignment',
                         falseDesc: 'There are grading components without assigned assessments.'
                     )->toggleable(false)
             ])
