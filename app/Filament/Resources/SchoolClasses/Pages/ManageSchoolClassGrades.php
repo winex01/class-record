@@ -380,7 +380,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->modalContent(function ($record) {
                         return view('filament.tables.grades', compact('record'));
                     })
-                    ->modalWidth(Width::Screen)
+                    ->modalWidth(Width::SevenExtraLarge)
+                    // ->modalWidth(Width::Screen)
                     ->modalFooterActions([])
                     ;
     }

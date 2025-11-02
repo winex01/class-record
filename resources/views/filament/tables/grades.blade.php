@@ -3,7 +3,7 @@
         <thead>
             <!-- Header Row 1 -->
             <tr class="header-row">
-                <td rowspan="3" style="vertical-align: middle; min-width: 180px;"><strong>FIRST QUARTER</strong></td>
+                <td rowspan="3" class="frozen-column" style="vertical-align: middle; min-width: 180px;"><strong>STUDENT NAMES</strong></td>
                 <td colspan="3">GRADE & SECTION:</td>
                 <td colspan="11">Grade 10 - Ruby</td>
                 <td colspan="2">TEACHER:</td>
@@ -57,7 +57,7 @@
 
             <!-- Highest Possible Score Row -->
             <tr class="highest-score">
-                <td class="learner-name">HIGHEST POSSIBLE SCORE</td>
+                <td class="frozen-column" style="text-align: right; font-size: 9px;">HIGHEST POSSIBLE SCORE</td>
                 <td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td>
                 <td>100.00</td><td>100.00</td><td>30%</td>
                 <td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td>
@@ -68,9 +68,12 @@
 
         <tbody>
             <!-- MALE SECTION -->
-            <tr><td colspan="32" class="gender-header">MALE</td></tr>
             <tr>
-                <td class="learner-name">Juan Dela Cruz</td>
+                <td class="gender-header frozen-column">MALE</td>
+                <td colspan="31" class="gender-header"></td>
+            </tr>
+            <tr>
+                <td class="learner-name frozen-column">Juan Dela Cruz</td>
                 <td>89</td><td>87</td><td>91</td><td>88</td><td>90</td><td>92</td><td>87</td><td>91</td><td>93</td><td>85</td>
                 <td>903</td><td>90.3</td><td>27.09</td>
                 <td>95</td><td>94</td><td>96</td><td>90</td><td>98</td><td>97</td><td>92</td><td>95</td><td>94</td><td>98</td>
@@ -78,7 +81,7 @@
                 <td>90</td><td>90</td><td>18</td><td>92</td><td>92</td>
             </tr>
             <tr>
-                <td class="learner-name">Carlos Mendoza</td>
+                <td class="learner-name frozen-column">Carlos Mendoza</td>
                 <td>91</td><td>89</td><td>87</td><td>90</td><td>93</td><td>95</td><td>89</td><td>90</td><td>92</td><td>91</td>
                 <td>907</td><td>90.7</td><td>27.21</td>
                 <td>94</td><td>92</td><td>93</td><td>95</td><td>90</td><td>96</td><td>95</td><td>94</td><td>97</td><td>98</td>
@@ -87,9 +90,12 @@
             </tr>
 
             <!-- FEMALE SECTION -->
-            <tr><td colspan="32" class="gender-header">FEMALE</td></tr>
             <tr>
-                <td class="learner-name">Maria Santos</td>
+                <td class="gender-header frozen-column">FEMALE</td>
+                <td colspan="31" class="gender-header"></td>
+            </tr>
+            <tr>
+                <td class="learner-name frozen-column">Maria Santos</td>
                 <td>94</td><td>93</td><td>95</td><td>92</td><td>94</td><td>93</td><td>96</td><td>92</td><td>95</td><td>94</td>
                 <td>938</td><td>93.8</td><td>28.14</td>
                 <td>97</td><td>98</td><td>96</td><td>95</td><td>94</td><td>97</td><td>98</td><td>95</td><td>99</td><td>100</td>
@@ -97,7 +103,7 @@
                 <td>95</td><td>95</td><td>19</td><td>96</td><td>96</td>
             </tr>
             <tr>
-                <td class="learner-name">Clara Villanueva</td>
+                <td class="learner-name frozen-column">Clara Villanueva</td>
                 <td>90</td><td>91</td><td>89</td><td>90</td><td>92</td><td>91</td><td>93</td><td>92</td><td>94</td><td>90</td>
                 <td>912</td><td>91.2</td><td>27.36</td>
                 <td>94</td><td>96</td><td>97</td><td>95</td><td>93</td><td>92</td><td>94</td><td>95</td><td>97</td><td>94</td>
@@ -145,5 +151,42 @@
         font-weight: 600;
         text-align: left;
         color: #000;
+    }
+
+    /* Frozen first column styles */
+    .grades-table .frozen-column {
+        position: sticky;
+        left: 0;
+        z-index: 10;
+        background-color: inherit;
+    }
+
+    /* Ensure frozen column maintains proper background colors */
+    .header-row .frozen-column {
+        background-color: #f9f9f9;
+    }
+
+    .highest-score .frozen-column {
+        background-color: #f4f4e1;
+    }
+
+    .gender-header.frozen-column {
+        background-color: #e5e5e5;
+    }
+
+    tbody tr:not(:has(.gender-header)) .frozen-column {
+        background-color: #fff9db;
+    }
+
+    /* Add shadow effect to frozen column for better visual separation */
+    .frozen-column::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
+        pointer-events: none;
     }
 </style>
