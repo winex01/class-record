@@ -22,8 +22,12 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use Filament\Infolists\Components\RepeatableEntry\TableColumn;
 
 class ManageSchoolClassGrades extends ManageRelatedRecords
 {
@@ -257,6 +261,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ])
             ->recordActions([
                 ActionGroup::make([
+                    static::viewGrades(),
                     ViewAction::make()->modalWidth(Width::TwoExtraLarge),
                     EditAction::make()->modalWidth(Width::TwoExtraLarge),
                     DeleteAction::make(),
@@ -369,6 +374,68 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         ];
     }
 
+    private static function viewGrades()
+    {
+        return Action::make('grades')
+                    ->label('View Grades')
+                    ->icon('heroicon-o-academic-cap')
+                    ->modalHeading('First Quarter Grades - Filipino')
+                    ->modalContent(function ($record) {
+                        // Generate dummy data
+                        $data = [
+                            'subject' => 'FILIPINO',
+                            'quarter' => 'FIRST QUARTER',
+                            'teacher' => '',
+                            'grade_section' => '',
+                            'learners' => [
+                                [
+                                    'name' => 'Juan Dela Cruz',
+                                    'gender' => 'MALE',
+                                    'written_works' => [85, 90, 78, 92, 88, 86, 91, 84, 87, 89],
+                                    'performance_tasks' => [88, 92, 85, 90, 87, 91, 86, 89, 84, 93],
+                                    'quarterly_assessment' => 90,
+                                ],
+                                [
+                                    'name' => 'Maria Santos',
+                                    'gender' => 'FEMALE',
+                                    'written_works' => [92, 95, 88, 94, 91, 89, 93, 90, 92, 91],
+                                    'performance_tasks' => [94, 96, 90, 93, 92, 94, 91, 95, 89, 96],
+                                    'quarterly_assessment' => 95,
+                                ],
+                                [
+                                    'name' => 'Pedro Reyes',
+                                    'gender' => 'MALE',
+                                    'written_works' => [78, 82, 75, 80, 79, 81, 77, 83, 76, 84],
+                                    'performance_tasks' => [80, 84, 78, 82, 81, 83, 79, 85, 77, 86],
+                                    'quarterly_assessment' => 82,
+                                ],
+                            ],
+                        ];
 
+                        // Calculate totals and percentages for each learner
+                        foreach ($data['learners'] as &$learner) {
+                            $learner['ww_total'] = array_sum($learner['written_works']);
+                            $learner['ww_ps'] = $learner['ww_total'];
+                            $learner['ww_ws'] = round($learner['ww_ps'] * 0.30, 2);
+
+                            $learner['pt_total'] = array_sum($learner['performance_tasks']);
+                            $learner['pt_ps'] = $learner['pt_total'];
+                            $learner['pt_ws'] = round($learner['pt_ps'] * 0.50, 2);
+
+                            $learner['qa_ps'] = $learner['quarterly_assessment'];
+                            $learner['qa_ws'] = round($learner['qa_ps'] * 0.20, 2);
+
+                            $learner['initial_grade'] = $learner['ww_ws'] + $learner['pt_ws'] + $learner['qa_ws'];
+                            $learner['quarterly_grade'] = round($learner['initial_grade']);
+                        }
+
+                        return view('filament.tables.grades', ['data' => $data]);
+                    })
+                    ->modalWidth(Width::SevenExtraLarge)
+                    ->modalFooterActions([])
+                    ->closeModalByClickingAway(false)
+                    ->stickyModalHeader()
+                    ->stickyModalFooter();
+    }
 
 }
