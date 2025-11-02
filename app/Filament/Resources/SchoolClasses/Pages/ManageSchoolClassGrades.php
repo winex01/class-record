@@ -22,12 +22,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use Filament\Infolists\Components\RepeatableEntry\TableColumn;
 
 class ManageSchoolClassGrades extends ManageRelatedRecords
 {
@@ -382,78 +378,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->color('warning')
                     ->modalHeading('First Quarter Grades - Filipino')
                     ->modalContent(function ($record) {
-
-                        // Generate dummy data
-                        $data = [
-                            'subject' => 'FILIPINO',
-                            'quarter' => 'FIRST QUARTER',
-                            'teacher' => null,
-                            'grade_section' => null,
-
-                            // Define dynamic column counts
-                            'written_works_count' => 10,
-                            'performance_tasks_count' => 10,
-                            'quarterly_assessment_count' => 1,
-
-                            // Headers for each section (can be customized per assessment)
-                            'written_works_headers' => array_fill(0, 10, null), // [null, null, ..., null]
-                            'performance_tasks_headers' => array_fill(0, 10, null),
-                            'quarterly_assessment_headers' => array_fill(0, 1, null),
-
-                            // Highest possible scores for each column
-                            'written_works_highest' => array_fill(0, 10, null), // Default null, can set values like [100, 50, 75, ...]
-                            'performance_tasks_highest' => array_fill(0, 10, null),
-                            'quarterly_assessment_highest' => array_fill(0, 1, null),
-
-                            // Weighted percentages
-                            'written_works_percentage' => 30,
-                            'performance_tasks_percentage' => 50,
-                            'quarterly_assessment_percentage' => 20,
-
-                            'learners' => [
-                                [
-                                    'name' => 'Juan Dela Cruz',
-                                    'gender' => 'MALE',
-                                    'written_works' => [85, 90, 78, 92, 88, 86, 91, 84, 87, 89],
-                                    'performance_tasks' => [88, 92, 85, 90, 87, 91, 86, 89, 84, 93],
-                                    'quarterly_assessment' => [90],
-                                ],
-                                [
-                                    'name' => 'Maria Santos',
-                                    'gender' => 'FEMALE',
-                                    'written_works' => [92, 95, 88, 94, 91, 89, 93, 90, 92, 91],
-                                    'performance_tasks' => [94, 96, 90, 93, 92, 94, 91, 95, 89, 96],
-                                    'quarterly_assessment' => [95],
-                                ],
-                                [
-                                    'name' => 'Pedro Reyes',
-                                    'gender' => 'MALE',
-                                    'written_works' => [78, 82, 75, 80, 79, 81, 77, 83, 76, 84],
-                                    'performance_tasks' => [80, 84, 78, 82, 81, 83, 79, 85, 77, 86],
-                                    'quarterly_assessment' => [82],
-                                ],
-                            ],
-                        ];
-
-                        // Calculate totals and percentages for each learner
-                        foreach ($data['learners'] as &$learner) {
-                            $learner['ww_total'] = array_sum($learner['written_works']);
-                            $learner['ww_ps'] = $learner['ww_total'];
-                            $learner['ww_ws'] = round($learner['ww_ps'] * ($data['written_works_percentage'] / 100), 2);
-
-                            $learner['pt_total'] = array_sum($learner['performance_tasks']);
-                            $learner['pt_ps'] = $learner['pt_total'];
-                            $learner['pt_ws'] = round($learner['pt_ps'] * ($data['performance_tasks_percentage'] / 100), 2);
-
-                            $learner['qa_total'] = array_sum($learner['quarterly_assessment']);
-                            $learner['qa_ps'] = $learner['qa_total'];
-                            $learner['qa_ws'] = round($learner['qa_ps'] * ($data['quarterly_assessment_percentage'] / 100), 2);
-
-                            $learner['initial_grade'] = $learner['ww_ws'] + $learner['pt_ws'] + $learner['qa_ws'];
-                            $learner['quarterly_grade'] = round($learner['initial_grade']);
-                        }
-
-                        return view('filament.tables.grades', ['data' => $data]);
+                        return view('filament.tables.grades', compact('record'));
                     })
                     ->modalWidth(Width::Screen)
                     ->modalFooterActions([])
