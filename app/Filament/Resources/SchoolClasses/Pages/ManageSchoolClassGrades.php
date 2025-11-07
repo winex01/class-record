@@ -10,7 +10,6 @@ use Filament\Schemas\Schema;
 use App\Models\GradingComponent;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -84,7 +83,9 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             ->required(),
 
                         CheckboxList::make('assessments')
+                            ->hiddenLabel()
                             ->relationship('assessments', 'name')
+                            ->searchPrompt('Start typing to search assessment...')
                             ->searchable()
                             ->bulkToggleable()
                             ->columns(2)
@@ -199,10 +200,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         $set('gradeGradingComponents', $reordered);
                     })
                     ->collapsible()
-                    ->addActionLabel('Add Grading Component')
-                    ->deleteAction(
-                        fn (Action $action) => $action->requiresConfirmation()
-                    )
+                    ->deletable(false)
+                    ->addable(false)
 
             ]);
     }
@@ -227,12 +226,10 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 CreateAction::make()->modalWidth(Width::TwoExtraLarge),
             ])
             ->recordActions([
-                // ActionGroup::make([
-                    static::viewGrades(),
-                    ViewAction::make()->modalWidth(Width::TwoExtraLarge),
-                    EditAction::make()->modalWidth(Width::TwoExtraLarge),
-                    DeleteAction::make(),
-                // ])->grouped()
+                static::viewGrades(),
+                ViewAction::make()->modalWidth(Width::TwoExtraLarge),
+                EditAction::make()->modalWidth(Width::TwoExtraLarge),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
