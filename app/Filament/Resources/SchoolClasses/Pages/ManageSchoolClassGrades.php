@@ -13,6 +13,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
@@ -73,22 +74,14 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         },
                     ]),
 
-                // TODO:: assign items
+                // TODO::
                 Repeater::make('gradeGradingComponents')
                     ->relationship('gradeGradingComponents')
                     ->schema([
-                        Select::make('grading_component_id')
-                            ->relationship('gradingComponent', 'name')
-                            ->required()
-                            ->preload()
-                            ->searchable()
-                            // ->disableOptionWhen(function ($value, $state, $get) {
-                            //     // Prevent selecting the same grading component twice
-                            //     return collect($get('../../gradeGradingComponents'))
-                            //         ->pluck('grading_component_id')
-                            //         ->contains($value);
-                            // })
-                            ->live(),
+                        Hidden::make('grading_component_id')
+                            ->distinct()
+                            ->required(),
+
 
                         CheckboxList::make('assessments')
                             ->relationship('assessments', 'name')
@@ -97,13 +90,57 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             ->columns(2)
                             ->gridDirection('row')
                             ->required()
+                            ->distinct()
                             ->minItems(1)
                     ])
                     ->itemLabel(fn (array $state): ?string =>
-                        GradingComponent::find($state['grading_component_id'])?->name ?? 'New Component'
+                        ($component = GradingComponent::find($state['grading_component_id']))
+                            ? "{$component->name} (" . (int) round(floatval($component->weighted_score)) . "%)"
+                            : 'New Component'
                     )
+                    ->default(function () {
+                        $record = $this->getOwnerRecord();
+
+                        if (! $record || ! $record->gradingComponents) {
+                            return [];
+                        }
+
+                        return $record->gradingComponents
+                            ->map(fn($c) => ['grading_component_id' => $c->id])
+                            ->toArray();
+                    })
+                    ->afterStateHydrated(function (callable $set, callable $get, $state, $record) {
+                        $class = $this->getOwnerRecord(); // parent (SchoolClass)
+                        if (! $class) {
+                            return;
+                        }
+
+                        // 🔹 Get all grading components ordered by sort
+                        $gradingComponents = $class->gradingComponents()
+                            ->orderBy('sort', 'asc')
+                            ->get();
+
+                        if ($gradingComponents->isEmpty()) {
+                            return;
+                        }
+
+                        $items = collect($state);
+
+                        // 🔹 Rebuild or reorder repeater items
+                        $reordered = $gradingComponents->map(function ($component) use ($items) {
+                            $existing = $items->firstWhere('grading_component_id', $component->id);
+
+                            return [
+                                'grading_component_id' => $component->id,
+                                // preserve other subfields if they exist
+                                ...($existing ?? []),
+                            ];
+                        })->values()->toArray();
+
+                        // 🔹 Apply reordered state back to the repeater
+                        $set('gradeGradingComponents', $reordered);
+                    })
                     ->collapsible()
-                    ->defaultItems(0)
                     ->addActionLabel('Add Grading Component')
                     ->deleteAction(
                         fn (Action $action) => $action->requiresConfirmation()
