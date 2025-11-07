@@ -234,7 +234,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->toolbarActions([
                 DeleteBulkAction::make(),
             ])
-            ->recordAction('view');
+            ->recordAction('grades');
     }
 
     protected function getHeaderActions(): array
