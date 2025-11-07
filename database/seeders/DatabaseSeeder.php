@@ -73,12 +73,19 @@ class DatabaseSeeder extends Seeder
             $attendance->students()->attach($attachData);
         }
 
-        // create assessments
-        for ($i = 0; $i < 15; $i++) {
-            $date = Carbon::today()->subDays($i);
+        $this->generateAssessment($class, 1, 20); // Quiz
+        $this->generateAssessment($class, 2, 4); // Exam
+        $this->generateAssessment($class, 3, 4); // Homework
+        $this->generateAssessment($class, 4, 4); // Project
+        $this->generateAssessment($class, 5, 4); // oral
 
-            // random AssessmentType
-            $assessmentTypeId = AssessmentType::where('user_id', 1)->inRandomOrder()->value('id');
+    }
+
+    private function generateAssessment(SchoolClass $class, $assessmentTypeId, $count = 5)
+    {
+        // create assessments
+        for ($i = 1; $i <= $count; $i++) {
+            $date = Carbon::today()->subDays($i);
 
             // random max_score between 15–100 (multiples of 5)
             $maxScore = collect(range(15, 100, 5))->random();
@@ -86,7 +93,7 @@ class DatabaseSeeder extends Seeder
             // create assessment
             $assessment = $class->assessments()->create([
                 'user_id' => $class->user_id,
-                'name' => ucfirst($faker->words(2, true)), // e.g., "Grammar Quiz"
+                'name' => AssessmentType::findOrFail($assessmentTypeId)->name.' '. $i,
                 'date' => $date,
                 'assessment_type_id' => $assessmentTypeId,
                 'max_score' => $maxScore,
@@ -102,7 +109,6 @@ class DatabaseSeeder extends Seeder
             });
 
             $assessment->students()->attach($pivotData);
-        }
-
+        }// end quiz
     }
 }

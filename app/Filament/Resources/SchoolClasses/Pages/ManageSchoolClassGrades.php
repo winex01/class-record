@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Grade;
+use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -13,6 +14,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use App\Models\GradeGradingComponent;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
@@ -74,24 +76,76 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         },
                     ]),
 
-                // TODO::
+                // TODO:: minor bug, in edit if i uncheck a checkbox, it wont show the uncheck on options. i want to show it because it already uncheck, perhaps because its included in the GradeGradingComponent  pluck
                 Repeater::make('gradeGradingComponents')
                     ->relationship('gradeGradingComponents')
+                    ->hiddenLabel()
                     ->schema([
                         Hidden::make('grading_component_id')
                             ->distinct()
                             ->required(),
-
 
                         CheckboxList::make('assessments')
                             ->relationship('assessments', 'name')
                             ->searchable()
                             ->bulkToggleable()
                             ->columns(2)
-                            ->gridDirection('row')
                             ->required()
                             ->distinct()
                             ->minItems(1)
+                            ->live()
+                            ->options(function (callable $get, $record, callable $set, string $operation) {
+                                // 🟢 1. Handle view mode early
+                                if ($operation === 'view') {
+                                    $selectedIds = collect($get('assessments'))->filter()->all();
+                                    return Assessment::query()
+                                        ->whereIn('id', $selectedIds)
+                                        ->pluck('name', 'id')
+                                        ->mapWithKeys(fn ($name, $id) => [(int) $id => $name])
+                                        ->toArray();
+                                }
+
+                                // 🟡 2. Otherwise, handle edit/create
+                                $allItems = collect($get('../../gradeGradingComponents') ?? []);
+
+                                // Collect all selected assessment IDs from other repeater items
+                                $selectedInOtherItems = $allItems
+                                    ->reject(fn ($item) => $item === $get()) // exclude current repeater item
+                                    ->pluck('assessments')
+                                    ->flatten()
+                                    ->filter()
+                                    ->unique()
+                                    ->values();
+
+                                // 🟢 Get ALL assessments already assigned to GradeGradingComponent records
+                                $existingAssessments = GradeGradingComponent::query()
+                                    ->whereHas('assessments')
+                                    ->get()
+                                    ->pluck('assessments.*.id')
+                                    ->flatten()
+                                    ->unique()
+                                    ->values();
+
+                                // 🟢 Get current repeater item's selected assessments
+                                $currentItemAssessments = collect($get('assessments'))->filter()->values();
+
+                                // Combine exclusions but REMOVE current item's assessments from exclusion
+                                $allExcludedIds = $selectedInOtherItems
+                                    ->merge($existingAssessments)
+                                    ->filter(function ($id) use ($currentItemAssessments) {
+                                        // Keep current item's selected assessments available
+                                        return !$currentItemAssessments->contains($id);
+                                    })
+                                    ->unique()
+                                    ->values();
+
+                                // Return available assessments
+                                return Assessment::query()
+                                    ->whereNotIn('id', $allExcludedIds)
+                                    ->pluck('name', 'id')
+                                    ->toArray();
+                            })
+
                     ])
                     ->itemLabel(fn (array $state): ?string =>
                         ($component = GradingComponent::find($state['grading_component_id']))
