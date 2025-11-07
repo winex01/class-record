@@ -3,18 +3,17 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Grade;
-use App\Services\Column;
-use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
+use App\Models\GradingComponent;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
@@ -74,157 +73,42 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         },
                     ]),
 
-
-                Repeater::make('components')
-                    ->hiddenLabel()
-                    ->deletable(false)
-                    ->orderable(false)
-                    ->addable(false)
-                    ->collapsible()
-                    ->default(function () {
-                        $record = $this->getOwnerRecord();
-
-                        if (! $record || ! $record->gradingComponents) {
-                            return [];
-                        }
-
-                        return $record->gradingComponents
-                            ->map(fn($c) => ['grading_component_id' => $c->id])
-                            ->toArray();
-                    })
-                    ->itemLabel(function (array $state): ?string {
-                        $record = $this->getOwnerRecord();
-
-                        if (! $record || ! $record->gradingComponents) {
-                            return null;
-                        }
-
-                        $component = $record->gradingComponents
-                            ->firstWhere('id', $state['grading_component_id'] ?? null);
-
-                        return $component
-                            ? "{$component->name} (" . (int) round(floatval($component->weighted_score)) . "%)"
-                            : null;
-                    })
-                    ->afterStateHydrated(function (callable $set, callable $get, $state, $record) {
-                        $class = $this->getOwnerRecord(); // SchoolClass model
-
-                        if (! $class) {
-                            return;
-                        }
-
-                        $components = collect($get('components'));
-
-                        // 1️⃣ Get all grading components of the SchoolClass ordered by sort
-                        $gradingComponents = $class->gradingComponents()
-                            ->orderBy('sort', 'asc')
-                            ->get();
-
-                        if ($gradingComponents->isEmpty()) {
-                            return;
-                        }
-
-                        // 2️⃣ Build a new, synced list
-                        $reordered = $gradingComponents->map(function ($component) use ($components) {
-                            // find if this component already exists in the repeater
-                            $existing = $components->firstWhere('grading_component_id', $component->id);
-
-                            return [
-                                'grading_component_id' => $component->id,
-                                'assessment_ids' => $existing['assessment_ids'] ?? [],
-                            ];
-                        })->values()->toArray();
-
-                        // 3️⃣ Replace repeater state
-                        $set('components', $reordered);
-                    })
+                // TODO:: assign items
+                Repeater::make('gradeGradingComponents')
+                    ->relationship('gradeGradingComponents')
                     ->schema([
-                        Hidden::make('grading_component_id')
-                            ->required(),
-
-                        CheckboxList::make('assessment_ids')
-                            ->hiddenLabel()
-                            ->columns(2)
-                            ->bulkToggleable()
+                        Select::make('grading_component_id')
+                            ->relationship('gradingComponent', 'name')
                             ->required()
-                            ->live()
-                            ->searchable(fn ($operation) => $operation === 'view' ? false : true)
-                            ->descriptions(function ($record, $get) {
-                                // Get available assessments for descriptions
-                                $allSelected = collect($get('../../components'))
-                                    ->pluck('assessment_ids')
-                                    ->flatten()
-                                    ->filter()
-                                    ->all();
+                            ->preload()
+                            ->searchable()
+                            // ->disableOptionWhen(function ($value, $state, $get) {
+                            //     // Prevent selecting the same grading component twice
+                            //     return collect($get('../../gradeGradingComponents'))
+                            //         ->pluck('grading_component_id')
+                            //         ->contains($value);
+                            // })
+                            ->live(),
 
-                                $currentSelected = collect($get('assessment_ids'))->all();
-                                $selectedInSiblings = array_diff($allSelected, $currentSelected);
-
-                                return Assessment::query()
-                                    ->whereNotIn('id', $selectedInSiblings)
-                                    ->with('assessmentType')
-                                    ->get()
-                                    ->mapWithKeys(function ($assessment) {
-                                        return [
-                                            (int) $assessment->id => "{$assessment->assessmentType->name} ({$assessment->max_score})"
-                                        ];
-                                    })
-                                    ->toArray();
-                            })
-                            ->options(function (callable $get, $record, $set, $operation) {
-                                // ✅ If we’re in "view" mode, show only the currently selected items
-                                if ($operation === 'view') {
-                                    $selectedIds = collect($get('assessment_ids'))->filter()->all();
-
-                                    return Assessment::query()
-                                        ->whereIn('id', $selectedIds)
-                                        ->pluck('name', 'id')
-                                        ->mapWithKeys(fn($name, $id) => [(int) $id => $name])
-                                        ->toArray();
-                                }
-
-                                // ✅ 1️⃣ Collect all assessments assigned in other Grade records under the same SchoolClass
-                                $grades = $this->getOwnerRecord()->grades()->get();
-                                $assignedInOtherGrades = [];
-
-                                if ($grades->isNotEmpty()) {
-                                    $assignedInOtherGrades = $grades
-                                        ->when($record && $record->id, fn($q) => $q->where('id', '!=', $record->id)) // exclude current Grade only if editing
-                                        ->pluck('components') // get JSON column from each grade
-                                        ->flatten(1)
-                                        ->filter()
-                                        ->flatMap(fn($component) => $component['assessment_ids'] ?? [])
-                                        ->filter()
-                                        ->unique()
-                                        ->values()
-                                        ->toArray();
-                                }
-
-                                // ✅ 2️⃣ Collect all selected IDs from this Grade’s repeater items
-                                $allSelected = collect($get('../../components'))
-                                    ->pluck('assessment_ids')
-                                    ->flatten()
-                                    ->filter()
-                                    ->all();
-
-                                // ✅ 3️⃣ Exclude current item’s selections
-                                $currentSelected = collect($get('assessment_ids'))->all();
-                                $selectedInSiblings = array_diff($allSelected, $currentSelected);
-
-                                // ✅ 4️⃣ Merge everything to exclude globally assigned + sibling selections
-                                $excludeIds = array_unique(array_merge($assignedInOtherGrades, $selectedInSiblings));
-
-                                // ✅ 5️⃣ Return only available options
-                                return Assessment::query()
-                                    ->whereNotIn('id', $excludeIds)
-                                    ->pluck('name', 'id')
-                                    ->mapWithKeys(fn($name, $id) => [(int) $id => $name])
-                                    ->toArray();
-                            })
-
-
-
+                        CheckboxList::make('assessments')
+                            ->relationship('assessments', 'name')
+                            ->searchable()
+                            ->bulkToggleable()
+                            ->columns(2)
+                            ->gridDirection('row')
+                            ->required()
+                            ->minItems(1)
                     ])
+                    ->itemLabel(fn (array $state): ?string =>
+                        GradingComponent::find($state['grading_component_id'])?->name ?? 'New Component'
+                    )
+                    ->collapsible()
+                    ->defaultItems(0)
+                    ->addActionLabel('Add Grading Component')
+                    ->deleteAction(
+                        fn (Action $action) => $action->requiresConfirmation()
+                    )
+
             ]);
     }
 
@@ -242,13 +126,13 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ->searchable()
                         ->toggleable(false),
 
-                    Column::boolean(
-                        name: 'status',
-                        trueLabel: 'Fully Assigned',
-                        trueDesc: 'All grading components already have assigned assessments.',
-                        falseLabel: 'Needs Assignment',
-                        falseDesc: 'There are grading components without assigned assessments.'
-                    )->toggleable(false)
+                    // Column::boolean(
+                    //     name: 'status',
+                    //     trueLabel: 'Assigned Successfully!',
+                    //     trueDesc: 'All grading components already have assigned assessments.',
+                    //     falseLabel: 'Needs Assignment',
+                    //     falseDesc: 'There are grading components without assigned assessments.'
+                    // )->toggleable(false)
             ])
             ->paginated(false)
             ->actionsAlignment('start')
@@ -273,11 +157,11 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     {
         return [
             Action::make('manageComponents')
+                ->model(fn () => $this->getOwnerRecord()) // ✅ bind to current SchoolClass model
                 ->label('Manage Components')
                 ->icon('heroicon-o-adjustments-horizontal')
                 ->color('gray')
                 ->modalWidth(Width::Large)
-                ->model(fn () => $this->getOwnerRecord()) // ✅ bind to current SchoolClass model
                 ->fillForm(fn ($record) => [
                     'gradingComponents' => $record->gradingComponents()
                         ->get(['id', 'name', 'weighted_score'])
@@ -344,24 +228,13 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                     $fail("The total weighted score of all components must equal 100%. Current total: {$total}%");
                                 }
                             },
-                        ]),
+                        ])
+                        ->deleteAction(
+                            fn (Action $action) => $action->requiresConfirmation()
+                        ),
                 ])
                 ->action(function ($data, $record) {
                     // 🎯 No need to handle saving manually — Filament will sync the relationship automatically
-
-                    // Remove repeater items in Grade component repeater items if grading_component_id record no longer exists
-                    $gradingComponentIds = $record->gradingComponents->pluck('id')->toArray();
-                    $record->grades->each(function ($grade) use ($gradingComponentIds) {
-                        $components = collect($grade->components)
-                            ->filter(function ($item) use ($gradingComponentIds) {
-                                return in_array($item['grading_component_id'], $gradingComponentIds);
-                            })
-                            ->values()
-                            ->toArray();
-
-                        $grade->update(['components' => $components]);
-                    });
-
                     Notification::make()
                         ->title('Grading components saved successfully!')
                         ->success()
@@ -372,18 +245,15 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
     private static function viewGrades()
     {
-        return
-                Action::make('grades')
-                    ->icon('heroicon-o-list-bullet')
-                    ->color('warning')
-                    ->modalHeading('First Quarter Grades - Filipino')
-                    ->modalContent(function ($record) {
-                        return view('filament.tables.grades', compact('record'));
-                    })
-                    ->modalWidth(Width::SevenExtraLarge)
-                    // ->modalWidth(Width::Screen)
-                    ->modalFooterActions([])
-                    ;
+        return Action::make('grades')
+            ->icon('heroicon-o-list-bullet')
+            ->color('warning')
+            ->modalHeading('First Quarter Grades - Filipino')
+            ->modalContent(function ($record) {
+                return view('filament.tables.grades', compact('record'));
+            })
+            ->modalWidth(Width::SevenExtraLarge)
+            ->modalFooterActions([]);
     }
 
 }

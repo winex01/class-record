@@ -12,4 +12,9 @@ class GradingComponent extends Model
     use BelongsToSchoolClass;
 
     protected $guarded = [];
+
+    public function gradeGradingComponents()
+    {
+        return $this->hasMany(GradeGradingComponent::class);
+    }
 }

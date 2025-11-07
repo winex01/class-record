@@ -33,4 +33,14 @@ class Assessment extends Model
             ->withTimestamps()
             ->withPivot(['score', 'group']);
     }
+
+    public function gradeGradingComponents()
+    {
+        return $this->belongsToMany(
+            GradeGradingComponent::class,
+            'grade_component_assessments',
+            'assessment_id',
+            'ggc_id'
+        )->withTimestamps();
+    }
 }
