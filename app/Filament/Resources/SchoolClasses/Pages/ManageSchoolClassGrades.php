@@ -16,7 +16,6 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use App\Models\GradeGradingComponent;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
@@ -76,7 +75,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         },
                     ]),
 
-                // TODO:: minor bug, in edit if i uncheck a checkbox, it wont show the uncheck on options. i want to show it because it already uncheck, perhaps because its included in the GradeGradingComponent  pluck
                 Repeater::make('gradeGradingComponents')
                     ->relationship('gradeGradingComponents')
                     ->hiddenLabel()
@@ -95,7 +93,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             ->minItems(1)
                             ->live()
                             ->options(function (callable $get, $record, callable $set, string $operation) {
-                                // 🟢 1. Handle view mode early
+                                // Handle view mode early
                                 if ($operation === 'view') {
                                     $selectedIds = collect($get('assessments'))->filter()->all();
                                     return Assessment::query()
@@ -105,20 +103,33 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                         ->toArray();
                                 }
 
-                                // 🟡 2. Otherwise, handle edit/create
+                                // Get current repeater item's selected assessments FIRST
+                                $currentItemAssessments = collect($get('assessments'))->filter()->values();
+
+                                // Get all repeater state
                                 $allItems = collect($get('../../gradeGradingComponents') ?? []);
 
                                 // Collect all selected assessment IDs from other repeater items
                                 $selectedInOtherItems = $allItems
-                                    ->reject(fn ($item) => $item === $get()) // exclude current repeater item
+                                    ->reject(fn ($item) => $item === $get())
                                     ->pluck('assessments')
                                     ->flatten()
                                     ->filter()
                                     ->unique()
                                     ->values();
 
-                                // 🟢 Get ALL assessments already assigned to GradeGradingComponent records
-                                $existingAssessments = GradeGradingComponent::query()
+                                // Get the current Grade ID from the form data (only available in edit)
+                                $currentGradeId = $get('../../id');
+
+                                // Get assessments from OTHER GradeGradingComponent records ONLY
+                                $otherDatabaseAssessments = GradeGradingComponent::query()
+                                    ->when($operation === 'edit' && $currentGradeId, function ($query) use ($currentGradeId) {
+                                        // In EDIT: Exclude GradeGradingComponents that belong to the current Grade
+                                        return $query->where('grade_id', '!=', $currentGradeId);
+                                    }, function ($query) use ($operation) {
+                                        // In CREATE: Exclude all existing assignments
+                                        return $query; // This will exclude all GradeGradingComponent assessments
+                                    })
                                     ->whereHas('assessments')
                                     ->get()
                                     ->pluck('assessments.*.id')
@@ -126,16 +137,9 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                     ->unique()
                                     ->values();
 
-                                // 🟢 Get current repeater item's selected assessments
-                                $currentItemAssessments = collect($get('assessments'))->filter()->values();
-
-                                // Combine exclusions but REMOVE current item's assessments from exclusion
+                                // Combine exclusions (other repeater items + other database records)
                                 $allExcludedIds = $selectedInOtherItems
-                                    ->merge($existingAssessments)
-                                    ->filter(function ($id) use ($currentItemAssessments) {
-                                        // Keep current item's selected assessments available
-                                        return !$currentItemAssessments->contains($id);
-                                    })
+                                    ->merge($otherDatabaseAssessments)
                                     ->unique()
                                     ->values();
 
