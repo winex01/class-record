@@ -220,14 +220,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ->sortable()
                         ->searchable()
                         ->toggleable(false),
-
-                    // Column::boolean(
-                    //     name: 'status',
-                    //     trueLabel: 'Assigned Successfully!',
-                    //     trueDesc: 'All grading components already have assigned assessments.',
-                    //     falseLabel: 'Needs Assignment',
-                    //     falseDesc: 'There are grading components without assigned assessments.'
-                    // )->toggleable(false)
             ])
             ->paginated(false)
             ->actionsAlignment('start')
@@ -235,12 +227,12 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 CreateAction::make()->modalWidth(Width::TwoExtraLarge),
             ])
             ->recordActions([
-                ActionGroup::make([
+                // ActionGroup::make([
                     static::viewGrades(),
                     ViewAction::make()->modalWidth(Width::TwoExtraLarge),
                     EditAction::make()->modalWidth(Width::TwoExtraLarge),
                     DeleteAction::make(),
-                ])->grouped()
+                // ])->grouped()
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
@@ -252,7 +244,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     {
         return [
             Action::make('manageComponents')
-                ->model(fn () => $this->getOwnerRecord()) // ✅ bind to current SchoolClass model
+                ->model(fn () => $this->getOwnerRecord()) // bind to current SchoolClass model
                 ->label('Manage Components')
                 ->icon('heroicon-o-adjustments-horizontal')
                 ->color('gray')
@@ -269,7 +261,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ])
                 ->form([
                     Repeater::make('gradingComponents')
-                        ->relationship('gradingComponents') // ✅ repeater tied to hasMany relation
+                        ->relationship('gradingComponents') // repeater tied to hasMany relation
                         ->hiddenLabel()
                         ->collapsible()
                         ->orderable()
@@ -329,7 +321,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ),
                 ])
                 ->action(function ($data, $record) {
-                    // 🎯 No need to handle saving manually — Filament will sync the relationship automatically
+                    // No need to handle saving manually — Filament will sync the relationship automatically
                     Notification::make()
                         ->title('Grading components saved successfully!')
                         ->success()
@@ -342,8 +334,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     {
         return Action::make('grades')
             ->icon('heroicon-o-list-bullet')
-            ->color('warning')
-            ->modalHeading('First Quarter Grades - Filipino')
+            ->color('info')
+            ->modalHeading(heading: 'First Quarter Grades - Filipino')
             ->modalContent(function ($record) {
                 return view('filament.tables.grades', compact('record'));
             })
