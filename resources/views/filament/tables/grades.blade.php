@@ -1,73 +1,78 @@
+@php
+    $gradeId = $record->id;
+    $gradeGradingComponents = $record->orderedGradeGradingComponents;
+
+    $groupedAssessments = $record->orderedGradeGradingComponents
+    ->load(['gradingComponent', 'assessments'])
+    ->groupBy(fn($ggc) => $ggc->gradingComponent?->label)
+    ->map(fn($group) => $group->flatMap->assessments);
+
+    // Calculate total columns needed for assessments
+    $totalAssessmentColumns = $groupedAssessments->sum(fn($assessments) => $assessments->count() + 3);
+    $totalColumns = $totalAssessmentColumns + 2; // +2 for Initial Grade and Quarterly Grade
+
+@endphp
+
 <div style="overflow-x: auto; width: 100%;">
     <table class="grades-table">
         <thead>
-            <!-- Header Row 1 -->
+            <!-- ROW 1 -->
             <tr class="header-row">
                 <td rowspan="3" class="frozen-column" style="vertical-align: middle; min-width: 180px;"><strong>STUDENT NAMES</strong></td>
                 <td colspan="3">GRADE & SECTION:</td>
-                <td colspan="11">Grade 10 - Ruby</td>
+                <td colspan="6">Grade 10 - Ruby</td>
                 <td colspan="2">TEACHER:</td>
-                <td colspan="11">Mr. Juan Dela Cruz</td>
-                <td colspan="5" style="vertical-align: middle;"><strong>SUBJECT: FILIPINO</strong></td>
+                <td colspan="6">Mr. Juan Dela Cruz</td>
+                <td colspan="{{ $totalColumns - 17 }}">SUBJECT: FILIPINO</td> {{-- Dynamic colspan --}}
             </tr>
 
-            <!-- Header Row 2 -->
+
+            {{-- ROW 2: Components Label --}}
             <tr class="header-row">
-                <td colspan="13"><strong>WRITTEN WORKS (30%)</strong></td>
-                <td colspan="13"><strong>PERFORMANCE TASKS (50%)</strong></td>
-                <td colspan="3"><strong>Quarterly Assessment (20%)</strong></td>
-                <td rowspan="3"><strong>Initial Grade</strong></td>
-                <td rowspan="3"><strong>Quarterly Grade</strong></td>
+                @foreach($groupedAssessments->keys() as $label)
+                    @php
+                        $currentAssessments = $groupedAssessments->get($label);
+                        $colspan = $currentAssessments->count() + 3; // +3 for Total, PS, WS
+                    @endphp
+                    <td colspan="{{ $colspan }}"><strong>{{ $label }}</strong></td>
+                @endforeach
+                    <td rowspan="3"><strong>Initial Grade</strong></td>
+                    <td rowspan="3"><strong>Quarterly Grade</strong></td>
             </tr>
 
-            <!-- Header Row 3 -->
+            {{-- ROW 3: Assessment Numbers --}}
             <tr class="header-row">
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td><strong>Total</strong></td>
-                <td><strong>PS</strong></td>
-                <td><strong>WS</strong></td>
-
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td><strong>Total</strong></td>
-                <td><strong>PS</strong></td>
-                <td><strong>WS</strong></td>
-
-                <td>1</td>
-                <td><strong>PS</strong></td>
-                <td><strong>WS</strong></td>
+                @foreach($groupedAssessments as $assessments)
+                    @foreach($assessments as $item)
+                        <td title="{{ $item->name }}">{{ $loop->iteration }}</td>
+                    @endforeach
+                        <td title="Total Score"><strong>Total</strong></td>
+                        <td title="Percentage Score"><strong>PS</strong></td>
+                        <td title="Weighted Score"><strong>WS</strong></td>
+                @endforeach
             </tr>
 
-            <!-- Highest Possible Score Row -->
-            <tr class="highest-score">
+            {{-- ROW 4: Max Scores --}}
+            <tr class="header-row">
                 <td class="frozen-column" style="text-align: right; font-size: 9px;">HIGHEST POSSIBLE SCORE</td>
-                <td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td>
-                <td>100.00</td><td>100.00</td><td>30%</td>
-                <td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td><td>100</td>
-                <td>100.00</td><td>100.00</td><td>50%</td>
-                <td>100</td><td>100.00</td><td>20%</td>
+                @foreach($groupedAssessments as $assessments)
+                    @foreach($assessments as $item)
+                        <td title="{{ $item->name }}">{{ $item->max_score }}</td>
+                    @endforeach
+
+                        {{-- TODO:: --}}
+
+                        <td title="Total Score"><strong>Total</strong></td>
+                        <td title="Percentage Score"><strong>100</strong></td>
+                        <td title="Weighted Score"><strong>WS</strong></td>
+
+                @endforeach
             </tr>
+
         </thead>
 
         <tbody>
-            <!-- MALE SECTION -->
+            {{-- <!-- MALE SECTION -->
             <tr>
                 <td class="gender-header frozen-column">MALE</td>
                 <td colspan="31" class="gender-header"></td>
@@ -109,7 +114,8 @@
                 <td>94</td><td>96</td><td>97</td><td>95</td><td>93</td><td>92</td><td>94</td><td>95</td><td>97</td><td>94</td>
                 <td>947</td><td>94.7</td><td>47.35</td>
                 <td>93</td><td>93</td><td>18.6</td><td>93</td><td>93</td>
-            </tr>
+            </tr> --}}
+
         </tbody>
     </table>
 </div>

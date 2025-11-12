@@ -154,7 +154,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ])
                     ->itemLabel(fn (array $state): ?string =>
                         ($component = GradingComponent::find($state['grading_component_id']))
-                            ? "{$component->name} (" . (int) round(floatval($component->weighted_score)) . "%)"
+                            ? $component->label
                             : 'New Component'
                     )
                     ->default(function () {
@@ -226,7 +226,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 CreateAction::make()->modalWidth(Width::TwoExtraLarge),
             ])
             ->recordActions([
-                static::viewGrades(),
+                static::viewGrades($this->getOwnerRecord()),
                 ViewAction::make()->modalWidth(Width::TwoExtraLarge),
                 EditAction::make()->modalWidth(Width::TwoExtraLarge),
                 DeleteAction::make(),
@@ -327,16 +327,17 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         ];
     }
 
-    private static function viewGrades()
+    private static function viewGrades($getOwnerRecord)
     {
         return Action::make('grades')
             ->icon('heroicon-o-list-bullet')
             ->color('info')
             ->modalHeading(heading: 'First Quarter Grades - Filipino')
-            ->modalContent(function ($record) {
-                return view('filament.tables.grades', compact('record'));
+            ->modalContent(function ($record) use ($getOwnerRecord) {
+                return view('filament.tables.grades', compact('record', 'getOwnerRecord'));
             })
-            ->modalWidth(Width::SevenExtraLarge)
+            // ->modalWidth(Width::SevenExtraLarge)
+            ->modalWidth(Width::Full)
             ->modalFooterActions([]);
     }
 

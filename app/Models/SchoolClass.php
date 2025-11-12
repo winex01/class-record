@@ -44,6 +44,7 @@ class SchoolClass extends Model
 
     public function gradingComponents()
     {
-        return $this->hasMany(GradingComponent::class);
+        return $this->hasMany(GradingComponent::class)
+            ->orderBy('sort', 'asc');
     }
 }

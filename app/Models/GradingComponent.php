@@ -17,4 +17,9 @@ class GradingComponent extends Model
     {
         return $this->hasMany(GradeGradingComponent::class);
     }
+
+    public function getLabelAttribute()
+    {
+        return "{$this->name} (" . (int) round(floatval($this->weighted_score)) . "%)";
+    }
 }
