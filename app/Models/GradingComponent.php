@@ -22,4 +22,9 @@ class GradingComponent extends Model
     {
         return "{$this->name} (" . (int) round(floatval($this->weighted_score)) . "%)";
     }
+
+    public function getWeightedScorePercentageLabelAttribute()
+    {
+        return (int) round(floatval($this->weighted_score)) . "%";
+    }
 }
