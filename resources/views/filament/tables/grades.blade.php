@@ -55,7 +55,9 @@
             <tr class="highest-score">
                 <td class="frozen-column" style="text-align: right; font-size: 9px;">HIGHEST POSSIBLE SCORE</td>
                 @foreach($groupedAssessments as $assessments)
+                    @php $totalScore = 0; @endphp
                     @foreach($assessments as $item)
+                        @php $totalScore += $item->max_score; @endphp
                         <td title="{{ $item->name }}">{{ $item->max_score }}</td>
                     @endforeach
 
@@ -70,7 +72,7 @@
                     @endphp
 
                     {{-- TODO:: Total score --}}
-                    <td title="Total Score"><strong>-</strong></td>
+                    <td title="Total Score"><strong>{{ $totalScore }}</strong></td>
                     <td title="Percentage Score"><strong>100</strong></td>
                     <td title="Weighted Score">
                         <strong>{{ $weightedScorePercentageLabel ?? '-' }}</strong>
