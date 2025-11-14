@@ -1,5 +1,5 @@
 @php
-    $gradeId = $record->id;
+    $schoolClass = $getOwnerRecord;
     $gradeGradingComponents = $record->orderedGradeGradingComponents;
 
     $groupedAssessments = $record->orderedGradeGradingComponents
@@ -10,6 +10,9 @@
     // Calculate total columns needed for assessments
     $totalAssessmentColumns = $groupedAssessments->sum(fn($assessments) => $assessments->count() + 3);
     $totalColumns = $totalAssessmentColumns + 2; // +2 for Initial Grade and Quarterly Grade
+
+
+    $students = $schoolClass->students->groupBy('gender');
 @endphp
 
 <div style="overflow-x: auto; width: 100%;">
@@ -17,13 +20,13 @@
         <thead>
             <!-- ROW 1 -->
             <tr class="header-row">
-                {{-- TODO:: --}}
+                {{-- TODO::  --}}
                 <td rowspan="3" class="frozen-column" style="vertical-align: middle; min-width: 180px;"><strong>STUDENT NAMES</strong></td>
-                <td colspan="3">GRADE & SECTION:</td>
-                <td colspan="6">Grade 10 - Ruby</td>
-                <td colspan="2">TEACHER:</td>
-                <td colspan="6">Mr. Juan Dela Cruz</td>
-                <td colspan="{{ $totalColumns - 17 }}">SUBJECT: FILIPINO</td>
+                {{-- <td colspan="3">GRADE & SECTION:</td> --}}
+                {{-- <td colspan="6">Grade 10 - Ruby</td> --}}
+                {{-- <td colspan="2">TEACHER:</td> --}}
+                {{-- <td colspan="6">Mr. Juan Dela Cruz</td> --}}
+                {{-- <td colspan="4">SUBJECT: FILIPINO</td> --}}
             </tr>
 
             {{-- ROW 2: Components Label --}}
@@ -83,7 +86,25 @@
         </thead>
 
         <tbody>
-            {{-- TODO: Add student data here --}}
+            {{-- TODO:  --}}
+            @foreach ($students as $gender => $studentByGender)
+                <tr>
+                    <td class="gender-header frozen-column">{{ $gender }}</td>
+                    <td colspan="{{ $totalColumns }}" class="gender-header"></td>
+                </tr>
+
+                @foreach ($studentByGender as $student)
+                    <tr>
+                        <td class="learner-name frozen-column">{{ $student->full_name }}</td>
+                        <td>89</td><td>87</td><td>91</td><td>88</td><td>90</td><td>92</td><td>87</td><td>91</td><td>93</td><td>85</td>
+                        <td>903</td><td>90.3</td><td>27.09</td>
+                        <td>95</td><td>94</td><td>96</td><td>90</td><td>98</td><td>97</td>
+                        <td>92</td><td>95</td>
+                    </tr>
+                @endforeach
+
+            @endforeach
+
         </tbody>
     </table>
 </div>
