@@ -11,8 +11,9 @@
     $totalAssessmentColumns = $groupedAssessments->sum(fn($assessments) => $assessments->count() + 3);
     $totalColumns = $totalAssessmentColumns + 2; // +2 for Initial Grade and Quarterly Grade
 
-
     $students = $schoolClass->students->groupBy('gender');
+
+    $percentageScore = 100;
 @endphp
 
 <div style="overflow-x: auto; width: 100%;">
@@ -48,7 +49,7 @@
                     @foreach($assessments as $item)
                         <td title="{{ $item->name }}">{{ $loop->iteration }}</td>
                     @endforeach
-                    <td title="Total Score"><strong>Total</strong></td>
+                    <td title="Total Score"><strong>TS</strong></td>
                     <td title="Percentage Score"><strong>PS</strong></td>
                     <td title="Weighted Score"><strong>WS</strong></td>
                 @endforeach
@@ -67,16 +68,14 @@
                     @php
                         $weightedScorePercentageLabel = null;
                         // Get the weighted_score from the first assessment's gradeGradingComponents relationship
-                        if ($assessments->isNotEmpty()) {
-                            $firstAssessment = $assessments->first();
-                            $gradeGradingComponent = $firstAssessment->gradeGradingComponents->first();
-                            $weightedScorePercentageLabel = $gradeGradingComponent->gradingComponent->weighted_score_percentage_label ?? null;
-                        }
+                        $firstAssessment = $assessments->first();
+                        $gradeGradingComponent = $firstAssessment->gradeGradingComponents->first();
+                        $weightedScorePercentageLabel = $gradeGradingComponent->gradingComponent->weighted_score_percentage_label ?? null;
                     @endphp
 
                     {{-- TODO:: Total score --}}
                     <td title="Total Score"><strong>{{ $totalScore }}</strong></td>
-                    <td title="Percentage Score"><strong>100</strong></td>
+                    <td title="Percentage Score"><strong>{{ $percentageScore }}</strong></td>
                     <td title="Weighted Score">
                         <strong>{{ $weightedScorePercentageLabel ?? '-' }}</strong>
                     </td>
@@ -86,6 +85,8 @@
         </thead>
 
         <tbody>
+            {{-- @dump($groupedAssessments->toArray()) --}}
+
             {{-- TODO:  --}}
             @foreach ($students as $gender => $studentByGender)
                 <tr>
@@ -96,9 +97,53 @@
                 @foreach ($studentByGender as $student)
                     <tr>
                         <td class="learner-name frozen-column">{{ $student->full_name }}</td>
-                        <td>89</td><td>87</td><td>91</td><td>88</td><td>90</td><td>92</td><td>87</td><td>91</td><td>93</td><td>85</td>
-                        <td>903</td><td>90.3</td><td>27.09</td>
-                        <td>95</td><td>94</td><td>96</td><td>90</td><td>98</td><td>97</td><td>92</td><td>95</td>
+
+                        @foreach($groupedAssessments as $assessments)
+                            @php
+                                $TS = 0;
+                                $assessmentTotalScore = 0;
+
+                                $firstAssessment = $assessments->first();
+                                $gradeGradingComponent = $firstAssessment->gradeGradingComponents->first();
+                                $weightedScore = $gradeGradingComponent->gradingComponent->weighted_score;
+                            @endphp
+                            @foreach($assessments as $assessment)
+                                @php
+                                    $assessmentTotalScore += $assessment->max_score;
+
+                                    $ass = $assessment->students()->where('student_id', $student->id)->first();
+                                    $score = $ass->pivot->score;
+                                    $TS += $score ?? 0;
+                                @endphp
+
+                                <td title="{{ $assessment->name }}">{{ $score }}</td>
+                            @endforeach
+
+                            @php
+                                // Raw value for calculations
+                                $PS_raw = round(($TS / $assessmentTotalScore) * $percentageScore, 2);
+                                $WS_raw = round($PS_raw * ($weightedScore / 100), 2);
+
+                                // Formatted value for display
+                                $PS_display = number_format($PS_raw, 2);
+                                $WS_display = number_format($WS_raw, 2);
+                            @endphp
+
+                            {{-- TS = sum of student score --}}
+                            <td title="Total Score">{{ $TS }}</td>
+
+                            {{-- PS = studentTotalScore / highestScore x PS --}}
+                            <td title="Percentage Score"><strong>{{ $PS_display }}</strong></td>
+
+                            {{-- WS = PS * WS% (convert to decimal) --}}
+                            <td title="Weighted Score"><strong>{{ $WS_display }}</strong></td>
+
+                        @endforeach
+
+                        {{-- Initial Grade --}}
+                        <td>-</td>
+                        {{-- Quarterly Grade --}}
+                        <td>-</td>
                     </tr>
                 @endforeach
 
