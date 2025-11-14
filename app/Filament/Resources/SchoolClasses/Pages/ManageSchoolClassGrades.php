@@ -332,11 +332,10 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         return Action::make('grades')
             ->icon('heroicon-o-list-bullet')
             ->color('info')
-            ->modalHeading(heading: 'First Quarter Grades - Filipino')
+            ->modalHeading(fn ($record) => $record->grading_period)
             ->modalContent(function ($record) use ($getOwnerRecord) {
                 return view('filament.tables.grades', compact('record', 'getOwnerRecord'));
             })
-            // ->modalWidth(Width::SevenExtraLarge)
             ->modalWidth(Width::Full)
             ->modalFooterActions([]);
     }

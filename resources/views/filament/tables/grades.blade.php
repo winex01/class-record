@@ -20,13 +20,13 @@
         <thead>
             <!-- ROW 1 -->
             <tr class="header-row">
-                {{-- TODO::  --}}
                 <td rowspan="3" class="frozen-column" style="vertical-align: middle; min-width: 180px;"><strong>STUDENT NAMES</strong></td>
-                {{-- <td colspan="3">GRADE & SECTION:</td> --}}
-                {{-- <td colspan="6">Grade 10 - Ruby</td> --}}
-                {{-- <td colspan="2">TEACHER:</td> --}}
-                {{-- <td colspan="6">Mr. Juan Dela Cruz</td> --}}
-                {{-- <td colspan="4">SUBJECT: FILIPINO</td> --}}
+                @php
+                    $colspan = (int )$totalColumns / 3;
+                @endphp
+                <td colspan="{{ $colspan }}">GRADING PERIOD: {{ $record->grading_period }}</td>
+                <td colspan="{{ $colspan }}">SUBJECT: {{ $schoolClass->name }}</td>
+                <td colspan="{{ $colspan + 99 }}">TAGS: {{ implode(', ', $schoolClass->tags) }}</td>
             </tr>
 
             {{-- ROW 2: Components Label --}}
@@ -98,8 +98,7 @@
                         <td class="learner-name frozen-column">{{ $student->full_name }}</td>
                         <td>89</td><td>87</td><td>91</td><td>88</td><td>90</td><td>92</td><td>87</td><td>91</td><td>93</td><td>85</td>
                         <td>903</td><td>90.3</td><td>27.09</td>
-                        <td>95</td><td>94</td><td>96</td><td>90</td><td>98</td><td>97</td>
-                        <td>92</td><td>95</td>
+                        <td>95</td><td>94</td><td>96</td><td>90</td><td>98</td><td>97</td><td>92</td><td>95</td>
                     </tr>
                 @endforeach
 
