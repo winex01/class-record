@@ -103,7 +103,7 @@ class DatabaseSeeder extends Seeder
                 $maxScore = $assessment->max_score;
                 return [
                     $student->id => [
-                        'score' => collect(range(($maxScore - 15), $maxScore, 1))->random(),
+                        'score' => collect(range((int)($maxScore * .75), $maxScore, 1))->random(),
                     ],
                 ];
             });
