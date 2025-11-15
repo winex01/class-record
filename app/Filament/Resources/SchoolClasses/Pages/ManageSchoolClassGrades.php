@@ -326,7 +326,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ->send();
                 }),
         ];
-    }s
+    }
 
     private static function viewGrades($getOwnerRecord)
     {
