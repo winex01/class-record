@@ -73,7 +73,6 @@
                         $weightedScorePercentageLabel = $gradeGradingComponent->gradingComponent->weighted_score_percentage_label ?? null;
                     @endphp
 
-                    {{-- TODO:: Total score --}}
                     <td title="Total Score"><strong>{{ $totalScore }}</strong></td>
                     <td title="Percentage Score"><strong>{{ $percentageScore }}</strong></td>
                     <td title="Weighted Score">
@@ -150,11 +149,11 @@
                         @endphp
 
                         {{-- Initial Grade --}}
-                        <td><strong>{{ $studentInitialGrade }}</strong></td>
+                        <td title="Initial Grade"><strong>{{ $studentInitialGrade }}</strong></td>
 
                         {{-- TODO::transmutable table --}}
                         {{-- Quarterly Grade --}}
-                        <td>-</td>
+                        <td title="Quarterly Grade"></td>
                     </tr>
                 @endforeach
 
