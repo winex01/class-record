@@ -226,4 +226,16 @@
         background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
         pointer-events: none;
     }
+
+    /* Hover effect for student rows - Light Blue/Info color */
+    tbody tr:hover {
+        background-color: #d1ecf1 !important; /* Bootstrap-like info color */
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow */
+        transition: all 0.2s ease-in-out; /* Smooth transition */
+    }
+
+    /* Ensure frozen column also changes color on hover */
+    tbody tr:hover .frozen-column:not(.gender-header) {
+        background-color: #d1ecf1 !important;
+    }
 </style>
