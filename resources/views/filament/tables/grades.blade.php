@@ -39,8 +39,8 @@
                     @endphp
                     <td colspan="{{ $colspan }}"><strong>{{ $label }}</strong></td>
                 @endforeach
-                <td rowspan="3"><strong>Initial Grade</strong></td>
-                <td rowspan="3"><strong>Quarterly Grade</strong></td>
+                <td rowspan="3"><strong>Initial<br>Grade</strong></td>
+                <td rowspan="3"><strong>Quarterly<br>Grade</strong></td>
             </tr>
 
             {{-- ROW 3: Assessment Numbers --}}
@@ -85,9 +85,6 @@
         </thead>
 
         <tbody>
-            {{-- @dump($groupedAssessments->toArray()) --}}
-
-            {{-- TODO:  --}}
             @foreach ($students as $gender => $studentByGender)
                 <tr>
                     <td class="gender-header frozen-column">{{ $gender }}</td>
@@ -95,6 +92,9 @@
                 </tr>
 
                 @foreach ($studentByGender as $student)
+                    @php
+                        $studentInitialGrade = 0;
+                    @endphp
                     <tr>
                         <td class="learner-name frozen-column">{{ $student->full_name }}</td>
 
@@ -124,9 +124,12 @@
                                 $PS_raw = round(($TS / $assessmentTotalScore) * $percentageScore, 2);
                                 $WS_raw = round($PS_raw * ($weightedScore / 100), 2);
 
+                                $studentInitialGrade += $WS_raw;
+
                                 // Formatted value for display
                                 $PS_display = number_format($PS_raw, 2);
                                 $WS_display = number_format($WS_raw, 2);
+
                             @endphp
 
                             {{-- TS = sum of student score --}}
@@ -140,8 +143,16 @@
 
                         @endforeach
 
+
+                        @php
+                            $studentInitialGrade = round($studentInitialGrade, 2);
+                            $studentInitialGrade = number_format($studentInitialGrade, 2);
+                        @endphp
+
                         {{-- Initial Grade --}}
-                        <td>-</td>
+                        <td><strong>{{ $studentInitialGrade }}</strong></td>
+
+                        {{-- TODO::transmutable table --}}
                         {{-- Quarterly Grade --}}
                         <td>-</td>
                     </tr>
