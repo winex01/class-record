@@ -16,7 +16,9 @@ use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
 use App\Models\GradeGradingComponent;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\View;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
@@ -329,18 +331,83 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
     private static function viewGrades($getOwnerRecord)
     {
-        return Action::make('grades')
-            ->icon('heroicon-o-list-bullet')
-            ->color('info')
-            ->modalHeading(fn ($record) => $record->grading_period)
-            ->modalDescription(new HtmlString(
-                '💡 Tip: To see hidden columns, drag the scrollbar or hold <kbd style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 1px 4px; border-radius: 3px; font-size: 0.6rem;">Shift</kbd> while scrolling.'
-            ))
-            ->modalContent(function ($record) use ($getOwnerRecord) {
-                return view('filament.tables.grades', compact('record', 'getOwnerRecord'));
-            })
-            ->modalWidth(Width::SevenExtraLarge)
-            ->modalFooterActions([]);
+        return
+            Action::make('grades')
+                ->icon('heroicon-o-list-bullet')
+                ->color('info')
+                ->modalHeading(fn ($record) => $record->grading_period)
+                ->modalDescription(new HtmlString(
+                    '💡 Tip: To see hidden columns, drag the scrollbar or hold <kbd style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 1px 4px; border-radius: 3px; font-size: 0.6rem;">Shift</kbd> while scrolling.'
+                ))
+                ->form(function () use ($getOwnerRecord) {
+                    return [
+                        Select::make('student_filter')
+                                ->label('Filter by Student')
+                                ->placeholder('All Students')
+                                ->options(function () use ($getOwnerRecord) {
+                                    return $getOwnerRecord->students()
+                                        ->orderBy('last_name')
+                                        ->orderBy('first_name')
+                                        ->get()
+                                        ->pluck('full_name', 'id')
+                                        ->toArray();
+                                })
+                                ->searchable()
+                                ->native(false)
+                                ->live()
+                                ->multiple()
+                                ->extraAttributes([
+                                    'style' => 'position: relative; z-index: 50;',
+                                ]),
+
+                            View::make('filament.tables.grades')
+                                ->viewData(function ($get, $record) use ($getOwnerRecord) {
+                                    // Get the selected student filter
+                                    $studentFilter = $get('student_filter');
+
+                                    // Process data
+                                    $schoolClass = $getOwnerRecord;
+                                    $gradeGradingComponents = $record->orderedGradeGradingComponents;
+
+                                    $groupedAssessments = $record->orderedGradeGradingComponents
+                                        ->load(['gradingComponent', 'assessments'])
+                                        ->groupBy(fn($ggc) => $ggc->gradingComponent?->label)
+                                        ->map(fn($group) => $group->flatMap->assessments);
+
+                                    // Calculate total columns
+                                    $totalAssessmentColumns = $groupedAssessments->sum(fn($assessments) => $assessments->count() + 3);
+                                    $totalColumns = $totalAssessmentColumns + 2;
+
+                                    // Filter students based on selection
+                                    $studentsQuery = $schoolClass->students();
+
+                                    if (!empty($studentFilter)) {
+                                        $studentsQuery->whereIn('students.id', $studentFilter);
+                                    }
+
+                                    $students = $studentsQuery->get()->groupBy('gender');
+
+                                    $percentageScore = 100;
+
+                                    // Return all data to the view
+                                    return [
+                                        'record' => $record,
+                                        'schoolClass' => $schoolClass,
+                                        'gradeGradingComponents' => $gradeGradingComponents,
+                                        'groupedAssessments' => $groupedAssessments,
+                                        'totalAssessmentColumns' => $totalAssessmentColumns,
+                                        'totalColumns' => $totalColumns,
+                                        'students' => $students,
+                                        'percentageScore' => $percentageScore,
+                                        'studentFilter' => $studentFilter,
+                                    ];
+                                }),
+                        ];
+                    })
+                    ->modalWidth(Width::SevenExtraLarge)
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close');
+
     }
 
 }
