@@ -13,6 +13,7 @@ use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Illuminate\Support\HtmlString;
 use App\Models\GradeGradingComponent;
 use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Grid;
@@ -325,7 +326,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ->send();
                 }),
         ];
-    }
+    }s
 
     private static function viewGrades($getOwnerRecord)
     {
@@ -333,10 +334,15 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->icon('heroicon-o-list-bullet')
             ->color('info')
             ->modalHeading(fn ($record) => $record->grading_period)
+            ->modalDescription(new HtmlString(
+                '<div style="background: #dbeafe; border: 1px solid #93c5fd; border-radius: 6px; padding: 12px; color: #1e40af; font-size: 0.875rem;">
+                    <strong>💡 Tip:</strong> To see hidden columns, drag the scrollbar or hold <kbd style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">Shift</kbd> while scrolling.
+                </div>'
+            ))
             ->modalContent(function ($record) use ($getOwnerRecord) {
                 return view('filament.tables.grades', compact('record', 'getOwnerRecord'));
             })
-            ->modalWidth(Width::Full)
+            ->modalWidth(Width::SevenExtraLarge)
             ->modalFooterActions([]);
     }
 
