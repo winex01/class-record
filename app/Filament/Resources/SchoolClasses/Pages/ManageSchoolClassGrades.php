@@ -342,23 +342,23 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ->form(function () use ($getOwnerRecord) {
                     return [
                         Select::make('student_filter')
-                                ->label('Filter by Student')
-                                ->placeholder('All Students')
-                                ->options(function () use ($getOwnerRecord) {
-                                    return $getOwnerRecord->students()
-                                        ->orderBy('last_name')
-                                        ->orderBy('first_name')
-                                        ->get()
-                                        ->pluck('full_name', 'id')
-                                        ->toArray();
-                                })
-                                ->searchable()
-                                ->native(false)
-                                ->live()
-                                ->multiple()
-                                ->extraAttributes([
-                                    'style' => 'position: relative; z-index: 50;',
-                                ]),
+                            ->label('Filter by Student')
+                            ->placeholder('All Students')
+                            ->options(function () use ($getOwnerRecord) {
+                                return $getOwnerRecord->students()
+                                    ->orderBy('last_name')
+                                    ->orderBy('first_name')
+                                    ->get()
+                                    ->pluck('full_name', 'id')
+                                    ->toArray();
+                            })
+                            ->searchable()
+                            ->native(false)
+                            ->live()
+                            ->multiple()
+                            ->extraAttributes([
+                                'style' => 'position: relative; z-index: 50;',
+                            ]),
 
                             View::make('filament.tables.grades')
                                 ->viewData(function ($get, $record) use ($getOwnerRecord) {
@@ -406,7 +406,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     })
                     ->modalWidth(Width::SevenExtraLarge)
                     ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Close');
+                    ->modalCancelActionLabel('Close')
+                    ->modalAutofocus(false);
 
     }
 
