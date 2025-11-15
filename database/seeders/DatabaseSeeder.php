@@ -72,10 +72,10 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->generateAssessment($class, 1, 20, '15-30'); // Quiz
-        $this->generateAssessment($class, 2, '50-70'); // Exam
-        $this->generateAssessment($class, 3, '40-50'); // Homework
-        $this->generateAssessment($class, 4, '50-60'); // Project
-        $this->generateAssessment($class, 5, '50-80'); // oral
+        $this->generateAssessment($class, 2, 4, '50-70'); // Exam
+        $this->generateAssessment($class, 3, 4, '40-50'); // Homework
+        $this->generateAssessment($class, 4, 4, '50-60'); // Project
+        $this->generateAssessment($class, 5, 4, '50-80'); // oral
 
     }
 
