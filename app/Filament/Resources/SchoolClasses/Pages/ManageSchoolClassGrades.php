@@ -234,8 +234,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ])
-            ->recordAction('grades');
+            ]);
     }
 
     protected function getHeaderActions(): array
@@ -335,9 +334,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->color('info')
             ->modalHeading(fn ($record) => $record->grading_period)
             ->modalDescription(new HtmlString(
-                '<div style="background: #dbeafe; border: 1px solid #93c5fd; border-radius: 6px; padding: 12px; color: #1e40af; font-size: 0.875rem;">
-                    <strong>💡 Tip:</strong> To see hidden columns, drag the scrollbar or hold <kbd style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">Shift</kbd> while scrolling.
-                </div>'
+                '💡 Tip: To see hidden columns, drag the scrollbar or hold <kbd style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 1px 4px; border-radius: 3px; font-size: 0.6rem;">Shift</kbd> while scrolling.'
             ))
             ->modalContent(function ($record) use ($getOwnerRecord) {
                 return view('filament.tables.grades', compact('record', 'getOwnerRecord'));
