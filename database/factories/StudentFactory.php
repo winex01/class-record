@@ -29,6 +29,11 @@ class StudentFactory extends Factory
         ];
     }
 
+    public function gender($gender)
+    {
+        return $this->state(fn () => ['gender' => $gender]);
+    }
+
     /**
      * Allow overriding user_id when needed.
      */

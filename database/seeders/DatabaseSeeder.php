@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Enums\Gender;
 use App\Models\Student;
 use App\Models\SchoolClass;
 use Faker\Factory as Faker;
@@ -35,11 +36,8 @@ class DatabaseSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        // create 10 students for user 1
-        Student::factory()
-            ->count(10)
-            ->forUser(1)
-            ->create();
+        Student::factory()->count(25)->gender(Gender::MALE->value)->create();
+        Student::factory()->count(25)->gender(Gender::FEMALE->value)->create();
 
         // create a class
         SchoolClass::factory()->count(1)->create();
@@ -73,22 +71,23 @@ class DatabaseSeeder extends Seeder
             $attendance->students()->attach($attachData);
         }
 
-        $this->generateAssessment($class, 1, 20); // Quiz
-        $this->generateAssessment($class, 2, 4); // Exam
-        $this->generateAssessment($class, 3, 4); // Homework
-        $this->generateAssessment($class, 4, 4); // Project
-        $this->generateAssessment($class, 5, 4); // oral
+        $this->generateAssessment($class, 1, 20, '15-30'); // Quiz
+        $this->generateAssessment($class, 2, '50-70'); // Exam
+        $this->generateAssessment($class, 3, '40-50'); // Homework
+        $this->generateAssessment($class, 4, '50-60'); // Project
+        $this->generateAssessment($class, 5, '50-80'); // oral
 
     }
 
-    private function generateAssessment(SchoolClass $class, $assessmentTypeId, $count = 5)
+    private function generateAssessment(SchoolClass $class, $assessmentTypeId, $count = 5, $maxScoreRange = '15-100')
     {
         // create assessments
         for ($i = 1; $i <= $count; $i++) {
             $date = Carbon::today()->subDays($i);
 
-            // random max_score between 15–100 (multiples of 5)
-            $maxScore = collect(range(15, 100, 5))->random();
+            $maxScoreRangeArray = explode('-', $maxScoreRange);
+
+            $maxScore = collect(range($maxScoreRangeArray[0], $maxScoreRangeArray[1], 5))->random();
 
             // create assessment
             $assessment = $class->assessments()->create([
@@ -101,9 +100,10 @@ class DatabaseSeeder extends Seeder
 
             // attach students with random scores ≤ max_score
             $pivotData = $class->students->mapWithKeys(function ($student) use ($assessment) {
+                $maxScore = $assessment->max_score;
                 return [
                     $student->id => [
-                        'score' => rand(0, $assessment->max_score),
+                        'score' => collect(range(($maxScore - 15), $maxScore, 1))->random(),
                     ],
                 ];
             });
