@@ -62,7 +62,7 @@
                     @php $totalScore = 0; @endphp
                     @foreach($assessments as $item)
                         @php $totalScore += $item->max_score; @endphp
-                        <td title="{{ $item->name }}">{{ $item->max_score }}</td>
+                        <td title="{{ $item->name }} Max Score">{{ $item->max_score }}</td>
                     @endforeach
 
                     @php
@@ -71,11 +71,12 @@
                         $firstAssessment = $assessments->first();
                         $gradeGradingComponent = $firstAssessment->gradeGradingComponents->first();
                         $weightedScorePercentageLabel = $gradeGradingComponent->gradingComponent->weighted_score_percentage_label ?? null;
+                        $componentLabel = $gradeGradingComponent->gradingComponent->name;
                     @endphp
 
-                    <td title="Total Score"><strong>{{ $totalScore }}</strong></td>
-                    <td title="Percentage Score"><strong>{{ $percentageScore }}</strong></td>
-                    <td title="Weighted Score">
+                    <td title="{{ $componentLabel }} Total Score"><strong>{{ $totalScore }}</strong></td>
+                    <td title="{{ $componentLabel }} Percentage Score"><strong>{{ $percentageScore }}</strong></td>
+                    <td title="{{ $componentLabel }} Weighted Score">
                         <strong>{{ $weightedScorePercentageLabel ?? '-' }}</strong>
                     </td>
 
@@ -105,6 +106,8 @@
                                 $firstAssessment = $assessments->first();
                                 $gradeGradingComponent = $firstAssessment->gradeGradingComponents->first();
                                 $weightedScore = $gradeGradingComponent->gradingComponent->weighted_score;
+
+                                $componentLabel = $gradeGradingComponent->gradingComponent->name;
                             @endphp
                             @foreach($assessments as $assessment)
                                 @php
@@ -115,7 +118,7 @@
                                     $TS += $score ?? 0;
                                 @endphp
 
-                                <td title="{{ $assessment->name }}">{{ $score }}</td>
+                                <td title="{{ $assessment->name }} Raw Score">{{ $score }}</td>
                             @endforeach
 
                             @php
@@ -132,13 +135,13 @@
                             @endphp
 
                             {{-- TS = sum of student score --}}
-                            <td title="Total Score">{{ $TS }}</td>
+                            <td title="{{ $componentLabel }} Total Score">{{ $TS }}</td>
 
                             {{-- PS = studentTotalScore / highestScore x PS --}}
-                            <td title="Percentage Score"><strong>{{ $PS_display }}</strong></td>
+                            <td title="{{ $componentLabel }} Percentage Score"><strong>{{ $PS_display }}</strong></td>
 
                             {{-- WS = PS * WS% (convert to decimal) --}}
-                            <td title="Weighted Score"><strong>{{ $WS_display }}</strong></td>
+                            <td title="{{ $componentLabel }} Weighted Score"><strong>{{ $WS_display }}</strong></td>
 
                         @endforeach
 
