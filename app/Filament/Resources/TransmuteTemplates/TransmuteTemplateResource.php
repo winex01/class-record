@@ -39,8 +39,14 @@ class TransmuteTemplateResource extends Resource
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->unique()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    // unique combine tenant/user_id and name column
+                    ->unique(
+                        table: 'transmute_templates',
+                        modifyRuleUsing: function ($rule) {
+                            return $rule->where('user_id', auth()->id());
+                        }
+                    )
             ]);
     }
 
