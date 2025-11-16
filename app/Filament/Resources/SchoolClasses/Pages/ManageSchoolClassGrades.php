@@ -358,6 +358,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->step(0.01)
                     ->placeholder('e.g., 75.00')
                     ->helperText('Converted grade')
+                    ->unique()
                     ->columnSpan(1),
             ]),
         ];

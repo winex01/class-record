@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
 
 
         $this->testData();
+        $this->call(TransmuteTemplatesTableSeeder::class);
+        $this->call(TransmuteTemplateRangesTableSeeder::class);
     }
 
     public function testData()

@@ -59,7 +59,6 @@ class TransmuteTemplateResource extends Resource
                 //
             ])
             ->recordActions([
-                // TODO:: add seeder for deped transmutable table as default
                 static::createRangesAction(),
                 EditAction::make()->modalWidth(Width::Large),
                 DeleteAction::make(),

@@ -29,7 +29,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make()
+            'All' => Tab::make()
                 ->badge(fn () =>
                     $this->getOwnerRecord()->{static::$relationship}()->count()
                 ),
