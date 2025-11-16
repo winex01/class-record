@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TransmuteTemplates;
 
+use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -10,11 +11,7 @@ use Filament\Resources\Resource;
 use App\Models\TransmuteTemplate;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms\Components\Repeater;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\TransmuteTemplates\Pages\ManageTransmuteTemplates;
 
@@ -48,9 +45,7 @@ class TransmuteTemplateResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
-
+                Column::text('name'),
             ])
             ->filters([
                 //

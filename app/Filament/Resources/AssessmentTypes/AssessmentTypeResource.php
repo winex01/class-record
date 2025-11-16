@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AssessmentTypes;
 
+use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use App\Models\AssessmentType;
@@ -10,7 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\AssessmentTypes\Pages\ManageAssessmentTypes;
 
@@ -51,8 +51,7 @@ class AssessmentTypeResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
+                Column::text('name'),
             ])
             ->filters([
                 //
