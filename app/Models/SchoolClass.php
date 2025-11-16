@@ -47,4 +47,10 @@ class SchoolClass extends Model
         return $this->hasMany(GradingComponent::class)
             ->orderBy('sort', 'asc');
     }
+
+    public function gradeTransmutations()
+    {
+        return $this->hasMany(GradeTransmutation::class)
+            ->orderBy('initial_max', 'desc');
+    }
 }

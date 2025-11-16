@@ -14,16 +14,19 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
+use Filament\Support\Icons\Heroicon;
 use App\Models\GradeGradingComponent;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\View;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -34,7 +37,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
     protected static string $relationship = 'grades';
 
-    public $defaultAction = 'manageComponents';
+    public $defaultAction = 'settingsAction';
 
     public function mount(int|string $record): void
     {
@@ -227,6 +230,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->actionsAlignment('start')
             ->headerActions([
                 CreateAction::make()->modalWidth(Width::TwoExtraLarge),
+                // TODO:: Summary action modal
             ])
             ->recordActions([
                 static::viewGrades($this->getOwnerRecord()),
@@ -242,12 +246,12 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('manageComponents')
-                ->model(fn () => $this->getOwnerRecord()) // bind to current SchoolClass model
-                ->label('Manage Components')
-                ->icon('heroicon-o-adjustments-horizontal')
+            Action::make('settingsAction')
+                ->label('Settings')
+                ->model(fn () => $this->getOwnerRecord()) // bind to owner SchoolClass model
+                ->icon(Heroicon::Cog8Tooth)
                 ->color('gray')
-                ->modalWidth(Width::Large)
+                ->modalWidth(Width::ExtraLarge)
                 ->fillForm(fn ($record) => [
                     'gradingComponents' => $record->gradingComponents()
                         ->get(['id', 'name', 'weighted_score'])
@@ -259,12 +263,95 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ->toArray(),
                 ])
                 ->form([
+                    Tabs::make('Tabs')
+                        ->tabs([
+                            static::formTabGradingComponents($this->getOwnerRecord()),
+                            static::formTabTransmutationTable($this->getOwnerRecord()),
+                        ])
+                ])
+                ->action(function ($data, $record) {
+                    // No need to handle saving manually — Filament will sync the relationship automatically
+                    Notification::make()
+                        ->title('Grading components saved successfully!')
+                        ->success()
+                        ->send();
+                }),
+        ];
+    }
+
+    private static function formTabTransmutationTable($ownerRecord)
+    {
+        return Tab::make('Transmutation Table')
+                ->icon(Heroicon::Scale)
+                ->schema([
+                    Repeater::make('gradeTransmutations')
+                    ->relationship('gradeTransmutations')
+                    ->hiddenLabel()
+                    ->collapsible()
+                    ->minItems(1)
+                    ->collapsed($ownerRecord?->gradingComponents()->exists())
+                    ->afterStateHydrated(function ($component, $state) {
+                        // When editing: if no data is loaded, create 1 empty row.
+                        if (blank($state)) {
+                            $component->state([[]]);
+                        }
+                    })
+                    ->itemLabel(fn (array $state): ?string =>
+                        isset($state['initial_min'], $state['initial_max'], $state['transmuted_grade'])
+                            ? "{$state['initial_min']}-{$state['initial_max']} → {$state['transmuted_grade']}"
+                            : 'New Transmutation Range'
+                    )
+                    ->schema([
+                        Grid::make(3)
+                        ->schema([
+                            TextInput::make('initial_min')
+                                ->label('Min Score')
+                                ->numeric()
+                                ->required()
+                                ->minValue(0)
+                                ->maxValue(100)
+                                ->step(0.01)
+                                ->placeholder('e.g., 0.00')
+                                ->helperText('Minimum score range')
+                                ->columnSpan(1),
+
+                            TextInput::make('initial_max')
+                                ->label('Max Score')
+                                ->numeric()
+                                ->required()
+                                ->minValue(0)
+                                ->maxValue(100)
+                                ->step(0.01)
+                                ->placeholder('e.g., 59.99')
+                                ->helperText('Maximum score range')
+                                ->columnSpan(1),
+
+                            TextInput::make('transmuted_grade')
+                                ->label('Transmuted Grade')
+                                ->numeric()
+                                ->required()
+                                ->minValue(0)
+                                ->maxValue(100)
+                                ->step(0.01)
+                                ->placeholder('e.g., 75.00')
+                                ->helperText('Converted grade')
+                                ->columnSpan(1),
+                        ]),
+                    ])
+                ]);
+    }
+
+    private static function formTabGradingComponents($ownerRecord)
+    {
+        return Tab::make('Grading Components')
+                ->icon(Heroicon::AdjustmentsHorizontal)
+                ->schema([
                     Repeater::make('gradingComponents')
                         ->relationship('gradingComponents') // repeater tied to hasMany relation
                         ->hiddenLabel()
                         ->collapsible()
                         ->orderable()
-                        ->collapsed(fn () => $this->getOwnerRecord()?->gradingComponents()->exists())
+                        ->collapsed($ownerRecord?->gradingComponents()->exists())
                         ->minItems(1)
                         ->afterStateHydrated(function ($component, $state) {
                             // When editing: if no data is loaded, create 1 empty row.
@@ -318,15 +405,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ->deleteAction(
                             fn (Action $action) => $action->requiresConfirmation()
                         ),
-                ])
-                ->action(function ($data, $record) {
-                    // No need to handle saving manually — Filament will sync the relationship automatically
-                    Notification::make()
-                        ->title('Grading components saved successfully!')
-                        ->success()
-                        ->send();
-                }),
-        ];
+                    ]);
     }
 
     private static function viewGrades($getOwnerRecord)
