@@ -24,7 +24,7 @@ return new class extends Migration
             $table->decimal('initial_max', 5, 2);
 
             // Transmuted grade
-            $table->unsignedTinyInteger('transmuted_grade');
+            $table->decimal('transmuted_grade', 5, 2);
 
             $table->timestamps();
 

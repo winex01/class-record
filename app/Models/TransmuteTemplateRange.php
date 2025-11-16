@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 
-class TransmutationRange extends Model
+class TransmuteTemplateRange extends Model
 {
     use BelongsToUser;
 

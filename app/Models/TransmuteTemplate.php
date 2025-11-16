@@ -11,8 +11,9 @@ class TransmuteTemplate extends Model
 
     protected $guarded = [];
 
-    public function transmutationRanges()
+    public function transmuteTemplateRanges()
     {
-        return $this->hasMany(TransmutationRange::class);
+        return $this->hasMany(TransmuteTemplateRange::class)
+            ->orderBy('transmuted_grade', 'desc');
     }
 }
