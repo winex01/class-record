@@ -58,7 +58,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
     {
         return $table
             ->recordTitleAttribute('full_name')
-            ->defaultSort('full_name', 'asc')
+            ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
                 ...static::getColumns()
             ])

@@ -40,7 +40,7 @@ class TakeFeeCollectionRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('full_name')
-            ->defaultSort('full_name', 'asc')
+            ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
                 ...ManageSchoolClassStudents::getColumns(),
 

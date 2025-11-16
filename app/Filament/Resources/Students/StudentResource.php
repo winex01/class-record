@@ -121,10 +121,8 @@ class StudentResource extends Resource
             Column::text('full_name')
                 ->tooltip(fn ($record) => $record->complete_name)
                 ->sortable(query: function ($query, $direction) {
-                    $query->orderBy('last_name', $direction)
-                        ->orderBy('first_name', $direction)
-                        ->orderBy('middle_name', $direction)
-                        ->orderBy('suffix_name', $direction);
+                    $callback = static::defaultNameSort($direction);
+                    $callback($query);
                 })
                 ->searchable(['last_name', 'first_name', 'middle_name', 'suffix_name']),
 
@@ -133,6 +131,16 @@ class StudentResource extends Resource
             Column::text('email'),
             Column::text('contact_number')->label('Contact'),
         ];
+    }
+
+    public static function defaultNameSort($direction = 'asc')
+    {
+        return function ($query) use ($direction) {
+            $query->orderBy('last_name', $direction)
+                ->orderBy('first_name', $direction)
+                ->orderBy('middle_name', $direction)
+                ->orderBy('suffix_name', $direction);
+        };
     }
 
     public static function getPages(): array
