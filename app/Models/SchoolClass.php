@@ -51,6 +51,6 @@ class SchoolClass extends Model
     public function gradeTransmutations()
     {
         return $this->hasMany(GradeTransmutation::class)
-            ->orderBy('initial_max', 'desc');
+            ->orderBy('transmuted_grade', 'desc');
     }
 }
