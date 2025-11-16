@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TransmuteTemplates\Pages;
 
+use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
@@ -15,7 +16,11 @@ class ManageTransmuteTemplates extends ManageRecords
     {
         return [
             CreateAction::make()
-                ->modalWidth(Width::Large)
+            ->modalWidth(Width::Large)
+            ->registerModalActions([
+                static::$resource::createRangesAction()
+            ])
+            ->after(fn () => $this->mountAction('createRanges'))
         ];
     }
 }

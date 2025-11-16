@@ -302,43 +302,65 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             : 'New Transmutation Range'
                     )
                     ->schema([
-                        Grid::make(3)
-                        ->schema([
-                            TextInput::make('initial_min')
-                                ->label('Min Score')
-                                ->numeric()
-                                ->required()
-                                ->minValue(0)
-                                ->maxValue(100)
-                                ->step(0.01)
-                                ->placeholder('e.g., 0.00')
-                                ->helperText('Minimum score range')
-                                ->columnSpan(1),
-
-                            TextInput::make('initial_max')
-                                ->label('Max Score')
-                                ->numeric()
-                                ->required()
-                                ->minValue(0)
-                                ->maxValue(100)
-                                ->step(0.01)
-                                ->placeholder('e.g., 59.99')
-                                ->helperText('Maximum score range')
-                                ->columnSpan(1),
-
-                            TextInput::make('transmuted_grade')
-                                ->label('Transmuted Grade')
-                                ->numeric()
-                                ->required()
-                                ->minValue(0)
-                                ->maxValue(100)
-                                ->step(0.01)
-                                ->placeholder('e.g., 75.00')
-                                ->helperText('Converted grade')
-                                ->columnSpan(1),
-                        ]),
+                        ...static::rangesField(),
                     ])
                 ]);
+    }
+
+    public static function rangesField()
+    {
+        return [
+            Grid::make(3)
+            ->schema([
+                TextInput::make('initial_min')
+                    ->numeric()
+                    ->required()
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->step(0.01)
+                    ->placeholder('e.g., 0.00')
+                    ->helperText('Minimum score range')
+                    ->rules([
+                        fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
+                            $maxValue = $get('initial_max');
+                            if ($maxValue !== null && $value > $maxValue) {
+                                $fail('Minimum must be less than or equal to maximum.');
+                            }
+                        }
+                    ])
+                    ->live(onBlur: true)
+                    ->columnSpan(1),
+
+                TextInput::make('initial_max')
+                    ->numeric()
+                    ->required()
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->step(0.01)
+                    ->placeholder('e.g., 59.99')
+                    ->helperText('Maximum score range')
+                    ->rules([
+                        fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
+                            $minValue = $get('initial_min');
+                            if ($minValue !== null && $value < $minValue) {
+                                $fail('Maximum must be greater than or equal to minimum.');
+                            }
+                        }
+                    ])
+                    ->live(onBlur: true)
+                    ->columnSpan(1),
+
+                TextInput::make('transmuted_grade')
+                    ->numeric()
+                    ->required()
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->step(0.01)
+                    ->placeholder('e.g., 75.00')
+                    ->helperText('Converted grade')
+                    ->columnSpan(1),
+            ]),
+        ];
     }
 
     private static function formTabGradingComponents($ownerRecord)

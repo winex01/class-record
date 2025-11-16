@@ -2,18 +2,21 @@
 
 namespace App\Filament\Resources\TransmuteTemplates;
 
+use App\Services\Icon;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use App\Models\TransmuteTemplate;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 use App\Filament\Resources\TransmuteTemplates\Pages\ManageTransmuteTemplates;
+use App\Filament\Resources\TransmuteTemplates\RelationManagers\TransmuteTemplateRangesRelationManager;
 
 class TransmuteTemplateResource extends Resource
 {
@@ -27,7 +30,7 @@ class TransmuteTemplateResource extends Resource
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
-        return \App\Services\Icon::transmutations();
+        return Icon::transmutations();
     }
 
     public static function form(Schema $schema): Schema
@@ -36,6 +39,7 @@ class TransmuteTemplateResource extends Resource
             ->components([
                 TextInput::make('name')
                     ->required()
+                    ->unique()
                     ->maxLength(255),
             ]);
     }
@@ -46,19 +50,34 @@ class TransmuteTemplateResource extends Resource
             ->recordTitleAttribute('name')
             ->columns([
                 Column::text('name'),
+                TextColumn::make('transmute_template_ranges_count')
+                    ->label('Ranges Count')
+                    ->badge()
+                    ->counts('transmuteTemplateRanges'),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                // TODO:: create relation manager guava
-                ViewAction::make()->modalWidth(Width::Large),
+                static::createRangesAction(),
                 EditAction::make()->modalWidth(Width::Large),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordAction('createRanges');
+    }
+
+    public static function createRangesAction()
+    {
+        return RelationManagerAction::make('createRanges')
+            ->label('Table Ranges')
+            ->color('info')
+            ->icon('heroicon-o-plus')
+            ->slideOver()
+            ->modalHeading(fn ($record) => $record->name)
+            ->relationManager(TransmuteTemplateRangesRelationManager::make());
     }
 
     public static function getPages(): array
