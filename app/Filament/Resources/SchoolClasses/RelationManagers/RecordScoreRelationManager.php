@@ -44,6 +44,7 @@ class RecordScoreRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
+        // TODO:: column sort/order cause error
         return $table
             ->recordTitleAttribute('full_name')
             ->defaultSort('full_name', 'asc')

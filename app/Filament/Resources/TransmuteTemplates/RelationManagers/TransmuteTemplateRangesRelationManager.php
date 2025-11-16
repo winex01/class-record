@@ -27,7 +27,6 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('transmuted_grade')
             ->columns([
                 Column::text('initial_min'),
                 Column::text('initial_max'),

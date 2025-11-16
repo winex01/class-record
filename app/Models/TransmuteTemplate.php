@@ -13,7 +13,6 @@ class TransmuteTemplate extends Model
 
     public function transmuteTemplateRanges()
     {
-        return $this->hasMany(TransmuteTemplateRange::class)
-            ->orderBy('transmuted_grade', 'desc');
+        return $this->hasMany(TransmuteTemplateRange::class);
     }
 }
