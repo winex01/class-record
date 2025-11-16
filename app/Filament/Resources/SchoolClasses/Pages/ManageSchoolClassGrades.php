@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Grade;
+use App\Services\Icon;
 use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -14,7 +15,6 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
-use Filament\Support\Icons\Heroicon;
 use App\Models\GradeGradingComponent;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -249,7 +249,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             Action::make('settingsAction')
                 ->label('Settings')
                 ->model(fn () => $this->getOwnerRecord()) // bind to owner SchoolClass model
-                ->icon(Heroicon::Cog8Tooth)
+                ->icon(Icon::settings())
                 ->color('gray')
                 ->modalWidth(Width::ExtraLarge)
                 ->fillForm(fn ($record) => [
@@ -282,7 +282,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     private static function formTabTransmutationTable($ownerRecord)
     {
         return Tab::make('Transmutation Table')
-                ->icon(Heroicon::Scale)
+                ->icon(Icon::transmutations())
                 ->schema([
                     Repeater::make('gradeTransmutations')
                     ->relationship('gradeTransmutations')
@@ -344,7 +344,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     private static function formTabGradingComponents($ownerRecord)
     {
         return Tab::make('Grading Components')
-                ->icon(Heroicon::AdjustmentsHorizontal)
+                ->icon(Icon::gradingComponents())
                 ->schema([
                     Repeater::make('gradingComponents')
                         ->relationship('gradingComponents') // repeater tied to hasMany relation

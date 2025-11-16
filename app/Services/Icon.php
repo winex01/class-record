@@ -71,6 +71,16 @@ final class Icon
         return Heroicon::ClipboardDocumentCheck;
     }
 
+    public static function settings(): Heroicon|string
+    {
+        return Heroicon::Cog8Tooth;
+    }
+
+    public static function gradingComponents(): Heroicon|string
+    {
+        return Heroicon::AdjustmentsHorizontal;
+    }
+
     public static function transmutations(): Heroicon|string
     {
         return Heroicon::Scale;
