@@ -70,4 +70,9 @@ final class Icon
     {
         return Heroicon::ClipboardDocumentCheck;
     }
+
+    public static function transmutations(): Heroicon|string
+    {
+        return Heroicon::Scale;
+    }
 }
