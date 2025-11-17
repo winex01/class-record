@@ -291,9 +291,15 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->collapsible()
                     ->minItems(1)
                     ->collapsed($ownerRecord?->gradeTransmutations()->exists())
+                    ->afterStateHydrated(function ($component, $state) {
+                        // When editing: if no data is loaded, create 1 empty row.
+                        if (blank($state)) {
+                            $component->state([[]]);
+                        }
+                    })
                     ->itemLabel(fn (array $state): ?string =>
                         isset($state['initial_min'], $state['initial_max'], $state['transmuted_grade'])
-                            ? "{$state['initial_min']}-{$state['initial_max']} → {$state['transmuted_grade']}"
+                            ? number_format((float) $state['initial_min'], 2, '.', '') . "-" . number_format((float) $state['initial_max'], 2, '.', '') . " → {$state['transmuted_grade']}"
                             : 'New Transmutation Range'
                     )
                     ->schema([
@@ -307,7 +313,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             ->modalWidth(Width::Large)
                             ->form([
                                 Select::make('template_id')
-                                    ->label('Select Transmute Template')
+                                    ->label('Select Template')
                                     ->options(TransmuteTemplate::query()->pluck('name', 'id'))
                                     ->searchable()
                                     ->preload()
@@ -364,7 +370,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             ->modalHeading('Delete all transmutation ranges?')
                             ->modalDescription('Are you sure you want to delete all transmutation ranges? This action cannot be undone.')
                             ->action(function (Repeater $component) {
-                                // Clear all items, set to one empty row to maintain minItems
+                                // Clear all items
                                 $component->state([]);
 
                                 Notification::make()
@@ -373,14 +379,16 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                     ->send();
                             })
                     ])
-                ]);
+                ]); // end schema
     }
 
     public static function rangesField()
     {
+        // TODO:: make initial_min and initial_max always 2 decimal places
         return [
             Grid::make(3)
             ->schema([
+
                 TextInput::make('initial_min')
                     ->numeric()
                     ->required()
@@ -421,14 +429,16 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                 TextInput::make('transmuted_grade')
                     ->step(0.01)
-                    ->placeholder('e.g., 99')
+                    ->placeholder('e.g., 99.00')
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(100)
                     ->required()
                     ->distinct()
                     ->columnSpan(1),
-            ]),
+
+
+            ]), // end Schema
         ];
     }
 
