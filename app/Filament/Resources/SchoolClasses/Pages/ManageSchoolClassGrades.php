@@ -346,9 +346,14 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 // Merge existing items with template data (append template items)
                                 $mergedData = array_merge($existingData, $templateData);
 
-                                // Sort by transmuted_grade
+                                // Sort by transmuted_grade - ASCENDING
+                                // usort($mergedData, function ($a, $b) {
+                                //     return ($a['transmuted_grade'] ?? '') <=> ($b['transmuted_grade'] ?? '');
+                                // });
+
+                                // Sort by transmuted_grade - DESCENDING
                                 usort($mergedData, function ($a, $b) {
-                                    return ($a['transmuted_grade'] ?? '') <=> ($b['transmuted_grade'] ?? '');
+                                    return ($b['transmuted_grade'] ?? '') <=> ($a['transmuted_grade'] ?? '');
                                 });
 
                                 // Set the combined data to the repeater
@@ -382,9 +387,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ]); // end schema
     }
 
-    public static function rangesField()
+    public static function rangesField(bool $isRepeater = true)
     {
-        // TODO:: make initial_min and initial_max always 2 decimal places
         return [
             Grid::make(3)
             ->schema([
@@ -405,7 +409,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             }
                         }
                     ])
-                    ->distinct()
+                    ->when($isRepeater, fn ($field) => $field->distinct())
+                    ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
                     ->columnSpan(1),
 
                 TextInput::make('initial_max')
@@ -424,7 +429,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             }
                         }
                     ])
-                    ->distinct()
+                    ->when($isRepeater, fn ($field) => $field->distinct())
+                    ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
                     ->columnSpan(1),
 
                 TextInput::make('transmuted_grade')
@@ -434,9 +440,9 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->minValue(0)
                     ->maxValue(100)
                     ->required()
-                    ->distinct()
+                    ->when($isRepeater, fn ($field) => $field->distinct())
+                    ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
                     ->columnSpan(1),
-
 
             ]), // end Schema
         ];

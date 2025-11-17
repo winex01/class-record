@@ -20,7 +20,7 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                ...ManageSchoolClassGrades::rangesField(),
+                ...ManageSchoolClassGrades::rangesField(false),
             ]);
     }
 
@@ -30,7 +30,8 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
             ->columns([
                 Column::text('initial_min'),
                 Column::text('initial_max'),
-                Column::text('transmuted_grade'),
+                Column::text('transmuted_grade')
+                    ->formatStateUsing(fn ($state) => $state != floor($state) ? $state : number_format($state, 0))
             ])
             ->filters([
                 //
