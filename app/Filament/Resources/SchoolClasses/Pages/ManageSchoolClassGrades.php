@@ -289,6 +289,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->relationship('gradeTransmutations')
                     ->hiddenLabel()
                     ->collapsible()
+                    ->minItems(1)
                     ->collapsed($ownerRecord?->gradeTransmutations()->exists())
                     ->itemLabel(fn (array $state): ?string =>
                         isset($state['initial_min'], $state['initial_max'], $state['transmuted_grade'])
@@ -364,7 +365,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             ->modalDescription('Are you sure you want to delete all transmutation ranges? This action cannot be undone.')
                             ->action(function (Repeater $component) {
                                 // Clear all items, set to one empty row to maintain minItems
-                                $component->state(null);
+                                $component->state([]);
 
                                 Notification::make()
                                     ->title('All items deleted')
