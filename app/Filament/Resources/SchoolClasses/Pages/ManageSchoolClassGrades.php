@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Grade;
 use App\Services\Icon;
+use App\Services\Alert;
 use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -251,7 +252,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ->model(fn () => $this->getOwnerRecord()) // bind to owner SchoolClass model
                 ->icon(Icon::settings())
                 ->color('gray')
-                ->modalWidth(Width::ExtraLarge)
+                ->modalWidth(Width::TwoExtraLarge)
                 ->fillForm(fn ($record) => [
                     'gradingComponents' => $record->gradingComponents()
                         ->get(['id', 'name', 'weighted_score'])
@@ -271,10 +272,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ])
                 ->action(function ($data, $record) {
                     // No need to handle saving manually — Filament will sync the relationship automatically
-                    Notification::make()
-                        ->title('Grading components saved successfully!')
-                        ->success()
-                        ->send();
+                    Alert::success();
                 }),
         ];
     }
@@ -289,7 +287,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->hiddenLabel()
                     ->collapsible()
                     ->minItems(1)
-                    ->collapsed($ownerRecord?->gradingComponents()->exists())
+                    ->collapsed($ownerRecord?->gradeTransmutations()->exists())
                     ->afterStateHydrated(function ($component, $state) {
                         // When editing: if no data is loaded, create 1 empty row.
                         if (blank($state)) {
@@ -304,6 +302,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->schema([
                         ...static::rangesField(),
                     ])
+                    ->addActionLabel('Add range')
                 ]);
     }
 
@@ -319,7 +318,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->maxValue(100)
                     ->step(0.01)
                     ->placeholder('e.g., 0.00')
-                    ->helperText('Minimum score range')
                     ->rules([
                         fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
                             $maxValue = $get('initial_max');
@@ -337,8 +335,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->minValue(0)
                     ->maxValue(100)
                     ->step(0.01)
-                    ->placeholder('e.g., 59.99')
-                    ->helperText('Maximum score range')
+                    ->placeholder('e.g., 99.99')
                     ->rules([
                         fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
                             $minValue = $get('initial_min');
@@ -356,8 +353,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->minValue(0)
                     ->maxValue(100)
                     ->step(0.01)
-                    ->placeholder('e.g., 75.00')
-                    ->helperText('Converted grade')
+                    ->placeholder('e.g., 99')
                     ->unique()
                     ->columnSpan(1),
             ]),
@@ -374,8 +370,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ->hiddenLabel()
                         ->collapsible()
                         ->orderable()
-                        ->collapsed($ownerRecord?->gradingComponents()->exists())
                         ->minItems(1)
+                        ->collapsed($ownerRecord?->gradingComponents()->exists())
                         ->afterStateHydrated(function ($component, $state) {
                             // When editing: if no data is loaded, create 1 empty row.
                             if (blank($state)) {
@@ -427,7 +423,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ])
                         ->deleteAction(
                             fn (Action $action) => $action->requiresConfirmation()
-                        ),
+                        )
+                        ->addActionLabel('Add grading component')
                     ]);
     }
 
