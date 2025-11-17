@@ -4,7 +4,6 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Grade;
 use App\Services\Icon;
-use App\Services\Alert;
 use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -12,6 +11,7 @@ use Filament\Schemas\Schema;
 use App\Models\GradingComponent;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use App\Models\TransmuteTemplate;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -272,7 +272,10 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ])
                 ->action(function ($data, $record) {
                     // No need to handle saving manually — Filament will sync the relationship automatically
-                    Alert::success();
+                    Notification::make()
+                        ->title('Saved')
+                        ->success()
+                        ->send();
                 }),
         ];
     }
@@ -286,14 +289,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->relationship('gradeTransmutations')
                     ->hiddenLabel()
                     ->collapsible()
-                    ->minItems(1)
                     ->collapsed($ownerRecord?->gradeTransmutations()->exists())
-                    ->afterStateHydrated(function ($component, $state) {
-                        // When editing: if no data is loaded, create 1 empty row.
-                        if (blank($state)) {
-                            $component->state([[]]);
-                        }
-                    })
                     ->itemLabel(fn (array $state): ?string =>
                         isset($state['initial_min'], $state['initial_max'], $state['transmuted_grade'])
                             ? "{$state['initial_min']}-{$state['initial_max']} → {$state['transmuted_grade']}"
@@ -303,6 +299,79 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ...static::rangesField(),
                     ])
                     ->addActionLabel('Add range')
+                    ->aboveContent([
+                        Action::make('copyTransmuteTemplate')
+                            ->label('Copy from Template')
+                            ->icon('heroicon-o-document-duplicate')
+                            ->modalWidth(Width::Large)
+                            ->form([
+                                Select::make('template_id')
+                                    ->label('Select Transmute Template')
+                                    ->options(TransmuteTemplate::query()->pluck('name', 'id'))
+                                    ->searchable()
+                                    ->preload()
+                                    ->required()
+                                    ->placeholder('Choose a template')
+                            ])
+                            ->action(function (array $data, Repeater $component) {
+                                $template = TransmuteTemplate::find($data['template_id']);
+
+                                if (!$template) {
+                                    Notification::make()
+                                        ->title('Template not found')
+                                        ->danger()
+                                        ->send();
+                                    return;
+                                }
+
+                                // Get existing repeater items
+                                $existingData = $component->getState() ?? [];
+
+                                // Build the transmutation data from template
+                                $templateData = $template->transmuteTemplateRanges->map(function ($range) {
+                                    return [
+                                        'initial_min' => $range->initial_min,
+                                        'initial_max' => $range->initial_max,
+                                        'transmuted_grade' => $range->transmuted_grade,
+                                    ];
+                                })->toArray();
+
+                                // Merge existing items with template data (append template items)
+                                $mergedData = array_merge($existingData, $templateData);
+
+                                // Sort by transmuted_grade
+                                usort($mergedData, function ($a, $b) {
+                                    return ($a['transmuted_grade'] ?? '') <=> ($b['transmuted_grade'] ?? '');
+                                });
+
+                                // Set the combined data to the repeater
+                                $component->state($mergedData);
+
+                                Notification::make()
+                                    ->title('Template items added successfully')
+                                    ->body('Please review for any duplicates before saving.')
+                                    ->success()
+                                    ->send();
+                            })
+                            ->modalSubmitActionLabel('Copy & Paste'),
+
+                        Action::make('deleteAll')
+                            ->label('Delete All')
+                            ->icon('heroicon-o-trash')
+                            ->color('danger')
+                            ->requiresConfirmation()
+                            ->modalHeading('Delete all transmutation ranges?')
+                            ->modalDescription('Are you sure you want to delete all transmutation ranges? This action cannot be undone.')
+                            ->action(function (Repeater $component) {
+                                // Clear all items, set to one empty row to maintain minItems
+                                $component->state(null);
+
+                                Notification::make()
+                                    ->title('All items deleted')
+                                    ->success()
+                                    ->send();
+                            })
+                    ])
                 ]);
     }
 
@@ -318,6 +387,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->maxValue(100)
                     ->step(0.01)
                     ->placeholder('e.g., 0.00')
+                    ->live(onBlur: true)
                     ->rules([
                         fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
                             $maxValue = $get('initial_max');
@@ -326,7 +396,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             }
                         }
                     ])
-                    ->live(onBlur: true)
+                    ->distinct()
                     ->columnSpan(1),
 
                 TextInput::make('initial_max')
@@ -336,6 +406,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->maxValue(100)
                     ->step(0.01)
                     ->placeholder('e.g., 99.99')
+                    ->live(onBlur: true)
                     ->rules([
                         fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
                             $minValue = $get('initial_min');
@@ -344,17 +415,17 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             }
                         }
                     ])
-                    ->live(onBlur: true)
+                    ->distinct()
                     ->columnSpan(1),
 
                 TextInput::make('transmuted_grade')
-                    ->numeric()
-                    ->required()
-                    ->minValue(0)
-                    ->maxValue(100)
                     ->step(0.01)
                     ->placeholder('e.g., 99')
-                    ->unique()
+                    ->numeric()
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->required()
+                    ->distinct()
                     ->columnSpan(1),
             ]),
         ];
