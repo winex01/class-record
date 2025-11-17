@@ -291,12 +291,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->collapsible()
                     ->minItems(1)
                     ->collapsed($ownerRecord?->gradeTransmutations()->exists())
-                    ->afterStateHydrated(function ($component, $state) {
-                        // When editing: if no data is loaded, create 1 empty row.
-                        if (blank($state)) {
-                            $component->state([[]]);
-                        }
-                    })
                     ->itemLabel(fn (array $state): ?string =>
                         isset($state['initial_min'], $state['initial_max'], $state['transmuted_grade'])
                             ? number_format((float) $state['initial_min'], 2, '.', '') . "-" . number_format((float) $state['initial_max'], 2, '.', '') . " → {$state['transmuted_grade']}"
