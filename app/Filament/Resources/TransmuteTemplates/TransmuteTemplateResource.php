@@ -12,7 +12,6 @@ use App\Models\TransmuteTemplate;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 use App\Filament\Resources\TransmuteTemplates\Pages\ManageTransmuteTemplates;
@@ -56,10 +55,6 @@ class TransmuteTemplateResource extends Resource
             ->recordTitleAttribute('name')
             ->columns([
                 Column::text('name'),
-                TextColumn::make('transmute_template_ranges_count')
-                    ->label('Ranges Count')
-                    ->badge()
-                    ->counts('transmuteTemplateRanges'),
             ])
             ->filters([
                 //
