@@ -11,7 +11,8 @@
         "filament/filament": "^4.0",
         "guava/calendar": "^2.0",
         "guava/filament-modal-relation-managers": "^2.0",
-        "laravel/framework": "^12.0"
+        "laravel/framework": "^12.0",
+        "laravel/tinker": "^2.10"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
