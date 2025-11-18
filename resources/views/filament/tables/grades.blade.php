@@ -1,3 +1,6 @@
+@php
+    use App\Services\GradeCalculation;
+@endphp
 {{-- All variables are now passed from the action --}}
 <div style="overflow-x: auto; width: 100%;">
     <table class="grades-table">
@@ -127,7 +130,11 @@
                         @endphp
 
                         <td title="Initial Grade"><strong>{{ $studentInitialGrade }}</strong></td>
-                        <td title="Transmuted Grade"></td>
+                        <td title="Transmuted Grade">
+                            <strong>
+                                {{ GradeCalculation::getTransmutedGrade($schoolClass, $studentInitialGrade) }}
+                            </strong>
+                        </td>
                     </tr>
                 @endforeach
             @endforeach

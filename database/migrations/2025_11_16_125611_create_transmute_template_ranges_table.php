@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('initial_max', 5, 2);
 
             // Transmuted grade
-            $table->decimal('transmuted_grade', 5, 2);
+            $table->string('transmuted_grade', 10)->nullable();
 
             $table->timestamps();
 
