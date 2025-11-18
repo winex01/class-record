@@ -340,14 +340,14 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 // Merge existing items with template data (append template items)
                                 $mergedData = array_merge($existingData, $templateData);
 
-                                // Sort by transmuted_grade - ASCENDING
+                                // Sort by initial_max - ASCENDING
                                 // usort($mergedData, function ($a, $b) {
-                                //     return ($a['transmuted_grade'] ?? '') <=> ($b['transmuted_grade'] ?? '');
+                                //     return ($a['initial_max'] ?? '') <=> ($b['initial_max'] ?? '');
                                 // });
 
-                                // Sort by transmuted_grade - DESCENDING
+                                // Sort by initial_max - DESCENDING
                                 usort($mergedData, function ($a, $b) {
-                                    return ($b['transmuted_grade'] ?? '') <=> ($a['transmuted_grade'] ?? '');
+                                    return ($b['initial_max'] ?? '') <=> ($a['initial_max'] ?? '');
                                 });
 
                                 // Set the combined data to the repeater
