@@ -2,16 +2,28 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use App\Models\Lesson;
+use App\Services\Field;
 use Filament\Tables\Table;
 use Relaticle\Flowforge\Board;
 use Relaticle\Flowforge\Column;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Support\Enums\Width;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\SelectFilter;
 use Relaticle\Flowforge\Concerns\BaseBoard;
 use Relaticle\Flowforge\Contracts\HasBoard;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-
 
 class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
 {
@@ -19,6 +31,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
     protected string $view = 'flowforge::filament.pages.board-page';
     protected static string $resource = SchoolClassResource::class;
     protected static string $relationship = 'lessons';
+    protected static ?string $model = Lesson::class;
 
     public function board(Board $board): Board
     {
@@ -28,9 +41,9 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
             ->columnIdentifier('status')
             ->positionIdentifier('position')
             ->columns([
-                Column::make('todo')->label('To Do')->color('gray'),
+                Column::make('topics')->color('gray'),
                 Column::make('in_progress')->label('In Progress')->color('blue'),
-                Column::make('completed')->label('Completed')->color('green'),
+                Column::make('Completed')->color('green'),
             ])
             ->filters([
                 // NOTE:: this board is just a hacky way solution i did because there is no ManageRelatedRecords example
@@ -39,11 +52,80 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 // manually add the logic in ->query() using $this->tableSearch.
                 SelectFilter::make('status')
                 ->options([
-                    'todo' => 'To Do',
+                    'topics' => 'Topics',
                     'in_progress' => 'In Progress',
                     'completed' => 'Completed',
                 ]),
             ])
-            ->searchable(['title']);
+            ->searchable(['title'])
+            ->columnActions([
+                CreateAction::make()
+                    ->hiddenLabel()
+                    ->button()
+                    ->icon('heroicon-o-plus')
+                    ->iconButton()
+                    ->modalWidth(Width::Large)
+                    ->form($this->getForm())
+                    ->model(static::$model)
+
+            ])
+            ->cardActions([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
+            ]);
+    }
+
+    protected function getForm()
+    {
+        return [
+            Hidden::make('school_class_id')->default($this->getOwnerRecord()->id),
+
+            Hidden::make('status')
+            ->default(function ($livewire) {
+                // Access the column from mountedActions
+                if (!empty($livewire->mountedActions)) {
+                    $firstAction = $livewire->mountedActions[0];
+                    if (isset($firstAction['arguments']['column'])) {
+                        $column = $firstAction['arguments']['column'];
+
+                        $statusMap = [
+                            'topics' => 'topics',
+                            'in_progress' => 'in_progress',
+                            'Completed' => 'completed'
+                        ];
+
+                        return $statusMap[$column] ?? 'topics';
+                    }
+                }
+
+                return 'topics'; // fallback
+            }),
+
+            TextInput::make('title')
+                ->required()
+                ->maxLength(255),
+
+            Textarea::make('description')
+                ->nullable()
+                ->rows(3)
+                ->columnSpanFull(),
+
+            Field::tags('tags'),
+
+            Field::date('completion_date'),
+
+            Repeater::make('checklist')
+                ->nullable()
+                ->schema([
+                    TextInput::make('item')
+                        ->required()
+                        ->placeholder('Enter checklist item'),
+                    Checkbox::make('completed')
+                        ->default(false),
+                ])
+                ->columns(2)
+                ->itemLabel(fn (array $state): ?string => $state['item'] ?? null),
+        ];
     }
 }

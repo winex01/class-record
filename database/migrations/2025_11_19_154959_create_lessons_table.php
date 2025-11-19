@@ -19,6 +19,10 @@ return new class extends Migration
             $table->foreignIdFor(SchoolClass::class)->constrained()->cascadeOnDelete();
 
             $table->string('title'); // Card title
+            $table->text('description')->nullable();
+            $table->json('tags')->nullable();
+            $table->date('completion_date')->nullable();
+            $table->json('checklist')->nullable();
             $table->string('status'); // Column identifier
             $table->flowforgePositionColumn(); // Drag-and-drop ordering
 

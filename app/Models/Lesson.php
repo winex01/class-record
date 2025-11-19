@@ -12,4 +12,9 @@ class Lesson extends Model
     use BelongsToSchoolClass;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'tags' => 'array',
+        'checklist' => 'array',
+    ];
 }
