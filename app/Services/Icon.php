@@ -88,6 +88,6 @@ final class Icon
 
     public static function lessons(): Heroicon|string
     {
-        return Heroicon::Wallet;
+        return Heroicon::ViewColumns;
     }
 }

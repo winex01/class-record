@@ -42,8 +42,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                     'todo' => 'To Do',
                     'in_progress' => 'In Progress',
                     'completed' => 'Completed',
-                ])
-                ->label('Filter by Status'),
+                ]),
             ])
             ->searchable(['title']);
     }
