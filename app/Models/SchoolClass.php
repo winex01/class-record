@@ -53,4 +53,9 @@ class SchoolClass extends Model
         return $this->hasMany(GradeTransmutation::class)
             ->orderBy('transmuted_grade', 'desc');
     }
+
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
+    }
 }

@@ -85,4 +85,9 @@ final class Icon
     {
         return Heroicon::Scale;
     }
+
+    public static function lessons(): Heroicon|string
+    {
+        return Heroicon::Wallet;
+    }
 }

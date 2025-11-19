@@ -25,6 +25,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\TernaryFilter;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassLessons;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAssessments;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAttendances;
@@ -164,6 +165,7 @@ class SchoolClassResource extends Resource
             'assessments' => ManageSchoolClassAssessments::route('/{record}/assessments'),
             'fee-collections' => ManageSchoolClassFeeCollections::route('/{record}/fee-collections'),
             'grades' => ManageSchoolClassGrades::route('/{record}/grades'),
+            'lessons' => ManageSchoolClassLessons::route('/{record}/lessons'),
         ];
     }
 
@@ -182,6 +184,11 @@ class SchoolClassResource extends Resource
                 ->icon(Icon::attendances())
                 // ->badge($record->attendances()->count())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAttendances),
+
+            NavigationItem::make('Lessons')
+                ->url(ManageSchoolClassLessons::getUrl(['record' => $record]))
+                ->icon(Icon::lessons())
+                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassLessons),
 
             NavigationItem::make('Assessments')
                 ->url(ManageSchoolClassAssessments::getUrl(['record' => $record]))
