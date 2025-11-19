@@ -41,9 +41,9 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
             ->columnIdentifier('status')
             ->positionIdentifier('position')
             ->columns([
-                Column::make('topics')->color('gray'),
-                Column::make('in_progress')->label('In Progress')->color('blue'),
-                Column::make('Completed')->color('green'),
+                Column::make('topics')->color('info'),
+                Column::make('in_progress')->label('In Progress')->color('warning'),
+                Column::make('Completed')->color('primary'),
             ])
             ->filters([
                 // NOTE:: this board is just a hacky way solution i did because there is no ManageRelatedRecords example
@@ -70,8 +70,8 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
 
             ])
             ->cardActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()->modalWidth(Width::Large)->form($this->getForm()),
+                EditAction::make()->modalWidth(Width::Large)->form($this->getForm()),
                 DeleteAction::make(),
             ]);
     }
@@ -115,6 +115,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
 
             Field::date('completion_date'),
 
+            // TODO:: column span and maybe use toggle
             Repeater::make('checklist')
                 ->nullable()
                 ->schema([
