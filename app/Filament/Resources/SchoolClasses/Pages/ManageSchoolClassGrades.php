@@ -428,7 +428,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->columnSpan(1),
 
                 TextInput::make('transmuted_grade')
-                    ->placeholder('e.g., A+, B, 95, 1.00')
+                    ->placeholder('e.g., 99, 1.00, A+')
                     ->required()
                     ->maxLength(10)
                     ->when($isRepeater, fn ($field) => $field->distinct())
