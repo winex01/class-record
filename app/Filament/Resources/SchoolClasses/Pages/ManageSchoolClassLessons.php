@@ -45,13 +45,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 Column::make('in_progress')->label('In Progress')->color('warning'),
                 Column::make('done')->color('primary'),
             ])
-            ->filters([
-                // NOTE:: this board is just a hacky way solution i did because there is no ManageRelatedRecords example
-                // available in the plugin https://relaticle.github.io/flowforge/, i notice as long as i have
-                // at least 1 filter which is not hidden the ->searchable(['title']) below will work no need to
-                // manually add the logic in ->query() using $this->tableSearch.
-                SelectFilter::make('status'),
-            ])
+            ->filters($this->getFilters())
             ->searchable(['title'])
             ->columnActions([
                 CreateAction::make()
@@ -69,6 +63,39 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 EditAction::make()->modalWidth(Width::Large)->form($this->getForm()),
                 DeleteAction::make(),
             ]);
+    }
+
+    private function getFilters()
+    {
+        return [
+            // NOTE:: this board is just a hacky way solution i did because there is no ManageRelatedRecords example
+            // available in the plugin https://relaticle.github.io/flowforge/, i notice as long as i have
+            // at least 1 filter which is not hidden then the search bar will worked!
+            SelectFilter::make('tags')
+            ->label('Tags')
+            ->multiple()
+            ->options(function () {
+                return $this->getOwnerRecord()
+                    ->lessons()
+                    ->pluck('tags')
+                    ->flatten()
+                    ->unique()
+                    ->filter()
+                    ->sort()
+                    ->mapWithKeys(fn($tag) => [$tag => $tag])
+                    ->toArray();
+            })
+            ->query(function ($query, array $data) {
+                if (filled($data['values'])) {
+                    return $query->where(function ($query) use ($data) {
+                        foreach ($data['values'] as $tag) {
+                            $query->orWhereJsonContains('tags', $tag);
+                        }
+                    });
+                }
+                return $query;
+            })
+        ];
     }
 
     protected function getForm()
