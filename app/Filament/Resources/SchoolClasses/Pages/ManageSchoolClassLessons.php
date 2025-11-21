@@ -4,7 +4,7 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Lesson;
 use App\Services\Field;
-use Filament\Tables\Table;
+use Filament\Schemas\Schema;
 use Relaticle\Flowforge\Board;
 use Relaticle\Flowforge\Column;
 use Filament\Actions\EditAction;
@@ -12,16 +12,16 @@ use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Support\Enums\TextSize;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\SelectFilter;
 use Relaticle\Flowforge\Concerns\BaseBoard;
 use Relaticle\Flowforge\Contracts\HasBoard;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
@@ -45,8 +45,9 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 Column::make('in_progress')->label('In Progress')->color('warning'),
                 Column::make('done')->color('primary'),
             ])
+            ->cardSchema(fn(Schema $schema) => $schema->components($this->getColumns()))
             ->filters($this->getFilters())
-            ->searchable(['title'])
+            ->searchable(['title', 'description', 'tags'])
             ->columnActions([
                 CreateAction::make()
                     ->hiddenLabel()
@@ -63,6 +64,35 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 EditAction::make()->modalWidth(Width::Large)->form($this->getForm()),
                 DeleteAction::make(),
             ]);
+    }
+
+    private function getColumns()
+    {
+        return [
+            TextEntry::make('description')
+                ->hiddenLabel()
+                ->color('gray')
+                ->size(TextSize::Small)
+                ->lineClamp(3)
+                ->html()
+                ->extraAttributes(['style' => 'margin-top: -30px;']),
+
+            TextEntry::make('completion_date')
+                ->hiddenLabel()
+                ->date('M d, Y')
+                ->icon('heroicon-o-calendar')
+                ->iconColor('primary')
+                ->size(TextSize::Small)
+                ->extraAttributes(['style' => 'margin-top: -20px;']),
+
+            TextEntry::make('tags')
+                ->hiddenLabel()
+                ->badge()
+                ->separator(',')
+                ->color('primary')
+                ->size(TextSize::Small)
+                ->extraAttributes(['style' => 'margin-top: -20px;']),
+        ];
     }
 
     private function getFilters()
@@ -95,6 +125,8 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 }
                 return $query;
             })
+
+            // TODO:: filter completion date
         ];
     }
 
