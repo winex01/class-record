@@ -5,9 +5,11 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Concerns\BelongsToSchoolClass;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Lesson extends Model
 {
+    use HasFactory;
     use BelongsToUser;
     use BelongsToSchoolClass;
 

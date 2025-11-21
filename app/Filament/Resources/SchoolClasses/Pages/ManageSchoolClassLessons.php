@@ -43,19 +43,14 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
             ->columns([
                 Column::make('topics')->color('info'),
                 Column::make('in_progress')->label('In Progress')->color('warning'),
-                Column::make('Completed')->color('primary'),
+                Column::make('done')->color('primary'),
             ])
             ->filters([
                 // NOTE:: this board is just a hacky way solution i did because there is no ManageRelatedRecords example
                 // available in the plugin https://relaticle.github.io/flowforge/, i notice as long as i have
                 // at least 1 filter which is not hidden the ->searchable(['title']) below will work no need to
                 // manually add the logic in ->query() using $this->tableSearch.
-                SelectFilter::make('status')
-                ->options([
-                    'topics' => 'Topics',
-                    'in_progress' => 'In Progress',
-                    'completed' => 'Completed',
-                ]),
+                SelectFilter::make('status'),
             ])
             ->searchable(['title'])
             ->columnActions([
@@ -92,14 +87,14 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                         $statusMap = [
                             'topics' => 'topics',
                             'in_progress' => 'in_progress',
-                            'Completed' => 'completed'
+                            'done' => 'done'
                         ];
 
                         return $statusMap[$column] ?? 'topics';
                     }
                 }
 
-                return 'topics'; // fallback
+                return 'topics';
             }),
 
             TextInput::make('title')
