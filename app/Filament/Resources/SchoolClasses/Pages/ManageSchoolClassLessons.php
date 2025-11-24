@@ -14,6 +14,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Enums\TextSize;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
@@ -23,6 +24,7 @@ use Relaticle\Flowforge\Concerns\BaseBoard;
 use Relaticle\Flowforge\Contracts\HasBoard;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
 class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
@@ -54,14 +56,14 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                     ->button()
                     ->icon('heroicon-o-plus')
                     ->iconButton()
-                    ->modalWidth(Width::Large)
+                    ->modalWidth(Width::TwoExtraLarge)
                     ->form($this->getForm())
                     ->model(static::$model)
 
             ])
             ->cardActions([
-                ViewAction::make()->modalWidth(Width::Large)->form($this->getForm()),
-                EditAction::make()->modalWidth(Width::Large)->form($this->getForm()),
+                ViewAction::make()->modalWidth(Width::TwoExtraLarge)->form($this->getForm()),
+                EditAction::make()->modalWidth(Width::TwoExtraLarge)->form($this->getForm()),
                 DeleteAction::make(),
             ]);
     }
@@ -169,18 +171,20 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
 
             Field::date('completion_date'),
 
-            // TODO:: column span and maybe use toggle
             Repeater::make('checklist')
-                ->nullable()
-                ->schema([
-                    TextInput::make('item')
-                        ->required()
-                        ->placeholder('Enter checklist item'),
-                    Checkbox::make('completed')
-                        ->default(false),
+                ->table([
+                    TableColumn::make('Item'),
+                    TableColumn::make('Done')->width(1),
                 ])
-                ->columns(2)
-                ->itemLabel(fn (array $state): ?string => $state['item'] ?? null),
+                ->schema([
+                    TextInput::make('item')->placeholder('Enter checklist item'),
+
+                    Toggle::make('done')
+                        ->default(false)
+                ])
+                ->compact()
+                ->minItems(0)
+                ->defaultItems(0)
         ];
     }
 }
