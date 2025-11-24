@@ -367,19 +367,22 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             })
                             ->modalSubmitActionLabel('Copy & Paste'),
 
-                        Action::make('removeAll')
-                            ->label('Remove All')
+                        Action::make('deleteAll')
+                            ->label('Delete All')
                             ->icon('heroicon-o-trash')
                             ->color('danger')
                             ->requiresConfirmation()
-                            ->modalHeading('Remove all transmutation ranges?')
-                            ->modalDescription('Are you sure you want to remove all transmutation ranges?')
+                            ->modalHeading('Delete All')
+                            ->modalDescription('Are you sure you want to delete all transmutation ranges?')
                             ->modalFooterActionsAlignment(Alignment::Center)
                             ->action(function (Repeater $component) {
                                 // Clear all items
                                 $component->state([]);
                             })
                     ])
+                    ->deleteAction(
+                        fn (Action $action) => $action->requiresConfirmation()->modalFooterActionsAlignment(Alignment::Center)
+                    )
                 ]); // end schema
     }
 
@@ -499,7 +502,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             },
                         ])
                         ->deleteAction(
-                            fn (Action $action) => $action->requiresConfirmation()
+                            fn (Action $action) => $action->requiresConfirmation()->modalFooterActionsAlignment(Alignment::Center)
                         )
                         ->addActionLabel('Add grading component')
                     ]);
