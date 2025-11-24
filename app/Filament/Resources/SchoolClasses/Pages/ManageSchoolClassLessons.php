@@ -15,7 +15,6 @@ use Filament\Actions\DeleteAction;
 use Filament\Support\Enums\TextSize;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;

@@ -8,6 +8,7 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
@@ -20,7 +21,10 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                ...ManageSchoolClassGrades::rangesField(false),
+                Grid::make(3)
+                    ->schema([
+                        ...ManageSchoolClassGrades::rangesField(false),
+                    ])
             ]);
     }
 

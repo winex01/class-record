@@ -30,6 +30,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
 class ManageSchoolClassGrades extends ManageRelatedRecords
@@ -296,6 +297,12 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             ? number_format((float) $state['initial_min'], 2, '.', '') . "-" . number_format((float) $state['initial_max'], 2, '.', '') . " → {$state['transmuted_grade']}"
                             : 'New Transmutation Range'
                     )
+                    ->compact()
+                    ->table([
+                        TableColumn::make('Initial Min'),
+                        TableColumn::make('Initial Max'),
+                        TableColumn::make('Grade'),
+                    ])
                     ->schema([
                         ...static::rangesField(),
                     ])
@@ -384,58 +391,54 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     public static function rangesField(bool $isRepeater = true)
     {
         return [
-            Grid::make(3)
-            ->schema([
-
-                TextInput::make('initial_min')
-                    ->numeric()
-                    ->required()
-                    ->minValue(0)
-                    ->maxValue(100)
-                    ->step(0.01)
-                    ->placeholder('e.g., 0.00')
-                    ->live(onBlur: true)
-                    ->rules([
-                        fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
-                            $maxValue = $get('initial_max');
-                            if ($maxValue !== null && $value > $maxValue) {
-                                $fail('Minimum must be less than or equal to maximum.');
-                            }
+            TextInput::make('initial_min')
+                ->numeric()
+                ->required()
+                ->minValue(0)
+                ->maxValue(100)
+                ->step(0.01)
+                ->placeholder('e.g., 0.00')
+                ->live(onBlur: true)
+                ->rules([
+                    fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
+                        $maxValue = $get('initial_max');
+                        if ($maxValue !== null && $value > $maxValue) {
+                            $fail('Minimum must be less than or equal to maximum.');
                         }
-                    ])
-                    ->when($isRepeater, fn ($field) => $field->distinct())
-                    ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
-                    ->columnSpan(1),
+                    }
+                ])
+                ->when($isRepeater, fn ($field) => $field->distinct())
+                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
+                ->columnSpan(1),
 
-                TextInput::make('initial_max')
-                    ->numeric()
-                    ->required()
-                    ->minValue(0)
-                    ->maxValue(100)
-                    ->step(0.01)
-                    ->placeholder('e.g., 99.99')
-                    ->live(onBlur: true)
-                    ->rules([
-                        fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
-                            $minValue = $get('initial_min');
-                            if ($minValue !== null && $value < $minValue) {
-                                $fail('Maximum must be greater than or equal to minimum.');
-                            }
+            TextInput::make('initial_max')
+                ->numeric()
+                ->required()
+                ->minValue(0)
+                ->maxValue(100)
+                ->step(0.01)
+                ->placeholder('e.g., 99.99')
+                ->live(onBlur: true)
+                ->rules([
+                    fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
+                        $minValue = $get('initial_min');
+                        if ($minValue !== null && $value < $minValue) {
+                            $fail('Maximum must be greater than or equal to minimum.');
                         }
-                    ])
-                    ->when($isRepeater, fn ($field) => $field->distinct())
-                    ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
-                    ->columnSpan(1),
+                    }
+                ])
+                ->when($isRepeater, fn ($field) => $field->distinct())
+                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
+                ->columnSpan(1),
 
-                TextInput::make('transmuted_grade')
-                    ->placeholder('e.g., 99, 1.00, A+')
-                    ->required()
-                    ->maxLength(10)
-                    ->when($isRepeater, fn ($field) => $field->distinct())
-                    ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
-                    ->columnSpan(1),
+            TextInput::make('transmuted_grade')
+                ->placeholder('e.g., 99, 1.00, A+')
+                ->required()
+                ->maxLength(10)
+                ->when($isRepeater, fn ($field) => $field->distinct())
+                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
+                ->columnSpan(1),
 
-            ]), // end Schema
         ];
     }
 
