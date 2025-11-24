@@ -210,6 +210,10 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->collapsible()
                     ->deletable(false)
                     ->addable(false)
+                    ->minItems(1)
+                    ->validationMessages([
+                        'min' => 'Please configure grading components by clicking the Settings button above the New Grade button.',
+                    ])
 
             ]);
     }
@@ -518,7 +522,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ->color('info')
                 ->modalHeading(fn ($record) => $record->grading_period)
                 ->modalDescription(new HtmlString(
-                    '💡 Note: This table adjusts automatically. When there are many columns, a horizontal scrollbar will appear. Scroll left/right or hold <kbd style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 1px 4px; border-radius: 3px; font-size: 0.6rem;">Shift</kbd> to view all columns.'
+                    '💡 <strong>Tip:</strong> Hold <kbd style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 6px; border-radius: 3px; font-size: 0.75rem;">Shift</kbd> + scroll to navigate horizontally across all columns.'
                 ))
                 ->form(function () use ($getOwnerRecord) {
                     return [
