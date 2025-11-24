@@ -76,6 +76,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 ->size(TextSize::Small)
                 ->lineClamp(3)
                 ->html()
+                ->hidden(fn ($record) => empty($record->description))
                 ->extraAttributes(['style' => 'margin-top: -25px;']),
 
             TextEntry::make('tags')
@@ -84,6 +85,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 ->separator(',')
                 ->color('primary')
                 ->size(TextSize::Small)
+                ->hidden(fn ($record) => empty($record->tags))
                 ->extraAttributes(['style' => 'margin-top: -15px;']),
 
             TextEntry::make('completion_date')
@@ -92,6 +94,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 ->icon('heroicon-o-calendar')
                 ->iconColor('primary')
                 ->size(TextSize::Small)
+                ->hidden(fn ($record) => empty($record->completion_date))
                 ->extraAttributes(['style' => 'margin-top: -15px;']),
         ];
     }
