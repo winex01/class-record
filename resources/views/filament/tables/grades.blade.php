@@ -117,7 +117,7 @@
                                 $WS_display = number_format($WS_raw, 2);
                             @endphp
 
-                            <td title="{{ $componentLabel }} Total Score">{{ $TS }}</td>
+                            <td title="{{ $componentLabel }} Total Score"><strong>{{ $TS }}</strong></td>
                             <td title="{{ $componentLabel }} Percentage Score"><strong>{{ $PS_display }}</strong></td>
                             <td title="{{ $componentLabel }} Weighted Score"><strong>{{ $WS_display }}</strong></td>
                         @endforeach
