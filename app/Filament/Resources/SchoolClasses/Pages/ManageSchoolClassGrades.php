@@ -236,7 +236,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->actionsAlignment('start')
             ->headerActions([
                 CreateAction::make()->modalWidth(Width::TwoExtraLarge),
-                // TODO:: Summary action modal
+                // TODO:: Grade Summary (Overall Grade) action modal
             ])
             ->recordActions([
                 static::viewGrades($this->getOwnerRecord()),
