@@ -77,15 +77,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 ->size(TextSize::Small)
                 ->lineClamp(3)
                 ->html()
-                ->extraAttributes(['style' => 'margin-top: -30px;']),
-
-            TextEntry::make('completion_date')
-                ->hiddenLabel()
-                ->date('M d, Y')
-                ->icon('heroicon-o-calendar')
-                ->iconColor('primary')
-                ->size(TextSize::Small)
-                ->extraAttributes(['style' => 'margin-top: -20px;']),
+                ->extraAttributes(['style' => 'margin-top: -25px;']),
 
             TextEntry::make('tags')
                 ->hiddenLabel()
@@ -93,7 +85,15 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 ->separator(',')
                 ->color('primary')
                 ->size(TextSize::Small)
-                ->extraAttributes(['style' => 'margin-top: -20px;']),
+                ->extraAttributes(['style' => 'margin-top: -15px;']),
+
+            TextEntry::make('completion_date')
+                ->hiddenLabel()
+                ->date('M d, Y')
+                ->icon('heroicon-o-calendar')
+                ->iconColor('primary')
+                ->size(TextSize::Small)
+                ->extraAttributes(['style' => 'margin-top: -15px;']),
         ];
     }
 
@@ -127,8 +127,6 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 }
                 return $query;
             })
-
-            // TODO:: filter completion date
         ];
     }
 
