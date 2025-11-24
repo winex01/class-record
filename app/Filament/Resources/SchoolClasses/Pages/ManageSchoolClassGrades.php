@@ -22,6 +22,7 @@ use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\View;
+use Filament\Support\Enums\Alignment;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
@@ -363,30 +364,20 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                                 // Set the combined data to the repeater
                                 $component->state($mergedData);
-
-                                Notification::make()
-                                    ->title('Template items added successfully')
-                                    ->body('Please review for any duplicates before saving.')
-                                    ->success()
-                                    ->send();
                             })
                             ->modalSubmitActionLabel('Copy & Paste'),
 
-                        Action::make('deleteAll')
-                            ->label('Delete All')
+                        Action::make('removeAll')
+                            ->label('Remove All')
                             ->icon('heroicon-o-trash')
                             ->color('danger')
                             ->requiresConfirmation()
-                            ->modalHeading('Delete all transmutation ranges?')
-                            ->modalDescription('Are you sure you want to delete all transmutation ranges? This action cannot be undone.')
+                            ->modalHeading('Remove all transmutation ranges?')
+                            ->modalDescription('Are you sure you want to remove all transmutation ranges?')
+                            ->modalFooterActionsAlignment(Alignment::Center)
                             ->action(function (Repeater $component) {
                                 // Clear all items
                                 $component->state([]);
-
-                                Notification::make()
-                                    ->title('All items deleted')
-                                    ->success()
-                                    ->send();
                             })
                     ])
                 ]); // end schema
