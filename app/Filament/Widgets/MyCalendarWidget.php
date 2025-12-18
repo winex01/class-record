@@ -48,10 +48,10 @@ class MyCalendarWidget extends CalendarWidget
     protected function getEvents(FetchInfo $info): Collection | array | Builder
     {
         return [
-            ...Meeting::withinCalendarRange($info)->get()->map->toCalendarEvent(),
-            ...Task::withinCalendarRange($info)->get()->map->toCalendarEvent(),
             ...Note::withinCalendarRange($info)->get()->map->toCalendarEvent(),
-            ...$this->recurringEvents($info),
+            ...Task::withinCalendarRange($info)->get()->map->toCalendarEvent(),
+            ...Meeting::withinCalendarRange($info)->get()->map->toCalendarEvent(),
+            // ...$this->recurringEvents($info),
         ];
     }
 
@@ -158,10 +158,10 @@ class MyCalendarWidget extends CalendarWidget
     private function getActions()
     {
         return [
-            $this->defaultCreateAction(Meeting::class),
-            $this->defaultCreateAction(Task::class)->modalWidth(Width::Large),
             $this->defaultCreateAction(Note::class),
-            $this->recurringCreateAction(Recurring::class)->modalWidth(Width::ExtraLarge),
+            $this->defaultCreateAction(Task::class)->modalWidth(Width::Large),
+            $this->defaultCreateAction(Meeting::class),
+            // $this->recurringCreateAction(Recurring::class)->modalWidth(Width::ExtraLarge),
         ];
     }
 

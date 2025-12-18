@@ -29,8 +29,8 @@ class RecurringResource extends Resource
     protected static ?string $model = Recurring::class;
     protected static ?string $recordTitleAttribute = 'name';
     protected static string | \UnitEnum | null $navigationGroup = \App\Enums\NavigationGroup::Group2;
-
     protected static ?int $navigationSort = 280;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
