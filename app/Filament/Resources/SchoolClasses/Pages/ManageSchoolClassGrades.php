@@ -282,7 +282,11 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ->title('Saved')
                         ->success()
                         ->send();
-                }),
+                })
+                ->modalSubmitActionLabel(function () {
+                    $record = $this->getOwnerRecord();
+                    return $record->gradingComponents()->exists() ? 'Save Changes' : 'Save';
+                })
         ];
     }
 
@@ -311,11 +315,21 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->schema([
                         ...static::rangesField(),
                     ])
+                    ->afterStateHydrated(function (Repeater $component, $state) {
+                        if (is_array($state) && count($state) > 0) {
+                            // Sort by initial_max - DESCENDING
+                            usort($state, function ($a, $b) {
+                                return ($b['initial_max'] ?? 0) <=> ($a['initial_max'] ?? 0);
+                            });
+
+                            $component->state($state);
+                        }
+                    })
                     ->addActionLabel('Add range')
                     ->aboveContent([
                         Action::make('copyTransmuteTemplate')
                             ->label('Copy from Template')
-                            ->icon('heroicon-o-document-duplicate')
+                            ->icon(icon: 'heroicon-o-document-duplicate')
                             ->modalWidth(Width::Large)
                             ->form([
                                 Select::make('template_id')
@@ -352,14 +366,9 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 // Merge existing items with template data (append template items)
                                 $mergedData = array_merge($existingData, $templateData);
 
-                                // Sort by initial_max - ASCENDING
-                                // usort($mergedData, function ($a, $b) {
-                                //     return ($a['initial_max'] ?? '') <=> ($b['initial_max'] ?? '');
-                                // });
-
                                 // Sort by initial_max - DESCENDING
                                 usort($mergedData, function ($a, $b) {
-                                    return ($b['initial_max'] ?? '') <=> ($a['initial_max'] ?? '');
+                                    return ($b['initial_max'] ?? 0) <=> ($a['initial_max'] ?? 0);
                                 });
 
                                 // Set the combined data to the repeater
