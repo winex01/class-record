@@ -195,15 +195,17 @@ class SchoolClassResource extends Resource
                 ->icon(Icon::assessments())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAssessments),
 
+            NavigationItem::make('Grades')
+                ->url(ManageSchoolClassGrades::getUrl(['record' => $record]))
+                ->icon(Icon::grades())
+                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassGrades),
+
             NavigationItem::make('Fee Collections')
                 ->url(ManageSchoolClassFeeCollections::getUrl(['record' => $record]))
                 ->icon(Icon::feeCollections())
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassFeeCollections),
 
-            NavigationItem::make('Grades')
-                ->url(ManageSchoolClassGrades::getUrl(['record' => $record]))
-                ->icon(Icon::grades())
-                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassGrades),
+
         ];
     }
 }
