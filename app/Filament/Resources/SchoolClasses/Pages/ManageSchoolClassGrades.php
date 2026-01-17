@@ -254,7 +254,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     {
         return [
             Action::make('settingsAction')
-                ->label('Settings')
+                ->label('Grading Settings')
                 ->model(fn () => $this->getOwnerRecord()) // bind to owner SchoolClass model
                 ->icon(Icon::settings())
                 ->color('gray')
