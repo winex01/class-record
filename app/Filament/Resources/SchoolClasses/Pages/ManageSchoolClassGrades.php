@@ -255,37 +255,45 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         return [
             Action::make('settingsAction')
                 ->label('Grading Settings')
-                ->model(fn () => $this->getOwnerRecord()) // bind to owner SchoolClass model
                 ->icon(Icon::settings())
                 ->color('gray')
                 ->modalWidth(Width::TwoExtraLarge)
-                ->fillForm(fn ($record) => [
-                    'gradingComponents' => $record->gradingComponents()
-                        ->get(['id', 'name', 'weighted_score'])
-                        ->map(fn ($item) => [
-                            'id' => $item->id,
-                            'name' => $item->name,
-                            'weighted_score' => $item->weighted_score,
-                        ])
-                        ->toArray(),
-                ])
-                ->form([
-                    Tabs::make('Tabs')
-                        ->tabs([
-                            static::formTabGradingComponents($this->getOwnerRecord()),
-                            static::formTabTransmutationTable($this->getOwnerRecord()),
-                        ])
-                ])
-                ->action(function ($data, $record) {
+                ->fillForm(function ($livewire) {
+                    $owner = $livewire->getOwnerRecord();
+
+                    return [
+                        'gradingComponents' => $owner->gradingComponents()
+                            ->get(['id', 'name', 'weighted_score'])
+                            ->map(fn ($item) => [
+                                'id' => $item->id,
+                                'name' => $item->name,
+                                'weighted_score' => $item->weighted_score,
+                            ])
+                            ->toArray(),
+                    ];
+                })
+                ->form(function ($livewire) {
+                    $owner = $livewire->getOwnerRecord();
+
+                    return [
+                        Tabs::make('Tabs')
+                            ->tabs([
+                                static::formTabGradingComponents($owner),
+                                static::formTabTransmutationTable($owner),
+                            ])
+                    ];
+                })
+                ->action(function ($data, $livewire) {
                     // No need to handle saving manually — Filament will sync the relationship automatically
+
                     Notification::make()
                         ->title('Saved')
                         ->success()
                         ->send();
                 })
-                ->modalSubmitActionLabel(function () {
-                    $record = $this->getOwnerRecord();
-                    return $record->gradingComponents()->exists() ? 'Save Changes' : 'Save';
+                ->modalSubmitActionLabel(function ($livewire) {
+                    $owner = $livewire->getOwnerRecord();
+                    return $owner->gradingComponents()->exists() ? 'Save Changes' : 'Save';
                 })
         ];
     }
