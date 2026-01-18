@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
 use Filament\Tables\Table;
+use Filament\Actions\BulkAction;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Builder;
@@ -58,6 +59,32 @@ class TakeAttendanceRelationManager extends RelationManager
                 //
             ])
             ->toolbarActions([
+                BulkAction::make('markAbsent')
+                    ->label('Mark Absent')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(function ($records, $livewire) {
+                        foreach ($records as $record) {
+                            $livewire->getRelationship()->updateExistingPivot($record->id, ['present' => false]);
+                        }
+                    })
+                    ->deselectRecordsAfterCompletion()
+                    ->successNotificationTitle('Marked as absent'),
+
+                BulkAction::make('markPresent')
+                    ->label('Mark Present')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->action(function ($records, $livewire) {
+                        foreach ($records as $record) {
+                            $livewire->getRelationship()->updateExistingPivot($record->id, ['present' => true]);
+                        }
+                    })
+                    ->deselectRecordsAfterCompletion()
+                    ->successNotificationTitle('Marked as present'),
+
                 ManageSchoolClassStudents::detachBulkAction(),
             ]);
     }
