@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
 use App\Services\Column;
 use Filament\Tables\Table;
+use Filament\Actions\BulkAction;
 use App\Enums\FeeCollectionStatus;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
@@ -89,6 +90,55 @@ class TakeFeeCollectionRelationManager extends RelationManager
                 //
             ])
             ->toolbarActions([
+                // Mark as Paid Bulk Action
+                BulkAction::make('markPaid')
+                    ->label('Mark as Paid')
+                    ->icon(FeeCollectionStatus::PAID->getIcon())
+                    ->color(FeeCollectionStatus::PAID->getColor())
+                    ->requiresConfirmation()
+                    ->action(function ($records, $livewire) {
+                        foreach ($records as $record) {
+                            // Check pivot amount first
+                            $currentAmount = $record->pivot?->amount;
+
+                            // Only update if amount is empty or zero
+                            if (empty($currentAmount) || $currentAmount == 0) {
+                                $record->feeCollections()
+                                    ->updateExistingPivot(
+                                        $livewire->getOwnerRecord()->getKey(),
+                                        [
+                                            'amount' => $livewire->getOwnerRecord()->amount,
+                                            'status' => FeeCollectionStatus::PAID->value,
+                                        ]
+                                    );
+                            }
+                        }
+                    })
+                    ->deselectRecordsAfterCompletion()
+                    ->successNotificationTitle('Marked as paid'),
+
+                // Mark as Unpaid Bulk Action
+                BulkAction::make('markUnpaid')
+                    ->label('Mark as Unpaid')
+                    ->icon(FeeCollectionStatus::UNPAID->getIcon())
+                    ->color(FeeCollectionStatus::UNPAID->getColor())
+                    ->requiresConfirmation()
+                    ->action(function ($records, $livewire) {
+                        foreach ($records as $record) {
+                            $record->feeCollections()
+                                ->updateExistingPivot(
+                                    $livewire->getOwnerRecord()->getKey(),
+                                    [
+                                        'amount' => null,
+                                        'status' => FeeCollectionStatus::UNPAID->value,
+                                    ]
+                                );
+                        }
+                    })
+                    ->deselectRecordsAfterCompletion()
+                    ->successNotificationTitle('Marked as unpaid'),
+
+
                 ManageSchoolClassStudents::detachBulkAction(),
             ]);
     }
