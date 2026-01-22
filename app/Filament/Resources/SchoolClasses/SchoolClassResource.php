@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses;
 
+use App\Enums\LessonStatus;
 use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
@@ -203,6 +204,7 @@ class SchoolClassResource extends Resource
                             foreach ($record->lessons as $lesson) {
                                 $newLesson = $lesson->replicate();
                                 $newLesson->school_class_id = $newClass->id;
+                                $newLesson->status = LessonStatus::TOPICS->value;
                                 $newLesson->save();
                             }
                         }
