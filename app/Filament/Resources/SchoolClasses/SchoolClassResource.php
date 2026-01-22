@@ -59,6 +59,7 @@ class SchoolClassResource extends Resource
     public static function formSchema()
     {
         return [
+            'name' =>
             TextInput::make('name')
                     ->label('Subject')
                     ->placeholder('e.g. Math 101 or ENG-201')
@@ -69,17 +70,17 @@ class SchoolClassResource extends Resource
             Field::tags('tags')
                 ->placeholder('e.g. 1st Year, Section A, Evening Class'),
 
-            Grid::make(2)
-                ->schema([
-                    Field::date('date_start')
-                        ->label('Start Date')
-                        ->placeholder('e.g. ' . Carbon::now()->format('M j, Y')), // e.g. Aug 28, 2025
+            'date_start' =>
+            Field::date('date_start')
+                ->label('Start Date')
+                ->placeholder('e.g. ' . Carbon::now()->format('M j, Y')), // e.g. Aug 28, 2025
 
-                    Field::date('date_end')
-                        ->label('End Date')
-                        ->placeholder('e.g. ' . Carbon::now()->addMonths(6)->format('M j, Y')), // e.g. Nov 28, 2025
-                ]),
+            'date_end' =>
+            Field::date('date_end')
+                ->label('End Date')
+                ->placeholder('e.g. ' . Carbon::now()->addMonths(6)->format('M j, Y')), // e.g. Nov 28, 2025
 
+            'description' =>
             Textarea::make('description')
                 ->label('Description')
                 ->placeholder('Brief details about this subject... (optional)')
@@ -172,10 +173,13 @@ class SchoolClassResource extends Resource
                         ])
                         // ->default(['students', 'lessons', 'assessments', 'grading_settings'])
                         ->default(['students', 'lessons', 'assessments'])
-                        ->required()
                         ->columns(2),
 
+                    static::formSchema()['name']->default(fn ($record) => $record->name),
                     static::formSchema()['tags']->default(fn ($record) => $record->tags ?? []),
+                    static::formSchema()['date_start']->default(fn ($record) => $record->date_start),
+                    static::formSchema()['date_end']->default(fn ($record) => $record->date_end),
+
                 ])
                 ->action(function (array $data, $record) {
                     // Start a database transaction for data integrity
@@ -184,7 +188,10 @@ class SchoolClassResource extends Resource
                     try {
                         // Clone the main class record
                         $newClass = $record->replicate();
+                        $newClass->name = $data['name'];
                         $newClass->tags = $data['tags'];
+                        $newClass->date_start = $data['date_start'];
+                        $newClass->date_end = $data['date_end'];
                         $newClass->save();
 
                         $itemsToClone = $data['items_to_clone'];
