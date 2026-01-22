@@ -154,7 +154,6 @@ class SchoolClassResource extends Resource
             ->recordUrl(fn ($record) => route('filament.app.resources.school-classes.students', $record));
     }
 
-    // TODO:: gradingSettings / gradingComponents clone
     private static function cloneClassAction()
     {
         return Action::make('clone')
@@ -169,10 +168,9 @@ class SchoolClassResource extends Resource
                             'students' => 'Students',
                             'lessons' => 'Lessons',
                             'assessments' => 'Assessments',
-                            // 'grading_settings' => 'Grading Settings',
+                            'grading_settings' => 'Grading Settings',
                         ])
-                        // ->default(['students', 'lessons', 'assessments', 'grading_settings'])
-                        ->default(['students', 'lessons', 'assessments'])
+                        ->default(['students', 'lessons', 'assessments', 'grading_settings'])
                         ->columns(2),
 
                     static::formSchema()['name']->default(fn ($record) => $record->name),
@@ -228,10 +226,16 @@ class SchoolClassResource extends Resource
                         }
 
                         // Clone Grading Settings
-                        if (in_array('grading_settings', $itemsToClone) && $record->gradingSettings()->exists()) {
-                            foreach ($record->gradingSettings as $setting) {
-                                $newSetting = $setting->replicate();
+                        if (in_array('grading_settings', $itemsToClone) && $record->gradingComponents()->exists()) {
+                            foreach ($record->gradingComponents as $gradingComponent) {
+                                $newSetting = $gradingComponent->replicate();
                                 $newSetting->school_class_id = $newClass->id;
+
+                                // clone transmutable table
+                                if ($gradingComponent->gradeGradingComponents()->exists()) {
+                                    // TODO:: transmutable here
+                                }
+
                                 $newSetting->save();
                             }
                         }
