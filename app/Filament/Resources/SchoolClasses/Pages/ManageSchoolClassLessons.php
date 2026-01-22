@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Lesson;
 use App\Services\Field;
+use App\Enums\LessonStatus;
 use Filament\Schemas\Schema;
 use Relaticle\Flowforge\Board;
 use Relaticle\Flowforge\Column;
@@ -42,9 +43,15 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
             ->columnIdentifier('status')
             ->positionIdentifier('position')
             ->columns([
-                Column::make('topics')->color('info'),
-                Column::make('in_progress')->label('In Progress')->color('warning'),
-                Column::make('done')->color('primary'),
+                Column::make(LessonStatus::TOPICS->value)
+                    ->label(LessonStatus::TOPICS->getLabel())
+                    ->color(LessonStatus::TOPICS->getColor()),
+                Column::make(LessonStatus::IN_PROGRESS->value)
+                    ->label(LessonStatus::IN_PROGRESS->getLabel())
+                    ->color(LessonStatus::IN_PROGRESS->getColor()),
+                Column::make(LessonStatus::DONE->value)
+                    ->label(LessonStatus::DONE->getLabel())
+                    ->color(LessonStatus::DONE->getColor()),
             ])
             ->cardSchema(fn(Schema $schema) => $schema->components($this->getColumns()))
             ->filters($this->getFilters())
@@ -139,23 +146,14 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
 
             Hidden::make('status')
             ->default(function ($livewire) {
-                // Access the column from mountedActions
                 if (!empty($livewire->mountedActions)) {
                     $firstAction = $livewire->mountedActions[0];
                     if (isset($firstAction['arguments']['column'])) {
                         $column = $firstAction['arguments']['column'];
-
-                        $statusMap = [
-                            'topics' => 'topics',
-                            'in_progress' => 'in_progress',
-                            'done' => 'done'
-                        ];
-
-                        return $statusMap[$column] ?? 'topics';
+                        return LessonStatus::tryFrom($column)?->value ?? LessonStatus::TOPICS->value;
                     }
                 }
-
-                return 'topics';
+                return LessonStatus::TOPICS->value;
             }),
 
             TextInput::make('title')

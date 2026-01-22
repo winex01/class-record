@@ -62,7 +62,7 @@ class TestDataSeeder extends Seeder
         $this->generateAssessment($class, 5, 4, '50-80'); // oral
 
         // lesson
-        Lesson::factory()->count(15)->forUser(1)->forSchoolClass(1)->create();
+        Lesson::factory()->count(5)->forUser(1)->forSchoolClass(1)->create();
     }
 
     private function generateAssessment(SchoolClass $class, $assessmentTypeId, $count = 5, $maxScoreRange = '15-100')

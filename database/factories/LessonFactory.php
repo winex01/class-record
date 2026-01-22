@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Enums\LessonStatus;
 use App\Models\SchoolClass;
 use Relaticle\Flowforge\Services\Rank;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -12,7 +13,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class LessonFactory extends Factory
 {
-    private static array $statusCounters = ['topics' => 0, 'in_progress' => 0, 'done' => 0];
+    private static array $statusCounters = [
+        LessonStatus::TOPICS->value => 0,
+        LessonStatus::IN_PROGRESS->value => 0,
+        LessonStatus::DONE->value => 0,
+    ];
     private static array $lastRanks = [];
 
     /**
@@ -22,7 +27,11 @@ class LessonFactory extends Factory
      */
     public function definition(): array
     {
-        $status = $this->faker->randomElement(['topics', 'in_progress', 'done']);
+        $status = $this->faker->randomElement([
+            LessonStatus::TOPICS->value,
+            LessonStatus::IN_PROGRESS->value,
+            LessonStatus::DONE->value,
+        ]);
 
         return [
             'user_id' => User::first()->id,

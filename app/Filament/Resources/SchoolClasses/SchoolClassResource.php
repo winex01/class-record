@@ -51,48 +51,55 @@ class SchoolClassResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('name')
+                ...static::formSchema(),
+            ]);
+    }
+
+    public static function formSchema()
+    {
+        return [
+            TextInput::make('name')
                     ->label('Subject')
                     ->placeholder('e.g. Math 101 or ENG-201')
                     ->required()
                     ->maxLength(255),
 
-                Field::tags('tags')
-                    ->placeholder('e.g. 1st Year, Section A, Evening Class'),
+            Field::tags('tags')
+                ->placeholder('e.g. 1st Year, Section A, Evening Class'),
 
-                Grid::make(2)
-                    ->schema([
-                        Field::date('date_start')
-                            ->label('Start Date')
-                            ->placeholder('e.g. ' . Carbon::now()->format('M j, Y')), // e.g. Aug 28, 2025
+            Grid::make(2)
+                ->schema([
+                    Field::date('date_start')
+                        ->label('Start Date')
+                        ->placeholder('e.g. ' . Carbon::now()->format('M j, Y')), // e.g. Aug 28, 2025
 
-                        Field::date('date_end')
-                            ->label('End Date')
-                            ->placeholder('e.g. ' . Carbon::now()->addMonths(6)->format('M j, Y')), // e.g. Nov 28, 2025
-                    ]),
+                    Field::date('date_end')
+                        ->label('End Date')
+                        ->placeholder('e.g. ' . Carbon::now()->addMonths(6)->format('M j, Y')), // e.g. Nov 28, 2025
+                ]),
 
-                Textarea::make('description')
-                    ->label('Description')
-                    ->placeholder('Brief details about this subject... (optional)')
-                    ->rows(5),
+            Textarea::make('description')
+                ->label('Description')
+                ->placeholder('Brief details about this subject... (optional)')
+                ->rows(5),
 
-                Field::toggleBoolean('active')
-                    ->default(true)
-                    ->label('Status')
-                    ->helperText('Active = editable, Archived = view only')
-                    ->options([
-                        true => 'Active',
-                        false => 'Archived',
-                    ])
-                    ->icons([
-                        true => 'heroicon-o-check',
-                        false => 'heroicon-o-lock-closed',
-                    ])
-                    ->colors([
-                        true => 'success',
-                        false => 'warning',
-                    ])
-            ]);
+            Field::toggleBoolean('active')
+                ->default(true)
+                ->label('Status')
+                ->helperText('Active = editable, Archived = view only')
+                ->options([
+                    true => 'Active',
+                    false => 'Archived',
+                ])
+                ->icons([
+                    true => 'heroicon-o-check',
+                    false => 'heroicon-o-lock-closed',
+                ])
+                ->colors([
+                    true => 'success',
+                    false => 'warning',
+                ])
+        ];
     }
 
     public static function table(Table $table): Table
