@@ -226,17 +226,22 @@ class SchoolClassResource extends Resource
                         }
 
                         // Clone Grading Settings
-                        if (in_array('grading_settings', $itemsToClone) && $record->gradingComponents()->exists()) {
+                        // NOTE:: although GradingComponent and Transmutation is using the grading_settings checkbox but they have 2 different class
+                        if (in_array('grading_settings', $itemsToClone) && $record->gradingComponents()->exists()
+                            && $record->gradeTransmutations()->exists()) {
+
+                            // grading components
                             foreach ($record->gradingComponents as $gradingComponent) {
-                                $newSetting = $gradingComponent->replicate();
-                                $newSetting->school_class_id = $newClass->id;
+                                $newGradingComponent = $gradingComponent->replicate();
+                                $newGradingComponent->school_class_id = $newClass->id;
+                                $newGradingComponent->save();
+                            }
 
-                                // clone transmutable table
-                                if ($gradingComponent->gradeGradingComponents()->exists()) {
-                                    // TODO:: transmutable here
-                                }
-
-                                $newSetting->save();
+                            // grade transmutation table
+                            foreach ($record->gradeTransmutations as $gradeTransmutation) {
+                                $newGradeTransmutation = $gradeTransmutation->replicate();
+                                $newGradeTransmutation->school_class_id = $newClass->id;
+                                $newGradeTransmutation->save();
                             }
                         }
 
