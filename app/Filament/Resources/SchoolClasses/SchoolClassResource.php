@@ -65,6 +65,7 @@ class SchoolClassResource extends Resource
                     ->required()
                     ->maxLength(255),
 
+            'tags' =>
             Field::tags('tags')
                 ->placeholder('e.g. 1st Year, Section A, Evening Class'),
 
@@ -153,7 +154,6 @@ class SchoolClassResource extends Resource
     }
 
     // TODO:: gradingSettings / gradingComponents clone
-    // TODO:: TBD add or concat Clone in column name?
     private static function cloneClassAction()
     {
         return Action::make('clone')
@@ -175,11 +175,7 @@ class SchoolClassResource extends Resource
                         ->required()
                         ->columns(2),
 
-                    // TextInput::make('new_class_name')
-                    //     ->label('New Class Name')
-                    //     ->required()
-                    //     ->maxLength(255)
-                    //     ->placeholder('Enter name for cloned class'),
+                    static::formSchema()['tags']->default(fn ($record) => $record->tags ?? []),
                 ])
                 ->action(function (array $data, $record) {
                     // Start a database transaction for data integrity
@@ -188,7 +184,7 @@ class SchoolClassResource extends Resource
                     try {
                         // Clone the main class record
                         $newClass = $record->replicate();
-                        // $newClass->name = $data['new_class_name'];
+                        $newClass->tags = $data['tags'];
                         $newClass->save();
 
                         $itemsToClone = $data['items_to_clone'];
@@ -215,6 +211,12 @@ class SchoolClassResource extends Resource
                                 $newAssessment = $assessment->replicate();
                                 $newAssessment->school_class_id = $newClass->id;
                                 $newAssessment->save();
+
+                                // Clone assessment students
+                                if ($assessment->students()->exists()) {
+                                    $studentIds = $assessment->students()->pluck('students.id');
+                                    $newAssessment->students()->attach($studentIds);
+                                }
                             }
                         }
 
