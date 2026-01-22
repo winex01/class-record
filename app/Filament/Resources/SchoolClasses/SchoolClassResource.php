@@ -17,12 +17,15 @@ use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
+use Illuminate\Support\Facades\DB;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Navigation\NavigationItem;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Tables\Filters\TernaryFilter;
+use Filament\Forms\Components\CheckboxList;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassLessons;
@@ -112,12 +115,13 @@ class SchoolClassResource extends Resource
                 )->label('Status')
             ])
             ->filters([
-                TernaryFilter::make('active')
-                    ->label('Status')
-                    ->placeholder('All')
-                    ->trueLabel('Active')
-                    ->falseLabel('Archived')
-                    ->native(false)
+                // TernaryFilter::make('active')
+                //     ->label('Status')
+                //     ->placeholder('All')
+                //     ->trueLabel('Active')
+                //     ->falseLabel('Archived')
+                //     ->native(false),
+
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -126,6 +130,8 @@ class SchoolClassResource extends Resource
                         ->color('info')
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
                         ->icon(Icon::students()),
+
+                    static::cloneClassAction(),
 
                     ViewAction::make()->modalWidth(Width::Large),
                     EditAction::make()->modalWidth(Width::Large),
@@ -136,6 +142,100 @@ class SchoolClassResource extends Resource
                 DeleteBulkAction::make(),
             ])
             ->recordUrl(fn ($record) => route('filament.app.resources.school-classes.students', $record));
+    }
+
+    // TODO:: gradingSettings / gradingComponents clone
+    // TODO:: TBD add or concat Clone in column name?
+    private static function cloneClassAction()
+    {
+        return Action::make('clone')
+                ->label('Clone Class')
+                ->color('warning')
+                ->icon('heroicon-o-document-duplicate')
+                ->modalHeading(fn ($record) => 'Clone Class: ' . $record->name)
+                ->form([
+                    CheckboxList::make('items_to_clone')
+                        ->label('Select items to include in clone')
+                        ->options([
+                            'students' => 'Students',
+                            'lessons' => 'Lessons',
+                            'assessments' => 'Assessments',
+                            // 'grading_settings' => 'Grading Settings',
+                        ])
+                        // ->default(['students', 'lessons', 'assessments', 'grading_settings'])
+                        ->default(['students', 'lessons', 'assessments'])
+                        ->required()
+                        ->columns(2),
+
+                    // TextInput::make('new_class_name')
+                    //     ->label('New Class Name')
+                    //     ->required()
+                    //     ->maxLength(255)
+                    //     ->placeholder('Enter name for cloned class'),
+                ])
+                ->action(function (array $data, $record) {
+                    // Start a database transaction for data integrity
+                    DB::beginTransaction();
+
+                    try {
+                        // Clone the main class record
+                        $newClass = $record->replicate();
+                        // $newClass->name = $data['new_class_name'];
+                        $newClass->save();
+
+                        $itemsToClone = $data['items_to_clone'];
+
+                        // Clone Students
+                        if (in_array('students', $itemsToClone) && $record->students()->exists()) {
+                            $studentIds = $record->students()->pluck('students.id');
+                            $newClass->students()->attach($studentIds);
+                        }
+
+                        // Clone Lessons
+                        if (in_array('lessons', $itemsToClone) && $record->lessons()->exists()) {
+                            foreach ($record->lessons as $lesson) {
+                                $newLesson = $lesson->replicate();
+                                $newLesson->school_class_id = $newClass->id;
+                                $newLesson->save();
+                            }
+                        }
+
+                        // Clone Assessments
+                        if (in_array('assessments', $itemsToClone) && $record->assessments()->exists()) {
+                            foreach ($record->assessments as $assessment) {
+                                $newAssessment = $assessment->replicate();
+                                $newAssessment->school_class_id = $newClass->id;
+                                $newAssessment->save();
+                            }
+                        }
+
+                        // Clone Grading Settings
+                        if (in_array('grading_settings', $itemsToClone) && $record->gradingSettings()->exists()) {
+                            foreach ($record->gradingSettings as $setting) {
+                                $newSetting = $setting->replicate();
+                                $newSetting->school_class_id = $newClass->id;
+                                $newSetting->save();
+                            }
+                        }
+
+                        DB::commit();
+
+                        Notification::make()
+                            ->title('Class cloned successfully')
+                            ->success()
+                            ->send();
+
+                    } catch (\Exception $e) {
+                        DB::rollBack();
+
+                        Notification::make()
+                            ->title('Error cloning class')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                })
+                ->modalWidth(Width::Large);
     }
 
     public static function getClassStudents($recordOrId)
