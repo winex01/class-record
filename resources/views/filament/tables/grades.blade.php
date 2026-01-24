@@ -12,7 +12,7 @@
                 @endphp
                 <td colspan="{{ $colspan }}">GRADING PERIOD: {{ $record->grading_period }}</td>
                 <td colspan="{{ $colspan }}">SUBJECT: {{ $schoolClass->name }}</td>
-                <td colspan="{{ $colspan + 99 }}">Year & Section: {{ str_replace(',', ', ', $schoolClass->year_section) }}</td>
+                <td colspan="{{ $colspan + 99 }}">YEAR & SECTION: {{ str_replace(',', ', ', $schoolClass->year_section) }}</td>
             </tr>
 
             {{-- ROW 2: Components Label --}}
