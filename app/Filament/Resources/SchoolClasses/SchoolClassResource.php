@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\SchoolClasses;
 
-use App\Enums\LessonStatus;
 use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
+use App\Enums\LessonStatus;
 use App\Models\SchoolClass;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -19,13 +19,11 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
-use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Navigation\NavigationItem;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Forms\Components\CheckboxList;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
@@ -125,13 +123,7 @@ class SchoolClassResource extends Resource
                 )->label('Status')
             ])
             ->filters([
-                // TernaryFilter::make('active')
-                //     ->label('Status')
-                //     ->placeholder('All')
-                //     ->trueLabel('Active')
-                //     ->falseLabel('Archived')
-                //     ->native(false),
-
+                //
             ])
             ->recordActions([
                 ActionGroup::make([
