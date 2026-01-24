@@ -102,7 +102,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             ->distinct()
                             ->minItems(1)
                             ->live()
-                            ->options(function (callable $get, $record, callable $set, string $operation) {
+                            ->options(function (callable $get, $livewire, callable $set, string $operation) {
                                 // Handle view mode early
                                 if ($operation === 'view') {
                                     $selectedIds = collect($get('assessments'))->filter()->all();
@@ -112,9 +112,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                         ->mapWithKeys(fn ($name, $id) => [(int) $id => $name])
                                         ->toArray();
                                 }
-
-                                // Get current repeater item's selected assessments FIRST
-                                $currentItemAssessments = collect($get('assessments'))->filter()->values();
 
                                 // Get all repeater state
                                 $allItems = collect($get('../../gradeGradingComponents') ?? []);
@@ -153,9 +150,13 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                     ->unique()
                                     ->values();
 
+                                // Get school_class_id from the record
+                                $schoolClassId = $livewire->record?->id ?? null;
+
                                 // Return available assessments
                                 return Assessment::query()
                                     ->whereNotIn('id', $allExcludedIds)
+                                    ->when($schoolClassId, fn($query) => $query->where('school_class_id', $schoolClassId))
                                     ->pluck('name', 'id')
                                     ->toArray();
                             })
