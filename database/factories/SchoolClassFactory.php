@@ -28,21 +28,29 @@ class SchoolClassFactory extends Factory
             'name'       => $this->faker->randomElement($subjects),
             'date_start' => $this->faker->optional()->date(),
             'date_end'   => $this->faker->optional()->date(),
-            'tags' => $this->fruitTags(3),
+            'year_section' => $this->yearAndSection(),
 
         ];
     }
 
-    public function fruitTags($count = 3)
+    public function yearAndSection()
     {
-        $fruits = [
-            'Apple', 'Banana', 'Orange', 'Grape', 'Strawberry', 'Blueberry',
-            'Pineapple', 'Mango', 'Watermelon', 'Kiwi', 'Peach', 'Pear',
-            'Cherry', 'Raspberry', 'Blackberry', 'Lemon', 'Lime', 'Coconut',
-            'Pomegranate', 'Avocado', 'Fig', 'Date', 'Papaya', 'Guava',
-            'Lychee', 'Dragonfruit', 'Passionfruit', 'Apricot', 'Plum', 'Nectarine'
+        $years = [
+            'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6',
+            'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11',
+            '1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year'
         ];
 
-        return $this->faker->randomElements($fruits, $count);
+        $sections = ['A', 'B', 'C', 'D']; // or [1, 2, 3] or ['Apple', 'Banana', 'Orange']
+
+        $combinations = [];
+
+        foreach ($years as $year) {
+            foreach ($sections as $section) {
+                $combinations[] = $year . ' - ' . $section; // e.g., "Grade 1 - A", "1st Year - B"
+            }
+        }
+
+        return $this->faker->randomElement($combinations);
     }
 }

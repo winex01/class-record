@@ -64,9 +64,9 @@ class SchoolClassResource extends Resource
                     ->required()
                     ->maxLength(255),
 
-            'tags' =>
-            Field::tags('tags')
-                ->placeholder('e.g. 1st Year, Section A, Evening Class'),
+            'year_section' =>
+            Field::tags('year_section')
+                ->placeholder('e.g. 1st Year, Grade 1, Section A'),
 
             'date_start' =>
             Field::date('date_start')
@@ -109,7 +109,7 @@ class SchoolClassResource extends Resource
             ->recordTitleAttribute('name')
             ->columns([
                 Column::text('name')->label('Subject'),
-                Column::tags('tags'),
+                Column::tags('year_section'),
                 Column::date('date_start'),
                 Column::date('date_end'),
                 Column::text('description')
@@ -166,7 +166,7 @@ class SchoolClassResource extends Resource
                         ->columns(2),
 
                     static::formSchema()['name']->default(fn ($record) => $record->name),
-                    static::formSchema()['tags']->default(fn ($record) => $record->tags ?? []),
+                    static::formSchema()['year_section']->default(fn ($record) => $record->year_section ?? []),
                     static::formSchema()['date_start']->default(fn ($record) => $record->date_start),
                     static::formSchema()['date_end']->default(fn ($record) => $record->date_end),
 
@@ -179,7 +179,7 @@ class SchoolClassResource extends Resource
                         // Clone the main class record
                         $newClass = $record->replicate();
                         $newClass->name = $data['name'];
-                        $newClass->tags = $data['tags'];
+                        $newClass->year_section = $data['year_section'];
                         $newClass->date_start = $data['date_start'];
                         $newClass->date_end = $data['date_end'];
                         $newClass->save();

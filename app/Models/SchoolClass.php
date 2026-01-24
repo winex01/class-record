@@ -14,7 +14,7 @@ class SchoolClass extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'tags' => 'array',
+        'year_section' => 'array',
     ];
 
     public function students()

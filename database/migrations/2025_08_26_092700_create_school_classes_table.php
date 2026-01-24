@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->date('date_start')->nullable();
             $table->date('date_end')->nullable();
-            $table->json('tags')->nullable();
+            $table->json('year_section')->nullable();
             $table->text('description')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
