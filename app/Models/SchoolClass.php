@@ -15,6 +15,8 @@ class SchoolClass extends Model
 
     protected $casts = [
         'year_section' => 'array',
+        'date_start' => 'date',
+        'date_end' => 'date',
     ];
 
     public function students()

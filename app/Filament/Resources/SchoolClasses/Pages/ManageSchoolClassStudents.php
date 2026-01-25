@@ -15,6 +15,7 @@ use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Widgets\SubjectDetailsWidget;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -24,6 +25,16 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
     protected static string $resource = SchoolClassResource::class;
 
     protected static string $relationship = 'students';
+
+    // TODO:: add to the rest of the cluster page nav
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            SubjectDetailsWidget::make([
+                'record' => $this->getOwnerRecord(),
+            ]),
+        ];
+    }
 
     public function getTabs(): array
     {
