@@ -18,7 +18,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Filters\TernaryFilter;
+use App\Filament\Traits\HasSubjectDetailsTrait;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
@@ -26,6 +26,8 @@ use App\Filament\Resources\SchoolClasses\RelationManagers\TakeFeeCollectionRelat
 
 class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 {
+    use HasSubjectDetailsTrait;
+    
     protected static string $resource = SchoolClassResource::class;
 
     protected static string $relationship = 'feeCollections';

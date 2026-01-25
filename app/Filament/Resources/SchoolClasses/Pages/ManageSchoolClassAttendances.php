@@ -14,6 +14,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Traits\HasSubjectDetailsTrait;
 use Coolsam\Flatpickr\Forms\Components\Flatpickr;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -22,6 +23,8 @@ use App\Filament\Resources\SchoolClasses\RelationManagers\TakeAttendanceRelation
 
 class ManageSchoolClassAttendances extends ManageRelatedRecords
 {
+    use HasSubjectDetailsTrait;
+    
     protected static string $resource = SchoolClassResource::class;
 
     protected static string $relationship = 'attendances';

@@ -23,13 +23,16 @@ use Filament\Tables\Filters\SelectFilter;
 use Relaticle\Flowforge\Concerns\BaseBoard;
 use Relaticle\Flowforge\Contracts\HasBoard;
 use Filament\Infolists\Components\TextEntry;
+use App\Filament\Traits\HasSubjectDetailsTrait;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
 class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
 {
+    use HasSubjectDetailsTrait;
     use BaseBoard;
+    
     protected string $view = 'flowforge::filament.pages.board-page';
     protected static string $resource = SchoolClassResource::class;
     protected static string $relationship = 'lessons';

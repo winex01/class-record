@@ -22,6 +22,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\ToggleButtons;
+use App\Filament\Traits\HasSubjectDetailsTrait;
 use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -31,6 +32,8 @@ use App\Filament\Resources\SchoolClasses\RelationManagers\RecordScoreRelationMan
 
 class ManageSchoolClassAssessments extends ManageRelatedRecords
 {
+    use HasSubjectDetailsTrait;
+    
     protected static string $resource = SchoolClassResource::class;
 
     protected static string $relationship = 'assessments';
