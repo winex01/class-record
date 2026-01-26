@@ -163,6 +163,7 @@ class SchoolClassResource extends Resource
                             'grading_settings' => 'Grading Settings',
                         ])
                         ->default(['students', 'lessons', 'assessments', 'grading_settings'])
+                        ->required()
                         ->columns(2),
 
                     static::formSchema()['name']->default(fn ($record) => $record->name),

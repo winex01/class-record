@@ -33,7 +33,7 @@ use App\Filament\Resources\SchoolClasses\RelationManagers\RecordScoreRelationMan
 class ManageSchoolClassAssessments extends ManageRelatedRecords
 {
     use HasSubjectDetailsTrait;
-    
+
     protected static string $resource = SchoolClassResource::class;
 
     protected static string $relationship = 'assessments';
