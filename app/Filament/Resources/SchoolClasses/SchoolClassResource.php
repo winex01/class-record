@@ -309,7 +309,7 @@ class SchoolClassResource extends Resource
             NavigationItem::make('Lessons')
                 ->url(ManageSchoolClassLessons::getUrl(['record' => $record]))
                 ->icon(Icon::lessons())
-                ->badge(fn () => $record->lessons()->where('status', LessonStatus::DONE)->count() ?: null)
+                ->badge(fn () => $record->lessons()->whereNot('status', LessonStatus::DONE)->count() ?: null)
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassLessons),
 
             NavigationItem::make('Assessments')
