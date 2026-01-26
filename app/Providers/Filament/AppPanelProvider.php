@@ -32,11 +32,13 @@ class AppPanelProvider extends PanelProvider
             ->spa()
             ->defaultThemeMode(ThemeMode::Dark)
             ->colors([
-                // 'primary' => Color::Amber,
                 'primary' => Color::Emerald,
                 'gray' => Color::Slate,
                 'pink' => Color::Pink,
-                // 'stone' => Color::Stone,
+                'purple' => Color::Purple,
+                'orange' => Color::Orange,
+                'cyan' => Color::Cyan,
+                'lime' => Color::Lime,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
