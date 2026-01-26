@@ -297,37 +297,43 @@ class SchoolClassResource extends Resource
             NavigationItem::make('Students')
                 ->url(ManageSchoolClassStudents::getUrl(['record' => $record]))
                 ->icon(Icon::students())
-                ->badge(fn () => $record->students()->count() ?: null)
+                ->badge(fn () => $record->students()->count() ?: null, 'success')
+                ->badgeTooltip('Total Students')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassStudents),
 
             NavigationItem::make('Attendances')
                 ->url(ManageSchoolClassAttendances::getUrl(['record' => $record]))
                 ->icon(Icon::attendances())
-                ->badge(fn () => $record->attendances()->count() ?: null)
+                ->badge(fn () => $record->attendances()->count() ?: null, 'success')
+                ->badgeTooltip('Attendance Records')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAttendances),
 
             NavigationItem::make('Lessons')
                 ->url(ManageSchoolClassLessons::getUrl(['record' => $record]))
                 ->icon(Icon::lessons())
-                ->badge(fn () => $record->lessons()->whereNot('status', LessonStatus::DONE)->count() ?: null)
+                ->badge(fn () => $record->lessons()->whereNot('status', LessonStatus::DONE)->count() ?: null, 'success')
+                ->badgeTooltip('Remaining Lessons')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassLessons),
 
             NavigationItem::make('Assessments')
                 ->url(ManageSchoolClassAssessments::getUrl(['record' => $record]))
                 ->icon(Icon::assessments())
-                ->badge(fn () => $record->assessments()->count() ?: null)
+                ->badge(fn () => $record->assessments()->count() ?: null, 'success')
+                ->badgeTooltip('Number of Assessments')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAssessments),
 
             NavigationItem::make('Fee Collections')
                 ->url(ManageSchoolClassFeeCollections::getUrl(['record' => $record]))
                 ->icon(Icon::feeCollections())
-                ->badge(fn () => $record->feeCollections()->count() ?: null)
+                ->badge(fn () => $record->feeCollections()->count() ?: null, 'success')
+                ->badgeTooltip('Number of Collections')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassFeeCollections),
 
             NavigationItem::make('Grades')
                 ->url(ManageSchoolClassGrades::getUrl(['record' => $record]))
                 ->icon(Icon::grades())
-                ->badge(fn () => $record->grades()->count() ?: null)
+                ->badge(fn () => $record->grades()->count() ?: null, 'success')
+                ->badgeTooltip('Grading Periods')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassGrades),
         ];
     }
