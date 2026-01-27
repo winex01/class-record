@@ -25,7 +25,7 @@
                     <td colspan="{{ $colspan }}"><strong>{{ $label }}</strong></td>
                 @endforeach
                 <td rowspan="3"><strong>Initial<br>Grade</strong></td>
-                <td rowspan="3" title="Transmuted Grade"><strong>Quarterly<br>Grade</strong></td>
+                <td rowspan="3" title="Transmuted Grade"><strong>Transmuted<br>Grade</strong></td>
             </tr>
 
             {{-- ROW 3: Assessment Numbers --}}
