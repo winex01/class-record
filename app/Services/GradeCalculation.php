@@ -18,15 +18,7 @@ class GradeCalculation
             }
         }
 
-        return null; // or you could throw an exception if preferred
-    }
-
-    public static function getTransmutedGrades(SchoolClass $schoolClass, array $rawGrades): array
-    {
-        $results = [];
-        foreach ($rawGrades as $rawGrade) {
-            $results[$rawGrade] = $this->getTransmutedGrade($schoolClass, $rawGrade);
-        }
-        return $results;
+        return $rawGrade;
+        // return number_format(round($rawGrade, 2), 2);
     }
 }

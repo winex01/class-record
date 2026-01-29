@@ -38,7 +38,7 @@ use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 class ManageSchoolClassGrades extends ManageRelatedRecords
 {
     use HasSubjectDetailsTrait;
-    
+
     protected static string $resource = SchoolClassResource::class;
 
     protected static string $relationship = 'grades';
@@ -311,7 +311,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->relationship('gradeTransmutations')
                     ->hiddenLabel()
                     ->collapsible()
-                    ->minItems(1)
+                    // ->minItems(1)
                     ->collapsed($ownerRecord?->gradeTransmutations()->exists())
                     ->itemLabel(fn (array $state): ?string =>
                         isset($state['initial_min'], $state['initial_max'], $state['transmuted_grade'])
