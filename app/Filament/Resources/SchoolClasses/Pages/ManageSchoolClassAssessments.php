@@ -5,12 +5,10 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
-use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
-use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use App\Enums\CompletedPendingStatus;
 use Filament\Forms\Components\Select;
@@ -117,21 +115,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
                 Section::make()
                     ->schema([
-                        Select::make('my_file_id')
-                            ->relationship('myFile', 'name')
-                            ->helperText('Optional')
-                            ->preload()
-                            ->searchable()
-                            ->editOptionForm(MyFileResource::getForm(true))
-                            ->editOptionAction(function (Action $action) {
-                                return $action
-                                    ->icon('heroicon-o-eye')
-                                    ->tooltip('View')
-                                    ->modalHeading('View File Details')
-                                    ->modalWidth(Width::Medium)
-                                    ->modalSubmitAction(false)
-                                    ->modalCancelActionLabel('Close');
-                            }),
+                        MyFileResource::selectMyFileAndCreateOption(),
 
                         ToggleButtons::make('can_group_students')
                             ->inline()

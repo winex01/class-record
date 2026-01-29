@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\MyFile;
 use App\Models\SchoolClass;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;

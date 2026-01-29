@@ -6,6 +6,7 @@ use App\Models\MyFile;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -14,6 +15,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
@@ -104,5 +106,29 @@ class MyFileResource extends Resource
         return [
             'index' => ManageMyFiles::route('/'),
         ];
+    }
+
+    public static function selectMyFileAndCreateOption()
+    {
+        return Select::make('my_file_id')
+                ->relationship('myFile', 'name')
+                ->helperText('Optional')
+                ->preload()
+                ->searchable()
+                ->nullable()
+                ->createOptionForm(static::getForm(false))
+                ->createOptionAction(
+                    fn (Action $action) => $action->modalWidth(Width::Medium),
+                )
+                ->editOptionForm(static::getForm(true))
+                ->editOptionAction(function (Action $action) {
+                    return $action
+                        ->icon('heroicon-o-eye')
+                        ->tooltip('View')
+                        ->modalHeading('View File Details')
+                        ->modalWidth(Width::Medium)
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel('Close');
+                });
     }
 }

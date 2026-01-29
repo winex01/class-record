@@ -16,14 +16,17 @@ use Filament\Actions\DeleteAction;
 use Filament\Support\Enums\TextSize;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Filters\SelectFilter;
 use Relaticle\Flowforge\Concerns\BaseBoard;
 use Relaticle\Flowforge\Contracts\HasBoard;
 use Filament\Infolists\Components\TextEntry;
 use App\Filament\Traits\HasSubjectDetailsTrait;
+use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -32,7 +35,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
 {
     use HasSubjectDetailsTrait;
     use BaseBoard;
-    
+
     protected string $view = 'flowforge::filament.pages.board-page';
     protected static string $resource = SchoolClassResource::class;
     protected static string $relationship = 'lessons';
@@ -57,7 +60,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                     ->color(LessonStatus::DONE->getColor()),
             ])
             ->cardSchema(fn(Schema $schema) => $schema->components($this->getColumns()))
-            ->filters($this->getFilters())
+            // ->filters($this->getFilters())
             ->searchable(['title', 'description', 'tags'])
             ->columnActions([
                 CreateAction::make()
@@ -65,7 +68,6 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                     ->button()
                     ->icon('heroicon-o-plus')
                     ->iconButton()
-                    ->modalWidth(Width::TwoExtraLarge)
                     ->form($this->getForm())
                     ->model(static::$model)
 
@@ -159,33 +161,46 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                 return LessonStatus::TOPICS->value;
             }),
 
-            TextInput::make('title')
-                ->required()
-                ->maxLength(255),
+            Grid::make(2)
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(255),
 
-            Textarea::make('description')
-                ->nullable()
-                ->rows(3)
-                ->columnSpanFull(),
+                        Textarea::make('description')
+                            ->nullable()
+                            ->rows(3)
+                            ->columnSpanFull(),
 
-            Field::tags('tags'),
+                        Field::tags('tags'),
 
-            Field::date('completion_date'),
+                        Field::date('completion_date'),
 
-            Repeater::make('checklist')
-                ->table([
-                    TableColumn::make('Item'),
-                    TableColumn::make('Done')->width(1),
-                ])
-                ->schema([
-                    TextInput::make('item')->placeholder('Enter checklist item'),
+                        Repeater::make('checklist')
+                            ->table([
+                                TableColumn::make('Item'),
+                                TableColumn::make('Done')->width(1),
+                            ])
+                            ->schema([
+                                TextInput::make('item')->placeholder('Enter checklist item'),
 
-                    Toggle::make('done')
-                        ->default(false)
-                ])
-                ->compact()
-                ->minItems(0)
-                ->defaultItems(0)
+                                Toggle::make('done')
+                                    ->default(false)
+                            ])
+                            ->compact()
+                            ->minItems(0)
+                            ->defaultItems(0),
+                    ])
+                    ->columnSpan(1),
+
+                Section::make()
+                    ->schema([
+                        // TODO:: attach multiple files
+                    ])
+                    ->columnSpan(1),
+            ]),
         ];
     }
 }
