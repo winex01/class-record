@@ -22,6 +22,11 @@ class MyFile extends Model
         return $this->hasMany(Assessment::class);
     }
 
+    public function lessons()
+    {
+        return $this->belongsToMany(Lesson::class);
+    }
+
     protected static function booted()
     {
         static::updating(function ($myFile) {

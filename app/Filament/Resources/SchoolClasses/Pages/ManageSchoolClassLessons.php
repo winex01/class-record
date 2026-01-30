@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Lesson;
+use App\Models\MyFile;
 use App\Services\Field;
 use App\Enums\LessonStatus;
 use Filament\Schemas\Schema;
@@ -15,6 +16,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Support\Enums\TextSize;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Repeater;
@@ -197,9 +199,24 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
 
                 Section::make()
                     ->schema([
-                        // TODO:: attach multiple files
-                    ])
-                    ->columnSpan(1),
+
+                        Select::make('myFiles')
+                            ->multiple()
+                            ->options(MyFile::pluck('name', 'id'))
+                            ->searchable()
+                            ->preload()
+                            ->dehydrated(false) // Don't save to the lessons table
+                            ->saveRelationshipsUsing(function ($component, $state, $record) {
+                                // $state contains the selected file IDs
+                                // $record is the Lesson model
+                                $record->myFiles()->sync($state ?? []);
+                            })
+                            ->loadStateFromRelationshipsUsing(function ($component, $record) {
+                                // Load existing relationships when editing
+                                $component->state($record->myFiles->pluck('id')->toArray());
+                            })
+
+                    ])->columnSpan(1),
             ]),
         ];
     }

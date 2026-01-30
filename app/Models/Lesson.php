@@ -19,4 +19,9 @@ class Lesson extends Model
         'tags' => 'array',
         'checklist' => 'array',
     ];
+
+    public function myFiles()
+    {
+        return $this->belongsToMany(MyFile::class);
+    }
 }
