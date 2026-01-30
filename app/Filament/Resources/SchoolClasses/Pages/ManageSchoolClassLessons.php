@@ -76,7 +76,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
 
             ])
             ->cardActions([
-                static::downloadFiles(),
+                static::downloadFiles()->modalWidth(Width::Medium),
                 ViewAction::make()->form($this->getForm()),
                 EditAction::make()->form($this->getForm()),
                 DeleteAction::make(),
