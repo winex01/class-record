@@ -1,5 +1,6 @@
-{{-- resources/views/filament/components/download-files.blade.php --}}
-
+{{--
+    TODO:: cant download file and also group the array files using the name.
+--}}
 <div class="space-y-2">
     @forelse($files as $file)
         @php
@@ -22,7 +23,7 @@
 
                 {{-- File Info --}}
                 <div class="flex-1 min-w-0">
-                    <p class="font-medium text-gray-900 dark:text-gray-100 truncate group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors">
+                    <p class="font-medium text-gray-900 dark:text-white truncate group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors"></p>
                         {{ $fileName }}
                     </p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
