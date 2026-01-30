@@ -66,6 +66,7 @@ class MyFileResource extends Resource
                 ->placeholder(fn ($operation) => $operation === 'view'
                     ? '<strong>Click on the icon to download or view</strong>'
                     : null)
+                ->hint('Attach one or more files')
                 ->disabled($readonly),
         ];
     }

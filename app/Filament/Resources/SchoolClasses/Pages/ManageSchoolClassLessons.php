@@ -6,6 +6,7 @@ use App\Models\Lesson;
 use App\Models\MyFile;
 use App\Services\Field;
 use App\Enums\LessonStatus;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Relaticle\Flowforge\Board;
 use Relaticle\Flowforge\Column;
@@ -19,6 +20,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\View;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -28,7 +30,6 @@ use Relaticle\Flowforge\Concerns\BaseBoard;
 use Relaticle\Flowforge\Contracts\HasBoard;
 use Filament\Infolists\Components\TextEntry;
 use App\Filament\Traits\HasSubjectDetailsTrait;
-use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -75,9 +76,38 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
 
             ])
             ->cardActions([
-                ViewAction::make()->modalWidth(Width::TwoExtraLarge)->form($this->getForm()),
-                EditAction::make()->modalWidth(Width::TwoExtraLarge)->form($this->getForm()),
+                static::downloadFiles(),
+                ViewAction::make()->form($this->getForm()),
+                EditAction::make()->form($this->getForm()),
                 DeleteAction::make(),
+            ]);
+    }
+
+    private static function downloadFiles()
+    {
+        return Action::make('downloadFiles')
+            ->label('Download Files')
+            ->icon('heroicon-o-arrow-down-tray')
+            ->color('info')
+            ->modalHeading('Attached Files')
+            ->modalWidth(Width::Small)
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Close')
+            ->form([
+                View::make('filament.components.download-files')
+                    ->viewData(function ($record) {
+                        if (!$record || !$record->myFiles->count()) {
+                            return ['files' => []];
+                        }
+
+                        $allFiles = [];
+
+                        foreach ($record->myFiles as $myFile) {
+                            $allFiles = array_merge($allFiles, $myFile->path ?? []);
+                        }
+
+                        return ['files' => $allFiles];
+                    }),
             ]);
     }
 
