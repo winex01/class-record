@@ -96,17 +96,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
             ->form([
                 View::make('filament.components.download-files')
                     ->viewData(function ($record) {
-                        if (!$record || !$record->myFiles->count()) {
-                            return ['files' => []];
-                        }
-
-                        $allFiles = [];
-
-                        foreach ($record->myFiles as $myFile) {
-                            $allFiles = array_merge($allFiles, $myFile->path ?? []);
-                        }
-
-                        return ['files' => $allFiles];
+                        return ['myFiles' => $record->myFiles];
                     }),
             ]);
     }
