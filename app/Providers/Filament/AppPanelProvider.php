@@ -34,6 +34,7 @@ class AppPanelProvider extends PanelProvider
             ->login()
             ->spa()
             ->defaultThemeMode(ThemeMode::Dark)
+            // ->maxContentWidth('full') // Options: 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', 'full'
             ->colors([
                 'primary' => Color::Emerald,
                 'gray' => Color::Slate,

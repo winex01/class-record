@@ -10,7 +10,6 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -92,11 +91,9 @@ class MeetingResource extends Resource
                 //
             ])
             ->recordActions([
-                ActionGroup::make([
-                    ViewAction::make()->modalWidth(Width::Medium),
-                    EditAction::make()->modalWidth(Width::Medium),
-                    DeleteAction::make(),
-                ])->grouped()
+                ViewAction::make()->modalWidth(Width::Medium),
+                EditAction::make()->modalWidth(Width::Medium),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

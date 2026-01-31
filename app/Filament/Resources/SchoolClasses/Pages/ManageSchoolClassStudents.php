@@ -15,14 +15,14 @@ use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Traits\HasSubjectDetailsTrait;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
 class ManageSchoolClassStudents extends ManageRelatedRecords
 {
-    use HasSubjectDetailsTrait;
+    use ManageSchoolClassInitTrait;
 
     protected static string $resource = SchoolClassResource::class;
 

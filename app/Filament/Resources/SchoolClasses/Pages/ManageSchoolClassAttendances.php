@@ -14,17 +14,17 @@ use Filament\Tables\Filters\Filter;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Traits\HasSubjectDetailsTrait;
 use Coolsam\Flatpickr\Forms\Components\Flatpickr;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 use App\Filament\Resources\SchoolClasses\RelationManagers\TakeAttendanceRelationManager;
 
 class ManageSchoolClassAttendances extends ManageRelatedRecords
 {
-    use HasSubjectDetailsTrait;
-    
+    use ManageSchoolClassInitTrait;
+
     protected static string $resource = SchoolClassResource::class;
 
     protected static string $relationship = 'attendances';

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Pages;
+namespace App\Filament\Traits;
 
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Support\Enums\Width;
 
-class BaseManageSchoolPage extends ManageRelatedRecords
+trait ManageSchoolClassInitTrait
 {
     protected function getHeaderWidgets(): array
     {
@@ -13,5 +13,10 @@ class BaseManageSchoolPage extends ManageRelatedRecords
                 'record' => $this->getOwnerRecord(),
             ]),
         ];
+    }
+
+    public function getMaxContentWidth(): Width
+    {
+        return Width::Full;
     }
 }

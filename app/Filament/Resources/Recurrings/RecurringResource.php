@@ -11,7 +11,6 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Radio;
@@ -175,11 +174,9 @@ class RecurringResource extends Resource
                 //
             ])
             ->recordActions([
-                ActionGroup::make([
-                    ViewAction::make()->modalWidth(Width::ExtraLarge),
-                    EditAction::make()->modalWidth(Width::ExtraLarge),
-                    DeleteAction::make(),
-                ])->grouped()
+                ViewAction::make()->modalWidth(Width::ExtraLarge),
+                EditAction::make()->modalWidth(Width::ExtraLarge),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

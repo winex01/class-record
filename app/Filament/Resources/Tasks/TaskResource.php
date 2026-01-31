@@ -10,7 +10,6 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -107,11 +106,9 @@ class TaskResource extends Resource
                 //
             ])
             ->recordActions([
-                ActionGroup::make([
-                    ViewAction::make()->modalWidth(Width::Large),
-                    EditAction::make()->modalWidth(Width::Large),
-                    DeleteAction::make(),
-                ])->grouped()
+                ViewAction::make()->modalWidth(Width::Large),
+                EditAction::make()->modalWidth(Width::Large),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

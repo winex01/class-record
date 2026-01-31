@@ -30,14 +30,14 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\CheckboxList;
-use App\Filament\Traits\HasSubjectDetailsTrait;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use App\Filament\Traits\ManageSchoolClassInitTrait;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
 class ManageSchoolClassGrades extends ManageRelatedRecords
 {
-    use HasSubjectDetailsTrait;
+    use ManageSchoolClassInitTrait;
 
     protected static string $resource = SchoolClassResource::class;
 

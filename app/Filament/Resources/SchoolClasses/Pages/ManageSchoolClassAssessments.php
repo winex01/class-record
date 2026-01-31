@@ -20,9 +20,9 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\ToggleButtons;
-use App\Filament\Traits\HasSubjectDetailsTrait;
 use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\AssessmentTypes\AssessmentTypeResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
@@ -30,7 +30,7 @@ use App\Filament\Resources\SchoolClasses\RelationManagers\RecordScoreRelationMan
 
 class ManageSchoolClassAssessments extends ManageRelatedRecords
 {
-    use HasSubjectDetailsTrait;
+    use ManageSchoolClassInitTrait;
 
     protected static string $resource = SchoolClassResource::class;
 
