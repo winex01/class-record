@@ -2,15 +2,13 @@
     @foreach($myFiles as $myFile)
         <h5>{{ $myFile->name }}</h5>
 
-        @foreach ($myFile->path as $file)
+        @foreach ($myFile->path as $index => $file)
             @php
                 $fileName = basename($file);
                 $extension = strtoupper(pathinfo($file, PATHINFO_EXTENSION));
             @endphp
 
-            <a href="{{ asset('storage/' . $file) }}"
-                download="{{ $myFile->name }}"
-                target="_blank"
+            <a href="{{ route('filament.app.myfile.download', ['myFileId' => $myFile->id, 'index' => $index]) }}"
                 class="group flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 hover:border-primary-400 dark:hover:border-primary-600 transition-all duration-200 hover:shadow-md">
 
                     {{-- Left side: Icon + File name --}}
