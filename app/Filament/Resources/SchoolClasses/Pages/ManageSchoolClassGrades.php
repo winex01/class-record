@@ -560,7 +560,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 'style' => 'position: relative; z-index: 50;',
                             ]),
 
-                            View::make('filament.tables.grades')
+                            View::make('filament.components.grades')
                                 ->viewData(function ($get, $record) use ($getOwnerRecord) {
                                     // Get the selected student filter
                                     $studentFilter = $get('student_filter');

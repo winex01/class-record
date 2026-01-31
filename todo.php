@@ -1,6 +1,5 @@
 <?php
 /*
-TODO:: transfer grade.blade.php into components directory
 TODO:: import student
 TODO:: export student
 TODO:: download active classs in excel
