@@ -92,13 +92,14 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
             ->modalHeading('Attached Files')
             ->modalWidth(Width::Small)
             ->modalSubmitAction(false)
-            ->modalCancelActionLabel('Close')
+            ->modalCancelAction(false)
             ->form([
                 View::make('filament.components.download-files')
                     ->viewData(function ($record) {
                         return ['myFiles' => $record->myFiles];
                     }),
-            ]);
+            ])
+            ->visible(fn ($record) => $record->myFiles->isNotEmpty());
     }
 
     private function getColumns()
