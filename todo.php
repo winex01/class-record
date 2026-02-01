@@ -1,5 +1,6 @@
 <?php
 /*
+TODO:: attedance: show student without absent and most absences / tirediness
 TODO:: Grade Summary (Overall Grade) action modal
 TODO:: import student
 TODO:: export student
