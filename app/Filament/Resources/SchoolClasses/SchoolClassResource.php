@@ -200,6 +200,15 @@ class SchoolClassResource extends Resource
                                 $newLesson->school_class_id = $newClass->id;
                                 $newLesson->status = LessonStatus::TOPICS->value;
                                 $newLesson->save();
+
+                                // Clone the many-to-many relationship with MyFile
+                                if ($lesson->myFiles()->exists()) {
+                                    // Get the IDs of related MyFile records (with pivot data if needed)
+                                    $myFileIds = $lesson->myFiles()->pluck('my_files.id')->toArray();
+
+                                    // Attach the same MyFile records to the new lesson
+                                    $newLesson->myFiles()->attach($myFileIds);
+                                }
                             }
                         }
 
