@@ -24,8 +24,20 @@
                     @endphp
                     <td colspan="{{ $colspan }}"><strong>{{ $label }}</strong></td>
                 @endforeach
-                <td rowspan="3"><strong>Initial<br>Grade</strong></td>
-                <td rowspan="3" title="Transmuted Grade"><strong>Transmuted<br>Grade</strong></td>
+
+                <td rowspan="3">
+                    <strong>
+                        @if ($hasTransmutedGrade)
+                            Initial<br>
+                        @endif
+                        Grade
+                    </strong>
+                </td>
+
+                @if ($hasTransmutedGrade)
+                    <td rowspan="3" title="Transmuted Grade"><strong>Transmuted<br>Grade</strong></td>
+                @endif
+
             </tr>
 
             {{-- ROW 3: Assessment Numbers --}}
@@ -127,11 +139,15 @@
                         @endphp
 
                         <td title="Initial Grade"><strong>{{ $studentInitialGrade }}</strong></td>
-                        <td title="Transmuted Grade">
-                            <strong>
-                                {{ App\Services\GradeCalculation::getTransmutedGrade($schoolClass, $studentInitialGrade) }}
-                            </strong>
-                        </td>
+
+                        @if ($hasTransmutedGrade)
+                            <td title="Transmuted Grade">
+                                <strong>
+                                    {{ App\Services\GradeCalculation::getTransmutedGrade($schoolClass, $studentInitialGrade) }}
+                                </strong>
+                            </td>
+                        @endif
+
                     </tr>
                 @endforeach
             @endforeach

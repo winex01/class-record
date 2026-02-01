@@ -241,7 +241,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->actionsAlignment('start')
             ->headerActions([
                 CreateAction::make()->modalWidth(Width::TwoExtraLarge),
-                // TODO:: Grade Summary (Overall Grade) action modal
             ])
             ->recordActions([
                 static::viewGrades($this->getOwnerRecord()),
@@ -347,6 +346,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 Select::make('template_id')
                                     ->label('Select Template')
                                     ->options(TransmuteTemplate::query()->pluck('name', 'id'))
+                                    ->default(fn () => TransmuteTemplate::query()->first()?->id)
                                     ->searchable()
                                     ->preload()
                                     ->required()
@@ -589,26 +589,29 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                                     $percentageScore = 100;
 
+                                    $hasTransmutedGrade = $schoolClass->gradeTransmutations()->exists();
+
                                     // Return all data to the view
-                                    return [
-                                        'record' => $record,
-                                        'schoolClass' => $schoolClass,
-                                        'gradeGradingComponents' => $gradeGradingComponents,
-                                        'groupedAssessments' => $groupedAssessments,
-                                        'totalAssessmentColumns' => $totalAssessmentColumns,
-                                        'totalColumns' => $totalColumns,
-                                        'students' => $students,
-                                        'percentageScore' => $percentageScore,
-                                        'studentFilter' => $studentFilter,
-                                    ];
+                                    return compact(
+                                        'record',
+                                        'schoolClass',
+                                        'gradeGradingComponents',
+                                        'groupedAssessments',
+                                        'totalAssessmentColumns',
+                                        'totalColumns',
+                                        'students',
+                                        'percentageScore',
+                                        'studentFilter',
+                                        'hasTransmutedGrade'
+                                    );
                                 }),
                         ];
                     })
                     ->modalWidth(Width::SevenExtraLarge)
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')
+                    ->closeModalByClickingAway(false)
                     ->modalAutofocus(false);
-
     }
 
 }
