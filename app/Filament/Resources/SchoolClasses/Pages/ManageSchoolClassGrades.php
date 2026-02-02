@@ -610,7 +610,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->modalWidth(Width::SevenExtraLarge)
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')
-                    ->closeModalByClickingAway(false)
                     ->modalAutofocus(false);
     }
 
