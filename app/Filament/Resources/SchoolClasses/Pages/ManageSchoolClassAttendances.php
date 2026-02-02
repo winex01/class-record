@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ActionGroup;
@@ -106,6 +107,8 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->headerActions([
                 SchoolClassResource::createAction($this->getOwnerRecord())
                     ->modalWidth(Width::Medium),
+
+                static::getOverviewAction(),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -124,5 +127,47 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                 DeleteBulkAction::make(),
             ])
             ->recordAction('takeAttendanceRelationManager');
+    }
+
+    public static function getOverviewAction(): Action
+    {
+        return Action::make('overview')
+            ->label('Overview')
+            ->icon('heroicon-o-user-group')
+            ->color('info')
+            ->modalHeading('Student Attendance Overview')
+            ->modalDescription('Overview of students across all attendance records')
+            ->modalContent(function ($livewire) {
+                $attendances = $livewire->getOwnerRecord()->attendances()->with('students')->get();
+
+                // Get unique students and group their attendance data
+                $studentsData = [];
+
+                foreach ($attendances as $attendance) {
+                    foreach ($attendance->students as $student) {
+                        if (!isset($studentsData[$student->id])) {
+                            $studentsData[$student->id] = [
+                                'id' => $student->id,
+                                'name' => $student->name,
+                                'present_count' => 0,
+                                'absent_count' => 0,
+                            ];
+                        }
+
+                        // Count based on the 'present' boolean pivot column
+                        if ($student->pivot->present) {
+                            $studentsData[$student->id]['present_count']++;
+                        } else {
+                            $studentsData[$student->id]['absent_count']++;
+                        }
+                    }
+                }
+
+                $studentsData = array_values($studentsData);
+
+                return view('filament.components.attendance-overview', compact('studentsData'));
+            })
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Close');
     }
 }
