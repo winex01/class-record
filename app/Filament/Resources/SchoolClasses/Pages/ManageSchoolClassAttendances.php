@@ -136,7 +136,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->icon('heroicon-o-user-group')
             ->color('info')
             ->modalHeading('Student Attendance Overview')
-            ->modalDescription('Overview of students across all attendance records')
+            ->modalDescription(fn ($livewire) => 'Overview of students across all attendance records for ' . $livewire->getOwnerRecord()->name)
             ->modalContent(function ($livewire) {
                 $attendances = $livewire->getOwnerRecord()->attendances()->with('students')->get();
 

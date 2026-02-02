@@ -2,16 +2,18 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use App\Models\Student;
+use Livewire\Component;
+use Filament\Tables\Table;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Actions\Concerns\InteractsWithActions;
+use App\Filament\Resources\Students\StudentResource;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 
 class AttendanceOverviewTable extends Component implements HasForms, HasTable, HasActions
 {
@@ -32,42 +34,45 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
     {
         return $table
             ->query(Student::query()->whereIn('id', array_column($this->studentsData, 'id')))
+            ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
-                TextColumn::make('full_name')
-                    ->label('Full Name')
-                    ->searchable(query: function ($query, $search) {
-                        return $query->where(function ($query) use ($search) {
-                            $query->where('first_name', 'like', "%{$search}%")
-                                ->orWhere('last_name', 'like', "%{$search}%")
-                                ->orWhere('middle_name', 'like', "%{$search}%")
-                                ->orWhere('suffix_name', 'like', "%{$search}%");
-                        });
-                    })
-                    ->sortable(),
+                ...ManageSchoolClassStudents::getColumns(),
 
                 TextColumn::make('present_count')
-                    ->label('Present')
-                    ->state(function ($record) {
-                        $studentData = collect($this->studentsData)->firstWhere('id', $record->id);
-                        return $studentData['present_count'] ?? 0;
-                    })
-                    ->alignCenter()
-                    ->badge()
-                    ->color('success')
-                    ->sortable(),
+                ->label('Present')
+                ->state(function ($record) {
+                    $studentData = collect($this->studentsData)->firstWhere('id', $record->id);
+                    return $studentData['present_count'] ?? 0;
+                })
+                ->alignCenter()
+                ->badge()
+                ->color('success')
+                ->sortable(query: function ($query, $direction) {
+                    $studentsData = $this->studentsData;
+                    $orderMap = collect($studentsData)->sortBy('present_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
 
-                TextColumn::make('absent_count')
-                    ->label('Absent')
-                    ->state(function ($record) {
-                        $studentData = collect($this->studentsData)->firstWhere('id', $record->id);
-                        return $studentData['absent_count'] ?? 0;
-                    })
-                    ->alignCenter()
-                    ->badge()
-                    ->color('danger')
-                    ->sortable(),
+                    return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
+                }),
+
+            TextColumn::make('absent_count')
+                ->label('Absent')
+                ->state(function ($record) {
+                    $studentData = collect($this->studentsData)->firstWhere('id', $record->id);
+                    return $studentData['absent_count'] ?? 0;
+                })
+                ->alignCenter()
+                ->badge()
+                ->color('danger')
+                ->sortable(query: function ($query, $direction) {
+                    $studentsData = $this->studentsData;
+                    $orderMap = collect($studentsData)->sortBy('absent_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
+
+                    return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
+                }),
             ])
-            ->paginated([10, 25, 50]);
+            ->filters([
+                ...StudentResource::getFilters()
+            ]);
     }
 
     public function render()
