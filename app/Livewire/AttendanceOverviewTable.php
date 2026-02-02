@@ -72,7 +72,9 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
             ])
             ->filters([
                 ...StudentResource::getFilters()
-            ]);
+            ])
+            ->emptyStateHeading('No attendance overview available')
+            ->emptyStateDescription('Create attendance records to see the summary here.');
     }
 
     public function render()
