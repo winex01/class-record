@@ -163,9 +163,11 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     }
                 }
 
-                $studentsData = array_values($studentsData);
 
-                return view('filament.components.attendance-overview', compact('studentsData'));
+                $studentsData = array_values($studentsData);
+                $schoolClassId = $livewire->getOwnerRecord()->id;
+
+                return view('filament.components.attendance-overview', compact('studentsData', 'schoolClassId'));
             })
             ->modalSubmitAction(false)
             ->modalCancelActionLabel('Close');
