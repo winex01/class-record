@@ -148,7 +148,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                         if (!isset($studentsData[$student->id])) {
                             $studentsData[$student->id] = [
                                 'id' => $student->id,
-                                'name' => $student->name,
+                                'name' => $student->full_name,
                                 'present_count' => 0,
                                 'absent_count' => 0,
                             ];
