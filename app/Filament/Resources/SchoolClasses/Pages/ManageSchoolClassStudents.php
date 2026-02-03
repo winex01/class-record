@@ -63,7 +63,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ->recordTitleAttribute('full_name')
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
-                ...static::getColumns()
+                ...static::getColumns(['photo', 'full_name', 'gender', 'birth_date'])
             ])
             ->filters([
                 ...StudentResource::getFilters()
@@ -119,18 +119,13 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 });
     }
 
-    public static function getColumns()
+    public static function getColumns($defaultShownColumns = ['photo', 'full_name', 'gender'])
     {
         $columns = StudentResource::getColumns();
 
         foreach ($columns as $key => $col) {
-            if (!in_array($col->getName(), [
-                'photo',
-                'full_name',
-                'gender',
-            ])) {
-                $col = $col->toggleable(isToggledHiddenByDefault:true);
-                $columns[$key] = $col;
+            if (!in_array($col->getName(), $defaultShownColumns)) {
+                $columns[$key] = $col->toggleable(isToggledHiddenByDefault: true);
             }
         }
 
