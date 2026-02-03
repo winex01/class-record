@@ -30,16 +30,6 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
 
     protected static string $relationship = 'attendances';
 
-    public function getTabs(): array
-    {
-        return [
-            'All' => Tab::make()
-                ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->count()
-                ),
-        ];
-    }
-
     public function form(Schema $schema): Schema
     {
         return $schema
