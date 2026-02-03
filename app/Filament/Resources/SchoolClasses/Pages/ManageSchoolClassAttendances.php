@@ -136,6 +136,8 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->color('info')
             ->modalHeading('Student Attendance Overview')
             ->modalDescription(fn ($livewire) => 'Overview of students across all attendance records for ' . $livewire->getOwnerRecord()->name)
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Close')
             ->modalContent(function ($livewire) {
                 $attendances = $livewire->getOwnerRecord()->attendances()->with('students')->get();
 
@@ -162,13 +164,25 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     }
                 }
 
-
                 $studentsData = array_values($studentsData);
-                $schoolClassId = $livewire->getOwnerRecord()->id;
 
-                return view('filament.components.attendance-overview', compact('studentsData', 'schoolClassId'));
-            })
-            ->modalSubmitAction(false)
-            ->modalCancelActionLabel('Close');
+                // Filter for perfect attendance (zero absents)
+                $perfectAttendanceData = array_filter($studentsData, function($student) {
+                    return $student['absent_count'] === 0;
+                });
+                $perfectAttendanceData = array_values($perfectAttendanceData);
+
+                $schoolClassId = $livewire->getOwnerRecord()->id;
+                $activeTab = 'all';
+
+                return view('filament.components.attendance-overview',
+                    compact(
+                        'studentsData',
+                        'perfectAttendanceData',
+                        'schoolClassId',
+                        'activeTab',
+                    )
+                );
+            });
     }
 }
