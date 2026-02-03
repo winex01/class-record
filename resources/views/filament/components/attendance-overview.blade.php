@@ -5,6 +5,9 @@
             x-on:click="activeTab = 'all'"
         >
             All
+            <x-filament::badge>
+                {{ count($studentsData) }}
+            </x-filament::badge>
         </x-filament::tabs.item>
 
         <x-filament::tabs.item
@@ -12,6 +15,9 @@
             x-on:click="activeTab = 'perfect'"
         >
             Perfect Attendance
+            <x-filament::badge>
+                {{ count($perfectAttendanceData) }}
+            </x-filament::badge>
         </x-filament::tabs.item>
     </x-filament::tabs>
 
