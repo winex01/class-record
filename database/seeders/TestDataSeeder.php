@@ -36,7 +36,7 @@ class TestDataSeeder extends Seeder
         $class->students()->attach($students);
 
         // create attendances
-        for ($i = 0; $i < 90; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $date = Carbon::today()->subDays($i);
 
             // create attendance record for this date
