@@ -8,12 +8,10 @@ use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use Coolsam\Flatpickr\Forms\Components\Flatpickr;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -101,11 +99,9 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                 static::getOverviewAction(),
             ])
             ->recordActions([
-                ActionGroup::make([
-                    static::getTakeAttendanceAction(),
-                    EditAction::make()->modalWidth(Width::Medium),
-                    DeleteAction::make(),
-                ])->grouped()
+                static::getTakeAttendanceAction(),
+                EditAction::make()->modalWidth(Width::Medium),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

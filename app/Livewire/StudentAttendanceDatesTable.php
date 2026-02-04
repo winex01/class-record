@@ -10,6 +10,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -83,13 +84,23 @@ class StudentAttendanceDatesTable extends Component implements HasForms, HasTabl
                         $record->students->first()?->pivot->present ? 'Mark as Absent' : 'Mark as Present'
                     )
                     ->action(function ($record) {
-                        $currentState = $record->students->first()?->pivot->present ?? false;
+                        $student = $record->students->first();
+                        $currentState = $student?->pivot->present ?? false;
+                        $newState = !$currentState;
+
                         $record->students()->updateExistingPivot($this->studentId, [
-                            'present' => !$currentState,
+                            'present' => $newState,
                         ]);
 
                         // Dispatch event to refresh the overview table
                         $this->dispatch('refresh-overview-data');
+
+                        // Show notification
+                        Notification::make()
+                            ->title('Attendance Updated')
+                            ->body($student->full_name . ' marked as ' . ($newState ? 'Present' : 'Absent') . ' for ' . $record->date->format('M d, Y'))
+                            ->success()
+                            ->send();
                     }),
             ])
             ->defaultSort('date', 'desc')
