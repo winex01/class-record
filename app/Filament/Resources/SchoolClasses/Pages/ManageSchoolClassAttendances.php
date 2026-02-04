@@ -102,13 +102,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ])
             ->recordActions([
                 ActionGroup::make([
-                    RelationManagerAction::make('takeAttendanceRelationManager')
-                        ->label('Take Attendance')
-                        ->icon(\App\Services\Icon::students())
-                        ->color('info')
-                        ->slideOver()
-                        ->relationManager(TakeAttendanceRelationManager::make()),
-
+                    static::getTakeAttendanceAction(),
                     EditAction::make()->modalWidth(Width::Medium),
                     DeleteAction::make(),
                 ])->grouped()
@@ -117,6 +111,17 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                 DeleteBulkAction::make(),
             ])
             ->recordAction('takeAttendanceRelationManager');
+    }
+
+    public static function getTakeAttendanceAction()
+    {
+        return RelationManagerAction::make('takeAttendanceRelationManager')
+                ->label('Take Attendance')
+                ->modalHeading(fn ($record) => 'Take Attendance - ' . $record->date->format('M d, Y'))
+                ->icon(\App\Services\Icon::students())
+                ->color('info')
+                ->slideOver()
+                ->relationManager(TakeAttendanceRelationManager::make());
     }
 
     public static function getOverviewAction(): Action

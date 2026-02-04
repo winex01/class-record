@@ -2,8 +2,8 @@
 
 namespace App\Livewire;
 
-use App\Models\Attendance;
 use Livewire\Component;
+use App\Models\Attendance;
 use Filament\Tables\Table;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
@@ -49,6 +49,9 @@ class StudentAttendanceDatesTable extends Component implements HasForms, HasTabl
                     ->label('Date')
                     ->date('F d, Y')
                     ->sortable(),
+            ])
+            ->recordActions([
+                //
             ])
             ->defaultSort('date', 'desc')
             ->paginated([10, 25, 50])

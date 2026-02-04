@@ -30,6 +30,9 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
     {
         $this->schoolClassId = $schoolClassId;
         $this->studentsData = $studentsData;
+
+        // Reset table page to 1 on mount or everytime modal is open
+        $this->resetTable();
     }
 
     public function table(Table $table): Table
@@ -57,7 +60,7 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
                 })
                 ->action(
                     Action::make('viewPresences')
-                        ->modalHeading(fn ($record) => 'Present Dates - ' . $record->name)
+                        ->modalHeading(fn ($record) => $record->full_name . ' - Present Dates')
                         ->modalContent(fn ($record, $livewire) => view('filament.components.student-attendance-dates', [
                             'studentId' => $record->id,
                             'schoolClassId' => $livewire->schoolClassId,
@@ -85,7 +88,7 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
                 })
                 ->action(
                     Action::make('viewAbsences')
-                        ->modalHeading(fn ($record) => 'Absent Dates - ' . $record->name)
+                        ->modalHeading(fn ($record) => $record->full_name . ' - Absent Dates')
                         ->modalContent(fn ($record, $livewire) => view('filament.components.student-attendance-dates', [
                             'studentId' => $record->id,
                             'schoolClassId' => $livewire->schoolClassId,
