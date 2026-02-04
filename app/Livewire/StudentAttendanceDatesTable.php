@@ -28,6 +28,9 @@ class StudentAttendanceDatesTable extends Component implements HasForms, HasTabl
         $this->studentId = $studentId;
         $this->schoolClassId = $schoolClassId;
         $this->isPresent = $isPresent;
+
+        // Reset table page to 1 on mount or everytime modal is open
+        $this->resetTable();
     }
 
     public function table(Table $table): Table
