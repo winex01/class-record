@@ -4,7 +4,9 @@ namespace App\Livewire;
 
 use App\Models\Student;
 use Livewire\Component;
+use App\Models\Attendance;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -52,9 +54,21 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
                     $orderMap = collect($studentsData)->sortBy('present_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
 
                     return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
-                }),
+                })
+                ->action(
+                    Action::make('viewPresences')
+                        ->modalHeading(fn ($record) => 'Present Dates - ' . $record->name)
+                        ->modalContent(fn ($record, $livewire) => view('filament.components.student-attendance-dates', [
+                            'studentId' => $record->id,
+                            'schoolClassId' => $livewire->schoolClassId,
+                            'isPresent' => true,
+                        ]))
+                        ->modalSubmitAction(false)
+                        ->modalCancelAction(false)
+                        ->modalWidth('2xl')
+                ),
 
-            TextColumn::make('absent_count')
+                TextColumn::make('absent_count')
                 ->label('Absent')
                 ->state(function ($record) {
                     $studentData = collect($this->studentsData)->firstWhere('id', $record->id);
@@ -68,7 +82,19 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
                     $orderMap = collect($studentsData)->sortBy('absent_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
 
                     return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
-                }),
+                })
+                ->action(
+                    Action::make('viewAbsences')
+                        ->modalHeading(fn ($record) => 'Absent Dates - ' . $record->name)
+                        ->modalContent(fn ($record, $livewire) => view('filament.components.student-attendance-dates', [
+                            'studentId' => $record->id,
+                            'schoolClassId' => $livewire->schoolClassId,
+                            'isPresent' => false,
+                        ]))
+                        ->modalSubmitAction(false)
+                        ->modalCancelAction(false)
+                        ->modalWidth('2xl')
+                ),
             ])
             ->filters([
                 ...StudentResource::getFilters()
