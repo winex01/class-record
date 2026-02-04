@@ -79,6 +79,9 @@ class StudentAttendanceDatesTable extends Component implements HasForms, HasTabl
                     ->modalDescription(fn ($record) =>
                         'Update attendance for ' . $record->date->format('M d, Y') . '?'
                     )
+                    ->modalSubmitActionLabel(fn ($record) =>
+                        $record->students->first()?->pivot->present ? 'Mark as Absent' : 'Mark as Present'
+                    )
                     ->action(function ($record) {
                         $currentState = $record->students->first()?->pivot->present ?? false;
                         $record->students()->updateExistingPivot($this->studentId, [
@@ -87,7 +90,6 @@ class StudentAttendanceDatesTable extends Component implements HasForms, HasTabl
 
                         // Dispatch event to refresh the overview table
                         $this->dispatch('refresh-overview-data');
-
                     }),
             ])
             ->defaultSort('date', 'desc')
