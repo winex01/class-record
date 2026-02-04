@@ -6,7 +6,10 @@ use App\Models\Student;
 use Livewire\Component;
 use App\Models\Attendance;
 use Filament\Tables\Table;
+use App\Models\SchoolClass;
+use Livewire\Attributes\On;
 use Filament\Actions\Action;
+use Filament\Support\Enums\Width;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -16,6 +19,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAttendances;
 
 class AttendanceOverviewTable extends Component implements HasForms, HasTable, HasActions
 {
@@ -33,6 +37,18 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
 
         // Reset table page to 1 on mount or everytime modal is open
         $this->resetTable();
+    }
+
+    #[On('refresh-overview-data')]
+    public function refreshOverviewData()
+    {
+        // Recalculate the studentsData
+        $attendances = SchoolClass::find($this->schoolClassId)
+            ->attendances()
+            ->with('students')
+            ->get();
+
+        $this->studentsData = ManageSchoolClassAttendances::calculateStudentsAttendanceData($attendances);;
     }
 
     public function table(Table $table): Table
@@ -68,7 +84,7 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
                         ]))
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)
-                        ->modalWidth('2xl')
+                        ->modalWidth(Width::Small)
                 ),
 
                 TextColumn::make('absent_count')
@@ -96,7 +112,7 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
                         ]))
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)
-                        ->modalWidth('2xl')
+                        ->modalWidth(Width::Small)
                 ),
             ])
             ->filters([
