@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\Student;
 use Livewire\Component;
-use App\Models\Attendance;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
 use Livewire\Attributes\On;
@@ -29,32 +28,52 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
 
     public $schoolClassId;
     public $studentsData = [];
+    public $perfectAttendanceData = [];
+    public $activeTab = 'all';
 
-    public function mount($schoolClassId, $studentsData)
+    public function mount($schoolClassId)
     {
         $this->schoolClassId = $schoolClassId;
-        $this->studentsData = $studentsData;
+        $this->loadData();
+        $this->resetTable();
+    }
 
-        // Reset table page to 1 on mount or everytime modal is open
+    public function loadData()
+    {
+        $attendances = SchoolClass::find($this->schoolClassId)
+            ->attendances()
+            ->with('students')
+            ->get();
+
+        $this->studentsData = ManageSchoolClassAttendances::calculateStudentsAttendanceData($attendances);
+
+        // Filter for perfect attendance
+        $this->perfectAttendanceData = array_filter($this->studentsData, function($student) {
+            return $student['absent_count'] === 0;
+        });
+        $this->perfectAttendanceData = array_values($this->perfectAttendanceData);
+    }
+
+    public function updatedActiveTab()
+    {
         $this->resetTable();
     }
 
     #[On('refresh-overview-data')]
     public function refreshOverviewData()
     {
-        // Recalculate the studentsData
-        $attendances = SchoolClass::find($this->schoolClassId)
-            ->attendances()
-            ->with('students')
-            ->get();
+        $this->loadData();
+    }
 
-        $this->studentsData = ManageSchoolClassAttendances::calculateStudentsAttendanceData($attendances);;
+    public function getCurrentStudentsData()
+    {
+        return $this->activeTab === 'all' ? $this->studentsData : $this->perfectAttendanceData;
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(Student::query()->whereIn('id', array_column($this->studentsData, 'id')))
+            ->query(Student::query()->whereIn('id', array_column($this->getCurrentStudentsData(), 'id')))
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
                 ...ManageSchoolClassStudents::getColumns(),
@@ -62,14 +81,14 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
                 TextColumn::make('present_count')
                 ->label('Present')
                 ->state(function ($record) {
-                    $studentData = collect($this->studentsData)->firstWhere('id', $record->id);
+                    $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
                     return $studentData['present_count'] ?? 0;
                 })
                 ->alignCenter()
                 ->badge()
                 ->color('success')
                 ->sortable(query: function ($query, $direction) {
-                    $studentsData = $this->studentsData;
+                    $studentsData = $this->getCurrentStudentsData();
                     $orderMap = collect($studentsData)->sortBy('present_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
 
                     return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
@@ -90,14 +109,14 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
                 TextColumn::make('absent_count')
                 ->label('Absent')
                 ->state(function ($record) {
-                    $studentData = collect($this->studentsData)->firstWhere('id', $record->id);
+                    $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
                     return $studentData['absent_count'] ?? 0;
                 })
                 ->alignCenter()
                 ->badge()
                 ->color('danger')
                 ->sortable(query: function ($query, $direction) {
-                    $studentsData = $this->studentsData;
+                    $studentsData = $this->getCurrentStudentsData();
                     $orderMap = collect($studentsData)->sortBy('absent_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
 
                     return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
