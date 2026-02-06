@@ -72,23 +72,28 @@ class AppPanelProvider extends PanelProvider
             ])
             ->viteTheme('resources/css/filament/app/theme.css')
             ->routes(function () {
-                // TODO:: refactor this shit and transfer below as method
-                Route::get('/my-files/download/{myFileId}/{index}', function ($myFileId, $index) {
-                    $myFile = MyFile::findOrFail($myFileId);
-
-                    if (!isset($myFile->path[$index])) {
-                        abort(404);
-                    }
-
-                    $filePath = $myFile->path[$index];
-
-                    if (!Storage::disk('local')->exists($filePath)) {
-                        abort(404);
-                    }
-
-                    return Storage::disk('local')->download($filePath);
-                })->name('myfile.download');
+                static::registerCustomRoutes();
             })
             ->databaseNotifications();
+    }
+
+    private static function registerCustomRoutes(): void
+    {
+        Route::get('/my-files/download/{myFileId}/{index}', function ($myFileId, $index) {
+            $myFile = MyFile::findOrFail($myFileId);
+
+            if (!isset($myFile->path[$index])) {
+                abort(404);
+            }
+
+            $filePath = $myFile->path[$index];
+
+            if (!Storage::disk('local')->exists($filePath)) {
+                abort(404);
+            }
+
+            return Storage::disk('local')->download($filePath);
+        })->name('myfile.download');
+
     }
 }
