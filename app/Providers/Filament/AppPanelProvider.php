@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Http\Middleware\Authenticate;
+use App\Http\Middleware\CheckStudentBirthdays;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -34,7 +35,6 @@ class AppPanelProvider extends PanelProvider
             ->login()
             ->spa()
             ->defaultThemeMode(ThemeMode::Dark)
-            // ->maxContentWidth('full') // Options: 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', 'full'
             ->colors([
                 'primary' => Color::Emerald,
                 'gray' => Color::Slate,
@@ -68,9 +68,11 @@ class AppPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                CheckStudentBirthdays::class,
             ])
             ->viteTheme('resources/css/filament/app/theme.css')
             ->routes(function () {
+                // TODO:: refactor this shit and transfer below as method
                 Route::get('/my-files/download/{myFileId}/{index}', function ($myFileId, $index) {
                     $myFile = MyFile::findOrFail($myFileId);
 
@@ -86,6 +88,7 @@ class AppPanelProvider extends PanelProvider
 
                     return Storage::disk('local')->download($filePath);
                 })->name('myfile.download');
-            });
+            })
+            ->databaseNotifications();
     }
 }

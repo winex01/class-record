@@ -1,6 +1,5 @@
 <?php
 /*
-TODO:: student birthday notification in subnav Students
 TODO:: Grade Summary (Overall Grade) action modal
 TODO:: import student
 TODO:: export student
