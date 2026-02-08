@@ -19,7 +19,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 
-class AttendanceOverviewTable extends Component implements HasForms, HasTable, HasActions
+class AttendanceOverview extends Component implements HasForms, HasTable, HasActions
 {
     use InteractsWithForms;
     use InteractsWithTable;
@@ -140,11 +140,6 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
             ->emptyStateDescription(false);
     }
 
-    public function render()
-    {
-        return view('livewire.attendance-overview-table');
-    }
-
     private static function calculateStudentsAttendanceData($attendances): array
     {
         $studentsData = [];
@@ -170,5 +165,10 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
         }
 
         return array_values($studentsData);
+    }
+
+    public function render()
+    {
+        return view('livewire.attendance-overview');
     }
 }

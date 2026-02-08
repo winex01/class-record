@@ -1,3 +1,3 @@
 <div>
-    @livewire('assessment-overview-table', ['schoolClassId' => $schoolClassId])
+    @livewire('assessment-overview', ['schoolClassId' => $schoolClassId])
 </div>

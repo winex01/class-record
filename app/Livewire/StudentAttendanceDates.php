@@ -11,13 +11,12 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 
-class StudentAttendanceDatesTable extends Component implements HasForms, HasTable, HasActions
+class StudentAttendanceDates extends Component implements HasForms, HasTable, HasActions
 {
     use InteractsWithForms;
     use InteractsWithTable;
@@ -111,6 +110,6 @@ class StudentAttendanceDatesTable extends Component implements HasForms, HasTabl
 
     public function render()
     {
-        return view('livewire.student-attendance-dates-table');
+        return view('livewire.student-attendance-dates');
     }
 }

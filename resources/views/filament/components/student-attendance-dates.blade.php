@@ -1,5 +1,5 @@
 <div>
-    @livewire('student-attendance-dates-table', [
+    @livewire('student-attendance-dates', [
         'studentId' => $studentId,
         'schoolClassId' => $schoolClassId,
         'isPresent' => $isPresent,

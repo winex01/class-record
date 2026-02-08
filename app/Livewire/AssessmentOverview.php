@@ -16,7 +16,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 
-class AssessmentOverviewTable extends Component implements HasForms, HasTable, HasActions
+class AssessmentOverview extends Component implements HasForms, HasTable, HasActions
 {
     use InteractsWithForms;
     use InteractsWithTable;
@@ -63,11 +63,6 @@ class AssessmentOverviewTable extends Component implements HasForms, HasTable, H
             ->emptyStateDescription(false);
     }
 
-    public function render()
-    {
-        return view('livewire.assessment-overview-table');
-    }
-
     private static function calculateStudentsAssessmentData($assessments): array
     {
         $studentsData = [];
@@ -84,5 +79,10 @@ class AssessmentOverviewTable extends Component implements HasForms, HasTable, H
         }
 
         return array_values($studentsData);
+    }
+
+    public function render()
+    {
+        return view('livewire.assessment-overview');
     }
 }
