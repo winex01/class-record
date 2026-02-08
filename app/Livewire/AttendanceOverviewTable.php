@@ -18,7 +18,6 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
-use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAttendances;
 
 class AttendanceOverviewTable extends Component implements HasForms, HasTable, HasActions
 {
@@ -45,7 +44,7 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
             ->with('students')
             ->get();
 
-        $this->studentsData = ManageSchoolClassAttendances::calculateStudentsAttendanceData($attendances);
+        $this->studentsData = static::calculateStudentsAttendanceData($attendances);
 
         // Filter for perfect attendance
         $this->perfectAttendanceData = array_filter($this->studentsData, function($student) {
@@ -59,7 +58,7 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
         $this->resetTable();
     }
 
-    #[On('refresh-overview-data')]
+    #[On('refresh-attendance-overview-data')]
     public function refreshOverviewData()
     {
         $this->loadData();
@@ -144,5 +143,32 @@ class AttendanceOverviewTable extends Component implements HasForms, HasTable, H
     public function render()
     {
         return view('livewire.attendance-overview-table');
+    }
+
+    private static function calculateStudentsAttendanceData($attendances): array
+    {
+        $studentsData = [];
+
+        foreach ($attendances as $attendance) {
+            foreach ($attendance->students as $student) {
+                if (!isset($studentsData[$student->id])) {
+                    $studentsData[$student->id] = [
+                        'id' => $student->id,
+                        'name' => $student->full_name,
+                        'present_count' => 0,
+                        'absent_count' => 0,
+                    ];
+                }
+
+                // Count based on the 'present' boolean pivot column
+                if ($student->pivot->present) {
+                    $studentsData[$student->id]['present_count']++;
+                } else {
+                    $studentsData[$student->id]['absent_count']++;
+                }
+            }
+        }
+
+        return array_values($studentsData);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -161,7 +162,9 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                     ->multiple(),
             ])
             ->headerActions([
-                SchoolClassResource::createAction($this->getOwnerRecord())
+                SchoolClassResource::createAction($this->getOwnerRecord()),
+
+                static::getOverviewAction(),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -181,5 +184,21 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 DeleteBulkAction::make(),
             ])
             ->recordAction('recordScoreRelationManager');
+    }
+
+    public static function getOverviewAction(): Action
+    {
+        return Action::make('overview')
+            ->label('Overview')
+            ->color('info')
+            ->modalHeading('Student Assessment Overview')
+            ->modalDescription(fn ($livewire) => 'Overview of students across all assessment records for ' . $livewire->getOwnerRecord()->name)
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Close')
+            ->modalContent(function ($livewire) {
+                $schoolClassId = $livewire->getOwnerRecord()->id;
+
+                return view('filament.components.assessment-overview', compact('schoolClassId'));
+            });
     }
 }

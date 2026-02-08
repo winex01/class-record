@@ -120,33 +120,6 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                 ->relationManager(TakeAttendanceRelationManager::make());
     }
 
-    public static function calculateStudentsAttendanceData($attendances): array
-    {
-        $studentsData = [];
-
-        foreach ($attendances as $attendance) {
-            foreach ($attendance->students as $student) {
-                if (!isset($studentsData[$student->id])) {
-                    $studentsData[$student->id] = [
-                        'id' => $student->id,
-                        'name' => $student->full_name,
-                        'present_count' => 0,
-                        'absent_count' => 0,
-                    ];
-                }
-
-                // Count based on the 'present' boolean pivot column
-                if ($student->pivot->present) {
-                    $studentsData[$student->id]['present_count']++;
-                } else {
-                    $studentsData[$student->id]['absent_count']++;
-                }
-            }
-        }
-
-        return array_values($studentsData);
-    }
-
     public static function getOverviewAction(): Action
     {
         return Action::make('overview')

@@ -93,7 +93,7 @@ class StudentAttendanceDatesTable extends Component implements HasForms, HasTabl
                         ]);
 
                         // Dispatch event to refresh the overview table
-                        $this->dispatch('refresh-overview-data');
+                        $this->dispatch('refresh-attendance-overview-data');
 
                         // Show notification
                         Notification::make()
