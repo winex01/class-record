@@ -15,6 +15,7 @@ use Filament\Actions\DetachBulkAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Filament\Schemas\Components\Component;
+use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -77,6 +78,9 @@ class AppServiceProvider extends ServiceProvider
     public function actionConfig()
     {
         Action::configureUsing(function (Action $action)  {
+            // Disable clickaway closing for all modals to prevent scroll lock bug
+            // $action->closeModalByClickingAway(false);
+
             // Auto-refresh navigation after all successful actions
             $action->after(function (\Livewire\Component $livewire) {
                 $livewire->dispatch('refresh-sidebar');
