@@ -3,12 +3,12 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Services\Column;
 use App\Models\Attendance;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
 use Filament\Actions\Contracts\HasActions;
@@ -51,9 +51,7 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
                     }])
             )
             ->columns([
-                TextColumn::make('date')
-                    ->label('Date')
-                    ->sortable(),
+                Column::date('date'),
 
                 IconColumn::make('present_status')
                     ->label('Status')
