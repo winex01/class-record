@@ -1,8 +1,8 @@
 <?php
 /*
-TODO:: Assessment Overview:
+TODO:: Overview:
+        - nested modal when close both disable global scroll
         - have the ability to modify score in overview modal
-        - fix modal when clickaway close is used the global scroll is gone
 TODO:: redo the birthday notifications and perhaps add birthday table notification? so that if user/teacher wont login or on vacation when he open its he
     // he/she will still get notification to the student in the past days.
 TODO:: Fee Collections Overview:
