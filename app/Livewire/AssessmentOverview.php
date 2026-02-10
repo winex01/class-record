@@ -2,11 +2,14 @@
 
 namespace App\Livewire;
 
+use App\Services\Icon;
 use App\Models\Student;
 use Livewire\Component;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
 use Livewire\Attributes\On;
+use Filament\Actions\Action;
+use Filament\Support\Enums\Width;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Actions\Contracts\HasActions;
@@ -60,7 +63,20 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
                 ...StudentResource::getFilters()
             ])
             ->emptyStateHeading(false)
-            ->emptyStateDescription(false);
+            ->emptyStateDescription(false)
+            ->recordActions([
+                Action::make('assessmentLists')
+                    ->label('Assessment Lists')
+                    ->modalHeading(fn ($record) => $record->full_name . ' - Assessment Lists')
+                    ->icon(Icon::assessments())
+                    ->modalContent(fn ($record, $livewire) => view('filament.components.student-assessment-lists', [
+                        'studentId' => $record->id,
+                        'schoolClassId' => $livewire->schoolClassId,
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(false)
+                    ->modalWidth(Width::Large)
+            ]);
     }
 
     private static function calculateStudentsAssessmentData($assessments): array

@@ -134,12 +134,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ->recordTitleAttribute('name')
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Column::text('name'),
-                Column::text('assessmentType.name')->badge()->width('1%')->label('Type'),
-                Column::text('date')->width('1%'),
-                Column::text('max_score')->label('Max')->color('info')->width('1%')->tooltip('Max score'),
-                Column::text('description')->toggleable(isToggledHiddenByDefault:true),
-                Column::boolean('can_group_students')->label('Can group')->toggleable(isToggledHiddenByDefault:true),
+                ...static::getColumns(),
 
                 Column::icon('status')
                     ->getStateUsing(fn ($record) =>
@@ -184,6 +179,18 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 DeleteBulkAction::make(),
             ])
             ->recordAction('recordScoreRelationManager');
+    }
+
+    public static function getColumns()
+    {
+        return [
+            Column::text('name'),
+            Column::text('assessmentType.name')->badge()->width('1%')->label('Type'),
+            Column::date('date')->width('1%'),
+            Column::text('max_score')->label('Max')->color('info')->width('1%')->tooltip('Max score'),
+            Column::text('description')->toggleable(isToggledHiddenByDefault:true),
+            Column::boolean('can_group_students')->label('Can group')->toggleable(isToggledHiddenByDefault:true),
+        ];
     }
 
     public static function getOverviewAction(): Action

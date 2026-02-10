@@ -14,6 +14,7 @@ class Assessment extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'date' => 'date',
         'can_group_students' => 'boolean',
     ];
 

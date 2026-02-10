@@ -53,7 +53,6 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
             ->columns([
                 TextColumn::make('date')
                     ->label('Date')
-                    ->date('M d, Y')
                     ->sortable(),
 
                 IconColumn::make('present_status')
