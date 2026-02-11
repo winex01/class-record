@@ -1,7 +1,6 @@
 <?php
 /*
-TODO:: Overview:
-        - have the ability to modify score in assessment overview modal
+TODO:: Assessment Overview column score sortable bug:
 
 TODO:: Fee Collections Overview:
         * Display each student in modal and total paid and also when click each collections and how much

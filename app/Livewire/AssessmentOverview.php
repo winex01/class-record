@@ -75,7 +75,7 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
                     ]))
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false)
-                    ->modalWidth(Width::Large)
+                    ->modalWidth(Width::TwoExtraLarge)
             ]);
     }
 
