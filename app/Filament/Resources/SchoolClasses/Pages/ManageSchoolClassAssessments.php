@@ -152,9 +152,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
             ])
             ->filters([
-                SelectFilter::make('assessmentType')
-                    ->relationship('assessmentType', 'name')
-                    ->multiple(),
+                ...static::getFilters(),
             ])
             ->headerActions([
                 SchoolClassResource::createAction($this->getOwnerRecord()),
@@ -179,6 +177,15 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 DeleteBulkAction::make(),
             ])
             ->recordAction('recordScoreRelationManager');
+    }
+
+    public static function getFilters()
+    {
+        return [
+            SelectFilter::make('assessmentType')
+                ->relationship('assessmentType', 'name')
+                ->multiple()
+        ];
     }
 
     public static function getColumns()

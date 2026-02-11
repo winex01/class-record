@@ -5,7 +5,6 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Assessment;
 use Filament\Tables\Table;
-use Illuminate\Support\Arr;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
 use Filament\Forms\Components\Select;
@@ -79,6 +78,9 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                     })
                     ->toggleable()
                     ->toggledHiddenByDefault(true)
+            ])
+            ->filters([
+                ...ManageSchoolClassAssessments::getFilters(),
             ])
             ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
