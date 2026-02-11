@@ -127,12 +127,12 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->color('info')
             ->modalHeading('Student Attendance Overview')
             ->modalDescription(fn ($livewire) => 'Overview of students across all attendance records for ' . $livewire->getOwnerRecord()->name)
-            ->modalSubmitAction(false)
-            ->modalCancelActionLabel('Close')
             ->modalContent(function ($livewire) {
                 $schoolClassId = $livewire->getOwnerRecord()->id;
 
                 return view('filament.components.attendance-overview', compact('schoolClassId'));
-            });
+            })
+            ->modalSubmitAction(false)
+            ->modalCancelAction(false);;
     }
 }

@@ -79,7 +79,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Action::configureUsing(function (Action $action)  {
             // Disable clickaway closing for all modals to prevent scroll lock bug
-            // $action->closeModalByClickingAway(false);
+            $action->closeModalByClickingAway(false);
+            $action->closeModalByEscaping(false);
 
             // Auto-refresh navigation after all successful actions
             $action->after(function (\Livewire\Component $livewire) {

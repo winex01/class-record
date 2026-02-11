@@ -1,10 +1,5 @@
 <?php
 /*
-TODO:: Attendance overview bug:
-        since we override the modal/index.blade.php it no longer dynamic or live example the count of absent/present count doesnt update
-        in real time once we lose the 2nd modal and also the tab filter count.
-
-
 TODO:: Overview:
         - have the ability to modify score in assessment overview modal
 

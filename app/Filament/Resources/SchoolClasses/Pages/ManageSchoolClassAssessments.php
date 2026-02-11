@@ -200,12 +200,12 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ->color('info')
             ->modalHeading('Student Assessment Overview')
             ->modalDescription(fn ($livewire) => 'Overview of students across all assessment records for ' . $livewire->getOwnerRecord()->name)
-            ->modalSubmitAction(false)
-            ->modalCancelActionLabel('Close')
             ->modalContent(function ($livewire) {
                 $schoolClassId = $livewire->getOwnerRecord()->id;
 
                 return view('filament.components.assessment-overview', compact('schoolClassId'));
-            });
+            })
+            ->modalSubmitAction(false)
+            ->modalCancelAction(false);
     }
 }
