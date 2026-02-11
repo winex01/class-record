@@ -14,6 +14,10 @@ class Student extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'birth_date' => 'date',
+    ];
+
     protected static function booted()
     {
         static::addGlobalScope('ordered', function ($builder) {
