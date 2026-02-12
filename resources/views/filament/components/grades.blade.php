@@ -415,24 +415,38 @@
         font-weight: 700;
     }
 
-    .summary-value.ts { background: #d1fae5; color: #065f46; }
-    .summary-value.ps { background: #ede9fe; color: #5b21b6; }
-    .summary-value.ws { background: #fee2e2; color: #991b1b; }
+    /* start */
+    .summary-value.ts {
+        background: #f3fdf7;
+        color: #047857;
+    }
 
+    .summary-value.ps {
+        background: #f9f5ff;
+        color: #6d28d9;
+    }
+
+    .summary-value.ws {
+        background: #fff5f5;
+        color: #b91c1c;
+    }
+
+    /* Dark Mode */
     .dark .summary-value.ts {
-        background: rgba(6, 78, 59, 0.4);
+        background: rgba(16, 185, 129, 0.18);
         color: #6ee7b7;
     }
 
     .dark .summary-value.ps {
-        background: rgba(76, 29, 149, 0.4);
+        background: rgba(139, 92, 246, 0.18);
         color: #c4b5fd;
     }
 
     .dark .summary-value.ws {
-        background: rgba(127, 29, 29, 0.4);
+        background: rgba(239, 68, 68, 0.18);
         color: #fca5a5;
     }
+    /* end */
 
     /* Grade Columns */
     .grade-column {
@@ -649,35 +663,38 @@
         border-left: 1px solid #374151;
     }
 
+    /* start */
     .summary-cell.ts {
-        background: #f0fdf4;
-        color: #065f46;
+        background: #f8fffb;   /* very light green */
+        color: #047857;        /* softer green */
     }
 
     .summary-cell.ps {
-        background: #faf5ff;
-        color: #5b21b6;
+        background: #fcfaff;   /* very light purple */
+        color: #6d28d9;        /* softer purple */
     }
 
     .summary-cell.ws {
-        background: #fef2f2;
-        color: #991b1b;
+        background: #fff9f9;   /* very light red */
+        color: #b91c1c;        /* softer red */
     }
 
+    /* Dark Mode – much more subtle */
     .dark .summary-cell.ts {
-        background: rgba(6, 95, 70, 0.3);
-        color: #6ee7b7;
+        background: rgba(16, 185, 129, 0.12);
+        color: #86efac;
     }
 
     .dark .summary-cell.ps {
-        background: rgba(91, 33, 182, 0.3);
+        background: rgba(139, 92, 246, 0.12);
         color: #c4b5fd;
     }
 
     .dark .summary-cell.ws {
-        background: rgba(127, 29, 29, 0.3);
+        background: rgba(239, 68, 68, 0.12);
         color: #fca5a5;
     }
+    /* end */
 
     .final-grade {
         padding: 0.5rem;
