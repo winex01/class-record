@@ -240,6 +240,10 @@
         overflow: hidden;
     }
 
+    .dark .grades-wrapper {
+        background: rgb(var(--gray-900));
+    }
+
     .grades-scroll-container {
         overflow-x: auto;
         overflow-y: visible;
@@ -268,6 +272,11 @@
         font-weight: 500;
     }
 
+    .dark .info-row th {
+        background: linear-gradient(to bottom, #1f2937, #111827);
+        border-bottom: 2px solid #374151;
+    }
+
     .meta-info {
         text-align: center;
     }
@@ -281,6 +290,10 @@
         margin-bottom: 0.25rem;
     }
 
+    .dark .info-label {
+        color: #9ca3af;
+    }
+
     .info-value {
         display: block;
         font-size: 0.875rem;
@@ -288,10 +301,19 @@
         font-weight: 600;
     }
 
+    .dark .info-value {
+        color: #f3f4f6;
+    }
+
     .component-row th {
         background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
         border-bottom: 1px solid #d1d5db;
         padding: 0.75rem;
+    }
+
+    .dark .component-row th {
+        background: linear-gradient(to bottom, #111827, #030712);
+        border-bottom: 1px solid #374151;
     }
 
     .component-badge {
@@ -315,6 +337,12 @@
         font-weight: 500;
     }
 
+    .dark .assessment-row th {
+        background: #111827;
+        border-bottom: 1px solid #374151;
+        color: #9ca3af;
+    }
+
     .assessment-badge {
         display: inline-flex;
         align-items: center;
@@ -327,6 +355,11 @@
         font-weight: 600;
     }
 
+    .dark .assessment-badge {
+        background: #1e3a8a;
+        color: #93c5fd;
+    }
+
     .summary-col {
         font-weight: 600;
         text-transform: uppercase;
@@ -337,12 +370,22 @@
     .summary-col.ps { color: #7c3aed; }
     .summary-col.ws { color: #dc2626; }
 
+    .dark .summary-col.ts { color: #34d399; }
+    .dark .summary-col.ps { color: #a78bfa; }
+    .dark .summary-col.ws { color: #f87171; }
+
     .max-score-row th {
         background: #fef3c7;
         border-bottom: 2px solid #fbbf24;
         padding: 0.625rem;
         font-weight: 600;
         color: #92400e;
+    }
+
+    .dark .max-score-row th {
+        background: #451a03;
+        border-bottom: 2px solid #d97706;
+        color: #fcd34d;
     }
 
     .max-score-label .label-content {
@@ -364,6 +407,10 @@
         color: #78350f;
     }
 
+    .dark .max-score-value {
+        color: #fcd34d;
+    }
+
     .summary-value {
         font-weight: 700;
     }
@@ -371,6 +418,21 @@
     .summary-value.ts { background: #d1fae5; color: #065f46; }
     .summary-value.ps { background: #ede9fe; color: #5b21b6; }
     .summary-value.ws { background: #fee2e2; color: #991b1b; }
+
+    .dark .summary-value.ts {
+        background: #064e3b;
+        color: #6ee7b7;
+    }
+
+    .dark .summary-value.ps {
+        background: #4c1d95;
+        color: #c4b5fd;
+    }
+
+    .dark .summary-value.ws {
+        background: #7f1d1d;
+        color: #fca5a5;
+    }
 
     /* Grade Columns */
     .grade-column {
@@ -380,10 +442,22 @@
         color: #92400e;
     }
 
+    .dark .grade-column {
+        background: linear-gradient(to bottom, #451a03, #78350f) !important;
+        border-left: 2px solid #d97706;
+        color: #fcd34d;
+    }
+
     .grade-column.transmuted {
         background: linear-gradient(to bottom, #dbeafe, #bfdbfe) !important;
         border-left: 2px solid #3b82f6;
         color: #1e40af;
+    }
+
+    .dark .grade-column.transmuted {
+        background: linear-gradient(to bottom, #1e3a8a, #1e40af) !important;
+        border-left: 2px solid #3b82f6;
+        color: #93c5fd;
     }
 
     .grade-header {
@@ -402,6 +476,11 @@
         box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
     }
 
+    .dark .frozen-column {
+        background: #111827;
+        box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
+    }
+
     .student-column {
         min-width: 200px;
         max-width: 250px;
@@ -415,15 +494,27 @@
         color: #111827;
     }
 
+    .dark .column-header {
+        color: #f3f4f6;
+    }
+
     .header-icon {
         width: 1.25rem;
         height: 1.25rem;
         color: #6b7280;
     }
 
+    .dark .header-icon {
+        color: #9ca3af;
+    }
+
     /* Body Styles */
     .gender-divider {
         background: #f3f4f6;
+    }
+
+    .dark .gender-divider {
+        background: #1f2937;
     }
 
     .gender-label {
@@ -452,23 +543,43 @@
         background: #f3f4f6;
     }
 
+    .dark .gender-spacer {
+        background: #1f2937;
+    }
+
     .student-row {
         transition: all 0.15s ease-in-out;
         border-bottom: 1px solid #f3f4f6;
+    }
+
+    .dark .student-row {
+        border-bottom: 1px solid #1f2937;
     }
 
     .student-row:hover {
         background: #f0f9ff !important;
     }
 
+    .dark .student-row:hover {
+        background: #1e3a8a !important;
+    }
+
     .student-row:hover .frozen-column {
         background: #f0f9ff !important;
+    }
+
+    .dark .student-row:hover .frozen-column {
+        background: #1e3a8a !important;
     }
 
     .student-name {
         padding: 0.75rem 1rem;
         font-weight: 500;
         color: #111827;
+    }
+
+    .dark .student-name {
+        color: #f3f4f6;
     }
 
     .name-cell {
@@ -499,13 +610,25 @@
         border-right: 1px solid #f3f4f6;
     }
 
+    .dark .grades-table td {
+        border-right: 1px solid #1f2937;
+    }
+
     .score-cell {
         font-weight: 500;
         color: #374151;
     }
 
+    .dark .score-cell {
+        color: #d1d5db;
+    }
+
     .score-value {
         color: #111827;
+    }
+
+    .dark .score-value {
+        color: #f3f4f6;
     }
 
     .score-empty {
@@ -513,9 +636,17 @@
         font-weight: 400;
     }
 
+    .dark .score-empty {
+        color: #4b5563;
+    }
+
     .summary-cell {
         font-weight: 600;
         border-left: 1px solid #e5e7eb;
+    }
+
+    .dark .summary-cell {
+        border-left: 1px solid #374151;
     }
 
     .summary-cell.ts {
@@ -533,9 +664,28 @@
         color: #991b1b;
     }
 
+    .dark .summary-cell.ts {
+        background: #064e3b;
+        color: #6ee7b7;
+    }
+
+    .dark .summary-cell.ps {
+        background: #4c1d95;
+        color: #c4b5fd;
+    }
+
+    .dark .summary-cell.ws {
+        background: #7f1d1d;
+        color: #fca5a5;
+    }
+
     .final-grade {
         padding: 0.5rem;
         border-left: 2px solid #fbbf24;
+    }
+
+    .dark .final-grade {
+        border-left: 2px solid #d97706;
     }
 
     .grade-badge {
