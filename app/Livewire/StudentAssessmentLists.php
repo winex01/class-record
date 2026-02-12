@@ -7,6 +7,7 @@ use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
+use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
@@ -41,10 +42,6 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
 
     public function table(Table $table): Table
     {
-        $columns = ManageSchoolClassAssessments::getColumns();
-        unset($columns['can_group_students']);
-        $columns['max_score']->alignCenter();
-
         return $table
             ->defaultSort('date', 'desc')
             ->query(
@@ -58,38 +55,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                     }])
             )
             ->columns([
-                ...$columns,
-
-                TextColumn::make('students.pivot.score')
-                    ->badge()
-                    ->color('success')
-                    ->label('Score')
-                    ->getStateUsing(function ($record) {
-                        return $record->students->first()?->pivot->score;
-                    })
-                    ->alignCenter()
-                    ->sortable(query: function (Builder $query, string $direction): Builder {
-                        return $query
-                            ->leftJoin('assessment_student', function ($join) {
-                                $join->on('assessments.id', '=', 'assessment_student.assessment_id')
-                                    ->whereRaw('assessment_student.id = (
-                                        SELECT id FROM assessment_student AS ast
-                                        WHERE ast.assessment_id = assessments.id
-                                        LIMIT 1
-                                    )');
-                            })
-                            ->orderBy('assessment_student.score', $direction)
-                            ->select('assessments.*', 'assessment_student.score as pivot_score');
-                    }),
-
-                TextColumn::make('students.pivot.group')
-                    ->label('Group')
-                    ->sortable()
-                    ->getStateUsing(function ($record) {
-                        return $record->students->first()?->pivot->group;
-                    })
-                    ->toggleable()
-                    ->toggledHiddenByDefault(true)
+                ...$this->getCOlumns(),
             ])
             ->filters([
                 ...ManageSchoolClassAssessments::getFilters(),
@@ -98,6 +64,56 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
             ->emptyStateHeading('No Records')
             ->emptyStateDescription('No attendance records found.')
             ->recordActions([$this->updateStudentRecord()]);
+    }
+
+    protected function getCOlumns()
+    {
+        $columns = ManageSchoolClassAssessments::getColumns();
+        unset($columns['can_group_students']);
+        $columns['max_score']->alignCenter();
+
+        return [
+            ...$columns,
+
+            TextColumn::make('students.pivot.score')
+                ->badge()
+                ->color('success')
+                ->label('Score')
+                ->getStateUsing(function ($record) {
+                    return $record->students->first()?->pivot->score;
+                })
+                ->alignCenter()
+                ->sortable(query: function (Builder $query, string $direction): Builder {
+                    return $query
+                        ->orderBy(
+                            \DB::table('assessment_student')
+                                ->select('score')
+                                ->whereColumn('assessment_student.assessment_id', 'assessments.id')
+                                ->where('assessment_student.student_id', $this->studentId)
+                                ->limit(1),
+                            $direction
+                        );
+                }),
+
+            TextColumn::make('students.pivot.group')
+                ->label('Group')
+                ->getStateUsing(function ($record) {
+                    return $record->students->first()?->pivot->group;
+                })
+                ->sortable(query: function (Builder $query, string $direction): Builder {
+                    return $query
+                        ->orderBy(
+                            \DB::table('assessment_student')
+                                ->select('group')
+                                ->whereColumn('assessment_student.assessment_id', 'assessments.id')
+                                ->where('assessment_student.student_id', $this->studentId)
+                                ->limit(1),
+                            $direction
+                        );
+                })
+                ->toggleable()
+                ->toggledHiddenByDefault(true)
+        ];
     }
 
     protected function updateStudentRecord()
