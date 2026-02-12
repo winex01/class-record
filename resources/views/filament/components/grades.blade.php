@@ -420,17 +420,17 @@
     .summary-value.ws { background: #fee2e2; color: #991b1b; }
 
     .dark .summary-value.ts {
-        background: #064e3b;
+        background: rgba(6, 78, 59, 0.4);
         color: #6ee7b7;
     }
 
     .dark .summary-value.ps {
-        background: #4c1d95;
+        background: rgba(76, 29, 149, 0.4);
         color: #c4b5fd;
     }
 
     .dark .summary-value.ws {
-        background: #7f1d1d;
+        background: rgba(127, 29, 29, 0.4);
         color: #fca5a5;
     }
 
@@ -665,17 +665,17 @@
     }
 
     .dark .summary-cell.ts {
-        background: #064e3b;
+        background: rgba(6, 95, 70, 0.3);
         color: #6ee7b7;
     }
 
     .dark .summary-cell.ps {
-        background: #4c1d95;
+        background: rgba(91, 33, 182, 0.3);
         color: #c4b5fd;
     }
 
     .dark .summary-cell.ws {
-        background: #7f1d1d;
+        background: rgba(127, 29, 29, 0.3);
         color: #fca5a5;
     }
 
