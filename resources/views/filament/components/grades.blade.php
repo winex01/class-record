@@ -415,7 +415,6 @@
         font-weight: 700;
     }
 
-    /* start */
     .summary-value.ts {
         background: #f3fdf7;
         color: #047857;
@@ -431,7 +430,6 @@
         color: #b91c1c;
     }
 
-    /* Dark Mode */
     .dark .summary-value.ts {
         background: rgba(16, 185, 129, 0.18);
         color: #6ee7b7;
@@ -446,7 +444,6 @@
         background: rgba(239, 68, 68, 0.18);
         color: #fca5a5;
     }
-    /* end */
 
     /* Grade Columns */
     .grade-column {
@@ -561,8 +558,13 @@
         background: #1f2937;
     }
 
+    /* start hover animation */
+    .student-row,
+    .student-row .frozen-column {
+        transition: background-color 0.05s ease-in-out;
+    }
+
     .student-row {
-        transition: all 0.15s ease-in-out;
         border-bottom: 1px solid #f3f4f6;
     }
 
@@ -585,6 +587,7 @@
     .dark .student-row:hover .frozen-column {
         background: #1e3a8a !important;
     }
+    /* end hover animation */
 
     .student-name {
         padding: 0.75rem 1rem;
@@ -663,23 +666,21 @@
         border-left: 1px solid #374151;
     }
 
-    /* start */
     .summary-cell.ts {
-        background: #f8fffb;   /* very light green */
-        color: #047857;        /* softer green */
+        background: #f8fffb;
+        color: #047857;
     }
 
     .summary-cell.ps {
-        background: #fcfaff;   /* very light purple */
-        color: #6d28d9;        /* softer purple */
+        background: #fcfaff;
+        color: #6d28d9;
     }
 
     .summary-cell.ws {
-        background: #fff9f9;   /* very light red */
-        color: #b91c1c;        /* softer red */
+        background: #fff9f9;
+        color: #b91c1c;
     }
 
-    /* Dark Mode – much more subtle */
     .dark .summary-cell.ts {
         background: rgba(16, 185, 129, 0.12);
         color: #86efac;
@@ -694,7 +695,6 @@
         background: rgba(239, 68, 68, 0.12);
         color: #fca5a5;
     }
-    /* end */
 
     .final-grade {
         padding: 0.5rem;
