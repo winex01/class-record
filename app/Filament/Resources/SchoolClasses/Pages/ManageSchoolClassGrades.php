@@ -543,6 +543,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     return [
                         Select::make('student_filter')
                             ->label('Filter by Student')
+                            ->placeholder('All Students')
                             ->options(function () use ($getOwnerRecord) {
                                 return $getOwnerRecord->students()
                                     ->orderBy('last_name')
@@ -662,7 +663,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 }),
                         ];
                     })
-                    ->modalWidth(Width::SevenExtraLarge)
+                    ->modalWidth(Width::Full)
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')
                     ->modalAutofocus(false);
