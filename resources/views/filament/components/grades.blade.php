@@ -5,8 +5,8 @@
             <thead>
                 <!-- ROW 1: Header Info -->
                 <tr class="info-row">
-                    <th rowspan="3" class="frozen-column student-column">
-                        <div class="column-header">
+                    <th rowspan="3" class="frozen-column student-column max-score-label">
+                        <div class="column-header label-content">
                             <svg class="header-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
@@ -42,7 +42,7 @@
                         </th>
                     @endforeach
 
-                    <th rowspan="2" class="grade-column">
+                    <th rowspan="3" class="grade-column">
                         <div class="grade-header">
                             @if ($hasTransmutedGrade)
                                 Initial<br>
@@ -52,7 +52,7 @@
                     </th>
 
                     @if ($hasTransmutedGrade)
-                        <th rowspan="2" class="grade-column transmuted">
+                        <th rowspan="3" class="grade-column transmuted">
                             <div class="grade-header">
                                 Transmuted<br>Grade
                             </div>
@@ -210,6 +210,158 @@
 </div>
 
 <style>
+    /* ===== FROZEN HEADERS + FROZEN COLUMN FIX ===== */
+    /* Enable vertical scrolling */
+    .grades-wrapper {
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .grades-scroll-container {
+        overflow-x: auto;
+        overflow-y: auto;
+        position: relative;
+        flex: 1;
+    }
+
+    /* Make thead sticky vertically */
+    .grades-table thead {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+    }
+
+    /* Frozen column base styles (applies to both student name and max score label) */
+    .frozen-column {
+        position: sticky;
+        left: 0;
+        z-index: 25;
+        background: white;
+        box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .dark .frozen-column {
+        background: #111827;
+        box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Frozen columns in header - higher z-index */
+    thead .frozen-column {
+        z-index: 35;
+    }
+
+    /* Top-most priority for the very first header cell ("Student Name") */
+    .student-column {
+        z-index: 40 !important;           /* highest priority */
+        background: #f3f4f6 !important;
+    }
+
+    .dark .student-column {
+        background: #1f2937 !important;
+    }
+
+    /* Make sure "Highest Possible Score" cell also stays frozen horizontally */
+    .max-score-label {
+        position: sticky !important;
+        left: 0 !important;
+        z-index: 35 !important;
+        background: #fef3c7 !important;
+    }
+
+    .dark .max-score-label {
+        background: #451a03 !important;
+    }
+
+    /* ===== FIX HEADER TRANSPARENCY - FORCE SOLID OPAQUE BACKGROUNDS ===== */
+    .grades-table thead th {
+        position: relative;
+        isolation: isolate;
+    }
+
+    /* Info row - solid background */
+    .info-row th {
+        background: #f3f4f6 !important;
+        border-bottom: 2px solid #e5e7eb;
+        padding: 1rem;
+        font-weight: 500;
+    }
+
+    .dark .info-row th {
+        background: #1f2937 !important;
+        border-bottom: 2px solid #374151;
+    }
+
+    /* Component row - solid background */
+    .component-row th {
+        background: #e5e7eb !important;
+        border-bottom: 1px solid #d1d5db;
+        padding: 0.75rem;
+    }
+
+    .dark .component-row th {
+        background: #111827 !important;
+        border-bottom: 1px solid #374151;
+    }
+
+    /* Assessment row - solid background */
+    .assessment-row th {
+        background: #f9fafb !important;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 0.5rem;
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .dark .assessment-row th {
+        background: #111827 !important;
+        border-bottom: 1px solid #374151;
+        color: #9ca3af;
+    }
+
+    /* Max score row - solid background */
+    .max-score-row th {
+        background: #fef3c7 !important;
+        border-bottom: 2px solid #fbbf24;
+        padding: 0.625rem;
+        font-weight: 600;
+        color: #92400e;
+    }
+
+    .dark .max-score-row th {
+        background: #451a03 !important;
+        border-bottom: 2px solid #d97706;
+        color: #fcd34d;
+    }
+
+    /* Grade columns in headers - solid backgrounds */
+    thead .grade-column {
+        background: #fde68a !important;
+        border-left: 2px solid #fbbf24;
+        font-weight: 600;
+        color: #92400e;
+    }
+
+    .dark thead .grade-column {
+        background: #78350f !important;
+        border-left: 2px solid #d97706;
+        color: #fcd34d;
+    }
+
+    thead .grade-column.transmuted {
+        background: #bfdbfe !important;
+        border-left: 2px solid #3b82f6;
+        color: #1e40af;
+    }
+
+    .dark thead .grade-column.transmuted {
+        background: #1e40af !important;
+        border-left: 2px solid #3b82f6;
+        color: #93c5fd;
+    }
+
+    /* ===== PRESERVED ORIGINAL STYLES BELOW ===== */
     .avatar-image {
         width: 2rem;
         height: 2rem;
@@ -244,11 +396,6 @@
         background: rgb(var(--gray-900));
     }
 
-    .grades-scroll-container {
-        overflow-x: auto;
-        overflow-y: visible;
-    }
-
     .grades-table {
         width: 100%;
         min-width: 1200px;
@@ -256,25 +403,6 @@
         border-spacing: 0;
         font-size: 0.875rem;
         line-height: 1.25rem;
-    }
-
-    /* Header Styles */
-    .grades-table thead {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
-
-    .info-row th {
-        background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
-        border-bottom: 2px solid #e5e7eb;
-        padding: 1rem;
-        font-weight: 500;
-    }
-
-    .dark .info-row th {
-        background: linear-gradient(to bottom, #1f2937, #111827);
-        border-bottom: 2px solid #374151;
     }
 
     .meta-info {
@@ -305,17 +433,6 @@
         color: #f3f4f6;
     }
 
-    .component-row th {
-        background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
-        border-bottom: 1px solid #d1d5db;
-        padding: 0.75rem;
-    }
-
-    .dark .component-row th {
-        background: linear-gradient(to bottom, #111827, #030712);
-        border-bottom: 1px solid #374151;
-    }
-
     .component-badge {
         display: inline-flex;
         padding: 0.375rem 0.75rem;
@@ -326,21 +443,6 @@
         font-size: 0.875rem;
         text-transform: uppercase;
         letter-spacing: 0.025em;
-    }
-
-    .assessment-row th {
-        background: #f9fafb;
-        border-bottom: 1px solid #e5e7eb;
-        padding: 0.5rem;
-        font-size: 0.75rem;
-        color: #6b7280;
-        font-weight: 500;
-    }
-
-    .dark .assessment-row th {
-        background: #111827;
-        border-bottom: 1px solid #374151;
-        color: #9ca3af;
     }
 
     .assessment-badge {
@@ -373,20 +475,6 @@
     .dark .summary-col.ts { color: #34d399; }
     .dark .summary-col.ps { color: #a78bfa; }
     .dark .summary-col.ws { color: #f87171; }
-
-    .max-score-row th {
-        background: #fef3c7;
-        border-bottom: 2px solid #fbbf24;
-        padding: 0.625rem;
-        font-weight: 600;
-        color: #92400e;
-    }
-
-    .dark .max-score-row th {
-        background: #451a03;
-        border-bottom: 2px solid #d97706;
-        color: #fcd34d;
-    }
 
     .max-score-label .label-content {
         display: flex;
@@ -447,26 +535,22 @@
 
     /* Grade Columns */
     .grade-column {
-        background: linear-gradient(to bottom, #fef3c7, #fde68a) !important;
         border-left: 2px solid #fbbf24;
         font-weight: 600;
         color: #92400e;
     }
 
     .dark .grade-column {
-        background: linear-gradient(to bottom, #451a03, #78350f) !important;
         border-left: 2px solid #d97706;
         color: #fcd34d;
     }
 
     .grade-column.transmuted {
-        background: linear-gradient(to bottom, #dbeafe, #bfdbfe) !important;
         border-left: 2px solid #3b82f6;
         color: #1e40af;
     }
 
     .dark .grade-column.transmuted {
-        background: linear-gradient(to bottom, #1e3a8a, #1e40af) !important;
         border-left: 2px solid #3b82f6;
         color: #93c5fd;
     }
@@ -476,20 +560,6 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         line-height: 1.2;
-    }
-
-    /* Frozen Column */
-    .frozen-column {
-        position: sticky;
-        left: 0;
-        z-index: 5;
-        background: white;
-        box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
-    }
-
-    .dark .frozen-column {
-        background: #111827;
-        box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
     }
 
     .student-column {
@@ -558,7 +628,7 @@
         background: #1f2937;
     }
 
-    /* start hover animation */
+    /* hover animation */
     .student-row,
     .student-row .frozen-column {
         transition: background-color 0.05s ease-in-out;
@@ -587,7 +657,6 @@
     .dark .student-row:hover .frozen-column {
         background: #1e3a8a !important;
     }
-    /* end hover animation */
 
     .student-name {
         padding: 0.75rem 1rem;
@@ -603,21 +672,6 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
-    }
-
-    .avatar {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 2rem;
-        height: 2rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 0.5rem;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        flex-shrink: 0;
     }
 
     /* Score Cells */
@@ -753,4 +807,5 @@
             break-inside: avoid;
         }
     }
+
 </style>
