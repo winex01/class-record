@@ -9,6 +9,9 @@ TODO:: Notification & calendar for:
         * Lessons Completion date
         * Assessments date
         * Fee collections date
+
+TODO:: improve grades modal it so slow and also the select student filter.
+
 TODO:: import student
 TODO:: export student
 TODO:: download active classs in excel
