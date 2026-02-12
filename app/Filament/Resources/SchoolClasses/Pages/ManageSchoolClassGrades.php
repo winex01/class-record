@@ -543,7 +543,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     return [
                         Select::make('student_filter')
                             ->label('Filter by Student')
-                            ->placeholder('All Students')
                             ->options(function () use ($getOwnerRecord) {
                                 return $getOwnerRecord->students()
                                     ->orderBy('last_name')
@@ -558,53 +557,14 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             ->multiple()
                             ->extraAttributes([
                                 'style' => 'position: relative; z-index: 50;',
-                            ]),
-
-                            // View::make('filament.components.grades')
-                            //     ->viewData(function ($get, $record) use ($getOwnerRecord) {
-                            //         // Get the selected student filter
-                            //         $studentFilter = $get('student_filter');
-
-                            //         // Process data
-                            //         $schoolClass = $getOwnerRecord;
-                            //         $gradeGradingComponents = $record->orderedGradeGradingComponents;
-
-                            //         $groupedAssessments = $record->orderedGradeGradingComponents
-                            //             ->load(['gradingComponent', 'assessments'])
-                            //             ->groupBy(fn($ggc) => $ggc->gradingComponent?->label)
-                            //             ->map(fn($group) => $group->flatMap->assessments);
-
-                            //         // Calculate total columns
-                            //         $totalAssessmentColumns = $groupedAssessments->sum(fn($assessments) => $assessments->count() + 3);
-                            //         $totalColumns = $totalAssessmentColumns + 2;
-
-                            //         // Filter students based on selection
-                            //         $studentsQuery = $schoolClass->students();
-
-                            //         if (!empty($studentFilter)) {
-                            //             $studentsQuery->whereIn('students.id', $studentFilter);
-                            //         }
-
-                            //         $students = $studentsQuery->get()->groupBy('gender');
-
-                            //         $percentageScore = 100;
-
-                            //         $hasTransmutedGrade = $schoolClass->gradeTransmutations()->exists();
-
-                            //         // Return all data to the view
-                            //         return compact(
-                            //             'record',
-                            //             'schoolClass',
-                            //             'gradeGradingComponents',
-                            //             'groupedAssessments',
-                            //             'totalAssessmentColumns',
-                            //             'totalColumns',
-                            //             'students',
-                            //             'percentageScore',
-                            //             'studentFilter',
-                            //             'hasTransmutedGrade'
-                            //         );
-                            //     }),
+                            ])
+                            ->suffixAction(
+                                Action::make('clearAll')
+                                    ->icon('heroicon-m-x-mark')
+                                    ->color('gray')
+                                    ->action(fn ($set) => $set('student_filter', []))
+                                    ->hidden(fn ($get) => blank($get('student_filter')))
+                            ),
 
                             View::make('filament.components.grades')
                                 ->viewData(function ($get, $record) use ($getOwnerRecord) {
@@ -664,7 +624,15 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                                     // Filter students - select actual columns, not accessors
                                     $studentsQuery = $schoolClass->students()
-                                        ->select('students.id', 'students.first_name', 'students.last_name', 'students.middle_name', 'students.suffix_name', 'students.gender');
+                                        ->select(
+                                            'students.id',
+                                            'students.first_name',
+                                            'students.last_name',
+                                            'students.middle_name',
+                                            'students.suffix_name',
+                                            'students.gender',
+                                            'students.photo',
+                                        );
 
                                     if (!empty($studentFilter)) {
                                         $studentsQuery->whereIn('students.id', $studentFilter);

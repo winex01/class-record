@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->string('photo')->nullable();
-            $table->unsignedBigInteger('photo_bytes')->default(0);
             $table->string('last_name');
             $table->string('first_name');
             $table->string('middle_name')->nullable();

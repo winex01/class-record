@@ -129,10 +129,20 @@
                         <tr class="student-row">
                             <td class="frozen-column student-name">
                                 <div class="name-cell">
-                                    <div class="avatar">
-                                        {{ substr($student->full_name, 0, 2) }}
-                                    </div>
-                                    <span>{{ $student->full_name }}</span>
+                                    @if($student->photo)
+                                        <img src="{{ route('filament.app.student.photo', $student->id) }}"
+                                            alt="{{ $student->full_name }}"
+                                            class="avatar-image"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="avatar-initials" style="display: none;">
+                                            {{ substr($student->full_name, 0, 2) }}
+                                        </div>
+                                    @else
+                                        <div class="avatar-initials">
+                                            {{ substr($student->full_name, 0, 2) }}
+                                        </div>
+                                    @endif
+                                    <span title="{{ $student->complete_name }}">{{ $student->full_name }}</span>
                                 </div>
                             </td>
 
@@ -200,6 +210,29 @@
 </div>
 
 <style>
+    .avatar-image {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .avatar-initials {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
     .grades-wrapper {
         background: white;
         border-radius: 0.75rem;

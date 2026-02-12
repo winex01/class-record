@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use Filament\Panel;
 use App\Models\MyFile;
+use App\Models\Student;
 use Filament\PanelProvider;
 use Filament\Enums\ThemeMode;
 use Filament\Pages\Dashboard;
@@ -79,21 +80,42 @@ class AppPanelProvider extends PanelProvider
 
     private static function registerCustomRoutes(): void
     {
-        Route::get('/my-files/download/{myFileId}/{index}', function ($myFileId, $index) {
-            $myFile = MyFile::findOrFail($myFileId);
+        Route::middleware(['auth'])->group(function () {
+            Route::get('/my-files/download/{myFileId}/{index}', function ($myFileId, $index) {
+                $myFile = MyFile::findOrFail($myFileId);
 
-            if (!isset($myFile->path[$index])) {
-                abort(404);
-            }
+                // Check if file belongs to authenticated user
+                if ($myFile->user_id !== auth()->id()) {
+                    abort(403, 'Unauthorized access to this file');
+                }
 
-            $filePath = $myFile->path[$index];
+                if (!isset($myFile->path[$index])) {
+                    abort(404);
+                }
 
-            if (!Storage::disk('local')->exists($filePath)) {
-                abort(404);
-            }
+                $filePath = $myFile->path[$index];
 
-            return Storage::disk('local')->download($filePath);
-        })->name('myfile.download');
+                if (!Storage::disk('local')->exists($filePath)) {
+                    abort(404);
+                }
 
+                return Storage::disk('local')->download($filePath);
+            })->name('myfile.download');
+
+            Route::get('/students/photo/{studentId}', function ($studentId) {
+                $student = Student::findOrFail($studentId);
+
+                // Optional: Check if student belongs to authenticated user
+                if ($student->user_id !== auth()->id()) {
+                    abort(403, 'Unauthorized access to this student');
+                }
+
+                if (!$student->photo || !Storage::disk('local')->exists($student->photo)) {
+                    abort(404);
+                }
+
+                return Storage::disk('local')->response($student->photo);
+            })->name('student.photo');
+        });
     }
 }
