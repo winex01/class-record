@@ -10,7 +10,7 @@ TODO:: Notification & calendar for:
         * Assessments date
         * Fee collections date
 
-TODO:: improve grades modal it so slow and also the select student filter.
+TODO:: Grades: review computations on components and etc
 
 TODO:: import student
 TODO:: export student
