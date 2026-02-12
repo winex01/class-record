@@ -1,5 +1,7 @@
 <?php
 /*
+TODO:: in initial avatar in grade student name instead of first 2 character use the first_name and last_name initials
+
 TODO:: Fee Collections Overview:
         * Display each student in modal and total paid and also when click each collections and how much
 
