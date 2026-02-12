@@ -197,7 +197,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             'max_score' =>
             Column::text('max_score')->label('Max')->color('info')->width('1%')->tooltip('Max score'),
             Column::text('description')->toggleable(isToggledHiddenByDefault:true),
-            'can_group_students' =>
             Column::boolean('can_group_students')->label('Can group')->toggleable(isToggledHiddenByDefault:true),
         ];
     }

@@ -69,7 +69,6 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
     protected function getCOlumns()
     {
         $columns = ManageSchoolClassAssessments::getColumns();
-        unset($columns['can_group_students']);
         $columns['max_score']->alignCenter();
 
         return [
