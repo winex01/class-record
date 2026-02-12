@@ -1,7 +1,5 @@
 <?php
 /*
-TODO:: Assessment Overview column score sortable bug:
-
 TODO:: Fee Collections Overview:
         * Display each student in modal and total paid and also when click each collections and how much
 TODO:: Notification & calendar for:

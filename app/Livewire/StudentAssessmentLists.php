@@ -59,7 +59,6 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
             ->columns([
                 ...$columns,
 
-                // TODO:: fix sortable error!!!
                 TextColumn::make('students.pivot.score')
                     ->badge()
                     ->color('success')
@@ -68,7 +67,19 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                         return $record->students->first()?->pivot->score;
                     })
                     ->alignCenter()
-                    ->sortable(),
+                    ->sortable(query: function (\Illuminate\Database\Eloquent\Builder $query, string $direction): \Illuminate\Database\Eloquent\Builder {
+                        return $query
+                            ->leftJoin('assessment_student', function ($join) {
+                                $join->on('assessments.id', '=', 'assessment_student.assessment_id')
+                                    ->whereRaw('assessment_student.id = (
+                                        SELECT id FROM assessment_student AS ast
+                                        WHERE ast.assessment_id = assessments.id
+                                        LIMIT 1
+                                    )');
+                            })
+                            ->orderBy('assessment_student.score', $direction)
+                            ->select('assessments.*', 'assessment_student.score as pivot_score');
+                    }),
 
                 TextColumn::make('students.pivot.group')
                     ->label('Group')
