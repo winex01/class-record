@@ -13,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use App\Filament\Resources\Groups\GroupResource;
@@ -67,7 +68,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                         return $record->students->first()?->pivot->score;
                     })
                     ->alignCenter()
-                    ->sortable(query: function (\Illuminate\Database\Eloquent\Builder $query, string $direction): \Illuminate\Database\Eloquent\Builder {
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
                             ->leftJoin('assessment_student', function ($join) {
                                 $join->on('assessments.id', '=', 'assessment_student.assessment_id')
@@ -153,7 +154,6 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                         'group' => $groupValue,
                     ]);
 
-                    // Show success notification
                     Notification::make()
                         ->title('Score updated successfully')
                         ->success()
