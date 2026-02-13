@@ -303,6 +303,42 @@
         border-bottom: 1px solid #374151;
     }
 
+    /* Alternating component backgrounds - modern and subtle */
+    .component-row th.component-header:nth-child(odd) {
+        background: linear-gradient(to bottom, #f0f9ff 0%, #e0f2fe 100%) !important;
+    }
+
+    .component-row th.component-header:nth-child(even) {
+        background: linear-gradient(to bottom, #f5f3ff 0%, #ede9fe 100%) !important;
+    }
+
+    .dark .component-row th.component-header:nth-child(odd) {
+        background: linear-gradient(to bottom, #0c4a6e 0%, #075985 100%) !important;
+    }
+
+    .dark .component-row th.component-header:nth-child(even) {
+        background: linear-gradient(to bottom, #4c1d95 0%, #5b21b6 100%) !important;
+    }
+
+    .component-badge {
+        display: inline-flex;
+        padding: 0.375rem 0.75rem;
+        background: transparent;
+        color: #1e40af;
+        border-radius: 0;
+        font-weight: 700;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        box-shadow: none;
+    }
+
+    .dark .component-badge {
+        background: transparent;
+        color: #93c5fd;
+        box-shadow: none;
+    }
+
     /* Assessment row - solid background */
     .assessment-row th {
         background: #f9fafb !important;
@@ -337,27 +373,46 @@
     /* Grade columns in headers - solid backgrounds */
     thead .grade-column {
         background: #fde68a !important;
-        border-left: 2px solid #fbbf24;
         font-weight: 600;
         color: #92400e;
     }
 
     .dark thead .grade-column {
         background: #78350f !important;
-        border-left: 2px solid #d97706;
         color: #fcd34d;
     }
 
     thead .grade-column.transmuted {
         background: #bfdbfe !important;
-        border-left: 2px solid #3b82f6;
         color: #1e40af;
     }
 
     .dark thead .grade-column.transmuted {
         background: #1e40af !important;
-        border-left: 2px solid #3b82f6;
         color: #93c5fd;
+    }
+
+    /* Add vertical spacing with subtle shadow on WS columns */
+    .assessment-row th.summary-col.ws,
+    .max-score-row th.summary-value.ws {
+        position: relative;
+    }
+
+    .assessment-row th.summary-col.ws::after,
+    .max-score-row th.summary-value.ws::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 8px;
+        background: linear-gradient(to right, transparent, rgba(59, 130, 246, 0.1));
+        pointer-events: none;
+    }
+
+    .dark .assessment-row th.summary-col.ws::after,
+    .dark .max-score-row th.summary-value.ws::after {
+        background: linear-gradient(to right, transparent, rgba(59, 130, 246, 0.2));
     }
 
     /* ===== PRESERVED ORIGINAL STYLES BELOW ===== */
@@ -430,18 +485,6 @@
 
     .dark .info-value {
         color: #f3f4f6;
-    }
-
-    .component-badge {
-        display: inline-flex;
-        padding: 0.375rem 0.75rem;
-        background: #3b82f6;
-        color: white;
-        border-radius: 0.375rem;
-        font-weight: 600;
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
     }
 
     .assessment-badge {
@@ -534,23 +577,19 @@
 
     /* Grade Columns */
     .grade-column {
-        border-left: 2px solid #fbbf24;
         font-weight: 600;
         color: #92400e;
     }
 
     .dark .grade-column {
-        border-left: 2px solid #d97706;
         color: #fcd34d;
     }
 
     .grade-column.transmuted {
-        border-left: 2px solid #3b82f6;
         color: #1e40af;
     }
 
     .dark .grade-column.transmuted {
-        border-left: 2px solid #3b82f6;
         color: #93c5fd;
     }
 
@@ -727,6 +766,19 @@
     .summary-cell.ws {
         background: #fff9f9;
         color: #b91c1c;
+        position: relative;
+    }
+
+    /* Add subtle shadow separator after WS in body rows */
+    .summary-cell.ws::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 8px;
+        background: linear-gradient(to right, transparent, rgba(59, 130, 246, 0.08));
+        pointer-events: none;
     }
 
     .dark .summary-cell.ts {
@@ -744,13 +796,12 @@
         color: #fca5a5;
     }
 
-    .final-grade {
-        padding: 0.5rem;
-        border-left: 2px solid #fbbf24;
+    .dark .summary-cell.ws::after {
+        background: linear-gradient(to right, transparent, rgba(59, 130, 246, 0.15));
     }
 
-    .dark .final-grade {
-        border-left: 2px solid #d97706;
+    .final-grade {
+        padding: 0.5rem;
     }
 
     .grade-badge {
@@ -803,5 +854,4 @@
             break-inside: avoid;
         }
     }
-
 </style>
