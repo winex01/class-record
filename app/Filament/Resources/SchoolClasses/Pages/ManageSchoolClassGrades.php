@@ -663,7 +663,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 }),
                         ];
                     })
-                    ->modalWidth(Width::Full)
+                    ->modalWidth(Width::SevenExtraLarge)
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')
                     ->modalAutofocus(false);
