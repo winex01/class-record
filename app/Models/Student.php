@@ -82,6 +82,14 @@ class Student extends Model
         return implode(', ', [$nameParts[0], trim(implode(' ', array_slice($nameParts, 1)))]);
     }
 
+    public function getInitialsAttribute(): string
+    {
+        $firstInitial = $this->first_name ? strtoupper(substr($this->first_name, 0, 1)) : '';
+        $lastInitial = $this->last_name ? strtoupper(substr($this->last_name, 0, 1)) : '';
+
+        return $lastInitial . $firstInitial;
+    }
+
     public function getCompleteNameAttribute(): string
     {
         // Build name parts array

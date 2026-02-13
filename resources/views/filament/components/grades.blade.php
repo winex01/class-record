@@ -134,14 +134,10 @@
                                             alt="{{ $student->full_name }}"
                                             class="avatar-image"
                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                        <div class="avatar-initials" style="display: none;">
-                                            {{ substr($student->full_name, 0, 2) }}
-                                        </div>
-                                    @else
-                                        <div class="avatar-initials">
-                                            {{ substr($student->full_name, 0, 2) }}
-                                        </div>
                                     @endif
+                                    <div class="avatar-initials" @if($student->photo) style="display: none;" @endif>
+                                        {{ $student->initials }}
+                                    </div>
                                     <span title="{{ $student->complete_name }}">{{ $student->full_name }}</span>
                                 </div>
                             </td>
