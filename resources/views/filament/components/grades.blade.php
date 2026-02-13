@@ -255,6 +255,9 @@
     .student-column {
         z-index: 40 !important;           /* highest priority */
         background: #f3f4f6 !important;
+        width: 220px;
+        min-width: 220px;
+        max-width: 220px;
     }
 
     .dark .student-column {
@@ -562,11 +565,6 @@
         line-height: 1.2;
     }
 
-    .student-column {
-        min-width: 200px;
-        max-width: 250px;
-    }
-
     .column-header {
         display: flex;
         align-items: center;
@@ -787,7 +785,9 @@
         }
 
         .student-column {
+            width: 150px;
             min-width: 150px;
+            max-width: 150px;
         }
 
         .avatar {
