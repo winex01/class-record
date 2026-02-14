@@ -51,13 +51,31 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     ->searchable(false)
                     ->badge()
                     ->color('info')
-                    ->state(fn ($record) => $record->students()->wherePivot('present', true)->count()),
+                    ->state(fn ($record) => $record->students()->wherePivot('present', true)->count())
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query
+                            ->withCount([
+                                'students as present_count' => function ($query) {
+                                    $query->where('attendance_student.present', true);
+                                }
+                            ])
+                            ->orderBy('present_count', $direction);
+                    }),
 
                 Column::text('absent')
                     ->searchable(false)
                     ->badge()
                     ->color('danger')
-                    ->state(fn ($record) => $record->students()->wherePivot('present', false)->count()),
+                    ->state(fn ($record) => $record->students()->wherePivot('present', false)->count())
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query
+                            ->withCount([
+                                'students as absent_count' => function ($query) {
+                                    $query->where('attendance_student.present', false);
+                                }
+                            ])
+                            ->orderBy('absent_count', $direction);
+                    }),
 
             ])
             ->filters([
