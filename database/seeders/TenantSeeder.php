@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\TransmuteTemplate;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\AssessmentType;
+use App\Models\TransmuteTemplate;
 
 class TenantSeeder
 {
@@ -75,18 +75,13 @@ class TenantSeeder
         }
     }
 
-    private function groupSeeder($user)
+    private function groupSeeder($user, $count = 10)
     {
-        $types = [
-            ['name' => 'Group 1', 'user_id' => $user->id],
-            ['name' => 'Group 2', 'user_id' => $user->id],
-            ['name' => 'Group 3', 'user_id' => $user->id],
-            ['name' => 'Group 4', 'user_id' => $user->id],
-            ['name' => 'Group 5', 'user_id' => $user->id],
-        ];
-
-        foreach ($types as $type) {
-            Group::create($type);
+        for ($i = 1; $i <= $count; $i++) {
+            Group::create([
+                'name' => "Group {$i}",
+                'user_id' => $user->id,
+            ]);
         }
     }
 
