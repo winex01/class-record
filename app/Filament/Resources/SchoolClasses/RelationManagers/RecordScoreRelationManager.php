@@ -80,10 +80,16 @@ class RecordScoreRelationManager extends RelationManager
                     ->searchable()
                     ->multiple()
                     ->options(GroupResource::selectOptions())
+                    ->query(function (Builder $query, array $data) {
+                        if (filled($data['values'])) {
+                            $query->whereIn('assessment_student.group', $data['values']);
+                        }
+                    })
                     ->visible($this->getOwnerRecord()->can_group_students),
 
-                ...StudentResource::getFilters()
+                    ...StudentResource::getFilters(),
             ])
+            ->filtersFormMaxHeight(300)
             ->headerActions([
                 ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
             ])
