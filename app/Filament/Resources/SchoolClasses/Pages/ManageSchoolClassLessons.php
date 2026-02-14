@@ -26,18 +26,19 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Tables\Filters\SelectFilter;
-use Relaticle\Flowforge\Concerns\BaseBoard;
 use Relaticle\Flowforge\Contracts\HasBoard;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use Filament\Forms\Components\Repeater\TableColumn;
+use Relaticle\Flowforge\Concerns\InteractsWithBoard;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
-class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
+
+class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
 {
+    use InteractsWithBoard;
     use ManageSchoolClassInitTrait;
-    use BaseBoard;
 
     protected string $view = 'flowforge::filament.pages.board-page';
     protected static string $resource = SchoolClassResource::class;
@@ -63,7 +64,6 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements Hasboard
                     ->color(LessonStatus::DONE->getColor()),
             ])
             ->cardSchema(fn(Schema $schema) => $schema->components($this->getColumns()))
-            // ->filters($this->getFilters())
             ->searchable(['title', 'description', 'tags'])
             ->columnActions([
                 CreateAction::make()

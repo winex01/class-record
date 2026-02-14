@@ -10,6 +10,7 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use App\Enums\CompletedPendingStatus;
 use Filament\Forms\Components\Select;
@@ -192,10 +193,10 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
     {
         return [
             Column::text('name'),
-            Column::text('assessmentType.name')->badge()->width('1%')->label('Type'),
-            Column::date('date')->width('1%'),
+            Column::text('assessmentType.name')->badge()->label('Type'),
+            Column::date('date'),
             'max_score' =>
-            Column::text('max_score')->label('Max')->color('info')->width('1%')->tooltip('Max score'),
+            Column::text('max_score')->label('Max')->alignCenter()->color('info')->tooltip('Max score'),
             Column::text('description')->toggleable(isToggledHiddenByDefault:true),
             Column::boolean('can_group_students')->label('Can group')->toggleable(isToggledHiddenByDefault:true),
         ];
@@ -213,6 +214,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
                 return view('filament.components.assessment-overview', compact('schoolClassId'));
             })
+            ->modalWidth(Width::TwoExtraLarge)
             ->modalSubmitAction(false)
             ->modalCancelAction(false);
     }

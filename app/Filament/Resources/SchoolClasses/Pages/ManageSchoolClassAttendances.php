@@ -51,6 +51,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     ->searchable(false)
                     ->badge()
                     ->color('info')
+                    ->alignCenter()
                     ->state(fn ($record) => $record->students()->wherePivot('present', true)->count())
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
@@ -66,6 +67,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     ->searchable(false)
                     ->badge()
                     ->color('danger')
+                    ->alignCenter()
                     ->state(fn ($record) => $record->students()->wherePivot('present', false)->count())
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
@@ -150,6 +152,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
 
                 return view('filament.components.attendance-overview', compact('schoolClassId'));
             })
+            ->modalWidth(Width::TwoExtraLarge)
             ->modalSubmitAction(false)
             ->modalCancelAction(false);;
     }
