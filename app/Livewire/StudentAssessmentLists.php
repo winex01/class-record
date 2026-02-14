@@ -62,8 +62,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
             ])
             ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
-            ->emptyStateDescription('No attendance records found.')
-            ->recordActions([$this->updateStudentRecord()]);
+            ->emptyStateDescription('No attendance records found.');
     }
 
     protected function getCOlumns()
@@ -92,10 +91,13 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                                 ->limit(1),
                             $direction
                         );
-                }),
+                })
+                ->action($this->updateStudentScore()),
 
             TextColumn::make('students.pivot.group')
                 ->label('Group')
+                ->badge(fn ($record) => $record->can_group_students)
+                ->color(fn ($record) => $record->can_group_students ? 'info' : null)
                 ->getStateUsing(function ($record) {
                     return $record->students->first()?->pivot->group;
                 })
@@ -112,14 +114,13 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                 })
                 ->toggleable()
                 ->toggledHiddenByDefault(true)
+                ->action($this->updateStudentGroup()),
         ];
     }
 
-    protected function updateStudentRecord()
+    protected function updateStudentScore()
     {
         return Action::make('updateScore')
-                ->label('Edit')
-                ->icon('heroicon-o-pencil-square')
                 ->form([
                     TextInput::make('score')
                         ->label('Score')
@@ -135,7 +136,27 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                         ->default(fn ($record) => $record->students->first()?->pivot->score)
                         ->placeholder(fn ($record) => 'Max: ' . ($record->max_score ?? 0))
                         ->helperText(fn ($record) => 'Maximum allowed score: ' . ($record->max_score ?? 100)),
+                ])
+                ->action(function ($record, array $data) {
+                    // Update only the score
+                    $record->students()->updateExistingPivot($this->studentId, [
+                        'score' => $data['score'],
+                    ]);
 
+                    Notification::make()
+                        ->title('Score updated successfully')
+                        ->success()
+                        ->send();
+                })
+                ->modalHeading('Update Assessment Score')
+                ->modalSubmitActionLabel('Save')
+                ->modalWidth(Width::ExtraSmall);
+    }
+
+    protected function updateStudentGroup()
+    {
+        return Action::make('updateGroup')
+                ->form([
                     Select::make('group')
                         ->label('Group')
                         ->options(function ($record) {
@@ -156,27 +177,26 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                                 $set('group', '-');
                             }
                         })
-                        ->visible(fn ($record) => $record->can_group_students)
                         ->searchable()
                 ])
                 ->action(function ($record, array $data) {
                     // If group is empty, set to '-'
                     $groupValue = empty($data['group']) ? '-' : $data['group'];
 
-                    // Update the pivot table
+                    // Update only the group
                     $record->students()->updateExistingPivot($this->studentId, [
-                        'score' => $data['score'],
                         'group' => $groupValue,
                     ]);
 
                     Notification::make()
-                        ->title('Score updated successfully')
+                        ->title('Group updated successfully')
                         ->success()
                         ->send();
                 })
-                ->modalHeading('Update Assessment Score')
+                ->modalHeading('Update Student Group')
                 ->modalSubmitActionLabel('Save')
-                ->modalWidth(Width::ExtraSmall);
+                ->modalWidth(Width::ExtraSmall)
+                ->visible(fn ($record) => $record->can_group_students);
     }
 
     public function render()
