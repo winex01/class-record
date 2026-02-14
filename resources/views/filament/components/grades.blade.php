@@ -661,9 +661,10 @@
         background: #1f2937;
     }
 
-    /* hover animation */
+    /* hover animation - CHANGED TO GREEN */
     .student-row,
-    .student-row .frozen-column {
+    .student-row .frozen-column,
+    .student-row td {
         transition: background-color 0.05s ease-in-out;
     }
 
@@ -676,19 +677,19 @@
     }
 
     .student-row:hover {
-        background: #f0f9ff !important;
+        background: #dcfce7 !important;
     }
 
     .dark .student-row:hover {
-        background: #1e3a8a !important;
+        background: #064e3b !important;
     }
 
     .student-row:hover .frozen-column {
-        background: #f0f9ff !important;
+        background: #dcfce7 !important;
     }
 
     .dark .student-row:hover .frozen-column {
-        background: #1e3a8a !important;
+        background: #064e3b !important;
     }
 
     .student-name {
@@ -769,6 +770,19 @@
         position: relative;
     }
 
+    /* Light mode hover effect for summary cells */
+    .student-row:hover .summary-cell.ts {
+        background: #dcfce7;
+    }
+
+    .student-row:hover .summary-cell.ps {
+        background: #dcfce7;
+    }
+
+    .student-row:hover .summary-cell.ws {
+        background: #dcfce7;
+    }
+
     /* Add subtle shadow separator after WS in body rows */
     .summary-cell.ws::after {
         content: '';
@@ -794,6 +808,19 @@
     .dark .summary-cell.ws {
         background: rgba(239, 68, 68, 0.12);
         color: #fca5a5;
+    }
+
+    /* Dark mode hover effect for summary cells */
+    .dark .student-row:hover .summary-cell.ts {
+        background: #064e3b;
+    }
+
+    .dark .student-row:hover .summary-cell.ps {
+        background: #064e3b;
+    }
+
+    .dark .student-row:hover .summary-cell.ws {
+        background: #064e3b;
     }
 
     .dark .summary-cell.ws::after {
