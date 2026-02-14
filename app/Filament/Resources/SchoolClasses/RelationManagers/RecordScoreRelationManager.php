@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
 use App\Services\Column;
 use Filament\Tables\Table;
+use Filament\Support\Enums\Width;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -89,7 +90,7 @@ class RecordScoreRelationManager extends RelationManager
 
                     ...StudentResource::getFilters(),
             ])
-            ->filtersFormMaxHeight(300)
+            ->filtersFormWidth(Width::Medium)
             ->headerActions([
                 ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
             ])

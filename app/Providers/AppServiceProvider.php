@@ -15,7 +15,6 @@ use Filament\Actions\DetachBulkAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Filament\Schemas\Components\Component;
-use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -62,8 +61,8 @@ class AppServiceProvider extends ServiceProvider
             $table->extremePaginationLinks();
 
             // Actions configuration
-            $table->filtersTriggerAction(fn (Action $action) => $action->button()->label(__('Filters')));
-            $table->toggleColumnsTriggerAction(fn (Action $action) => $action->button()->label(__('Columns')));
+            // $table->filtersTriggerAction(fn (Action $action) => $action->button()->label(__('Filters')));
+            // $table->toggleColumnsTriggerAction(fn (Action $action) => $action->button()->label(__('Columns')));
             $table->actionsAlignment('left');
 
             // Date/Time formatting
