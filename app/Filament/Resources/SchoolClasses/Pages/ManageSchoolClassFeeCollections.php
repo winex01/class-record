@@ -115,7 +115,12 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
                 Column::amount('total')
                     ->state(fn ($record) => $record->students()->sum('amount'))
-                    ->tooltip('Total collected'),
+                    ->tooltip('Total collected')
+                    ->sortable(
+                        query: fn ($query, string $direction) =>
+                            $query->withSum('students as total', 'fee_collection_student.amount')
+                                ->orderBy('total', $direction)
+                    ),
 
                 Column::icon('status')
                     ->getStateUsing(fn ($record) =>
