@@ -150,6 +150,13 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
                         return $status ? CompletedPendingStatus::PENDING->getLabel() : CompletedPendingStatus::COMPLETED->getLabel();
                     })
+                    ->sortable(
+                        query: fn ($query, string $direction) =>
+                            $query->withExists([
+                                'students as has_pending' => fn ($q) => $q->whereNull('score')
+                            ])
+                            ->orderBy('has_pending', $direction)
+                    )
 
             ])
             ->filters([

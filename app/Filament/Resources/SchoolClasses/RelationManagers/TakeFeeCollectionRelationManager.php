@@ -77,8 +77,6 @@ class TakeFeeCollectionRelationManager extends RelationManager
                                 );
                         }
                     })
-
-
             ])
             ->filters([
                 ...StudentResource::getFilters()

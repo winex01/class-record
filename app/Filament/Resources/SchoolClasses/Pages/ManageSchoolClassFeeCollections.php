@@ -135,6 +135,14 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
                         return $hasUnpaid ? CompletedPendingStatus::PENDING->getLabel() : CompletedPendingStatus::COMPLETED->getLabel();
                     })
+                    ->sortable(
+                        query: fn ($query, string $direction) =>
+                            $query->withExists([
+                                'students as has_unpaid' => fn ($q) =>
+                                    $q->where('fee_collection_student.status', '!=', FeeCollectionStatus::PAID->value)
+                            ])
+                            ->orderBy('has_unpaid', $direction)
+                    )
             ])
             ->filters([
                 //

@@ -48,6 +48,7 @@ class TakeAttendanceRelationManager extends RelationManager
                 ...ManageSchoolClassStudents::getColumns(),
                 ToggleColumn::make('present')
                     ->offColor('danger')
+                    ->sortable()
             ])
             ->filters([
                 ...StudentResource::getFilters()
