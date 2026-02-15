@@ -44,13 +44,40 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
             ->with('students')
             ->get();
 
-        $this->studentsData = static::calculateStudentsAttendanceData($attendances);
+        $this->studentsData = static::processData($attendances);
 
         // Filter for perfect attendance
         $this->perfectAttendanceData = array_filter($this->studentsData, function($student) {
             return $student['absent_count'] === 0;
         });
         $this->perfectAttendanceData = array_values($this->perfectAttendanceData);
+    }
+
+    private static function processData($attendances): array
+    {
+        $studentsData = [];
+
+        foreach ($attendances as $attendance) {
+            foreach ($attendance->students as $student) {
+                if (!isset($studentsData[$student->id])) {
+                    $studentsData[$student->id] = [
+                        'id' => $student->id,
+                        'name' => $student->full_name,
+                        'present_count' => 0,
+                        'absent_count' => 0,
+                    ];
+                }
+
+                // Count based on the 'present' boolean pivot column
+                if ($student->pivot->present) {
+                    $studentsData[$student->id]['present_count']++;
+                } else {
+                    $studentsData[$student->id]['absent_count']++;
+                }
+            }
+        }
+
+        return array_values($studentsData);
     }
 
     public function updatedActiveTab()
@@ -138,33 +165,6 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
             ])
             ->emptyStateHeading(false)
             ->emptyStateDescription(false);
-    }
-
-    private static function calculateStudentsAttendanceData($attendances): array
-    {
-        $studentsData = [];
-
-        foreach ($attendances as $attendance) {
-            foreach ($attendance->students as $student) {
-                if (!isset($studentsData[$student->id])) {
-                    $studentsData[$student->id] = [
-                        'id' => $student->id,
-                        'name' => $student->full_name,
-                        'present_count' => 0,
-                        'absent_count' => 0,
-                    ];
-                }
-
-                // Count based on the 'present' boolean pivot column
-                if ($student->pivot->present) {
-                    $studentsData[$student->id]['present_count']++;
-                } else {
-                    $studentsData[$student->id]['absent_count']++;
-                }
-            }
-        }
-
-        return array_values($studentsData);
     }
 
     public function render()

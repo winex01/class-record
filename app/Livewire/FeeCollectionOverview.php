@@ -36,12 +36,30 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
 
     public function loadData()
     {
-        $assessments = SchoolClass::find($this->schoolClassId)
-            ->assessments()
+        $feeCollections = SchoolClass::find($this->schoolClassId)
+            ->feeCollections()
             ->with('students')
             ->get();
 
-        $this->studentsData = static::processData($assessments);
+        $this->studentsData = static::processData($feeCollections);
+    }
+
+    private static function processData($assessments): array
+    {
+        $studentsData = [];
+
+        foreach ($assessments as $assessment) {
+            foreach ($assessment->students as $student) {
+                if (!isset($studentsData[$student->id])) {
+                    $studentsData[$student->id] = [
+                        'id' => $student->id,
+                        'name' => $student->full_name,
+                    ];
+                }
+            }
+        }
+
+        return array_values($studentsData);
     }
 
     public function table(Table $table): Table
@@ -70,24 +88,6 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                 //     ->modalCancelAction(false)
                 //     ->modalWidth(Width::TwoExtraLarge)
             ]);
-    }
-
-    private static function processData($assessments): array
-    {
-        $studentsData = [];
-
-        foreach ($assessments as $assessment) {
-            foreach ($assessment->students as $student) {
-                if (!isset($studentsData[$student->id])) {
-                    $studentsData[$student->id] = [
-                        'id' => $student->id,
-                        'name' => $student->full_name,
-                    ];
-                }
-            }
-        }
-
-        return array_values($studentsData);
     }
 
     public function render()

@@ -42,7 +42,25 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
             ->with('students')
             ->get();
 
-        $this->studentsData = static::calculateStudentsAssessmentData($assessments);
+        $this->studentsData = static::processData($assessments);
+    }
+
+    private static function processData($assessments): array
+    {
+        $studentsData = [];
+
+        foreach ($assessments as $assessment) {
+            foreach ($assessment->students as $student) {
+                if (!isset($studentsData[$student->id])) {
+                    $studentsData[$student->id] = [
+                        'id' => $student->id,
+                        'name' => $student->full_name,
+                    ];
+                }
+            }
+        }
+
+        return array_values($studentsData);
     }
 
     #[On('refresh-assessment-overview-data')]
@@ -77,24 +95,6 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
                     ->modalCancelAction(false)
                     ->modalWidth(Width::TwoExtraLarge)
             ]);
-    }
-
-    private static function calculateStudentsAssessmentData($assessments): array
-    {
-        $studentsData = [];
-
-        foreach ($assessments as $assessment) {
-            foreach ($assessment->students as $student) {
-                if (!isset($studentsData[$student->id])) {
-                    $studentsData[$student->id] = [
-                        'id' => $student->id,
-                        'name' => $student->full_name,
-                    ];
-                }
-            }
-        }
-
-        return array_values($studentsData);
     }
 
     public function render()
