@@ -2,15 +2,14 @@
 
 namespace App\Livewire;
 
-use App\Services\Icon;
 use App\Models\Student;
 use Livewire\Component;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
-use Filament\Actions\Action;
-use Filament\Support\Enums\Width;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -69,6 +68,49 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
                 ...ManageSchoolClassStudents::getColumns(),
+
+                TextColumn::make('total_paid')
+                    ->color('success')
+                    ->money('PHP')
+                    ->alignCenter()
+                    ->getStateUsing(function (Student $record) {
+                        return $record->feeCollections->sum('pivot.amount');
+                    })
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query->withSum([
+                            'feeCollections as total_paid_sort' => function ($q) {
+                                $q->where('school_class_id', $this->schoolClassId);
+                            }
+                        ], 'fee_collection_student.amount')
+                        ->orderBy('total_paid_sort', $direction);
+                    }),
+                    // TODO:: action to display the feecolltions
+
+                TextColumn::make('remaining')
+                    ->color('danger')
+                    ->money('PHP')
+                    ->alignCenter()
+                    ->getStateUsing(function (Student $record) {
+                        $totalDue = $record->feeCollections->sum('amount');
+                        $totalPaid = $record->feeCollections->sum('pivot.amount');
+
+                        return $totalDue - $totalPaid;
+                    })
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query->withSum([
+                            'feeCollections as total_due_sort' => function ($q) {
+                                $q->where('school_class_id', $this->schoolClassId);
+                            }
+                        ], 'amount')
+                        ->withSum([
+                            'feeCollections as total_paid_sort' => function ($q) {
+                                $q->where('school_class_id', $this->schoolClassId);
+                            }
+                        ], 'fee_collection_student.amount')
+                        ->orderByRaw("(total_due_sort - total_paid_sort) {$direction}");
+                    }),
+                    // TODO:: action to display the feecolltions
+
             ])
             ->filters([
                 ...StudentResource::getFilters()
@@ -76,17 +118,7 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
             ->emptyStateHeading(false)
             ->emptyStateDescription(false)
             ->recordActions([
-                // Action::make('assessmentLists')
-                //     ->label('Assessment Lists')
-                //     ->modalHeading(fn ($record) => $record->full_name . ' - Assessment Lists')
-                //     ->icon(Icon::assessments())
-                //     ->modalContent(fn ($record, $livewire) => view('filament.components.student-assessment-lists', [
-                //         'studentId' => $record->id,
-                //         'schoolClassId' => $livewire->schoolClassId,
-                //     ]))
-                //     ->modalSubmitAction(false)
-                //     ->modalCancelAction(false)
-                //     ->modalWidth(Width::TwoExtraLarge)
+                //
             ]);
     }
 
@@ -95,4 +127,3 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
         return view('livewire.fee-collection-overview');
     }
 }
-
