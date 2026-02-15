@@ -84,8 +84,8 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
             ->emptyStateDescription(false)
             ->recordActions([
                 Action::make('assessmentLists')
-                    ->label('Assessment Lists')
-                    ->modalHeading(fn ($record) => $record->full_name . ' - Assessment Lists')
+                    ->label('Assessments')
+                    ->modalHeading(fn ($record) => $record->full_name . ' - Assessments')
                     ->icon(Icon::assessments())
                     ->modalContent(fn ($record, $livewire) => view('filament.components.student-assessment-lists', [
                         'studentId' => $record->id,
