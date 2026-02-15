@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -149,6 +150,8 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ])
             ->headerActions([
                 SchoolClassResource::createAction($this->getOwnerRecord())->modalWidth(Width::Large),
+
+                static::getOverviewAction(),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -168,5 +171,22 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 DeleteBulkAction::make(),
             ])
             ->recordAction('takeFeeCollectionRelationManager');;
+    }
+
+    public static function getOverviewAction(): Action
+    {
+        return Action::make('overview')
+            ->label('Overview')
+            ->color('info')
+            ->modalHeading('Student Fee Collection Overview')
+            ->modalDescription(fn ($livewire) => 'Overview of students across all fee collections records for ' . $livewire->getOwnerRecord()->name)
+            ->modalContent(function ($livewire) {
+                $schoolClassId = $livewire->getOwnerRecord()->id;
+
+                return view('filament.components.fee-collection-overview', compact('schoolClassId'));
+            })
+            ->modalWidth(Width::TwoExtraLarge)
+            ->modalSubmitAction(false)
+            ->modalCancelAction(false);
     }
 }
