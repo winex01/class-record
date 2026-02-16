@@ -12,6 +12,7 @@ TODO:: Grades: review computations on components and etc
 
 TODO:: table seeders: fee collections
 TODO:: check all tables column sortable/order
+TODO:: auto or remove the apply filters or apply columns.
 
 TODO:: import student
 TODO:: export student
