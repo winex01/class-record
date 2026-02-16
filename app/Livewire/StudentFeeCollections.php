@@ -55,6 +55,7 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
             ->filters([
                 //
             ])
+            // ->columnToggleFormMaxHeight(10000) // TODO:: add this to service provider to enable to whole app
             ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
             ->emptyStateDescription('No attendance records found.');
