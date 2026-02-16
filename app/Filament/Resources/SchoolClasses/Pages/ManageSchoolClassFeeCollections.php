@@ -106,44 +106,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ->recordTitleAttribute('name')
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Column::text('name'),
-                Column::amount('amount')
-                    ->color('info'),
-                Column::date('date')
-                    ->width('1%'),
-                Column::text('description')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Column::amount('total')
-                    ->state(fn ($record) => $record->students()->sum('amount'))
-                    ->tooltip('Total collected')
-                    ->sortable(
-                        query: fn ($query, string $direction) =>
-                            $query->withSum('students as total', 'fee_collection_student.amount')
-                                ->orderBy('total', $direction)
-                    ),
-
-                Column::icon('status')
-                    ->getStateUsing(fn ($record) =>
-                        $record->students()
-                            ->where('status', '!=', FeeCollectionStatus::PAID->value)
-                            ->exists()
-                    )
-                    ->tooltip(function ($record) {
-                        $hasUnpaid = $record->students()
-                            ->where('status', '!=', FeeCollectionStatus::PAID->value)
-                            ->exists();
-
-                        return $hasUnpaid ? CompletedPendingStatus::PENDING->getLabel() : CompletedPendingStatus::COMPLETED->getLabel();
-                    })
-                    ->sortable(
-                        query: fn ($query, string $direction) =>
-                            $query->withExists([
-                                'students as has_unpaid' => fn ($q) =>
-                                    $q->where('fee_collection_student.status', '!=', FeeCollectionStatus::PAID->value)
-                            ])
-                            ->orderBy('has_unpaid', $direction)
-                    )
+                ...static::getColumns(),
             ])
             ->filters([
                 //
@@ -171,6 +134,50 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 DeleteBulkAction::make(),
             ])
             ->recordAction('takeFeeCollectionRelationManager');;
+    }
+
+    public static function getColumns()
+    {
+        return [
+            Column::text('name'),
+            Column::amount('amount')
+                ->color('info'),
+            Column::date('date')
+                ->width('1%'),
+            Column::text('description')
+                ->toggleable(isToggledHiddenByDefault: true),
+
+            Column::amount('total')
+                ->state(fn ($record) => $record->students()->sum('amount'))
+                ->tooltip('Total collected')
+                ->sortable(
+                    query: fn ($query, string $direction) =>
+                        $query->withSum('students as total', 'fee_collection_student.amount')
+                            ->orderBy('total', $direction)
+                ),
+
+            Column::icon('status')
+                ->getStateUsing(fn ($record) =>
+                    $record->students()
+                        ->where('status', '!=', FeeCollectionStatus::PAID->value)
+                        ->exists()
+                )
+                ->tooltip(function ($record) {
+                    $hasUnpaid = $record->students()
+                        ->where('status', '!=', FeeCollectionStatus::PAID->value)
+                        ->exists();
+
+                    return $hasUnpaid ? CompletedPendingStatus::PENDING->getLabel() : CompletedPendingStatus::COMPLETED->getLabel();
+                })
+                ->sortable(
+                    query: fn ($query, string $direction) =>
+                        $query->withExists([
+                            'students as has_unpaid' => fn ($q) =>
+                                $q->where('fee_collection_student.status', '!=', FeeCollectionStatus::PAID->value)
+                        ])
+                        ->orderBy('has_unpaid', $direction)
+                )
+        ];
     }
 
     public static function getOverviewAction(): Action

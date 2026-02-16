@@ -2,10 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Services\Icon;
 use App\Models\Student;
 use Livewire\Component;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
+use Filament\Actions\Action;
+use Filament\Support\Enums\Width;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -83,8 +86,21 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                             }
                         ], 'fee_collection_student.amount')
                         ->orderBy('total_paid_sort', $direction);
-                    }),
-                    // TODO:: action to display the feecolltions
+                    })
+                    ->action(
+                        Action::make('assessmentLists')
+                                    ->label('Assessments')
+                                    ->modalHeading(fn ($record) => $record->full_name . ' - Fee Collections')
+                                    ->icon(Icon::assessments())
+                                    ->modalContent(fn ($record, $livewire) => view('filament.components.student-fee-collections', [
+                                        'studentId' => $record->id,
+                                        'schoolClassId' => $livewire->schoolClassId,
+                                        'isPaidOrRemaining' => true, // True = Paid
+                                    ]))
+                                    ->modalSubmitAction(false)
+                                    ->modalCancelAction(false)
+                                    ->modalWidth(Width::TwoExtraLarge)
+                    ),
 
                 TextColumn::make('remaining')
                     ->color('danger')
