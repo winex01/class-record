@@ -193,6 +193,8 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             SelectFilter::make('assessmentType')
                 ->relationship('assessmentType', 'name')
                 ->multiple()
+                ->searchable()
+                ->preload()
         ];
     }
 

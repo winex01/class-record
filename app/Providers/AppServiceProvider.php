@@ -69,6 +69,14 @@ class AppServiceProvider extends ServiceProvider
             $table->defaultDateDisplayFormat('M d, Y');          // e.g. "Sep 30, 2025"
             $table->defaultDateTimeDisplayFormat('M d, Y h:i A'); // e.g. "Sep 30, 2025 05:30 PM"
 
+            // Column toggle and filters configuration
+            $table->columnToggleFormMaxHeight('10000px');
+            // $table->filtersFormMaxHeight('10000px'); // dont enable this it cause filter select to be shorter instead
+
+            // Auto-apply (like Filament v3)
+            $table->deferColumnManager(false); // Makes column toggles AND reordering apply instantly
+            $table->deferFilters(false);       // Makes filters apply instantly
+
             // Initialize empty filters array
             $table->filters([]);
         });
