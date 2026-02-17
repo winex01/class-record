@@ -13,7 +13,6 @@ use Filament\Actions\DeleteAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\Builder;
-use Coolsam\Flatpickr\Forms\Components\Flatpickr;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -83,34 +82,30 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->filters([
                 Filter::make('date')
                     ->form([
-                        Flatpickr::make('date_range')
-                            ->showMonths(2)
-                            ->rangePicker()
+                        Field::date('date_from')
+                            ->label('From'),
+                        Field::date('date_to')
+                            ->label('To'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        if (!empty($data['date_range'])) {
-                            $dates = explode(' to ', $data['date_range']);
-                            $dateFrom = $dates[0] ?? null;
-                            $dateTo = $dates[1] ?? null;
-
-                            return $query
-                                ->when($dateFrom, fn ($q, $date) => $q->whereDate('date', '>=', $date))
-                                ->when($dateTo, fn ($q, $date) => $q->whereDate('date', '<=', $date));
-                        }
-
-                        return $query;
+                        return $query
+                            ->when($data['date_from'], fn ($q, $date) => $q->whereDate('date', '>=', $date))
+                            ->when($data['date_to'], fn ($q, $date) => $q->whereDate('date', '<=', $date));
                     })
                     ->indicateUsing(function (array $data): array {
-                        if (!empty($data['date_range'])) {
-                            $dates = explode(' to ', $data['date_range']);
-                            $from = isset($dates[0]) ? \Carbon\Carbon::parse($dates[0])->format('M j, Y') : 'Start';
-                            $to = isset($dates[1]) ? \Carbon\Carbon::parse($dates[1])->format('M j, Y') : 'End';
+                        $indicators = [];
 
-                            return ["Date: {$from} to {$to}"];
+                        if ($data['date_from'] ?? null) {
+                            $indicators[] = 'From: ' . \Carbon\Carbon::parse($data['date_from'])->format('M j, Y');
                         }
 
-                        return [];
+                        if ($data['date_to'] ?? null) {
+                            $indicators[] = 'To: ' . \Carbon\Carbon::parse($data['date_to'])->format('M j, Y');
+                        }
+
+                        return $indicators;
                     })
+                    ->columnSpan(2)
             ])
             ->headerActions([
                 SchoolClassResource::createAction($this->getOwnerRecord())

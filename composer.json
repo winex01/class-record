@@ -7,7 +7,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "coolsam/flatpickr": "^5.0",
         "filament/filament": "^4.0",
         "guava/calendar": "^2.0",
         "guava/filament-modal-relation-managers": "^2.0",
