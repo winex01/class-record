@@ -25,7 +25,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Filament\Tables\Filters\SelectFilter;
 use Relaticle\Flowforge\Contracts\HasBoard;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -33,7 +32,6 @@ use App\Filament\Traits\ManageSchoolClassInitTrait;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Relaticle\Flowforge\Concerns\InteractsWithBoard;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-
 
 class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
 {
@@ -112,7 +110,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                 ->lineClamp(3)
                 ->html()
                 ->hidden(fn ($record) => empty($record->description))
-                ->extraAttributes(['style' => 'margin-top: -25px;']),
+                ->extraAttributes(['style' => 'margin-top: -25px; margin-left: 16px; margin-right: 16px;']),
 
             TextEntry::make('tags')
                 ->hiddenLabel()
@@ -121,7 +119,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                 ->color('primary')
                 ->size(TextSize::Small)
                 ->hidden(fn ($record) => empty($record->tags))
-                ->extraAttributes(['style' => 'margin-top: -15px;']),
+                ->extraAttributes(['style' => 'margin-top: -15px; margin-left: 16px; margin-right: 16px;']),
 
             TextEntry::make('completion_date')
                 ->hiddenLabel()
@@ -130,40 +128,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                 ->iconColor('primary')
                 ->size(TextSize::Small)
                 ->hidden(fn ($record) => empty($record->completion_date))
-                ->extraAttributes(['style' => 'margin-top: -15px;']),
-        ];
-    }
-
-    private function getFilters()
-    {
-        return [
-            // NOTE:: this board is just a hacky way solution i did because there is no ManageRelatedRecords example
-            // available in the plugin https://relaticle.github.io/flowforge/, i notice as long as i have
-            // at least 1 filter which is not hidden then the search bar will worked!
-            SelectFilter::make('tags')
-            ->label('Tags')
-            ->multiple()
-            ->options(function () {
-                return $this->getOwnerRecord()
-                    ->lessons()
-                    ->pluck('tags')
-                    ->flatten()
-                    ->unique()
-                    ->filter()
-                    ->sort()
-                    ->mapWithKeys(fn($tag) => [$tag => $tag])
-                    ->toArray();
-            })
-            ->query(function ($query, array $data) {
-                if (filled($data['values'])) {
-                    return $query->where(function ($query) use ($data) {
-                        foreach ($data['values'] as $tag) {
-                            $query->orWhereJsonContains('tags', $tag);
-                        }
-                    });
-                }
-                return $query;
-            })
+                ->extraAttributes(['style' => 'margin-top: -15px; margin-left: 16px; margin-right: 16px;']),
         ];
     }
 

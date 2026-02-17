@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\User;
 use App\Enums\LessonStatus;
 use App\Models\SchoolClass;
-use Relaticle\Flowforge\Services\Rank;
+use Relaticle\Flowforge\Services\DecimalPosition;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +18,7 @@ class LessonFactory extends Factory
         LessonStatus::IN_PROGRESS->value => 0,
         LessonStatus::DONE->value => 0,
     ];
-    private static array $lastRanks = [];
+    private static array $lastPositions = [];
 
     /**
      * Define the model's default state.
@@ -74,16 +74,16 @@ class LessonFactory extends Factory
     private function generatePositionForStatus(string $status): string
     {
         if (self::$statusCounters[$status] === 0) {
-            $rank = Rank::forEmptySequence();
+            $position = DecimalPosition::forEmptyColumn();
         } else {
-            $rank = isset(self::$lastRanks[$status])
-                ? Rank::after(self::$lastRanks[$status])
-                : Rank::forEmptySequence();
+            $position = isset(self::$lastPositions[$status])
+                ? DecimalPosition::after(self::$lastPositions[$status])
+                : DecimalPosition::forEmptyColumn();
         }
 
         self::$statusCounters[$status]++;
-        self::$lastRanks[$status] = $rank;
+        self::$lastPositions[$status] = $position;
 
-        return $rank->get();
+        return $position;
     }
 }
