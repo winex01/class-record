@@ -1,7 +1,9 @@
 <?php
 /*
 TODO:: overview fee collections, 2nd modal/table
-        -TBD in 2nd modal column Amount Paid / Remaining balance perhaps add a sum on the table column
+    -Fee Collection table, if its open contributions make sure the status column is not base on pivot.status because open contribution doesnt use pivot status condition
+    -Fee Collection table search error.
+    -TBD in 2nd modal column Amount Paid / Remaining balance perhaps add a sum on the table column
 
 TODO:: in manage attendance table column absent/present display student absent/present
 TODO:: on every manage relation manager modal display the assessment details above the table like how the cluster sub page display the school class details
