@@ -88,14 +88,13 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                         ->orderBy('total_paid_sort', $direction);
                     })
                     ->action(
-                        Action::make('assessmentLists')
-                                    ->label('Assessments')
+                        Action::make('totalPaidFeeCollections')
                                     ->modalHeading(fn ($record) => $record->full_name . ' - Fee Collections')
                                     ->icon(Icon::assessments())
                                     ->modalContent(fn ($record, $livewire) => view('filament.components.student-fee-collections', [
                                         'studentId' => $record->id,
                                         'schoolClassId' => $livewire->schoolClassId,
-                                        'isPaidOrRemaining' => true, // True = Paid
+                                        'isPaidOrRemaining' => true, // True = total paid
                                     ]))
                                     ->modalSubmitAction(false)
                                     ->modalCancelAction(false)
@@ -124,8 +123,20 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                             }
                         ], 'fee_collection_student.amount')
                         ->orderByRaw("(total_due_sort - total_paid_sort) {$direction}");
-                    }),
-                    // TODO:: action to display the feecolltions
+                    })
+                    ->action(
+                        Action::make('remainingFeeCollections')
+                                    ->modalHeading(fn ($record) => $record->full_name . ' - Fee Collections')
+                                    ->icon(Icon::assessments())
+                                    ->modalContent(fn ($record, $livewire) => view('filament.components.student-fee-collections', [
+                                        'studentId' => $record->id,
+                                        'schoolClassId' => $livewire->schoolClassId,
+                                        'isPaidOrRemaining' => false, // false = remaining
+                                    ]))
+                                    ->modalSubmitAction(false)
+                                    ->modalCancelAction(false)
+                                    ->modalWidth(Width::TwoExtraLarge)
+                    ),
 
             ])
             ->filters([

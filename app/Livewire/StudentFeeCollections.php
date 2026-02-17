@@ -6,6 +6,7 @@ use Livewire\Component;
 use Filament\Tables\Table;
 use App\Models\FeeCollection;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -38,35 +39,52 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
         return $table
             ->defaultSort('date', 'desc')
             ->query(
-                FeeCollection::query()
+            FeeCollection::query()
                     ->where('school_class_id', $this->schoolClassId)
                     ->whereHas('students', function ($query) {
-                        $query->where('student_id', $this->studentId)
-                            // TODO:: add whereClause here were pivot.amount > fee_collections.amount
-                            ;
+                        $query->where('student_id', $this->studentId);
                     })
                     ->with(['students' => function ($query) {
                         $query->where('student_id', $this->studentId);
                     }])
             )
             ->columns([
-                ...$this->getCOlumns(),
+                ...$this->getColumns(),
             ])
             ->filters([
                 //
             ])
-            // ->columnToggleFormMaxHeight(10000) // TODO:: add this to service provider to enable to whole app
             ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
-            ->emptyStateDescription('No attendance records found.');
+            ->emptyStateDescription('No fee collection records found.');
     }
 
     protected function getCOlumns()
     {
         $columns = ManageSchoolClassFeeCollections::getColumns();
+        unset($columns['total']);
+        unset($columns['status']);
 
         return [
             ...$columns,
+
+                TextColumn::make('student_amount')
+                    ->label(fn () => $this->isPaidOrRemaining ? 'Amount Paid' : 'Remaining Balance')
+                    ->money('PHP')
+                    ->alignCenter()
+                    ->getStateUsing(function (FeeCollection $record) {
+                        $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
+
+                        if ($this->isPaidOrRemaining) {
+                            $amount = $paidAmount;
+                        } else {
+                            $amount = $record->amount - $paidAmount;
+                        }
+
+                        return $amount > 0 ? $amount : null; // Return null if zero
+                    })
+                    ->placeholder('—') // Optional: show dash for null values
+                    ->color($this->isPaidOrRemaining ? 'success' : 'danger')
         ];
     }
 

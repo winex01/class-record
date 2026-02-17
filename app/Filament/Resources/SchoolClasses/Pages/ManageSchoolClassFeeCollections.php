@@ -147,6 +147,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             Column::text('description')
                 ->toggleable(isToggledHiddenByDefault: true),
 
+            'total' =>
             Column::amount('total')
                 ->state(fn ($record) => $record->students()->sum('amount'))
                 ->tooltip('Total collected')
@@ -156,6 +157,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                             ->orderBy('total', $direction)
                 ),
 
+            'status' =>
             Column::icon('status')
                 ->getStateUsing(fn ($record) =>
                     $record->students()
