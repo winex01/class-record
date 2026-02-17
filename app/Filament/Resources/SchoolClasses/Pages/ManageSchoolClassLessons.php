@@ -186,6 +186,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                 Section::make()
                     ->schema([
 
+                        // TODO:: fix this cant attach files in lessons after upgrade to flowforge v4
                         Select::make('myFiles')
                             ->multiple()
                             ->options(MyFile::pluck('name', 'id'))
