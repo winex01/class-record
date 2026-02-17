@@ -86,7 +86,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
                 TextInput::make('amount')
                     ->default(0)
-                    ->helperText('Fee amount.')
+                    ->helperText('Enter required amount (0 for open contribution)')
                     ->required()
                     ->numeric(),
 

@@ -77,6 +77,7 @@ class TakeFeeCollectionRelationManager extends RelationManager
                                 );
                         }
                     })
+                    ->visible($this->getOwnerRecord()->amount > 0 ? true : false)
             ])
             ->filters([
                 ...StudentResource::getFilters()
@@ -113,7 +114,8 @@ class TakeFeeCollectionRelationManager extends RelationManager
                         }
                     })
                     ->deselectRecordsAfterCompletion()
-                    ->successNotificationTitle('Marked as paid'),
+                    ->successNotificationTitle('Marked as paid')
+                    ->visible($this->getOwnerRecord()->amount > 0 ? true : false),
 
                 // Mark as Unpaid Bulk Action
                 BulkAction::make('markUnpaid')
@@ -134,7 +136,8 @@ class TakeFeeCollectionRelationManager extends RelationManager
                         }
                     })
                     ->deselectRecordsAfterCompletion()
-                    ->successNotificationTitle('Marked as unpaid'),
+                    ->successNotificationTitle('Marked as unpaid')
+                    ->visible($this->getOwnerRecord()->amount > 0 ? true : false),
 
 
                 ManageSchoolClassStudents::detachBulkAction(),
