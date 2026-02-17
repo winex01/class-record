@@ -71,12 +71,18 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                     ->iconButton()
                     ->form($this->getForm())
                     ->model(static::$model)
-
+                    ->after(function ($livewire) {
+                        $livewire->form->saveRelationships();
+                    }),
             ])
             ->cardActions([
                 static::downloadFiles()->modalWidth(Width::Medium),
                 ViewAction::make()->form($this->getForm()),
-                EditAction::make()->form($this->getForm()),
+                EditAction::make()
+                    ->form($this->getForm())
+                    ->after(function ($livewire) {
+                        $livewire->form->saveRelationships();
+                    }),
                 DeleteAction::make(),
             ]);
     }
@@ -138,73 +144,65 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
             Hidden::make('school_class_id')->default($this->getOwnerRecord()->id),
 
             Hidden::make('status')
-            ->default(function ($livewire) {
-                if (!empty($livewire->mountedActions)) {
-                    $firstAction = $livewire->mountedActions[0];
-                    if (isset($firstAction['arguments']['column'])) {
-                        $column = $firstAction['arguments']['column'];
-                        return LessonStatus::tryFrom($column)?->value ?? LessonStatus::TOPICS->value;
+                ->default(function ($livewire) {
+                    if (!empty($livewire->mountedActions)) {
+                        $firstAction = $livewire->mountedActions[0];
+                        if (isset($firstAction['arguments']['column'])) {
+                            $column = $firstAction['arguments']['column'];
+                            return LessonStatus::tryFrom($column)?->value ?? LessonStatus::TOPICS->value;
+                        }
                     }
-                }
-                return LessonStatus::TOPICS->value;
-            }),
+                    return LessonStatus::TOPICS->value;
+                }),
 
             Grid::make(2)
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextInput::make('title')
-                            ->required()
-                            ->maxLength(255),
+                ->schema([
+                    Section::make()
+                        ->schema([
+                            TextInput::make('title')
+                                ->required()
+                                ->maxLength(255),
 
-                        Textarea::make('description')
-                            ->nullable()
-                            ->rows(3)
-                            ->columnSpanFull(),
+                            Textarea::make('description')
+                                ->nullable()
+                                ->rows(3)
+                                ->columnSpanFull(),
 
-                        Field::tags('tags'),
+                            Field::tags('tags'),
 
-                        Field::date('completion_date'),
+                            Field::date('completion_date'),
 
-                        Repeater::make('checklist')
-                            ->table([
-                                TableColumn::make('Item'),
-                                TableColumn::make('Done')->width(1),
-                            ])
-                            ->schema([
-                                TextInput::make('item')->placeholder('Enter checklist item'),
+                            Repeater::make('checklist')
+                                ->table([
+                                    TableColumn::make('Item'),
+                                    TableColumn::make('Done')->width(1),
+                                ])
+                                ->schema([
+                                    TextInput::make('item')->placeholder('Enter checklist item'),
 
-                                Toggle::make('done')
-                                    ->default(false)
-                            ])
-                            ->compact()
-                            ->minItems(0)
-                            ->defaultItems(0),
-                    ])
-                    ->columnSpan(1),
+                                    Toggle::make('done')
+                                        ->default(false)
+                                ])
+                                ->compact()
+                                ->minItems(0)
+                                ->defaultItems(0),
+                        ])
+                        ->columnSpan(1),
 
-                Section::make()
-                    ->schema([
-
-                        // TODO:: fix this cant attach files in lessons after upgrade to flowforge v4
-                        Select::make('myFiles')
-                            ->multiple()
-                            ->options(MyFile::pluck('name', 'id'))
-                            ->searchable()
-                            ->preload()
-                            ->dehydrated(false) // Don't save to the lessons table
-                            ->saveRelationshipsUsing(function ($component, $state, $record) {
-                                // $state contains the selected file IDs
-                                // $record is the Lesson model
-                                $record->myFiles()->sync($state ?? []);
-                            })
-                            ->loadStateFromRelationshipsUsing(function ($component, $record) {
-                                // Load existing relationships when editing
-                                $component->state($record->myFiles->pluck('id')->toArray());
-                            })
-
-                    ])->columnSpan(1),
-            ]),
+                    Section::make()
+                        ->schema([
+                            Select::make('myFiles')
+                                ->multiple()
+                                ->options(MyFile::pluck('name', 'id'))
+                                ->dehydrated(false)
+                                ->saveRelationshipsUsing(function ($component, $state, $record) {
+                                    $record->myFiles()->sync($state ?? []);
+                                })
+                                ->loadStateFromRelationshipsUsing(function ($component, $record) {
+                                    $component->state($record->myFiles->pluck('id')->toArray());
+                                }),
+                        ])->columnSpan(1),
+                ]),
         ];
     }
 }
