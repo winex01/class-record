@@ -110,7 +110,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                 ->lineClamp(3)
                 ->html()
                 ->hidden(fn ($record) => empty($record->description))
-                ->extraAttributes(['style' => 'margin-top: -25px; margin-left: 16px; margin-right: 16px;']),
+                ->extraAttributes(['style' => 'margin-top: -15px;']),
 
             TextEntry::make('tags')
                 ->hiddenLabel()
@@ -119,7 +119,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                 ->color('primary')
                 ->size(TextSize::Small)
                 ->hidden(fn ($record) => empty($record->tags))
-                ->extraAttributes(['style' => 'margin-top: -15px; margin-left: 16px; margin-right: 16px;']),
+                ->extraAttributes(['style' => 'margin-top: -15px;']),
 
             TextEntry::make('completion_date')
                 ->hiddenLabel()
@@ -128,7 +128,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                 ->iconColor('primary')
                 ->size(TextSize::Small)
                 ->hidden(fn ($record) => empty($record->completion_date))
-                ->extraAttributes(['style' => 'margin-top: -15px; margin-left: 16px; margin-right: 16px;']),
+                ->extraAttributes(['style' => 'margin-top: -15px;']),
         ];
     }
 
