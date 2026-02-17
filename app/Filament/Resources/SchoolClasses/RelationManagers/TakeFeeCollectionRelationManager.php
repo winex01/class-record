@@ -25,13 +25,33 @@ class TakeFeeCollectionRelationManager extends RelationManager
                 ),
         ];
 
-        foreach (FeeCollectionStatus::cases() as $tab) {
-            $tabs[$tab->getLabel()] = Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', $tab->value))
-                ->badgeColor($tab->getColor())
+        if ((float) $this->getOwnerRecord()->amount === 0.0) { // open contribution
+            $tabs[FeeCollectionStatus::PAID->getLabel()] = Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('amount', '>', 0))
+                ->badgeColor(FeeCollectionStatus::PAID->getColor())
                 ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->where('status', $tab->value)->count()
+                    $this->getOwnerRecord()->{static::$relationship}()->where('amount', '>', 0)->count()
                 );
+
+            $tabs[FeeCollectionStatus::UNPAID->getLabel()] = Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where(function ($query) {
+                    $query->where('amount', 0)->orWhereNull('amount');
+                }))
+                ->badgeColor(FeeCollectionStatus::UNPAID->getColor())
+                ->badge(fn () =>
+                    $this->getOwnerRecord()->{static::$relationship}()->where(function ($query) {
+                        $query->where('amount', 0)->orWhereNull('amount');
+                    })->count()
+                );
+        } else {
+            foreach (FeeCollectionStatus::cases() as $tab) {
+                $tabs[$tab->getLabel()] = Tab::make()
+                    ->modifyQueryUsing(fn (Builder $query) => $query->where('status', $tab->value))
+                    ->badgeColor($tab->getColor())
+                    ->badge(fn () =>
+                        $this->getOwnerRecord()->{static::$relationship}()->where('status', $tab->value)->count()
+                    );
+            }
         }
 
         return $tabs;
