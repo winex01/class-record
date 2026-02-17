@@ -77,8 +77,11 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                     ->money('PHP')
                     ->alignCenter()
                     ->getStateUsing(function (Student $record) {
-                        return $record->feeCollections->sum('pivot.amount');
+                        $totalPaid = $record->feeCollections->sum('pivot.amount');
+
+                        return $totalPaid > 0 ? $totalPaid : null;
                     })
+                    ->placeholder('—')
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query->withSum([
                             'feeCollections as total_paid_sort' => function ($q) {
@@ -106,11 +109,16 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                     ->money('PHP')
                     ->alignCenter()
                     ->getStateUsing(function (Student $record) {
-                        $totalDue = $record->feeCollections->sum('amount');
-                        $totalPaid = $record->feeCollections->sum('pivot.amount');
+                        $fixedFees = $record->feeCollections->where('amount', '>', 0);
 
-                        return $totalDue - $totalPaid;
+                        $totalDue = $fixedFees->sum('amount');
+                        $totalPaid = $fixedFees->sum('pivot.amount');
+
+                        $remaining = $totalDue - $totalPaid;
+
+                        return $remaining > 0 ? $remaining : null;
                     })
+                    ->placeholder('—')
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query->withSum([
                             'feeCollections as total_due_sort' => function ($q) {

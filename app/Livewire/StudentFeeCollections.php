@@ -68,23 +68,23 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
         return [
             ...$columns,
 
-                TextColumn::make('student_amount')
-                    ->label(fn () => $this->isPaidOrRemaining ? 'Amount Paid' : 'Remaining Balance')
-                    ->money('PHP')
-                    ->alignCenter()
-                    ->getStateUsing(function (FeeCollection $record) {
-                        $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
+            TextColumn::make('student_amount')
+                ->label(fn () => $this->isPaidOrRemaining ? 'Amount Paid' : 'Remaining Balance')
+                ->money('PHP')
+                ->alignCenter()
+                ->getStateUsing(function (FeeCollection $record) {
+                    $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
 
-                        if ($this->isPaidOrRemaining) {
-                            $amount = $paidAmount;
-                        } else {
-                            $amount = $record->amount - $paidAmount;
-                        }
+                    if ($this->isPaidOrRemaining) {
+                        $amount = $paidAmount;
+                    } else {
+                        $amount = $record->amount - $paidAmount;
+                    }
 
-                        return $amount > 0 ? $amount : null; // Return null if zero
-                    })
-                    ->placeholder('—') // Optional: show dash for null values
-                    ->color($this->isPaidOrRemaining ? 'success' : 'danger')
+                    return $amount > 0 ? $amount : null;
+                })
+                ->placeholder('—')
+                ->color($this->isPaidOrRemaining ? 'success' : 'danger')
         ];
     }
 

@@ -88,7 +88,8 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                     ->default(0)
                     ->helperText('Enter required amount (0 for open contribution)')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->minValue(0),
 
                 Field::date('date'),
 
@@ -140,10 +141,15 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
     {
         return [
             Column::text('name'),
+
             Column::amount('amount')
+                ->placeholder('—')
+                ->getStateUsing(fn ($record) => $record->amount > 0 ? $record->amount : null)
                 ->color('info'),
+
             Column::date('date')
                 ->width('1%'),
+
             Column::text('description')
                 ->toggleable(isToggledHiddenByDefault: true),
 
