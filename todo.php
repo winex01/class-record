@@ -18,6 +18,8 @@ TODO:: table seeders: fee collections
 TODO:: check all tables column sortable/order
 TODO:: auto or remove the apply filters or apply columns.
 
+TODO:: check all table search if there is an error, including the modals and tables.
+
 TODO:: import student
 TODO:: export student
 TODO:: download active classs in excel
