@@ -1,5 +1,9 @@
 <?php
 /*
+TODO:: overview fee collections, 2nd modal/table
+        -add sortable in Amount Paid / Remaining Balance table column
+        -TBD in 2nd modal column Amount Paid / Remaining balance perhaps add a sum on the table column
+
 TODO:: in manage attendance table column absent/present display student absent/present
 TODO:: on every manage relation manager modal display the assessment details above the table like how the cluster sub page display the school class details
 
