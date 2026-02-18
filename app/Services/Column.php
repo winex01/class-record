@@ -87,7 +87,13 @@ final class Column
     {
         return static::text($name)
             ->date()
-            ->tooltip(fn ($record) => ('Search: '.$record->{$name}));
+            ->searchable(
+                query: fn ($query, string $search) =>
+                    $query->whereRaw(
+                        "DATE_FORMAT({$name}, '%b %d, %Y') LIKE ?",
+                        ["%{$search}%"]
+                    )
+            );
     }
 
     public static function timestamp($name)
