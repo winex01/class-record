@@ -47,6 +47,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                 Column::date('date'),
 
                 Column::text('present')
+                    ->searchable(false)
                     ->badge()
                     ->color('info')
                     ->alignCenter()
@@ -59,19 +60,10 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                                 }
                             ])
                             ->orderBy('present_count', $direction);
-                    })
-                    ->searchable(
-                        query: fn ($query, string $search) =>
-                            $query->whereRaw(
-                                '(SELECT COUNT(*)
-                                FROM attendance_student
-                                WHERE attendance_student.attendance_id = attendances.id
-                                AND attendance_student.present = 1) LIKE ?',
-                                ["%{$search}%"]
-                            )
-                    ),
+                    }),
 
                 Column::text('absent')
+                    ->searchable(false)
                     ->badge()
                     ->color('danger')
                     ->alignCenter()
@@ -84,17 +76,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                                 }
                             ])
                             ->orderBy('absent_count', $direction);
-                    })
-                    ->searchable(
-                        query: fn ($query, string $search) =>
-                            $query->whereRaw(
-                                '(SELECT COUNT(*)
-                                FROM attendance_student
-                                WHERE attendance_student.attendance_id = attendances.id
-                                AND attendance_student.present = 0) LIKE ?',
-                                ["%{$search}%"]
-                            )
-                    )
+                    }),
 
             ])
             ->filters([
