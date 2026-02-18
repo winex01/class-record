@@ -1,7 +1,6 @@
 <?php
 /*
 TODO:: overview fee collections, 2nd modal/table
-    -Fee Collection table, if its open contributions make sure the status column is not base on pivot.status because open contribution doesnt use pivot status condition
     -TBD in 2nd modal column Amount Paid / Remaining balance perhaps add a sum on the table column
 
 TODO:: in manage attendance table column absent/present display student absent/present
