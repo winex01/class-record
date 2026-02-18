@@ -66,7 +66,11 @@ class TakeFeeCollectionRelationManager extends RelationManager
                 ...ManageSchoolClassStudents::getColumns(),
 
                 Column::textInput('amount')
-                    ->placeholder('Fee ₱' . ($this->getOwnerRecord()->amount ?? 0))
+                    ->placeholder(
+                        $this->getOwnerRecord()->amount == 0
+                            ? '₱'
+                            : 'Fee ₱' . ($this->getOwnerRecord()->amount ?? 0)
+                    )
                     ->rules(function () {
                         $amount = $this->getOwnerRecord()->amount ?? 0;
 

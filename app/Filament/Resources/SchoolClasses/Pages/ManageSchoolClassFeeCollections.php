@@ -175,9 +175,9 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             'status' =>
             Column::icon('status')
                 ->getStateUsing(fn ($record) =>
-                    $record->students()
-                        ->where('status', '!=', FeeCollectionStatus::PAID->value)
-                        ->exists()
+                    $record->amount == 0
+                        ? $record->students()->whereNull('amount')->exists()
+                        : $record->students()->where('status', '!=', FeeCollectionStatus::PAID->value)->exists()
                 )
                 ->tooltip(function ($record) {
                     $hasUnpaid = $record->students()

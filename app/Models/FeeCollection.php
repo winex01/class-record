@@ -13,6 +13,10 @@ class FeeCollection extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'amount' => 'float',
+    ];
+
     public function students()
     {
         return $this->belongsToMany(Student::class)
