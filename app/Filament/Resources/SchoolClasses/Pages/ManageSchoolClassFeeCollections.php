@@ -161,6 +161,15 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                     query: fn ($query, string $direction) =>
                         $query->withSum('students as total', 'fee_collection_student.amount')
                             ->orderBy('total', $direction)
+                )
+                ->searchable(
+                    query: fn ($query, string $search) =>
+                        $query->whereRaw(
+                            '(SELECT COALESCE(SUM(fee_collection_student.amount), 0)
+                            FROM fee_collection_student
+                            WHERE fee_collection_student.fee_collection_id = fee_collections.id) LIKE ?',
+                            ["%{$search}%"]
+                        )
                 ),
 
             'status' =>
