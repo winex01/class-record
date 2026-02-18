@@ -13,6 +13,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Tables\Columns\Summarizers\Summarizer;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassFeeCollections;
 
 class StudentFeeCollections extends Component implements HasForms, HasTable, HasActions
@@ -55,7 +56,8 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
             ->filters([
                 //
             ])
-            ->paginated([10, 25, 50])
+            ->paginated([5, 10, 25, 50])
+            ->defaultPaginationPageOption(5)
             ->emptyStateHeading('No Records')
             ->emptyStateDescription('No fee collection records found.');
     }
@@ -114,6 +116,28 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                         );
                     }
                 })
+                ->summarize(
+                Summarizer::make()
+                    ->label('Total')
+                    ->money('PHP')
+                    ->using(function ($query) {
+                        return FeeCollection::query()
+                            ->whereIn('id', $query->pluck('id'))
+                            ->with(['students' => fn ($q) => $q->where('students.id', $this->studentId)])
+                            ->get()
+                            ->sum(function ($record) {
+                                $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
+
+                                if ($this->isPaidOrRemaining) {
+                                    $amount = $paidAmount;
+                                } else {
+                                    $amount = $record->amount - $paidAmount;
+                                }
+
+                                return $amount > 0 ? $amount : 0;
+                            });
+                    })
+            )
         ];
     }
 
