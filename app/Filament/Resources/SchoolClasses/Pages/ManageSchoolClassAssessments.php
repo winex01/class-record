@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -12,8 +13,10 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
+use Illuminate\Support\HtmlString;
 use App\Enums\CompletedPendingStatus;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -171,7 +174,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 ActionGroup::make([
                     RelationManagerAction::make('recordScoreRelationManager')
                         ->label('Record Score')
-                        ->icon(\App\Services\Icon::students())
+                        ->icon(Icon::students())
                         ->color('info')
                         ->slideOver()
                         ->relationManager(RecordScoreRelationManager::make()),
@@ -221,7 +224,16 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ->modalContent(function ($livewire) {
                 $schoolClassId = $livewire->getOwnerRecord()->id;
 
-                return view('filament.components.assessment-overview', compact('schoolClassId'));
+                return new HtmlString(
+                    Blade::render(
+                        <<<'BLADE'
+                        <div>
+                            @livewire('assessment-overview', ['schoolClassId' => $schoolClassId])
+                        </div>
+                        BLADE,
+                        ['schoolClassId' => $schoolClassId]
+                    )
+                );
             })
             ->modalWidth(Width::TwoExtraLarge)
             ->modalSubmitAction(false)

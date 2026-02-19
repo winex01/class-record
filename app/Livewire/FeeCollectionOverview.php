@@ -9,6 +9,8 @@ use Filament\Tables\Table;
 use App\Models\SchoolClass;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Blade;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -94,11 +96,26 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                         Action::make('totalPaidFeeCollections')
                                     ->modalHeading(fn ($record) => $record->full_name . ' - Fee Collections')
                                     ->icon(Icon::assessments())
-                                    ->modalContent(fn ($record, $livewire) => view('filament.components.student-fee-collections', [
-                                        'studentId' => $record->id,
-                                        'schoolClassId' => $livewire->schoolClassId,
-                                        'isPaidOrRemaining' => true, // True = total paid
-                                    ]))
+                                    ->modalContent(function ($record, $livewire) {
+                                        return new HtmlString(
+                                            Blade::render(
+                                                <<<'BLADE'
+                                                <div>
+                                                    @livewire('student-fee-collections', [
+                                                        'studentId' => $studentId,
+                                                        'schoolClassId' => $schoolClassId,
+                                                        'isPaidOrRemaining' => $isPaidOrRemaining,
+                                                    ])
+                                                </div>
+                                                BLADE,
+                                                [
+                                                    'studentId' => $record->id,
+                                                    'schoolClassId' => $livewire->schoolClassId,
+                                                    'isPaidOrRemaining' => true,
+                                                ]
+                                            )
+                                        );
+                                    })
                                     ->modalSubmitAction(false)
                                     ->modalCancelAction(false)
                                     ->modalWidth(Width::TwoExtraLarge)

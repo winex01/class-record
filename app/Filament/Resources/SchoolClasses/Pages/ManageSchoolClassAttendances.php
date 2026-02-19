@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use App\Services\Icon;
 use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
@@ -10,7 +11,9 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
+use Illuminate\Support\HtmlString;
 use Filament\Tables\Filters\Filter;
+use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -129,7 +132,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
         return RelationManagerAction::make('takeAttendanceRelationManager')
                 ->label('Take Attendance')
                 ->modalHeading(fn ($record) => 'Take Attendance - ' . $record->date->format('M d, Y'))
-                ->icon(\App\Services\Icon::students())
+                ->icon(Icon::students())
                 ->color('info')
                 ->slideOver()
                 ->relationManager(TakeAttendanceRelationManager::make());
@@ -145,7 +148,19 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->modalContent(function ($livewire) {
                 $schoolClassId = $livewire->getOwnerRecord()->id;
 
-                return view('filament.components.attendance-overview', compact('schoolClassId'));
+                return new HtmlString(
+                    Blade::render(
+                        <<<'BLADE'
+                        <div style="margin-top: -1.5rem;" class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                            <strong>Tip:</strong> Click on the present/absent counts to view the specific dates.
+                        </div>
+                        <div>
+                            @livewire('attendance-overview', ['schoolClassId' => $schoolClassId])
+                        </div>
+                        BLADE,
+                        ['schoolClassId' => $schoolClassId]
+                    )
+                );
             })
             ->modalWidth(Width::TwoExtraLarge)
             ->modalSubmitAction(false)

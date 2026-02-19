@@ -13,7 +13,9 @@ use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use App\Enums\FeeCollectionStatus;
 use Filament\Actions\DeleteAction;
+use Illuminate\Support\HtmlString;
 use App\Enums\CompletedPendingStatus;
+use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -207,7 +209,16 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ->modalContent(function ($livewire) {
                 $schoolClassId = $livewire->getOwnerRecord()->id;
 
-                return view('filament.components.fee-collection-overview', compact('schoolClassId'));
+                return new HtmlString(
+                    Blade::render(
+                        <<<'BLADE'
+                        <div>
+                            @livewire('fee-collection-overview', ['schoolClassId' => $schoolClassId])
+                        </div>
+                        BLADE,
+                        ['schoolClassId' => $schoolClassId]
+                    )
+                );
             })
             ->modalWidth(Width::TwoExtraLarge)
             ->modalSubmitAction(false)

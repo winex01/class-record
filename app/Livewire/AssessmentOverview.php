@@ -10,6 +10,8 @@ use App\Models\SchoolClass;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Blade;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Actions\Contracts\HasActions;
@@ -87,10 +89,24 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
                     ->label('Assessments')
                     ->modalHeading(fn ($record) => $record->full_name . ' - Assessments')
                     ->icon(Icon::assessments())
-                    ->modalContent(fn ($record, $livewire) => view('filament.components.student-assessment-lists', [
-                        'studentId' => $record->id,
-                        'schoolClassId' => $livewire->schoolClassId,
-                    ]))
+                    ->modalContent(function ($record, $livewire) {
+                        return new HtmlString(
+                            Blade::render(
+                                <<<'BLADE'
+                                <div>
+                                    @livewire('student-assessment-lists', [
+                                        'studentId' => $studentId,
+                                        'schoolClassId' => $schoolClassId,
+                                    ])
+                                </div>
+                                BLADE,
+                                [
+                                    'studentId' => $record->id,
+                                    'schoolClassId' => $livewire->schoolClassId,
+                                ]
+                            )
+                        );
+                    })
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false)
                     ->modalWidth(Width::TwoExtraLarge)

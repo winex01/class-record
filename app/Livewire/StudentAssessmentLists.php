@@ -84,7 +84,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                 ->sortable(query: function (Builder $query, string $direction): Builder {
                     return $query
                         ->orderBy(
-                            \DB::table('assessment_student')
+                            DB::table('assessment_student')
                                 ->select('score')
                                 ->whereColumn('assessment_student.assessment_id', 'assessments.id')
                                 ->where('assessment_student.student_id', $this->studentId)
