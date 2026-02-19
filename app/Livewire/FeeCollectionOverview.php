@@ -153,11 +153,26 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                         Action::make('remainingFeeCollections')
                                     ->modalHeading(fn ($record) => $record->full_name . ' - Fee Collections')
                                     ->icon(Icon::assessments())
-                                    ->modalContent(fn ($record, $livewire) => view('filament.components.student-fee-collections', [
-                                        'studentId' => $record->id,
-                                        'schoolClassId' => $livewire->schoolClassId,
-                                        'isPaidOrRemaining' => false, // false = remaining
-                                    ]))
+                                    ->modalContent(function ($record, $livewire) {
+                                        return new HtmlString(
+                                            Blade::render(
+                                                <<<'BLADE'
+                                                <div>
+                                                    @livewire('student-fee-collections', [
+                                                        'studentId' => $studentId,
+                                                        'schoolClassId' => $schoolClassId,
+                                                        'isPaidOrRemaining' => $isPaidOrRemaining,
+                                                    ])
+                                                </div>
+                                                BLADE,
+                                                [
+                                                    'studentId' => $record->id,
+                                                    'schoolClassId' => $livewire->schoolClassId,
+                                                    'isPaidOrRemaining' => false,
+                                                ]
+                                            )
+                                        );
+                                    })
                                     ->modalSubmitAction(false)
                                     ->modalCancelAction(false)
                                     ->modalWidth(Width::TwoExtraLarge)
