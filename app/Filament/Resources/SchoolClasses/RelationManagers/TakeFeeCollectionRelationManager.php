@@ -109,9 +109,6 @@ class TakeFeeCollectionRelationManager extends RelationManager
             ->headerActions([
                 ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
             ])
-            ->recordActions([
-                //
-            ])
             ->toolbarActions([
                 // Mark as Paid Bulk Action
                 BulkAction::make('markPaid')

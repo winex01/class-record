@@ -56,9 +56,6 @@ class TakeAttendanceRelationManager extends RelationManager
             ->headerActions([
                 ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
             ])
-            ->recordActions([
-                //
-            ])
             ->toolbarActions([
                 BulkAction::make('markAbsent')
                     ->label('Mark Absent')

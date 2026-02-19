@@ -94,9 +94,6 @@ class RecordScoreRelationManager extends RelationManager
             ->headerActions([
                 ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
             ])
-            ->recordActions([
-                //
-            ])
             ->toolbarActions([
                 ManageSchoolClassStudents::detachBulkAction(),
             ])
