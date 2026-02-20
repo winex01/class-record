@@ -89,29 +89,20 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
             ->recordActions([
                 Action::make('assessmentLists')
                     ->label('Assessments')
-                    ->modalHeading(fn ($record) => $record->full_name . ' - Assessments')
                     ->icon(Icon::assessments())
-                    ->modalContent(function ($record, $livewire) {
-                        return new HtmlString(
-                            Blade::render(
-                                <<<'BLADE'
-                                <div>
-                                    @livewire('student-assessment-lists', [
-                                        'studentId' => $studentId,
-                                        'schoolClassId' => $schoolClassId,
-                                    ])
-                                </div>
-                                BLADE,
-                                [
-                                    'studentId' => $record->id,
-                                    'schoolClassId' => $livewire->schoolClassId,
-                                ]
-                            )
-                        );
-                    })
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false)
                     ->modalWidth(Width::TwoExtraLarge)
+                    ->modalHeading(fn ($record) => $record->full_name . ' - Assessments')
+                    ->modalContent(fn ($record, $livewire) => new HtmlString(
+                        Blade::render(
+                            '@livewire("student-assessment-lists", ["studentId" => $studentId, "schoolClassId" => $schoolClassId])',
+                            [
+                                'studentId' => $record->id,
+                                'schoolClassId' => $livewire->schoolClassId,
+                            ]
+                        )
+                    ))
             ]);
     }
 }

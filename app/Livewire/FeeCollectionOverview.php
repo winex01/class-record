@@ -153,31 +153,21 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                     })
                     ->action(
                         Action::make('remainingFeeCollections')
-                                    ->modalHeading(fn ($record) => $record->full_name . ' - Fee Collections')
-                                    ->icon(Icon::assessments())
-                                    ->modalContent(function ($record, $livewire) {
-                                        return new HtmlString(
-                                            Blade::render(
-                                                <<<'BLADE'
-                                                <div>
-                                                    @livewire('student-fee-collections', [
-                                                        'studentId' => $studentId,
-                                                        'schoolClassId' => $schoolClassId,
-                                                        'isPaidOrRemaining' => $isPaidOrRemaining,
-                                                    ])
-                                                </div>
-                                                BLADE,
-                                                [
-                                                    'studentId' => $record->id,
-                                                    'schoolClassId' => $livewire->schoolClassId,
-                                                    'isPaidOrRemaining' => false,
-                                                ]
-                                            )
-                                        );
-                                    })
-                                    ->modalSubmitAction(false)
-                                    ->modalCancelAction(false)
-                                    ->modalWidth(Width::TwoExtraLarge)
+                            ->icon(Icon::assessments())
+                            ->modalSubmitAction(false)
+                            ->modalCancelAction(false)
+                            ->modalWidth(Width::TwoExtraLarge)
+                            ->modalHeading(fn ($record) => $record->full_name . ' - Fee Collections')
+                            ->modalContent(fn ($record, $livewire) => new HtmlString(
+                                Blade::render(
+                                    '@livewire("student-fee-collections", ["studentId" => $studentId, "schoolClassId" => $schoolClassId, "isPaidOrRemaining" => $isPaidOrRemaining])',
+                                    [
+                                        'studentId' => $record->id,
+                                        'schoolClassId' => $livewire->schoolClassId,
+                                        'isPaidOrRemaining' => false,
+                                    ]
+                                )
+                            ))
                     ),
 
             ])

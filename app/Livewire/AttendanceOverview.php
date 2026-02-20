@@ -163,26 +163,16 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
 
     private static function studentAttendanceDatesModal(bool $isPresent)
     {
-        return function ($record, $livewire) use ($isPresent) {
-            return new HtmlString(
-                Blade::render(
-                    <<<'BLADE'
-                    <div>
-                        @livewire('student-attendance-dates', [
-                            'studentId' => $studentId,
-                            'schoolClassId' => $schoolClassId,
-                            'isPresent' => $isPresent,
-                        ])
-                    </div>
-                    BLADE,
-                    [
-                        'studentId' => $record->id,
-                        'schoolClassId' => $livewire->schoolClassId,
-                        'isPresent' => $isPresent,
-                    ]
-                )
-            );
-        };
+        return fn ($record, $livewire) => new HtmlString(
+            Blade::render(
+                '@livewire("student-attendance-dates", ["studentId" => $studentId, "schoolClassId" => $schoolClassId, "isPresent" => $isPresent])',
+                [
+                    'studentId' => $record->id,
+                    'schoolClassId' => $livewire->schoolClassId,
+                    'isPresent' => $isPresent,
+                ]
+            )
+        );
     }
 
     public function render()

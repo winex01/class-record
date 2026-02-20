@@ -217,26 +217,17 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
     public static function getOverviewAction(): Action
     {
         return Action::make('overview')
-            ->label('Overview')
             ->color('info')
+            ->modalSubmitAction(false)
+            ->modalCancelAction(false)
+            ->modalWidth(Width::TwoExtraLarge)
             ->modalHeading('Student Assessment Overview')
             ->modalDescription(fn ($livewire) => 'Overview of students across all assessment records for ' . $livewire->getOwnerRecord()->name)
-            ->modalContent(function ($livewire) {
-                $schoolClassId = $livewire->getOwnerRecord()->id;
-
-                return new HtmlString(
-                    Blade::render(
-                        <<<'BLADE'
-                        <div>
-                            @livewire('assessment-overview', ['schoolClassId' => $schoolClassId])
-                        </div>
-                        BLADE,
-                        ['schoolClassId' => $schoolClassId]
-                    )
-                );
-            })
-            ->modalWidth(Width::TwoExtraLarge)
-            ->modalSubmitAction(false)
-            ->modalCancelAction(false);
+            ->modalContent(fn ($livewire) => new HtmlString(
+                Blade::render(
+                    '@livewire("assessment-overview", ["schoolClassId" => $schoolClassId])',
+                    ['schoolClassId' => $livewire->getOwnerRecord()->id]
+                )
+            ));
     }
 }

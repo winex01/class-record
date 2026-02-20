@@ -165,29 +165,20 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
     public static function getOverviewAction(): Action
     {
         return Action::make('overview')
-            ->label('Overview')
             ->color('info')
+            ->modalSubmitAction(false)
+            ->modalCancelAction(false)
+            ->modalWidth(Width::TwoExtraLarge)
             ->modalHeading('Student Attendance Overview')
             ->modalDescription(fn ($livewire) => 'Overview of students across all attendance records for ' . $livewire->getOwnerRecord()->name)
-            ->modalContent(function ($livewire) {
-                $schoolClassId = $livewire->getOwnerRecord()->id;
-
-                return new HtmlString(
-                    Blade::render(
-                        <<<'BLADE'
-                        <div style="margin-top: -1.5rem;" class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                            <strong>Tip:</strong> Click on the present/absent counts to view the specific dates.
-                        </div>
-                        <div>
-                            @livewire('attendance-overview', ['schoolClassId' => $schoolClassId])
-                        </div>
-                        BLADE,
-                        ['schoolClassId' => $schoolClassId]
-                    )
-                );
-            })
-            ->modalWidth(Width::TwoExtraLarge)
-            ->modalSubmitAction(false)
-            ->modalCancelAction(false);
+            ->modalContent(fn ($livewire) => new HtmlString(
+                Blade::render(
+                    '<div class="mb-4 text-sm text-gray-600 dark:text-gray-400" style="margin-top:-1.5rem;">
+                        <strong>Tip:</strong> Click on the present/absent counts to view the specific dates.
+                    </div>
+                    @livewire("attendance-overview", ["schoolClassId" => $schoolClassId])',
+                    ['schoolClassId' => $livewire->getOwnerRecord()->id]
+                )
+            ));
     }
 }
