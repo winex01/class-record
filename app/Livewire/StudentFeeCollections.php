@@ -8,6 +8,7 @@ use App\Models\FeeCollection;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use App\Livewire\Traits\RenderTableTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -21,6 +22,7 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
     use InteractsWithForms;
     use InteractsWithTable;
     use InteractsWithActions;
+    use RenderTableTrait;
 
     public $studentId;
     public $schoolClassId;
@@ -138,10 +140,5 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                     })
             )
         ];
-    }
-
-    public function render()
-    {
-        return view('livewire.student-fee-collections');
     }
 }

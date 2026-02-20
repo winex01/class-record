@@ -14,6 +14,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Blade;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
+use App\Livewire\Traits\RenderTableTrait;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -26,6 +27,7 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
     use InteractsWithForms;
     use InteractsWithTable;
     use InteractsWithActions;
+    use RenderTableTrait;
 
     public $schoolClassId;
     public $studentsData = [];
@@ -111,10 +113,5 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
                     ->modalCancelAction(false)
                     ->modalWidth(Width::TwoExtraLarge)
             ]);
-    }
-
-    public function render()
-    {
-        return view('livewire.assessment-overview');
     }
 }

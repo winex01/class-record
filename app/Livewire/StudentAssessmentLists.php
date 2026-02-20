@@ -14,6 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use App\Livewire\Traits\RenderTableTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -27,6 +28,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
     use InteractsWithForms;
     use InteractsWithTable;
     use InteractsWithActions;
+    use RenderTableTrait;
 
     public $studentId;
     public $schoolClassId;
@@ -197,10 +199,5 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                 ->modalSubmitActionLabel('Save')
                 ->modalWidth(Width::ExtraSmall)
                 ->visible(fn ($record) => $record->can_group_students);
-    }
-
-    public function render()
-    {
-        return view('livewire.student-assessment-lists');
     }
 }

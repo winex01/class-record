@@ -63,7 +63,19 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                                 }
                             ])
                             ->orderBy('present_count', $direction);
-                    }),
+                    })
+                    ->action(
+                    Action::make('presentStudents')
+                            ->modalWidth(Width::Large)
+                            ->modalSubmitAction(false)
+                            ->modalCancelAction(false)
+                            ->modalContent(fn ($record) => new HtmlString(
+                                Blade::render(
+                                    "@livewire('student-attendance-present-absent', ['attendance' => \$attendance, 'isPresent' => true])",
+                                    ['attendance' => $record]
+                                )
+                            ))
+                    ),
 
                 Column::text('absent')
                     ->searchable(false)
@@ -79,7 +91,19 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                                 }
                             ])
                             ->orderBy('absent_count', $direction);
-                    }),
+                    })
+                    ->action(
+                    Action::make('absentStudents')
+                            ->modalWidth(Width::Large)
+                            ->modalSubmitAction(false)
+                            ->modalCancelAction(false)
+                            ->modalContent(fn ($record) => new HtmlString(
+                                Blade::render(
+                                    "@livewire('student-attendance-present-absent', ['attendance' => \$attendance, 'isPresent' => false])",
+                                    ['attendance' => $record]
+                                )
+                            ))
+                    ),
 
             ])
             ->filters([
@@ -164,6 +188,6 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             })
             ->modalWidth(Width::TwoExtraLarge)
             ->modalSubmitAction(false)
-            ->modalCancelAction(false);;
+            ->modalCancelAction(false);
     }
 }

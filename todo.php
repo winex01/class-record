@@ -1,7 +1,8 @@
 <?php
 /*
-TODO:: in manage attendance table column absent/present display details as modal when click
 TODO:: on every manage relation manager modal display the assessment details above the table like how the cluster sub page display the school class details
+
+TODO:: lessons overview / show all files to be downloaded
 
 TODO:: Notification & calendar for:
         * Lessons Completion date

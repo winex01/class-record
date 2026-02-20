@@ -11,6 +11,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
+use App\Livewire\Traits\RenderTableTrait;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -21,6 +22,7 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
     use InteractsWithForms;
     use InteractsWithTable;
     use InteractsWithActions;
+    use RenderTableTrait;
 
     public $studentId;
     public $schoolClassId;
@@ -103,10 +105,5 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
             ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
             ->emptyStateDescription('No attendance records found.');
-    }
-
-    public function render()
-    {
-        return view('livewire.student-attendance-dates');
     }
 }
