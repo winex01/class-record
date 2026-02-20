@@ -147,8 +147,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ])
-            ->recordAction('takeAttendanceRelationManager');
+            ]);
     }
 
     public static function getTakeAttendanceAction()
