@@ -129,15 +129,15 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                         ->numeric()
                         ->required()
                         ->minValue(0)
-                        ->maxValue(fn ($record) => $record->max_score ?? 100)
+                        ->maxValue(fn ($record) => $record->max_score)
                         ->rules(fn ($record) => [
                             'numeric',
                             'min:0',
-                            'max:' . ($record->max_score ?? 100)
+                            'max:' . $record->max_score
                         ])
                         ->default(fn ($record) => $record->students->first()?->pivot->score)
-                        ->placeholder(fn ($record) => 'Max: ' . ($record->max_score ?? 0))
-                        ->helperText(fn ($record) => 'Maximum allowed score: ' . ($record->max_score ?? 100)),
+                        ->placeholder(fn ($record) => 'Max: ' . ($record->max_score))
+                        ->helperText(fn ($record) => 'Maximum allowed score: ' . ($record->max_score)),
                 ])
                 ->action(function ($record, array $data) {
                     // Update only the score

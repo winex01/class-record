@@ -4,13 +4,19 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use App\Models\FeeCollection;
+use Filament\Support\Enums\Width;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
 use App\Livewire\Traits\RenderTableTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -139,6 +145,93 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                             });
                     })
             )
+            ->action($this->updateAmountAction()),
         ];
+    }
+
+    protected function updateAmountAction()
+    {
+        return Action::make('updateAmountPaid')
+                ->form([
+                    Section::make()
+                        ->columns(3)
+                        ->schema([
+                            Placeholder::make('fee_amount')
+                                ->label('Amount')
+                                ->columnSpan(1)
+                                ->color('info')
+                                ->content(fn ($record) =>
+                                    $record->amount == 0
+                                        ? '—'
+                                        : '₱' . number_format($record->amount, 2)
+                                ),
+
+                            Placeholder::make('amount_paid')
+                                ->label('Paid')
+                                ->columnSpan(1)
+                                ->color('success')
+                                ->content(function ($record, $get) {
+                                    $paid = $get('amount') ?? 0;
+
+                                    return '₱' . number_format($paid, 2);
+                                }),
+
+                            Placeholder::make('balance')
+                                ->label('Balance')
+                                ->columnSpan(1)
+                                ->color('danger')
+                                ->content(function ($record, $get) {
+                                    if ($record->amount == 0) {
+                                        return '—';
+                                    }
+
+                                    $paid = $get('amount') ?? 0;
+                                    $balance = $record->amount - $paid;
+
+                                    return '₱' . number_format($balance, 2);
+                                }),
+                        ]),
+
+                    Section::make()
+                        ->schema([
+                            TextInput::make('amount')
+                                ->numeric()
+                                ->required()
+                                ->live()
+                                ->default(function ($record) {
+                                    return $record->students()
+                                        ->where('student_id', $this->studentId)
+                                        ->first()
+                                        ?->pivot
+                                        ?->amount;
+                                })
+                                ->placeholder(fn ($record) =>
+                                    $record->amount == 0
+                                        ? '₱'
+                                        : 'Fee ₱' . ($record->amount ?? 0)
+                                )
+                                ->rules(function ($record) {
+                                    $amount = $record->amount ?? 0;
+
+                                    return $amount > 0
+                                        ? ['numeric', 'min:0', 'max:' . $amount]
+                                        : ['numeric', 'min:0'];
+                                }),
+                        ]),
+                ])
+                ->action(function ($record, array $data) {
+                    // Update only the score
+                    $record->students()->updateExistingPivot($this->studentId, [
+                        'amount' => $data['amount'],
+                    ]);
+
+                    Notification::make()
+                        ->title('Amount updated successfully')
+                        ->success()
+                        ->send();
+                })
+                ->modalHeading('Update Fee Amount')
+                ->modalSubmitActionLabel('Save')
+                ->modalWidth(Width::Medium);
     }
 }
