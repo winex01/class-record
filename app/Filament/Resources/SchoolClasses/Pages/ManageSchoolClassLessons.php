@@ -15,12 +15,14 @@ use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Illuminate\Support\HtmlString;
 use Filament\Support\Enums\TextSize;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\View;
+use Illuminate\Support\Facades\Blade;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -90,24 +92,18 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
     protected function getHeaderActions(): array
     {
         return [
-            // TODO:: create livewire component and use table instead of this
             Action::make('allAttachedFiles')
                 ->label('All Attached Files')
                 ->icon('heroicon-o-arrow-down-tray')
                 ->modalHeading('All Attached Files')
-                ->modalWidth(Width::Medium)
                 ->modalSubmitAction(false)
                 ->modalCancelAction(false)
-                ->form([
-                    View::make('filament.components.download-files')
-                        ->viewData(fn () => [
-                            'myFiles' => $this->getOwnerRecord()
-                                ->lessons
-                                ->flatMap(fn ($lesson) => $lesson->myFiles)
-                                ->unique('id')
-                                ->values(),
-                        ]),
-                ]),
+                ->modalContent(fn () => new HtmlString(
+                    Blade::render(
+                        '@livewire("lessons-attached-files", ["schoolClassId" => $schoolClassId])',
+                        ['schoolClassId' => $this->getOwnerRecord()->id]
+                    )
+                ))
         ];
     }
 
@@ -117,7 +113,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
             ->label('Download Files')
             ->icon('heroicon-o-arrow-down-tray')
             ->color('info')
-            ->modalHeading('Attached Files')
+            ->modalHeading(fn ($record) => $record->title)
             ->modalWidth(Width::Medium)
             ->modalSubmitAction(false)
             ->modalCancelAction(false)

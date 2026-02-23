@@ -15,6 +15,7 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
@@ -55,7 +56,7 @@ class MyFileResource extends Resource
                 ->disabled($readonly),
 
             FileUpload::make('path')
-                ->label('File')
+                ->label('Files')
                 ->required()
                 ->multiple()
                 ->directory(fn () => 'my-files/' . auth()->id())
@@ -91,17 +92,13 @@ class MyFileResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Column::text('name'),
-                Column::tags('tags'),
+                ...static::getColumns(),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                ViewAction::make()
-                    ->label('View & Download')
-                    ->modalWidth(Width::Medium)
-                    ->color('info'),
+                static::getViewAction(),
 
                 EditAction::make()
                     ->modalWidth(Width::Medium),
@@ -110,7 +107,37 @@ class MyFileResource extends Resource
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordAction(false);
+    }
+
+    public static function getViewAction()
+    {
+        return ViewAction::make()->modalWidth(Width::Medium);
+    }
+
+    public static function getColumns()
+    {
+        return [
+            Column::text('name'),
+            Column::tags('tags'),
+
+            TextColumn::make('path')
+                ->label('Files')
+                ->toggleable(isToggledHiddenByDefault:false)
+                ->html()
+                ->wrap()
+                ->getStateUsing(fn ($record) => collect($record->path)
+                    ->map(fn ($path, $index) =>
+                        '<a href="' . route('filament.app.myfile.download', ['myFileId' => $record->id, 'index' => $index]) . '"
+                            class="text-info-500 hover:text-info-600 hover:underline block"
+                            target="_blank">
+                            ' . basename($path) . '
+                        </a>'
+                    )
+                    ->join(', ')
+                )
+        ];
     }
 
     public static function getPages(): array
