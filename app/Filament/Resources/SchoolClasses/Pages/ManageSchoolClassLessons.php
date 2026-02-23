@@ -90,6 +90,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
     protected function getHeaderActions(): array
     {
         return [
+            // TODO:: create livewire component and use table instead of this
             Action::make('allAttachedFiles')
                 ->label('All Attached Files')
                 ->icon('heroicon-o-arrow-down-tray')
@@ -101,7 +102,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                     View::make('filament.components.download-files')
                         ->viewData(fn () => [
                             'myFiles' => $this->getOwnerRecord()
-                                ->lessons  // adjust relation name as needed
+                                ->lessons
                                 ->flatMap(fn ($lesson) => $lesson->myFiles)
                                 ->unique('id')
                                 ->values(),
