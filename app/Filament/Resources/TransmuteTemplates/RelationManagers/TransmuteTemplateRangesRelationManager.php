@@ -6,6 +6,7 @@ use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
+use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Schemas\Components\Grid;
@@ -42,7 +43,8 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->label('New ' . strtolower($this->getOwnerRecord()->name) . ' range')
+                    ->label('New range')
+                    ->modalWidth(Width::Large)
             ])
             ->recordActions([
                 EditAction::make(),
