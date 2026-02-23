@@ -87,7 +87,30 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
             ]);
     }
 
-    private static function downloadFiles()
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('allAttachedFiles')
+                ->label('All Attached Files')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->modalHeading('All Attached Files')
+                ->modalWidth(Width::Medium)
+                ->modalSubmitAction(false)
+                ->modalCancelAction(false)
+                ->form([
+                    View::make('filament.components.download-files')
+                        ->viewData(fn () => [
+                            'myFiles' => $this->getOwnerRecord()
+                                ->lessons  // adjust relation name as needed
+                                ->flatMap(fn ($lesson) => $lesson->myFiles)
+                                ->unique('id')
+                                ->values(),
+                        ]),
+                ]),
+        ];
+    }
+
+    protected static function downloadFiles()
     {
         return Action::make('downloadFiles')
             ->label('Download Files')
