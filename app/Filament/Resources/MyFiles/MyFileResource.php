@@ -13,12 +13,13 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
+use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use App\Filament\Resources\MyFiles\Pages\ManageMyFiles;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class MyFileResource extends Resource
 {
@@ -57,7 +58,22 @@ class MyFileResource extends Resource
                 ->label('File')
                 ->required()
                 ->multiple()
-                ->directory('my-files')
+                ->directory(fn () => 'my-files/' . auth()->id())
+                ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file) {
+                    $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $directory = 'my-files/' . auth()->id();
+
+                    $fileName = "{$originalName}.{$extension}";
+                    $counter = 1;
+
+                    while (Storage::disk(config('filament.default_filesystem_disk'))->exists("{$directory}/{$fileName}")) {
+                        $fileName = "{$originalName}-{$counter}.{$extension}";
+                        $counter++;
+                    }
+
+                    return $fileName;
+                })
                 ->downloadable()
                 ->openable()
                 ->columns(12)
@@ -93,9 +109,7 @@ class MyFileResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                DeleteBulkAction::make(),
             ]);
     }
 
