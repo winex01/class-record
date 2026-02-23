@@ -3,13 +3,14 @@
 namespace App\Filament\Traits;
 
 use Filament\Support\Enums\Width;
+use App\Filament\Widgets\SubjectDetailsWidget;
 
 trait ManageSchoolClassInitTrait
 {
     protected function getHeaderWidgets(): array
     {
         return [
-            \App\Filament\Widgets\SubjectDetailsWidget::make([
+            SubjectDetailsWidget::make([
                 'record' => $this->getOwnerRecord(),
             ]),
         ];

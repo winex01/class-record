@@ -76,7 +76,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                     }),
             ])
             ->cardActions([
-                static::downloadFiles()->modalWidth(Width::Medium),
+                static::downloadFiles(),
                 ViewAction::make()->form($this->getForm()),
                 EditAction::make()
                     ->form($this->getForm())
@@ -94,7 +94,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
             ->icon('heroicon-o-arrow-down-tray')
             ->color('info')
             ->modalHeading('Attached Files')
-            ->modalWidth(Width::Small)
+            ->modalWidth(Width::Medium)
             ->modalSubmitAction(false)
             ->modalCancelAction(false)
             ->form([
