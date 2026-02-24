@@ -10,6 +10,7 @@ enum LessonStatus: string implements HasLabel, HasColor
     case TOPICS = 'TOPICS';
     case IN_PROGRESS = 'IN_PROGRESS';
     case DONE = 'DONE';
+    case NEED_REVIEW = 'NEED REVIEW';
 
     public function getLabel(): ?string
     {
@@ -17,6 +18,7 @@ enum LessonStatus: string implements HasLabel, HasColor
             self::TOPICS => 'Topics',
             self::IN_PROGRESS => 'In Progress',
             self::DONE => 'Done',
+            self::NEED_REVIEW => 'Need Review',
         };
     }
 
@@ -26,6 +28,7 @@ enum LessonStatus: string implements HasLabel, HasColor
             self::TOPICS => 'gray',
             self::IN_PROGRESS => 'warning',
             self::DONE => 'success',
+            self::NEED_REVIEW => 'danger',
         };
     }
 }

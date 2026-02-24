@@ -62,6 +62,9 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                 Column::make(LessonStatus::DONE->value)
                     ->label(LessonStatus::DONE->getLabel())
                     ->color(LessonStatus::DONE->getColor()),
+                Column::make(LessonStatus::NEED_REVIEW->value)
+                    ->label(LessonStatus::NEED_REVIEW->getLabel())
+                    ->color(LessonStatus::NEED_REVIEW->getColor()),
             ])
             ->cardSchema(fn(Schema $schema) => $schema->components($this->getColumns()))
             ->searchable(['title', 'description', 'tags'])
