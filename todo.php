@@ -1,7 +1,6 @@
 <?php
 /*
 TODO:: classess crud change from row to box, or grid style
-TODO:: on every manage relation manager modal display the assessment details above the table like how the cluster sub page display the school class details
 TODO:: Grading components templates resource/crud
 
 TODO:: Notification & calendar for:

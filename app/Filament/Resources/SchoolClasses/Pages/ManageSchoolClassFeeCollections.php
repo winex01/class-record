@@ -126,7 +126,12 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                         ->icon(\App\Services\Icon::students())
                         ->color('info')
                         ->slideOver()
-                        ->relationManager(TakeFeeCollectionRelationManager::make()),
+                        ->relationManager(TakeFeeCollectionRelationManager::make())
+                        ->modalDescription(fn ($record) => new HtmlString(
+                            view('filament.components.fee-collection-modal-heading', [
+                                'record' => $record,
+                            ])->render()
+                        )),
 
                     ViewAction::make()->modalWidth(Width::Large),
                     EditAction::make()->modalWidth(Width::Large),

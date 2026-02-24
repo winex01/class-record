@@ -154,11 +154,16 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
     {
         return RelationManagerAction::make('takeAttendanceRelationManager')
                 ->label('Take Attendance')
-                ->modalHeading(fn ($record) => 'Take Attendance - ' . $record->date->format('M d, Y'))
                 ->icon(Icon::students())
                 ->color('info')
                 ->slideOver()
-                ->relationManager(TakeAttendanceRelationManager::make());
+                ->relationManager(TakeAttendanceRelationManager::make())
+                ->modalHeading(fn ($record) => new HtmlString(
+                    view('filament.components.attendance-modal-heading', [
+                        'record' => $record,
+                    ])->render()
+                ))
+                ;
     }
 
     public static function getOverviewAction(): Action

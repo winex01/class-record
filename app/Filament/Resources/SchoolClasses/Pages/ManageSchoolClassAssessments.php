@@ -179,7 +179,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                         ->slideOver()
                         ->relationManager(RecordScoreRelationManager::make())
                         ->modalDescription(fn ($record) => new HtmlString(
-                            view('filament.components.assessment-modal-details', [
+                            view('filament.components.assessment-modal-heading', [
                                 'record' => $record,
                             ])->render()
                         )),
