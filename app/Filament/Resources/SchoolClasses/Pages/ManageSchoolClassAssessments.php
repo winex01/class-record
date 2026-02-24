@@ -177,7 +177,12 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                         ->icon(Icon::students())
                         ->color('info')
                         ->slideOver()
-                        ->relationManager(RecordScoreRelationManager::make()),
+                        ->relationManager(RecordScoreRelationManager::make())
+                        ->modalDescription(fn ($record) => new HtmlString(
+                            view('filament.components.assessment-modal-details', [
+                                'record' => $record,
+                            ])->render()
+                        )),
 
                     ViewAction::make(),
                     EditAction::make(),
