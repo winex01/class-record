@@ -60,4 +60,9 @@ class SchoolClass extends Model
     {
         return $this->hasMany(Lesson::class);
     }
+
+    public function getYearSectionFormattedAttribute(): string
+    {
+        return str_replace(',', ', ', $this->year_section ?? '');
+    }
 }
