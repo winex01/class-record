@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Size;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
@@ -24,6 +25,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Navigation\NavigationItem;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Forms\Components\CheckboxList;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
@@ -108,37 +111,74 @@ class SchoolClassResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Column::text('name')->label('Subject'),
-                Column::tags('year_section'),
-                Column::date('date_start'),
-                Column::date('date_end'),
-                Column::text('description')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Column::boolean(
-                    name: 'active',
-                    trueLabel: 'Active',
-                    falseLabel: 'Archived',
-                    falseIcon: 'heroicon-o-lock-closed',
-                    falseColor: 'warning'
-                )->label('Status')
+                Stack::make([
+                    Split::make([
+                        Column::text('name')
+                            ->label('Subject')
+                            ->searchable(
+                                query: fn ($query, string $search) => $query
+                                    ->where('name', 'like', "%{$search}%")
+                                    ->orWhereRaw("DATE_FORMAT(date_start, '%b %d, %Y') LIKE ?", ["%{$search}%"])
+                                    ->orWhereRaw("DATE_FORMAT(date_end, '%b %d, %Y') LIKE ?", ["%{$search}%"])
+                            )
+                            ->description(function ($record) {
+                                if (!$record->date_start && !$record->date_end) {
+                                    return 'No dates set';
+                                }
+                                return ($record->date_start?->format('M d, Y') ?? 'N/A') . ' → ' . ($record->date_end?->format('M d, Y') ?? 'N/A');
+                            }),
+
+                        Column::boolean(
+                            name: 'active',
+                            trueLabel: 'Active',
+                            falseLabel: 'Archived',
+                            falseIcon: 'heroicon-o-lock-closed',
+                            falseColor: 'warning'
+                        )->label('Status')
+                        ->badge(false)
+                        ->grow(false),
+                    ]),
+
+                    Column::tags('year_section')->wrap(),
+                ])
             ])
-            ->filters([
-                //
+            ->contentGrid([
+                'md' => 3,
+                'xl' => 3,
             ])
             ->recordActions([
                 ActionGroup::make([
                     Action::make('manageClass')
-                        ->label('Manage Class')
-                        ->color('info')
+                        ->tooltip('Manage Class')
+                        ->label(false)
+                        ->color(false)
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
                         ->icon(Icon::students()),
 
-                    static::cloneClassAction(),
+                    static::cloneClassAction()
+                        ->tooltip('Clone Class')
+                        ->label(false)
+                        ->color(false),
 
-                    ViewAction::make()->modalWidth(Width::Large),
-                    EditAction::make()->modalWidth(Width::Large),
-                    DeleteAction::make(),
-                ])->grouped()
+                    ViewAction::make()
+                        ->modalWidth(Width::Large)
+                        ->tooltip('View')
+                        ->label(false)
+                        ->color(false),
+
+                    EditAction::make()
+                        ->modalWidth(Width::Large)
+                        ->tooltip('Edit')
+                        ->label(false)
+                        ->color(false),
+
+                    DeleteAction::make()
+                        ->tooltip('Delete')
+                        ->label(false)
+                        ->color(false),
+                ])
+                ->buttonGroup()
+                ->size(Size::Small)
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
@@ -183,6 +223,7 @@ class SchoolClassResource extends Resource
                         $newClass->year_section = $data['year_section'];
                         $newClass->date_start = $data['date_start'];
                         $newClass->date_end = $data['date_end'];
+                        $newClass->active = true;
                         $newClass->save();
 
                         $itemsToClone = $data['items_to_clone'];

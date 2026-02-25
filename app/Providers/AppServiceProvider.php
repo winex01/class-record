@@ -63,7 +63,6 @@ class AppServiceProvider extends ServiceProvider
             // Actions configuration
             // $table->filtersTriggerAction(fn (Action $action) => $action->button()->label(__('Filters')));
             // $table->toggleColumnsTriggerAction(fn (Action $action) => $action->button()->label(__('Columns')));
-            $table->actionsAlignment('left');
 
             // Date/Time formatting
             $table->defaultDateDisplayFormat('M d, Y');          // e.g. "Sep 30, 2025"

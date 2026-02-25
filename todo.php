@@ -1,6 +1,5 @@
 <?php
 /*
-TODO:: classess crud change from row to box, or grid style
 TODO:: Grading components templates resource/crud
 
 TODO:: Notification & calendar for:
