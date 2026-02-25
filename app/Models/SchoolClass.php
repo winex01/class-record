@@ -65,4 +65,9 @@ class SchoolClass extends Model
     {
         return str_replace(',', ', ', $this->year_section ?? '');
     }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->active ? 'Active' : 'Archived';
+    }
 }

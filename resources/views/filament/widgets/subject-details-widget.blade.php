@@ -24,7 +24,7 @@
                     <div class="flex-shrink-0">
                         <x-filament::icon
                             icon="heroicon-o-calendar"
-                            class="h-5 w-5 text-success-500"
+                            class="h-5 w-5 text-info-500"
                         />
                     </div>
                     <div>
@@ -40,7 +40,7 @@
                     <div class="flex-shrink-0">
                         <x-filament::icon
                             icon="heroicon-o-play-circle"
-                            class="h-5 w-5 text-info-500"
+                            class="h-5 w-5 text-teal-500"
                         />
                     </div>
                     <div>
@@ -56,7 +56,7 @@
                     <div class="flex-shrink-0">
                         <x-filament::icon
                             icon="heroicon-o-stop-circle"
-                            class="h-5 w-5 text-warning-500"
+                            class="h-5 w-5 text-purple-500"
                         />
                     </div>
                     <div>
@@ -66,6 +66,22 @@
                         </p>
                     </div>
                 </div>
+
+                <!-- Status -->
+            <div class="flex items-center gap-2">
+                <div class="flex-shrink-0">
+                    <x-filament::icon
+                        icon="{{ $record->active ? 'heroicon-o-check-circle' : 'heroicon-o-lock-closed' }}"
+                        class="h-5 w-5 text-{{ $record->active ? 'success-500' : 'warning-500' }}"
+                    />
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Status</p>
+                    <p class="text-xs font-semibold text-gray-900 dark:text-white">
+                        {!! $record->status_label !!}
+                    </p>
+                </div>
+            </div>
 
             </div>
         @endif
