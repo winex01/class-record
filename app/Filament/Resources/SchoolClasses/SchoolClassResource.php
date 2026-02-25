@@ -110,6 +110,7 @@ class SchoolClassResource extends Resource
     {
         return $table
             ->recordTitleAttribute('name')
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Stack::make([
                     Split::make([
@@ -175,7 +176,8 @@ class SchoolClassResource extends Resource
                     DeleteAction::make()
                         ->tooltip('Delete')
                         ->label(false)
-                        ->color(false),
+                        ->color(false)
+                        ->modalSubmitAction(fn ($action) => $action->color('danger')),
                 ])
                 ->buttonGroup()
                 ->size(Size::Small)
