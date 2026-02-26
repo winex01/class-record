@@ -8,7 +8,6 @@ use App\Models\Attendance;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
 use App\Livewire\Traits\RenderTableTrait;
@@ -57,18 +56,12 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
             ->columns([
                 Column::date('date'),
 
-                IconColumn::make('present_status')
+                Column::icon('present_status')
                     ->label('Status')
-                    ->alignCenter()
                     ->state(function ($record) {
                         return $record->students->first()?->pivot->present ?? false;
                     })
-                    ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->trueColor('success')
-                    ->falseColor('danger')
-                    ->tooltip(fn ($state) => $state ? 'Present' : 'Absent'),
+
             ])
             ->recordActions([
                 Action::make('toggle')

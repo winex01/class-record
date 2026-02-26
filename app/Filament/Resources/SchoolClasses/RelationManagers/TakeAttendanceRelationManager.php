@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
+use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\BulkAction;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -47,11 +48,19 @@ class TakeAttendanceRelationManager extends RelationManager
             ->columns([
                 ...ManageSchoolClassStudents::getColumns(),
 
-                // TODO:: wip, hide actions or disable input columns if school class is archived
+                // when active
                 ToggleColumn::make('present')
                     ->offColor('danger')
+                    ->width('1%')
+                    ->alignCenter()
                     ->sortable()
-                    ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
+                    ->visible(fn () => $this->getOwnerRecord()->schoolClass->active),
+
+                // when archived
+                Column::icon('present_icon')
+                    ->label('Present')
+                    ->getStateUsing(fn ($record) => $record->present)
+                    ->visible(fn () => !$this->getOwnerRecord()->schoolClass->active),
 
             ])
             ->filters([

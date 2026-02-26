@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -18,13 +19,13 @@ final class Column
     public static function icon($name)
     {
         return IconColumn::make($name)
-            ->wrap()
             ->width('1%')
             ->alignCenter()
-            ->trueIcon('heroicon-o-x-circle')
-            ->falseIcon('heroicon-o-check-circle')
-            ->trueColor(Color::Rose)
-            ->falseColor(Color::Emerald);
+            ->trueIcon('heroicon-o-check-circle')
+            ->trueColor(Color::Emerald)
+            ->falseIcon('heroicon-o-x-circle')
+            ->falseColor(Color::Rose)
+            ->size(IconSize::TwoExtraLarge);
     }
 
     public static function timePickerFromAndTo($name, $starts_at = 'starts_at', $ends_at = 'ends_at')

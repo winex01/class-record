@@ -1,6 +1,6 @@
 <?php
 /*
-TODO:: if class/subject is archived then make sure all the activities or actions/buttons in the manage is disabled and make it only read
+TODO::(WIP: currently on assessment now but double check attendance) if class/subject is archived then make sure all the activities or actions/buttons in the manage is disabled and make it only read
 TODO:: TBD:: add edit school/subject above the manage actions navs widgets in getHeaderActions
 
 TODO:: Grading components templates resource/crud
