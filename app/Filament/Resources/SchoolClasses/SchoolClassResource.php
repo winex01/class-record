@@ -152,31 +152,27 @@ class SchoolClassResource extends Resource
                     Action::make('manageClass')
                         ->tooltip('Manage Class')
                         ->label(false)
-                        ->color(false)
+                        ->color('info')
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
                         ->icon(Icon::students()),
 
                     static::cloneClassAction()
                         ->tooltip('Clone Class')
-                        ->label(false)
-                        ->color(false),
+                        ->label(false),
 
                     ViewAction::make()
                         ->modalWidth(Width::Large)
                         ->tooltip('View')
-                        ->label(false)
-                        ->color(false),
+                        ->label(false),
 
                     EditAction::make()
                         ->modalWidth(Width::Large)
                         ->tooltip('Edit')
-                        ->label(false)
-                        ->color(false),
+                        ->label(false),
 
                     DeleteAction::make()
                         ->tooltip('Delete')
                         ->label(false)
-                        ->color(false)
                         ->modalSubmitAction(fn ($action) => $action->color('danger')),
                 ])
                 ->buttonGroup()

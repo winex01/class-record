@@ -5,6 +5,7 @@ namespace App\Providers;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DetachAction;
@@ -84,6 +85,10 @@ class AppServiceProvider extends ServiceProvider
     public function actionConfig()
     {
         Action::configureUsing(function (Action $action)  {
+            if ($action instanceof ViewAction) {
+                $action->color('purple');
+            }
+
             // Disable clickaway closing for all modals to prevent scroll lock bug
             $action->closeModalByClickingAway(false);
             $action->closeModalByEscaping(false);
