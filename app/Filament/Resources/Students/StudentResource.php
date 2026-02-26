@@ -11,13 +11,11 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Filters\SelectFilter;
 use App\Filament\Resources\Students\Pages\ManageStudents;
@@ -80,18 +78,12 @@ class StudentResource extends Resource
     {
         return $table
             ->recordTitleAttribute('full_name')
-            ->columns([
-                ...static::getColumns(),
-            ])
-            ->filters([
-                ...static::getFilters()
-            ])
+            ->columns(static::getColumns())
+            ->filters(static::getFilters())
             ->recordActions([
-                ActionGroup::make([
-                    ViewAction::make()->modalWidth(Width::Large),
-                    EditAction::make()->modalWidth(Width::Large),
-                    DeleteAction::make(),
-                ])->grouped()
+                ViewAction::make()->modalWidth(Width::Large),
+                EditAction::make()->modalWidth(Width::Large),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
@@ -129,6 +121,7 @@ class StudentResource extends Resource
             Column::enum('gender', Gender::class),
             Column::date('birth_date'),
             Column::text('email'),
+            'contact_number' =>
             Column::text('contact_number')->label('Contact'),
         ];
     }

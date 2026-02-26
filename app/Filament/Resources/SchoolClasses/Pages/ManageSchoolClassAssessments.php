@@ -10,7 +10,6 @@ use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
@@ -171,23 +170,21 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 static::getOverviewAction(),
             ])
             ->recordActions([
-                ActionGroup::make([
-                    RelationManagerAction::make('recordScoreRelationManager')
-                        ->label('Record Score')
-                        ->icon(Icon::students())
-                        ->color('info')
-                        ->slideOver()
-                        ->relationManager(RecordScoreRelationManager::make())
-                        ->modalDescription(fn ($record) => new HtmlString(
-                            view('filament.components.assessment-modal-heading', [
-                                'record' => $record,
-                            ])->render()
-                        )),
+                RelationManagerAction::make('recordScoreRelationManager')
+                    ->label('Score')
+                    ->icon(Icon::students())
+                    ->color('info')
+                    ->slideOver()
+                    ->relationManager(RecordScoreRelationManager::make())
+                    ->modalDescription(fn ($record) => new HtmlString(
+                        view('filament.components.assessment-modal-heading', [
+                            'record' => $record,
+                        ])->render()
+                    )),
 
-                    ViewAction::make(),
-                    EditAction::make(),
-                    DeleteAction::make(),
-                ])->grouped()
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

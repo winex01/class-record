@@ -7,7 +7,6 @@ use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
@@ -73,11 +72,9 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 static::attachAction(),
             ])
             ->recordActions([
-                ActionGroup::make([
-                    ViewAction::make()->modalWidth(Width::Large),
-                    EditAction::make()->modalWidth(Width::Large),
-                    DetachAction::make()->color('warning'),
-                ])->grouped()
+                ViewAction::make()->modalWidth(Width::Large),
+                EditAction::make()->modalWidth(Width::Large),
+                DetachAction::make()->color('warning'),
             ])
             ->toolbarActions([
                 static::detachBulkAction(),

@@ -153,7 +153,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
     public static function getTakeAttendanceAction()
     {
         return RelationManagerAction::make('takeAttendanceRelationManager')
-                ->label('Take Attendance')
+                ->label('Attendance')
                 ->icon(Icon::students())
                 ->color('info')
                 ->slideOver()

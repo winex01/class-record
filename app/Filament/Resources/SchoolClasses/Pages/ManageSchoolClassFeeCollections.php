@@ -9,7 +9,6 @@ use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use App\Enums\FeeCollectionStatus;
 use Filament\Actions\DeleteAction;
@@ -120,23 +119,21 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 static::getOverviewAction(),
             ])
             ->recordActions([
-                ActionGroup::make([
-                    RelationManagerAction::make('takeFeeCollectionRelationManager')
-                        ->label('Take Fee')
-                        ->icon(\App\Services\Icon::students())
-                        ->color('info')
-                        ->slideOver()
-                        ->relationManager(TakeFeeCollectionRelationManager::make())
-                        ->modalDescription(fn ($record) => new HtmlString(
-                            view('filament.components.fee-collection-modal-heading', [
-                                'record' => $record,
-                            ])->render()
-                        )),
+                RelationManagerAction::make('takeFeeCollectionRelationManager')
+                    ->label('Fee')
+                    ->icon(\App\Services\Icon::students())
+                    ->color('info')
+                    ->slideOver()
+                    ->relationManager(TakeFeeCollectionRelationManager::make())
+                    ->modalDescription(fn ($record) => new HtmlString(
+                        view('filament.components.fee-collection-modal-heading', [
+                            'record' => $record,
+                        ])->render()
+                    )),
 
-                    ViewAction::make()->modalWidth(Width::Large),
-                    EditAction::make()->modalWidth(Width::Large),
-                    DeleteAction::make(),
-                ])->grouped()
+                ViewAction::make()->modalWidth(Width::Large),
+                EditAction::make()->modalWidth(Width::Large),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

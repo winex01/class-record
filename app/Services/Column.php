@@ -18,6 +18,7 @@ final class Column
     public static function icon($name)
     {
         return IconColumn::make($name)
+            ->wrap()
             ->width('1%')
             ->alignCenter()
             ->trueIcon('heroicon-o-x-circle')
@@ -29,6 +30,7 @@ final class Column
     public static function timePickerFromAndTo($name, $starts_at = 'starts_at', $ends_at = 'ends_at')
     {
         return TextColumn::make($name)
+            ->wrap()
             ->formatStateUsing(function ($state) use ($starts_at, $ends_at) {
                 if (!is_array($state)) {
                     return '-';
@@ -49,6 +51,7 @@ final class Column
     public static function amount($name)
     {
         return static::text($name)
+            ->wrap()
             ->prefix('₱')
             ->width('1%')
             ->color('primary')
@@ -78,6 +81,7 @@ final class Column
     public static function text($name)
     {
         return TextColumn::make($name)
+            ->wrap()
             ->toggleable(isToggledHiddenByDefault: false)
             ->sortable()
             ->searchable();
@@ -86,6 +90,7 @@ final class Column
     public static function date($name)
     {
         return static::text($name)
+            ->wrap()
             ->date()
             ->searchable(
                 query: fn ($query, string $search) =>
@@ -99,6 +104,7 @@ final class Column
     public static function timestamp($name)
     {
         return static::text($name)
+            ->wrap()
             ->dateTime()
             ->tooltip(fn ($record) => ('Search: '.$record->{$name}));
     }
@@ -127,6 +133,7 @@ final class Column
     public static function tags($name = 'tags')
     {
         return TagsColumn::make($name)
+            ->wrap()
             ->toggleable(isToggledHiddenByDefault:false)
             ->separator(',')
             ->badge()
@@ -152,6 +159,7 @@ final class Column
         }
 
         return TextColumn::make($name)
+            ->wrap()
             ->toggleable(isToggledHiddenByDefault: false)
             ->sortable()
             ->searchable()
