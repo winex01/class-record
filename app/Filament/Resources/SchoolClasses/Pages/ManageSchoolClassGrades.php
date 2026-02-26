@@ -259,7 +259,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             Action::make('settingsAction')
                 ->label('Grading Settings')
                 ->icon(Icon::settings())
-                ->color('gray')
+                ->color('primary')
                 ->modalWidth(Width::TwoExtraLarge)
                 ->fillForm(function ($livewire) {
                     $owner = $livewire->getOwnerRecord();

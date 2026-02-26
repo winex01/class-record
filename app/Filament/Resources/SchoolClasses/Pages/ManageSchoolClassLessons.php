@@ -98,6 +98,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
             Action::make('allAttachedFiles')
                 ->label('All Attached Files')
                 ->icon('heroicon-o-arrow-down-tray')
+                ->color('primary')
                 ->modalHeading('All Attached Files')
                 ->modalSubmitAction(false)
                 ->modalCancelAction(false)
