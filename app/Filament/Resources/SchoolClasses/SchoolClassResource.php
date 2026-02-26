@@ -140,7 +140,7 @@ class SchoolClassResource extends Resource
                         ->grow(false),
                     ]),
 
-                    Column::tags('year_section')->wrap(),
+                    Column::tags('year_section')->badge(false)->color('primary'),
                 ])
             ])
             ->contentGrid([

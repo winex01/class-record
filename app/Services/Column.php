@@ -136,7 +136,6 @@ final class Column
             ->wrap()
             ->toggleable(isToggledHiddenByDefault:false)
             ->separator(',')
-            ->badge()
             ->searchable(query: function (Builder $query, string $search) use ($name): Builder {
                 return $query->whereRaw('LOWER('. $name .') LIKE ?', ['%' . strtolower($search) . '%']);
             });

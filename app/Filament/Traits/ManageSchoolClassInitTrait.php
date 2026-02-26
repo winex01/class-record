@@ -7,6 +7,8 @@ use App\Filament\Widgets\SubjectDetailsWidget;
 
 trait ManageSchoolClassInitTrait
 {
+    use ManageActionVisibility;
+
     protected function getHeaderWidgets(): array
     {
         return [

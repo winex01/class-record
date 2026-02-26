@@ -46,9 +46,13 @@ class TakeAttendanceRelationManager extends RelationManager
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
                 ...ManageSchoolClassStudents::getColumns(),
+
+                // TODO:: wip, hide actions or disable input columns if school class is archived
                 ToggleColumn::make('present')
                     ->offColor('danger')
                     ->sortable()
+                    ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
+
             ])
             ->filters([
                 ...StudentResource::getFilters()

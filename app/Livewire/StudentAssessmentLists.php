@@ -17,6 +17,7 @@ use Filament\Notifications\Notification;
 use App\Livewire\Traits\RenderTableTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
+use App\Filament\Traits\ManageActionVisibility;
 use Filament\Forms\Concerns\InteractsWithForms;
 use App\Filament\Resources\Groups\GroupResource;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -29,6 +30,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
     use InteractsWithTable;
     use InteractsWithActions;
     use RenderTableTrait;
+    use ManageActionVisibility;
 
     public $studentId;
     public $schoolClassId;
@@ -198,6 +200,6 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                 ->modalHeading('Update Student Group')
                 ->modalSubmitActionLabel('Save')
                 ->modalWidth(Width::ExtraSmall)
-                ->visible(fn ($record) => $record->can_group_students);
+                ->disabled(fn ($record) => !$record->can_group_students);
     }
 }

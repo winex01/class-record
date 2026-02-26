@@ -13,6 +13,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
 use App\Livewire\Traits\RenderTableTrait;
 use Filament\Actions\Contracts\HasActions;
+use App\Filament\Traits\ManageActionVisibility;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -23,6 +24,7 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
     use InteractsWithTable;
     use InteractsWithActions;
     use RenderTableTrait;
+    use ManageActionVisibility;
 
     public $studentId;
     public $schoolClassId;

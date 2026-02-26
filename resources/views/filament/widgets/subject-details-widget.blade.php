@@ -8,7 +8,7 @@
                     <div class="flex-shrink-0">
                         <x-filament::icon
                             icon="heroicon-o-academic-cap"
-                            class="h-5 w-5 text-primary-500"
+                            class="h-5 w-5 text-info-500"
                         />
                     </div>
                     <div>
@@ -24,7 +24,7 @@
                     <div class="flex-shrink-0">
                         <x-filament::icon
                             icon="heroicon-o-calendar"
-                            class="h-5 w-5 text-info-500"
+                            class="h-5 w-5 text-primary-500"
                         />
                     </div>
                     <div>

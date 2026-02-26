@@ -118,7 +118,7 @@ class StudentResource extends Resource
                 })
                 ->searchable(['last_name', 'first_name', 'middle_name', 'suffix_name']),
 
-            Column::enum('gender', Gender::class),
+            Column::enum('gender', Gender::class)->badge(false),
             Column::date('birth_date'),
             Column::text('email'),
             'contact_number' =>
