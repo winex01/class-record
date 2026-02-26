@@ -62,7 +62,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ->recordTitleAttribute('full_name')
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
-                ...static::getColumns(['photo', 'full_name', 'gender', 'birth_date'])
+                ...static::getColumns(['photo', 'full_name', 'gender', 'birth_date', 'email'])
             ])
             ->filters([
                 ...StudentResource::getFilters()
