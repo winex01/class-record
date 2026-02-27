@@ -87,21 +87,28 @@ class TakeFeeCollectionRelationManager extends RelationManager
                                 );
                         }
                     })
-                    ->visible($this->getOwnerRecord()->amount > 0 ? true : false),
+                    ->visible($this->getOwnerRecord()->amount > 0 ? true : false)
+                    ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
 
                 Column::textInput('amount')
-                    ->placeholder(
-                        $this->getOwnerRecord()->amount == 0
-                            ? '₱'
-                            : 'Fee ₱' . ($this->getOwnerRecord()->amount ?? 0)
-                    )
+                    ->width('1%')
                     ->rules(function () {
                         $amount = $this->getOwnerRecord()->amount ?? 0;
 
                         return $amount > 0
                             ? ['numeric', 'min:0', 'max:' . $amount]
                             : ['numeric', 'min:0'];
-                    }),
+                    })
+                    ->placeholder(function () {
+                        if (!$this->getOwnerRecord()->schoolClass->active) {
+                            return null;
+                        }
+
+                        return $this->getOwnerRecord()->amount == 0
+                            ? '₱'
+                            : 'Fee ₱' . ($this->getOwnerRecord()->amount ?? 0);
+                    })
+                    ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
             ])
             ->filters([
                 ...StudentResource::getFilters()

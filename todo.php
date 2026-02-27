@@ -1,7 +1,7 @@
 <?php
 /*
-TODO::(WIP: currently on assessment now but double check attendance) if class/subject is archived then make sure all the activities or actions/buttons in the manage is disabled and make it only read
-
+TODO:: Student Fee Collection Overview:: add summarize total
+TODO:: in manage Grade use grid style or box like not row
 TODO:: some of the requireConfirmation modal dialogue button submit/confirm is not align center, ex: in livewire student attendance table the mark as present/absent
 
 TODO:: TBD:: add edit school/subject above the manage actions navs widgets in getHeaderActions

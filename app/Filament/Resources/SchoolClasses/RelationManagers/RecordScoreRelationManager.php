@@ -75,8 +75,14 @@ class RecordScoreRelationManager extends RelationManager
 
                 Column::textInput('score')
                     ->width('1%')
-                    ->placeholder('Max: ' . ($this->getOwnerRecord()->max_score ?? 0))
                     ->rules(['numeric', 'min:0', 'max:' . ($this->getOwnerRecord()->max_score ?? 0)])
+                    ->placeholder(function () {
+                        if (!$this->getOwnerRecord()->schoolClass->active) {
+                            return null;
+                        }
+
+                        return 'Max: ' . ($this->getOwnerRecord()->max_score ?? 0);
+                    })
                     ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
 
             ])

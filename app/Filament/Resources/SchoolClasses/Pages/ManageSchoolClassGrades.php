@@ -257,6 +257,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     {
         return [
             Action::make('settingsAction')
+                ->disabledForm(fn () => !$this->getOwnerRecord()->active)
                 ->label('Grading Settings')
                 ->icon(Icon::settings())
                 ->color('primary')

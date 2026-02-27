@@ -28,8 +28,13 @@ trait ManageActionVisibility
             // manage assessments
             'assessmentLists',
 
-            // fee collections
+            // manage fee collections
             'updateAmountPaid',
+
+            // manage grades
+            'grades',
+            'clearAll',
+            'settingsAction',
         ];
 
         Action::configureUsing(function (Action $action) use ($excludedActions) {
