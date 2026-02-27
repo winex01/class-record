@@ -25,7 +25,7 @@ final class Column
             ->trueColor(Color::Emerald)
             ->falseIcon('heroicon-o-x-circle')
             ->falseColor(Color::Rose)
-            ->size(IconSize::TwoExtraLarge);
+            ->size(IconSize::Large);
     }
 
     public static function timePickerFromAndTo($name, $starts_at = 'starts_at', $ends_at = 'ends_at')
