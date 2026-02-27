@@ -27,6 +27,9 @@ trait ManageActionVisibility
 
             // manage assessments
             'assessmentLists',
+
+            // fee collections
+            'updateAmountPaid',
         ];
 
         Action::configureUsing(function (Action $action) use ($excludedActions) {

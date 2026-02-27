@@ -80,12 +80,14 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                     ->color('success')
                     ->money('PHP')
                     ->alignCenter()
-                    ->getStateUsing(function (Student $record) {
-                        $totalPaid = $record->feeCollections->sum('pivot.amount');
+                    ->placeholder('—')
+                    ->getStateUsing(function ($record) {
+                        $totalPaid = $record->feeCollections()
+                            ->where('school_class_id', $this->schoolClassId)
+                            ->sum('fee_collection_student.amount');
 
                         return $totalPaid > 0 ? $totalPaid : null;
                     })
-                    ->placeholder('—')
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query->withSum([
                             'feeCollections as total_paid_sort' => function ($q) {
@@ -94,41 +96,17 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                         ], 'fee_collection_student.amount')
                         ->orderBy('total_paid_sort', $direction);
                     })
-                    ->action(
-                        Action::make('totalPaidFeeCollections')
-                                    ->modalHeading(fn ($record) => $record->full_name . ' - Fee Collections')
-                                    ->icon(Icon::assessments())
-                                    ->modalContent(function ($record, $livewire) {
-                                        return new HtmlString(
-                                            Blade::render(
-                                                <<<'BLADE'
-                                                <div>
-                                                    @livewire('student-fee-collections', [
-                                                        'studentId' => $studentId,
-                                                        'schoolClassId' => $schoolClassId,
-                                                        'isPaidOrRemaining' => $isPaidOrRemaining,
-                                                    ])
-                                                </div>
-                                                BLADE,
-                                                [
-                                                    'studentId' => $record->id,
-                                                    'schoolClassId' => $livewire->schoolClassId,
-                                                    'isPaidOrRemaining' => true,
-                                                ]
-                                            )
-                                        );
-                                    })
-                                    ->modalSubmitAction(false)
-                                    ->modalCancelAction(false)
-                                    ->modalWidth(Width::TwoExtraLarge)
-                    ),
+                    ->action(static::getStudentFeePaidAndBalance()),
 
                 TextColumn::make('remaining')
                     ->color('danger')
                     ->money('PHP')
                     ->alignCenter()
-                    ->getStateUsing(function (Student $record) {
-                        $fixedFees = $record->feeCollections->where('amount', '>', 0);
+                    ->placeholder('—')
+                    ->getStateUsing(function ($record) {
+                        $fixedFees = $record->feeCollections
+                            ->where('school_class_id', $this->schoolClassId)
+                            ->where('amount', '>', 0);
 
                         $totalDue = $fixedFees->sum('amount');
                         $totalPaid = $fixedFees->sum('pivot.amount');
@@ -137,7 +115,6 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
 
                         return $remaining > 0 ? $remaining : null;
                     })
-                    ->placeholder('—')
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query->withSum([
                             'feeCollections as total_due_sort' => function ($q) {
@@ -151,33 +128,32 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                         ], 'fee_collection_student.amount')
                         ->orderByRaw("(total_due_sort - total_paid_sort) {$direction}");
                     })
-                    ->action(
-                        Action::make('remainingFeeCollections')
-                            ->icon(Icon::assessments())
-                            ->modalSubmitAction(false)
-                            ->modalCancelAction(false)
-                            ->modalWidth(Width::TwoExtraLarge)
-                            ->modalHeading(fn ($record) => $record->full_name . ' - Fee Collections')
-                            ->modalContent(fn ($record, $livewire) => new HtmlString(
-                                Blade::render(
-                                    '@livewire("student-fee-collections", ["studentId" => $studentId, "schoolClassId" => $schoolClassId, "isPaidOrRemaining" => $isPaidOrRemaining])',
-                                    [
-                                        'studentId' => $record->id,
-                                        'schoolClassId' => $livewire->schoolClassId,
-                                        'isPaidOrRemaining' => false,
-                                    ]
-                                )
-                            ))
-                    ),
+                    ->action(static::getStudentFeePaidAndBalance()),
 
             ])
             ->filters([
                 ...StudentResource::getFilters()
             ])
             ->emptyStateHeading(false)
-            ->emptyStateDescription(false)
-            ->recordActions([
-                //
-            ]);
+            ->emptyStateDescription(false);
+    }
+
+    public static function getStudentFeePaidAndBalance()
+    {
+        return Action::make('studentFeePaidAndBalance')
+                ->icon(Icon::assessments())
+                ->modalSubmitAction(false)
+                ->modalCancelAction(false)
+                ->modalWidth(Width::TwoExtraLarge)
+                ->modalHeading(fn ($record) => $record->full_name . ' - Fee Collections')
+                ->modalContent(fn ($record, $livewire) => new HtmlString(
+                    Blade::render(
+                        '@livewire("student-fee-collections", ["studentId" => $studentId, "schoolClassId" => $schoolClassId])',
+                        [
+                            'studentId' => $record->id,
+                            'schoolClassId' => $livewire->schoolClassId,
+                        ]
+                    )
+                ));
     }
 }

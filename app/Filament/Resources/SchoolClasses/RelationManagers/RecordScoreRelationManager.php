@@ -4,7 +4,6 @@ namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
 use App\Services\Column;
 use Filament\Tables\Table;
-use Filament\Support\Enums\Width;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,6 +50,7 @@ class RecordScoreRelationManager extends RelationManager
             ->columns([
                 ...ManageSchoolClassStudents::getColumns(),
 
+                // when active
                 Column::select('group')
                     ->options(function ($record) {
                         $baseOptions = GroupResource::selectOptions();
@@ -70,11 +70,15 @@ class RecordScoreRelationManager extends RelationManager
                             $record->pivot->save();
                         }
                     })
-                    ->visible($this->getOwnerRecord()->can_group_students),
+                    ->visible($this->getOwnerRecord()->can_group_students)
+                    ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
 
                 Column::textInput('score')
+                    ->width('1%')
                     ->placeholder('Max: ' . ($this->getOwnerRecord()->max_score ?? 0))
                     ->rules(['numeric', 'min:0', 'max:' . ($this->getOwnerRecord()->max_score ?? 0)])
+                    ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
+
             ])
             ->filters([
                 SelectFilter::make('group')
@@ -90,7 +94,6 @@ class RecordScoreRelationManager extends RelationManager
 
                     ...StudentResource::getFilters(),
             ])
-            ->filtersFormWidth(Width::Medium)
             ->headerActions([
                 ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
             ])

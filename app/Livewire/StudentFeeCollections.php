@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Filament\Tables\Table;
+use App\Models\SchoolClass;
 use Filament\Actions\Action;
 use App\Models\FeeCollection;
 use Filament\Support\Enums\Width;
@@ -17,6 +18,7 @@ use App\Livewire\Traits\RenderTableTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Placeholder;
+use App\Filament\Traits\ManageActionVisibility;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -29,16 +31,15 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
     use InteractsWithTable;
     use InteractsWithActions;
     use RenderTableTrait;
+    use ManageActionVisibility;
 
     public $studentId;
     public $schoolClassId;
-    public $isPaidOrRemaining;
 
-    public function mount($studentId, $schoolClassId, $isPaidOrRemaining)
+    public function mount($studentId, $schoolClassId)
     {
         $this->studentId = $studentId;
         $this->schoolClassId = $schoolClassId;
-        $this->isPaidOrRemaining = $isPaidOrRemaining;
 
         // Reset table page to 1 on mount or everytime modal is open
         $this->resetTable();
@@ -78,73 +79,87 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
         return [
             ...$columns,
 
-            TextColumn::make('student_amount')
-                ->label(fn () => $this->isPaidOrRemaining ? 'Amount Paid' : 'Remaining Balance')
+            TextColumn::make('paid')
                 ->money('PHP')
+                ->color('success')
                 ->alignCenter()
+                ->placeholder('—')
                 ->getStateUsing(function (FeeCollection $record) {
                     $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
-
-                    if ($this->isPaidOrRemaining) {
-                        $amount = $paidAmount;
-                    } else {
-                        $amount = $record->amount - $paidAmount;
-                    }
-
-                    return $amount > 0 ? $amount : null;
+                    return $paidAmount > 0 ? $paidAmount : null;
                 })
-                ->placeholder('—')
-                ->color($this->isPaidOrRemaining ? 'success' : 'danger')
+
                 ->sortable(query: function (Builder $query, string $direction): Builder {
-                    if ($this->isPaidOrRemaining) {
-                        return $query->orderByRaw(
-                            'CAST(COALESCE((
+                    return $query->orderByRaw(
+                        'CAST(COALESCE((
+                            SELECT SUM(amount) FROM fee_collection_student
+                            WHERE fee_collection_student.fee_collection_id = fee_collections.id
+                            AND fee_collection_student.student_id = ?
+                        ), -1) AS DECIMAL(10,2)) ' . $direction,
+                        [$this->studentId]
+                    );
+                })
+                ->summarize(
+                    Summarizer::make()
+                        ->label('Total Paid')
+                        ->money('PHP')
+                        ->using(function ($query) {
+                            return FeeCollection::query()
+                                ->whereIn('id', $query->pluck('id'))
+                                ->with(['students' => fn ($q) => $q->where('students.id', $this->studentId)])
+                                ->get()
+                                ->sum(function ($record) {
+                                    $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
+                                    return $paidAmount > 0 ? $paidAmount : 0;
+                                });
+                        })
+                )
+                ->action($this->updateAmountAction()),
+
+            TextColumn::make('remaining')
+                ->money('PHP')
+                ->color('danger')
+                ->alignCenter()
+                ->placeholder('—')
+                ->getStateUsing(function (FeeCollection $record) {
+                    $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
+                    $remaining = $record->amount - $paidAmount;
+                    return $remaining > 0 ? $remaining : null;
+                })
+
+                ->sortable(query: function (Builder $query, string $direction): Builder {
+                    return $query->orderByRaw(
+                        'CASE
+                            WHEN (fee_collections.amount - COALESCE((
                                 SELECT SUM(amount) FROM fee_collection_student
                                 WHERE fee_collection_student.fee_collection_id = fee_collections.id
                                 AND fee_collection_student.student_id = ?
-                            ), -1) AS DECIMAL(10,2)) ' . $direction,
-                            [$this->studentId]
-                        );
-                    } else {
-                        return $query->orderByRaw(
-                            'CASE
-                                WHEN (fee_collections.amount - COALESCE((
-                                    SELECT SUM(amount) FROM fee_collection_student
-                                    WHERE fee_collection_student.fee_collection_id = fee_collections.id
-                                    AND fee_collection_student.student_id = ?
-                                ), 0)) <= 0 THEN -1
-                                ELSE (fee_collections.amount - COALESCE((
-                                    SELECT SUM(amount) FROM fee_collection_student
-                                    WHERE fee_collection_student.fee_collection_id = fee_collections.id
-                                    AND fee_collection_student.student_id = ?
-                                ), 0))
-                            END ' . $direction,
-                            [$this->studentId, $this->studentId]
-                        );
-                    }
+                            ), 0)) <= 0 THEN -1
+                            ELSE (fee_collections.amount - COALESCE((
+                                SELECT SUM(amount) FROM fee_collection_student
+                                WHERE fee_collection_student.fee_collection_id = fee_collections.id
+                                AND fee_collection_student.student_id = ?
+                            ), 0))
+                        END ' . $direction,
+                        [$this->studentId, $this->studentId]
+                    );
                 })
                 ->summarize(
-                Summarizer::make()
-                    ->label('Total')
-                    ->money('PHP')
-                    ->using(function ($query) {
-                        return FeeCollection::query()
-                            ->whereIn('id', $query->pluck('id'))
-                            ->with(['students' => fn ($q) => $q->where('students.id', $this->studentId)])
-                            ->get()
-                            ->sum(function ($record) {
-                                $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
-
-                                if ($this->isPaidOrRemaining) {
-                                    $amount = $paidAmount;
-                                } else {
-                                    $amount = $record->amount - $paidAmount;
-                                }
-
-                                return $amount > 0 ? $amount : 0;
-                            });
-                    })
-            )
+                    Summarizer::make()
+                        ->label('Remaining Balance')
+                        ->money('PHP')
+                        ->using(function ($query) {
+                            return FeeCollection::query()
+                                ->whereIn('id', $query->pluck('id'))
+                                ->with(['students' => fn ($q) => $q->where('students.id', $this->studentId)])
+                                ->get()
+                                ->sum(function ($record) {
+                                    $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
+                                    $remaining = $record->amount - $paidAmount;
+                                    return $remaining > 0 ? $remaining : 0;
+                                });
+                        })
+                )
             ->action($this->updateAmountAction()),
         ];
     }
@@ -152,6 +167,11 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
     protected function updateAmountAction()
     {
         return Action::make('updateAmountPaid')
+                ->disabled(function () {
+                    // NOTE:: we need this although the submit button is already hidden,
+                    // i think its better if we disable the action click that opens the modal
+                    return !SchoolClass::findOrFail($this->schoolClassId)->active;
+                })
                 ->form([
                     Section::make()
                         ->columns(3)

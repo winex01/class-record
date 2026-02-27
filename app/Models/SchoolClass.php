@@ -17,6 +17,7 @@ class SchoolClass extends Model
         'year_section' => 'array',
         'date_start' => 'date',
         'date_end' => 'date',
+        'active' => 'boolean',
     ];
 
     public function students()

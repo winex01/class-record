@@ -65,20 +65,6 @@ class TakeFeeCollectionRelationManager extends RelationManager
             ->columns([
                 ...ManageSchoolClassStudents::getColumns(),
 
-                Column::textInput('amount')
-                    ->placeholder(
-                        $this->getOwnerRecord()->amount == 0
-                            ? '₱'
-                            : 'Fee ₱' . ($this->getOwnerRecord()->amount ?? 0)
-                    )
-                    ->rules(function () {
-                        $amount = $this->getOwnerRecord()->amount ?? 0;
-
-                        return $amount > 0
-                            ? ['numeric', 'min:0', 'max:' . $amount]
-                            : ['numeric', 'min:0'];
-                    }),
-
                 Column::select('status')
                     ->options(FeeCollectionStatus::class)
                     ->afterStateUpdated(function ($state, $record) {
@@ -101,7 +87,21 @@ class TakeFeeCollectionRelationManager extends RelationManager
                                 );
                         }
                     })
-                    ->visible($this->getOwnerRecord()->amount > 0 ? true : false)
+                    ->visible($this->getOwnerRecord()->amount > 0 ? true : false),
+
+                Column::textInput('amount')
+                    ->placeholder(
+                        $this->getOwnerRecord()->amount == 0
+                            ? '₱'
+                            : 'Fee ₱' . ($this->getOwnerRecord()->amount ?? 0)
+                    )
+                    ->rules(function () {
+                        $amount = $this->getOwnerRecord()->amount ?? 0;
+
+                        return $amount > 0
+                            ? ['numeric', 'min:0', 'max:' . $amount]
+                            : ['numeric', 'min:0'];
+                    }),
             ])
             ->filters([
                 ...StudentResource::getFilters()
