@@ -1,7 +1,6 @@
 <?php
 /*
 TODO:: in manage Grade use grid style or box like not row
-TODO:: some of the requireConfirmation modal dialogue button submit/confirm is not align center, ex: in livewire student attendance table the mark as present/absent
 
 TODO:: TBD:: add edit school/subject above the manage actions navs widgets in getHeaderActions
 

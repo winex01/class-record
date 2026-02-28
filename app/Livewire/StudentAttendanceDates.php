@@ -7,6 +7,7 @@ use App\Services\Column;
 use App\Models\Attendance;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
+use Filament\Support\Enums\Alignment;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
@@ -68,14 +69,14 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
                     ->label(fn ($record) => $record->students->first()?->pivot->present ? 'Mark Absent' : 'Mark Present')
                     ->icon('heroicon-o-arrow-path-rounded-square')
                     ->color(fn ($record) => $record->students->first()?->pivot->present ? 'danger' : 'success')
-                    ->requiresConfirmation()
-                    ->modalHeading('Confirm Attendance Update')
                     ->modalDescription(fn ($record) =>
                         'Update attendance for ' . $record->date->format('M d, Y') . '?'
                     )
                     ->modalSubmitActionLabel(fn ($record) =>
-                        $record->students->first()?->pivot->present ? 'Mark as Absent' : 'Mark as Present'
+                        $record->students->first()?->pivot->present ? 'Mark Absent' : 'Mark Present'
                     )
+                    ->requiresConfirmation()
+                    ->modalFooterActionsAlignment(Alignment::Center)
                     ->action(function ($record) {
                         $student = $record->students->first();
                         $currentState = $student?->pivot->present ?? false;

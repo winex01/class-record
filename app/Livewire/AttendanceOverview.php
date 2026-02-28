@@ -151,7 +151,7 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
                         ->modalContent(self::studentAttendanceDatesModal(false))
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)
-                        ->modalWidth(Width::Small)
+                        ->modalWidth(Width::Medium)
                 ),
             ])
             ->filters([
