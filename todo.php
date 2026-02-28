@@ -1,7 +1,5 @@
 <?php
 /*
-TODO:: in manage Grade use grid style or box like not row
-
 TODO:: TBD:: add edit school/subject above the manage actions navs widgets in getHeaderActions
 
 TODO:: Grading components templates resource/crud

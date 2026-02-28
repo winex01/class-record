@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Grade;
 use App\Services\Icon;
+use App\Services\Column;
 use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -12,10 +13,12 @@ use App\Models\GradingComponent;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use App\Models\TransmuteTemplate;
+use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
+use Filament\Support\Enums\TextSize;
 use App\Models\GradeGradingComponent;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -25,10 +28,10 @@ use Filament\Schemas\Components\View;
 use Filament\Support\Enums\Alignment;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
@@ -229,13 +232,16 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->recordTitleAttribute('grading_period')
             ->searchable(false)
             ->columns([
-                TextColumn::make('grading_period')
+                Stack::make([
+                    Column::text('grading_period')
                         ->label('Grading Period')
-                        ->badge()
-                        ->color('warning')
-                        ->sortable()
-                        ->searchable()
-                        ->toggleable(false),
+                        ->color('primary')
+                        ->size(TextSize::Large)
+                ])
+            ])
+            ->contentGrid([
+                'md' => 4,
+                'xl' => 4,
             ])
             ->paginated(false)
             ->actionsAlignment('start')
@@ -243,14 +249,31 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 CreateAction::make()->modalWidth(Width::TwoExtraLarge),
             ])
             ->recordActions([
-                static::viewGrades($this->getOwnerRecord()),
-                ViewAction::make()->modalWidth(Width::TwoExtraLarge),
-                EditAction::make()->modalWidth(Width::TwoExtraLarge),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    static::viewGrades($this->getOwnerRecord())
+                        ->label(false)
+                        ->tooltip('Grades'),
+
+                    ViewAction::make()
+                        ->modalWidth(Width::TwoExtraLarge)
+                        ->label(false)
+                        ->tooltip('View'),
+
+                    EditAction::make()
+                        ->modalWidth(Width::TwoExtraLarge)
+                        ->label(false)
+                        ->tooltip('Edit'),
+
+                    DeleteAction::make()
+                        ->label(false)
+                        ->tooltip('Delete'),
+                ])
+                ->buttonGroup()
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordAction('grades');
     }
 
     protected function getHeaderActions(): array
