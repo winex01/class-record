@@ -8,6 +8,7 @@ use Livewire\Component;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
 use Filament\Actions\Action;
+use App\Models\FeeCollection;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Blade;
@@ -20,6 +21,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Tables\Columns\Summarizers\Summarizer;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 
@@ -96,6 +98,18 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                         ], 'fee_collection_student.amount')
                         ->orderBy('total_paid_sort', $direction);
                     })
+                    ->summarize(
+                        Summarizer::make()
+                            ->label('Overall Total')
+                            ->money('PHP')
+                            ->using(function ($query) {
+                                return FeeCollection::query()
+                                    ->where('school_class_id', $this->schoolClassId)
+                                    ->join('fee_collection_student', 'fee_collections.id', '=', 'fee_collection_student.fee_collection_id')
+                                    ->whereIn('fee_collection_student.student_id', $query->pluck('id'))
+                                    ->sum('fee_collection_student.amount');
+                            })
+                    )
                     ->action(static::getStudentFeePaidAndBalance()),
 
                 TextColumn::make('remaining')
@@ -128,6 +142,32 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                         ], 'fee_collection_student.amount')
                         ->orderByRaw("(total_due_sort - total_paid_sort) {$direction}");
                     })
+                    ->summarize(
+                        Summarizer::make()
+                            ->label('Total Remaining')
+                            ->money('PHP')
+                            ->using(function ($query) {
+                                $studentIds = $query->pluck('id');
+
+                                $totalDue = FeeCollection::query()
+                                    ->where('school_class_id', $this->schoolClassId)
+                                    ->where('fee_collections.amount', '>', 0) // we add this it will not incldue the open contribution
+                                    ->join('fee_collection_student', 'fee_collections.id', '=', 'fee_collection_student.fee_collection_id')
+                                    ->whereIn('fee_collection_student.student_id', $studentIds)
+                                    ->sum('fee_collections.amount');
+
+                                $totalPaid = FeeCollection::query()
+                                    ->where('school_class_id', $this->schoolClassId)
+                                    ->where('fee_collections.amount', '>', 0) // dont include open contribution
+                                    ->join('fee_collection_student', 'fee_collections.id', '=', 'fee_collection_student.fee_collection_id')
+                                    ->whereIn('fee_collection_student.student_id', $studentIds)
+                                    ->sum('fee_collection_student.amount');
+
+                                $remaining = $totalDue - $totalPaid;
+
+                                return $remaining > 0 ? $remaining : 0;
+                            })
+                    )
                     ->action(static::getStudentFeePaidAndBalance()),
 
             ])
