@@ -13,7 +13,6 @@ use App\Models\GradingComponent;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use App\Models\TransmuteTemplate;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -31,7 +30,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Tables\Columns\Layout\Stack;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
@@ -230,18 +228,11 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     {
         return $table
             ->recordTitleAttribute('grading_period')
-            ->searchable(false)
             ->columns([
-                Stack::make([
-                    Column::text('grading_period')
-                        ->label('Grading Period')
-                        ->color('primary')
-                        ->size(TextSize::Large)
-                ])
-            ])
-            ->contentGrid([
-                'md' => 4,
-                'xl' => 4,
+                Column::text('grading_period')
+                    ->label('Grading Period')
+                    ->color('primary')
+                    ->size(TextSize::Large)
             ])
             ->paginated(false)
             ->actionsAlignment('start')
@@ -249,26 +240,10 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 CreateAction::make()->modalWidth(Width::TwoExtraLarge),
             ])
             ->recordActions([
-                ActionGroup::make([
-                    static::viewGrades($this->getOwnerRecord())
-                        ->label(false)
-                        ->tooltip('Grades'),
-
-                    ViewAction::make()
-                        ->modalWidth(Width::TwoExtraLarge)
-                        ->label(false)
-                        ->tooltip('View'),
-
-                    EditAction::make()
-                        ->modalWidth(Width::TwoExtraLarge)
-                        ->label(false)
-                        ->tooltip('Edit'),
-
-                    DeleteAction::make()
-                        ->label(false)
-                        ->tooltip('Delete'),
-                ])
-                ->buttonGroup()
+                static::viewGrades($this->getOwnerRecord()),
+                ViewAction::make()->modalWidth(Width::TwoExtraLarge),
+                EditAction::make()->modalWidth(Width::TwoExtraLarge),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
