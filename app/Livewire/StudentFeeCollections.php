@@ -35,11 +35,13 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
 
     public $studentId;
     public $schoolClassId;
+    public $isReadOnly = false;
 
     public function mount($studentId, $schoolClassId)
     {
         $this->studentId = $studentId;
         $this->schoolClassId = $schoolClassId;
+        $this->isReadOnly = !SchoolClass::findOrFail($this->schoolClassId)->active;
 
         // Reset table page to 1 on mount or everytime modal is open
         $this->resetTable();
@@ -88,7 +90,6 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                     $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
                     return $paidAmount > 0 ? $paidAmount : null;
                 })
-
                 ->sortable(query: function (Builder $query, string $direction): Builder {
                     return $query->orderByRaw(
                         'CAST(COALESCE((
@@ -167,11 +168,7 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
     protected function updateAmountAction()
     {
         return Action::make('updateAmountPaid')
-                ->disabled(function () {
-                    // NOTE:: we need this although the submit button is already hidden,
-                    // i think its better if we disable the action click that opens the modal
-                    return !SchoolClass::findOrFail($this->schoolClassId)->active;
-                })
+                ->disabled($this->isReadOnly)
                 ->form([
                     Section::make()
                         ->columns(3)

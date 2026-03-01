@@ -107,52 +107,50 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
                 ...ManageSchoolClassStudents::getColumns(),
 
                 TextColumn::make('present_count')
-                ->label('Present')
-                ->state(function ($record) {
-                    $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
-                    return $studentData['present_count'] ?? 0;
-                })
-                ->alignCenter()
-                ->badge()
-                ->color('success')
-                ->sortable(query: function ($query, $direction) {
-                    $studentsData = $this->getCurrentStudentsData();
-                    $orderMap = collect($studentsData)->sortBy('present_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
+                    ->label('Present')
+                    ->state(function ($record) {
+                        $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
+                        return $studentData['present_count'] ?? 0;
+                    })
+                    ->alignCenter()
+                    ->color('success')
+                    ->sortable(query: function ($query, $direction) {
+                        $studentsData = $this->getCurrentStudentsData();
+                        $orderMap = collect($studentsData)->sortBy('present_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
 
-                    return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
-                })
-                ->action(
-                    Action::make('viewPresences')
-                        ->modalHeading(fn ($record) => $record->full_name . ' - Present Dates')
-                        ->modalContent(self::studentAttendanceDatesModal(true))
-                        ->modalSubmitAction(false)
-                        ->modalCancelAction(false)
-                        ->modalWidth(Width::Small)
-                ),
+                        return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
+                    })
+                    ->action(
+                        Action::make('viewPresences')
+                            ->modalHeading(fn ($record) => $record->full_name . ' - Present Dates')
+                            ->modalContent(self::studentAttendanceDatesModal(true))
+                            ->modalSubmitAction(false)
+                            ->modalCancelAction(false)
+                            ->modalWidth(Width::Small)
+                    ),
 
                 TextColumn::make('absent_count')
-                ->label('Absent')
-                ->state(function ($record) {
-                    $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
-                    return $studentData['absent_count'] ?? 0;
-                })
-                ->alignCenter()
-                ->badge()
-                ->color('danger')
-                ->sortable(query: function ($query, $direction) {
-                    $studentsData = $this->getCurrentStudentsData();
-                    $orderMap = collect($studentsData)->sortBy('absent_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
+                    ->label('Absent')
+                    ->state(function ($record) {
+                        $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
+                        return $studentData['absent_count'] ?? 0;
+                    })
+                    ->alignCenter()
+                    ->color('danger')
+                    ->sortable(query: function ($query, $direction) {
+                        $studentsData = $this->getCurrentStudentsData();
+                        $orderMap = collect($studentsData)->sortBy('absent_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
 
-                    return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
-                })
-                ->action(
-                    Action::make('viewAbsences')
-                        ->modalHeading(fn ($record) => $record->full_name . ' - Absent Dates')
-                        ->modalContent(self::studentAttendanceDatesModal(false))
-                        ->modalSubmitAction(false)
-                        ->modalCancelAction(false)
-                        ->modalWidth(Width::Medium)
-                ),
+                        return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
+                    })
+                    ->action(
+                        Action::make('viewAbsences')
+                            ->modalHeading(fn ($record) => $record->full_name . ' - Absent Dates')
+                            ->modalContent(self::studentAttendanceDatesModal(false))
+                            ->modalSubmitAction(false)
+                            ->modalCancelAction(false)
+                            ->modalWidth(Width::Medium)
+                    ),
             ])
             ->filters([
                 ...StudentResource::getFilters()

@@ -89,7 +89,8 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                         $livewire->form->saveRelationships();
                     }),
                 DeleteAction::make(),
-            ]);
+            ])
+            ->cardAction('view');
     }
 
     protected function getHeaderActions(): array
@@ -187,11 +188,6 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                                 ->required()
                                 ->maxLength(255),
 
-                            Textarea::make('description')
-                                ->nullable()
-                                ->rows(3)
-                                ->columnSpanFull(),
-
                             Field::tags('tags'),
 
                             Field::date('completion_date'),
@@ -215,6 +211,11 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
 
                     Section::make()
                         ->schema([
+                            Textarea::make('description')
+                                ->nullable()
+                                ->rows(5)
+                                ->columnSpanFull(),
+
                             Select::make('myFiles')
                                 ->multiple()
                                 ->options(MyFile::pluck('name', 'id'))

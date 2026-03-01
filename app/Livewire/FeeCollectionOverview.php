@@ -144,7 +144,7 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                     })
                     ->summarize(
                         Summarizer::make()
-                            ->label('Total Remaining')
+                            ->label('Overall Remaining')
                             ->money('PHP')
                             ->using(function ($query) {
                                 $studentIds = $query->pluck('id');

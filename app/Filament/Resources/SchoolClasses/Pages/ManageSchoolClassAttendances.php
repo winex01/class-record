@@ -51,7 +51,6 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
 
                 Column::text('present')
                     ->searchable(false)
-                    ->badge()
                     ->color('info')
                     ->alignCenter()
                     ->state(fn ($record) => $record->students()->wherePivot('present', true)->count())
@@ -79,7 +78,6 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
 
                 Column::text('absent')
                     ->searchable(false)
-                    ->badge()
                     ->color('danger')
                     ->alignCenter()
                     ->state(fn ($record) => $record->students()->wherePivot('present', false)->count())
@@ -147,7 +145,8 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordAction('takeAttendanceRelationManager');
     }
 
     public static function getTakeAttendanceAction()
