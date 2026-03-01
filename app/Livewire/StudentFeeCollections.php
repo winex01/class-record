@@ -115,7 +115,10 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                                 });
                         })
                 )
-                ->action($this->updateAmountAction()),
+                ->extraAttributes(fn () => ! $this->isReadOnly
+                ? ['class' => 'cursor-pointer hover:underline hover:text-primary-600']
+                : [])
+                ->action($this->isReadOnly ? null : $this->updateAmountAction()),
 
             TextColumn::make('remaining')
                 ->money('PHP')
@@ -161,7 +164,10 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                                 });
                         })
                 )
-            ->action($this->updateAmountAction()),
+                ->extraAttributes(fn () => ! $this->isReadOnly
+                ? ['class' => 'cursor-pointer hover:underline hover:text-primary-600']
+                : [])
+                ->action($this->isReadOnly ? null : $this->updateAmountAction()),
         ];
     }
 

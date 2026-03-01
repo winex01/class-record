@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Assessment;
 use Filament\Tables\Table;
+use App\Models\SchoolClass;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\DB;
@@ -34,11 +35,13 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
 
     public $studentId;
     public $schoolClassId;
+    public $isReadOnly = false;
 
     public function mount($studentId, $schoolClassId)
     {
         $this->studentId = $studentId;
         $this->schoolClassId = $schoolClassId;
+        $this->isReadOnly = !SchoolClass::findOrFail($this->schoolClassId)->active;
 
         // Reset table page to 1 on mount or everytime modal is open
         $this->resetTable();
@@ -78,13 +81,12 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
             ...$columns,
 
             TextColumn::make('students.pivot.score')
-                ->badge()
                 ->color('success')
                 ->label('Score')
+                 ->alignCenter()
                 ->getStateUsing(function ($record) {
                     return $record->students->first()?->pivot->score;
                 })
-                ->alignCenter()
                 ->sortable(query: function (Builder $query, string $direction): Builder {
                     return $query
                         ->orderBy(
@@ -96,11 +98,13 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                             $direction
                         );
                 })
-                ->action($this->updateStudentScore()),
+                ->extraAttributes(fn () => ! $this->isReadOnly
+                ? ['class' => 'cursor-pointer hover:underline hover:text-primary-600']
+                : [])
+                ->action($this->isReadOnly ? null : $this->updateStudentScore()),
 
             TextColumn::make('students.pivot.group')
                 ->label('Group')
-                ->badge(fn ($record) => $record->can_group_students)
                 ->color(fn ($record) => $record->can_group_students ? 'info' : null)
                 ->getStateUsing(function ($record) {
                     return $record->students->first()?->pivot->group;
@@ -118,7 +122,10 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                 })
                 ->toggleable()
                 ->toggledHiddenByDefault(true)
-                ->action($this->updateStudentGroup()),
+                ->extraAttributes(fn () => ! $this->isReadOnly
+                ? ['class' => 'cursor-pointer hover:underline hover:text-primary-600']
+                : [])
+                ->action($this->isReadOnly ? null : $this->updateStudentGroup()),
         ];
     }
 

@@ -108,18 +108,21 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
 
                 TextColumn::make('present_count')
                     ->label('Present')
+                    ->color('success')
+                    ->alignCenter()
                     ->state(function ($record) {
                         $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
                         return $studentData['present_count'] ?? 0;
                     })
-                    ->alignCenter()
-                    ->color('success')
                     ->sortable(query: function ($query, $direction) {
                         $studentsData = $this->getCurrentStudentsData();
                         $orderMap = collect($studentsData)->sortBy('present_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
 
                         return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
                     })
+                    ->extraAttributes([
+                        'class' => 'cursor-pointer hover:underline hover:text-primary-600',
+                    ])
                     ->action(
                         Action::make('viewPresences')
                             ->modalHeading(fn ($record) => $record->full_name . ' - Present Dates')
@@ -131,18 +134,21 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
 
                 TextColumn::make('absent_count')
                     ->label('Absent')
+                    ->color('danger')
+                    ->alignCenter()
                     ->state(function ($record) {
                         $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
                         return $studentData['absent_count'] ?? 0;
                     })
-                    ->alignCenter()
-                    ->color('danger')
                     ->sortable(query: function ($query, $direction) {
                         $studentsData = $this->getCurrentStudentsData();
                         $orderMap = collect($studentsData)->sortBy('absent_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
 
                         return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
                     })
+                    ->extraAttributes([
+                        'class' => 'cursor-pointer hover:underline hover:text-primary-600',
+                    ])
                     ->action(
                         Action::make('viewAbsences')
                             ->modalHeading(fn ($record) => $record->full_name . ' - Absent Dates')

@@ -53,6 +53,9 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     ->searchable(false)
                     ->color('info')
                     ->alignCenter()
+                    ->extraAttributes([
+                        'class' => 'cursor-pointer hover:underline hover:text-primary-600',
+                    ])
                     ->state(fn ($record) => $record->students()->wherePivot('present', true)->count())
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
@@ -80,6 +83,9 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     ->searchable(false)
                     ->color('danger')
                     ->alignCenter()
+                    ->extraAttributes([
+                        'class' => 'cursor-pointer hover:underline hover:text-primary-600',
+                    ])
                     ->state(fn ($record) => $record->students()->wherePivot('present', false)->count())
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
