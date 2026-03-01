@@ -233,6 +233,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->label('Grading Period')
                     ->color('primary')
                     ->size(TextSize::Large)
+                    ->searchable(false)
             ])
             ->paginated(false)
             ->actionsAlignment('start')
