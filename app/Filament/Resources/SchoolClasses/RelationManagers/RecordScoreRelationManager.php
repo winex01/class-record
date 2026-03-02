@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
 use App\Services\Column;
 use Filament\Tables\Table;
+use Filament\Tables\Grouping\Group;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -108,7 +109,7 @@ class RecordScoreRelationManager extends RelationManager
             ])
             ->groups(
                 $this->getOwnerRecord()->can_group_students
-                    ? [\Filament\Tables\Grouping\Group::make('group')]
+                    ? [Group::make('group')->titlePrefixedWithLabel(false)]
                     : []
             )
             ->defaultGroup(
