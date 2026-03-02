@@ -338,9 +338,10 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->addActionLabel('Add range')
                     ->aboveContent([
                         Action::make('copyTransmuteTemplate')
-                            ->label('Copy from Template')
+                            ->label('Copy from Templates')
                             ->icon(icon: 'heroicon-o-document-duplicate')
                             ->modalWidth(Width::Large)
+                            ->modalHeading('Transmute Templates')
                             ->form([
                                 Select::make('template_id')
                                     ->label('Select Template')
@@ -404,60 +405,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         fn (Action $action) => $action->requiresConfirmation()->modalFooterActionsAlignment(Alignment::Center)
                     )
                 ]); // end schema
-    }
-
-    public static function rangesField(bool $isRepeater = true)
-    {
-        return [
-            TextInput::make('initial_min')
-                ->numeric()
-                ->required()
-                ->minValue(0)
-                ->maxValue(100)
-                ->step(0.01)
-                ->placeholder('e.g., 0.00')
-                ->live(onBlur: true)
-                ->rules([
-                    fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
-                        $maxValue = $get('initial_max');
-                        if ($maxValue !== null && $value > $maxValue) {
-                            $fail('Minimum must be less than or equal to maximum.');
-                        }
-                    }
-                ])
-                ->when($isRepeater, fn ($field) => $field->distinct())
-                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
-                ->columnSpan(1),
-
-            TextInput::make('initial_max')
-                ->numeric()
-                ->required()
-                ->minValue(0)
-                ->maxValue(100)
-                ->step(0.01)
-                ->placeholder('e.g., 99.99')
-                ->live(onBlur: true)
-                ->rules([
-                    fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
-                        $minValue = $get('initial_min');
-                        if ($minValue !== null && $value < $minValue) {
-                            $fail('Maximum must be greater than or equal to minimum.');
-                        }
-                    }
-                ])
-                ->when($isRepeater, fn ($field) => $field->distinct())
-                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
-                ->columnSpan(1),
-
-            TextInput::make('transmuted_grade')
-                ->placeholder('e.g., 99, 1.00, A+')
-                ->required()
-                ->maxLength(10)
-                ->when($isRepeater, fn ($field) => $field->distinct())
-                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
-                ->columnSpan(1),
-
-        ];
     }
 
     private static function formTabGradingComponents($ownerRecord)
@@ -525,7 +472,77 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             fn (Action $action) => $action->requiresConfirmation()->modalFooterActionsAlignment(Alignment::Center)
                         )
                         ->addActionLabel('Add grading component')
+                        ->aboveContent([
+                            Action::make('Copy from Templates'), // TODO:: continue this after the grading component templates resource
+
+                            Action::make('deleteAll')
+                                ->label('Delete All')
+                                ->icon('heroicon-o-trash')
+                                ->color('danger')
+                                ->requiresConfirmation()
+                                ->modalHeading('Delete All')
+                                ->modalDescription('Are you sure you want to delete all components?')
+                                ->modalFooterActionsAlignment(Alignment::Center)
+                                ->action(function (Repeater $component) {
+                                    // Clear all items
+                                    $component->state([]);
+                                })
+                        ])
                     ]);
+    }
+
+    public static function rangesField(bool $isRepeater = true)
+    {
+        return [
+            TextInput::make('initial_min')
+                ->numeric()
+                ->required()
+                ->minValue(0)
+                ->maxValue(100)
+                ->step(0.01)
+                ->placeholder('e.g., 0.00')
+                ->live(onBlur: true)
+                ->rules([
+                    fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
+                        $maxValue = $get('initial_max');
+                        if ($maxValue !== null && $value > $maxValue) {
+                            $fail('Minimum must be less than or equal to maximum.');
+                        }
+                    }
+                ])
+                ->when($isRepeater, fn ($field) => $field->distinct())
+                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
+                ->columnSpan(1),
+
+            TextInput::make('initial_max')
+                ->numeric()
+                ->required()
+                ->minValue(0)
+                ->maxValue(100)
+                ->step(0.01)
+                ->placeholder('e.g., 99.99')
+                ->live(onBlur: true)
+                ->rules([
+                    fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
+                        $minValue = $get('initial_min');
+                        if ($minValue !== null && $value < $minValue) {
+                            $fail('Maximum must be greater than or equal to minimum.');
+                        }
+                    }
+                ])
+                ->when($isRepeater, fn ($field) => $field->distinct())
+                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
+                ->columnSpan(1),
+
+            TextInput::make('transmuted_grade')
+                ->placeholder('e.g., 99, 1.00, A+')
+                ->required()
+                ->maxLength(10)
+                ->when($isRepeater, fn ($field) => $field->distinct())
+                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
+                ->columnSpan(1),
+
+        ];
     }
 
     private static function viewGrades($getOwnerRecord)
