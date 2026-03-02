@@ -47,7 +47,7 @@ class LessonsAttachedFiles extends Component implements HasForms, HasTable, HasA
                 ...MyFileResource::getColumns(),
             ])
             ->recordActions([
-                MyFileResource::getViewAction()->form(MyFileResource::getForm())
+                MyFileResource::getViewAction()->form(MyFileResource::getForm())->modalCancelAction(false)
             ])
             ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
