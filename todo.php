@@ -1,8 +1,8 @@
 <?php
 /*
-TODO:: TBD:: add edit school/subject above the manage actions navs widgets in getHeaderActions
-
 TODO:: Grading components templates resource/crud
+
+TODO:: TBD:: add edit school/subject above the manage actions navs widgets in getHeaderActions
 
 TODO:: Notification & calendar for:
         * Lessons Completion date
