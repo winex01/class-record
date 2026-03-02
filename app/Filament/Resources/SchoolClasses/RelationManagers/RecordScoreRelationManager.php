@@ -109,7 +109,11 @@ class RecordScoreRelationManager extends RelationManager
             ])
             ->groups(
                 $this->getOwnerRecord()->can_group_students
-                    ? [Group::make('group')->titlePrefixedWithLabel(false)]
+                    ? [
+                        Group::make('group')
+                            ->titlePrefixedWithLabel(false)
+                            ->collapsible()
+                    ]
                     : []
             )
             ->defaultGroup(
