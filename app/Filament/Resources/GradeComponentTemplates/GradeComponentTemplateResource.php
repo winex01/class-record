@@ -94,8 +94,8 @@ class GradeComponentTemplateResource extends Resource
                         return match ($rowLoop->iteration % 5) {
                             1 => 'primary',
                             2 => 'info',
-                            3 => 'success',
-                            4 => 'warning',
+                            3 => 'warning',
+                            4 => 'pink',
                             default => 'purple',
                         };
                     })
