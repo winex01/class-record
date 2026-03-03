@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Group;
 use App\Models\AssessmentType;
 use App\Models\TransmuteTemplate;
+use App\Models\GradeComponentTemplate;
 
 class TenantSeeder
 {
@@ -14,6 +15,41 @@ class TenantSeeder
         $this->assessmentTypeSeeder($user);
         $this->groupSeeder($user);
         $this->transmuteTemplatesSeeder($user);
+        $this->gradeComponentTemplatesSeeder($user);
+    }
+
+    private function gradeComponentTemplatesSeeder($user)
+    {
+        $subjects = [
+            ['name' => 'MTB', 'ww' => 30, 'pt' => 50, 'qa' => 20],
+            ['name' => 'MATH', 'ww' => 40, 'pt' => 40, 'qa' => 20],
+            ['name' => 'AP', 'ww' => 30, 'pt' => 50, 'qa' => 20],
+            ['name' => 'MUSIC', 'ww' => 20, 'pt' => 60, 'qa' => 20],
+            ['name' => 'ARTS', 'ww' => 20, 'pt' => 60, 'qa' => 20],
+            ['name' => 'PE', 'ww' => 20, 'pt' => 60, 'qa' => 20],
+            ['name' => 'HEALTH', 'ww' => 20, 'pt' => 60, 'qa' => 20],
+            ['name' => 'ESP', 'ww' => 30, 'pt' => 50, 'qa' => 20],
+        ];
+
+        foreach ($subjects as $subject) {
+            // Optional: Validate total is 100%
+            $total = $subject['ww'] + $subject['pt'] + $subject['qa'];
+            if ($total !== 100) {
+                throw new \Exception("Error: {$subject['name']} weights total {$total}%, must be 100%");
+            }
+
+            $components = [
+                ['name' => 'Written Works', 'weighted_score' => $subject['ww']],
+                ['name' => 'Performance Tasks', 'weighted_score' => $subject['pt']],
+                ['name' => 'Quarterly Assessment', 'weighted_score' => $subject['qa']],
+            ];
+
+            GradeComponentTemplate::create([
+                'name' => $subject['name'],
+                'components' => $components,
+                'user_id' => $user->id,
+            ]);
+        }
     }
 
     private function transmuteTemplatesSeeder($user)
