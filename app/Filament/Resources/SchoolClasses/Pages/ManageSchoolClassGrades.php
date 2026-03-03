@@ -36,6 +36,7 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use App\Filament\Resources\GradeComponentTemplates\GradeComponentTemplateResource;
 
 class ManageSchoolClassGrades extends ManageRelatedRecords
 {
@@ -454,6 +455,31 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                         ->preload()
                                         ->required()
                                         ->placeholder('Choose a template')
+                                        ->suffixActions([
+                                            Action::make('createGradeComponentTemplate')
+                                                ->icon('heroicon-m-plus')
+                                                ->modalWidth(Width::ExtraLarge)
+                                                ->modalHeading('Create Grade Component Template')
+                                                ->model(GradeComponentTemplate::class) // i added this
+                                                ->form(GradeComponentTemplateResource::getFields())
+                                                ->action(function (array $data, Select $component) {
+                                                    // Create the new template
+                                                    $template = GradeComponentTemplate::create($data);
+
+                                                    // Update the select options and set the newly created template as selected
+                                                    $component->options(
+                                                        GradeComponentTemplate::query()->pluck('name', 'id')
+                                                    );
+
+                                                    $component->state($template->id);
+
+                                                    Notification::make()
+                                                        ->title('Template created successfully')
+                                                        ->success()
+                                                        ->send();
+                                                })
+                                                ->modalSubmitActionLabel('Create'),
+                                        ])
                                 ])
                                 ->action(function (array $data, Repeater $component) {
                                     $template = GradeComponentTemplate::find($data['template_id']);

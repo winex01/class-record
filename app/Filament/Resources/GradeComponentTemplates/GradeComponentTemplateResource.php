@@ -41,33 +41,44 @@ class GradeComponentTemplateResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+            ->components(static::getFields());
+    }
 
-                Repeater::make('components')
-                    ->hiddenLabel()
-                    ->collapsible()
-                    ->orderable()
-                    ->minItems(1)
-                    ->collapsed(fn ($operation) => $operation == 'view' ? true : false)
-                    ->itemLabel(fn (array $state): ?string =>
-                        isset($state['name'], $state['weighted_score'])
-                            ? "{$state['name']} ({$state['weighted_score']}%)"
-                            : ($state['name'] ?? 'New Component')
-                    )
-                    ->schema(ManageSchoolClassGrades::getComponentFields())
-                    ->rules([
-                        fn ($get) => function (string $attribute, $value, $fail) use ($get) {
-                            $total = collect($get('components'))->sum('weighted_score');
-                            if ($total != 100) {
-                                $fail("The total weighted score of all components must equal 100%. Current total: {$total}%");
-                            }
-                        },
-                    ])
-                    ->addActionLabel('Add grading component')
-            ]);
+    public static function getFields()
+    {
+        return [
+            TextInput::make('name')
+                ->required()
+                ->maxLength(255)
+                ->unique(
+                    table: 'grade_component_templates',
+                    modifyRuleUsing: function ($rule) {
+                        return $rule->where('user_id', auth()->id());
+                    }
+                ),
+
+            Repeater::make('components')
+                ->hiddenLabel()
+                ->collapsible()
+                ->orderable()
+                ->minItems(1)
+                ->collapsed(fn ($operation) => $operation == 'view' ? true : false)
+                ->itemLabel(fn (array $state): ?string =>
+                    isset($state['name'], $state['weighted_score'])
+                        ? "{$state['name']} ({$state['weighted_score']}%)"
+                        : ($state['name'] ?? 'New Component')
+                )
+                ->schema(ManageSchoolClassGrades::getComponentFields())
+                ->rules([
+                    fn ($get) => function (string $attribute, $value, $fail) use ($get) {
+                        $total = collect($get('components'))->sum('weighted_score');
+                        if ($total != 100) {
+                            $fail("The total weighted score of all components must equal 100%. Current total: {$total}%");
+                        }
+                    },
+                ])
+                ->addActionLabel('Add grading component')
+        ];
     }
 
     public static function table(Table $table): Table
