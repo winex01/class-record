@@ -71,6 +71,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                             ->modalWidth(Width::Large)
                             ->modalSubmitAction(false)
                             ->modalCancelAction(false)
+                            ->modalHeading(fn ($record): string => "Present Students on " . $record->date_formatted)
                             ->modalContent(fn ($record) => new HtmlString(
                                 Blade::render(
                                     "@livewire('student-attendance-present-absent', ['attendance' => \$attendance, 'isPresent' => true])",
@@ -101,6 +102,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                             ->modalWidth(Width::Large)
                             ->modalSubmitAction(false)
                             ->modalCancelAction(false)
+                            ->modalHeading(fn ($record) => "Absent Students on " . $record->date_formatted)
                             ->modalContent(fn ($record) => new HtmlString(
                                 Blade::render(
                                     "@livewire('student-attendance-present-absent', ['attendance' => \$attendance, 'isPresent' => false])",

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\BelongsToSchoolClass;
 use App\Models\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\BelongsToSchoolClass;
 
 class Attendance extends Model
 {
@@ -22,5 +22,10 @@ class Attendance extends Model
         return $this->belongsToMany(Student::class)
             ->withTimestamps()
             ->withPivot(['present']);
+    }
+
+   public function getDateFormattedAttribute()
+    {
+        return $this->date->format('M d, Y');
     }
 }
