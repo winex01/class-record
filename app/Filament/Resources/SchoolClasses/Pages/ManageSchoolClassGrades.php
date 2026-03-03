@@ -450,7 +450,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 ->form([
                                     Select::make('template_id')
                                         ->label('Select Template')
-                                        ->options(GradeComponentTemplate::query()->pluck('name', 'id'))
+                                        ->options(GradeComponentTemplate::query()->orderBy('name')->pluck('name', 'id'))
                                         ->searchable()
                                         ->preload()
                                         ->required()

@@ -56,9 +56,6 @@ class TransmuteTemplateResource extends Resource
             ->columns([
                 Column::text('name'),
             ])
-            ->filters([
-                //
-            ])
             ->recordActions([
                 static::createRangesAction(),
                 EditAction::make()->modalWidth(Width::Large),
