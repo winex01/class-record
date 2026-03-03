@@ -1,7 +1,5 @@
 <?php
 /*
-TODO:: inline create of transmute template beside the select using the suffix button action
-
 TODO:: TBD:: add getTab filter for manage Assessment table: using the grading table column name. ex: 1st Grading, 2nd grading but make it dynamic dependign what is the name
 
 TODO:: TBD:: add edit school/subject above the manage actions navs widgets in getHeaderActions

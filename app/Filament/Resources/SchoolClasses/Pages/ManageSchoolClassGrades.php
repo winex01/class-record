@@ -25,6 +25,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\View;
 use Filament\Support\Enums\Alignment;
+use App\Models\GradeComponentTemplate;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
@@ -363,28 +364,24 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                     return;
                                 }
 
-                                // Get existing repeater items
-                                $existingData = $component->getState() ?? [];
-
-                                // Build the transmutation data from template
-                                $templateData = $template->transmuteTemplateRanges->map(function ($range) {
-                                    return [
-                                        'initial_min' => $range->initial_min,
-                                        'initial_max' => $range->initial_max,
-                                        'transmuted_grade' => $range->transmuted_grade,
-                                    ];
-                                })->toArray();
-
-                                // Merge existing items with template data (append template items)
-                                $mergedData = array_merge($existingData, $templateData);
+                                // Build the transmutation data from template (overwrites everything)
+                                $templateData = $template->transmuteTemplateRanges
+                                    ->map(function ($range) {
+                                        return [
+                                            'initial_min' => $range->initial_min,
+                                            'initial_max' => $range->initial_max,
+                                            'transmuted_grade' => $range->transmuted_grade,
+                                        ];
+                                    })
+                                    ->toArray();
 
                                 // Sort by initial_max - DESCENDING
-                                usort($mergedData, function ($a, $b) {
+                                usort($templateData, function ($a, $b) {
                                     return ($b['initial_max'] ?? 0) <=> ($a['initial_max'] ?? 0);
                                 });
 
-                                // Set the combined data to the repeater
-                                $component->state($mergedData);
+                                // Set the template data directly (no merging)
+                                $component->state($templateData);
                             })
                             ->modalSubmitActionLabel('Copy & Paste'),
 
@@ -444,7 +441,42 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         )
                         ->addActionLabel('Add grading component')
                         ->aboveContent([
-                            Action::make('Copy from Templates'), // TODO:: continue this after the grading component templates resource
+                            Action::make('copyGradeComponentTemplate')
+                                ->label('Copy from Templates')
+                                ->icon(icon: 'heroicon-o-document-duplicate')
+                                ->modalWidth(Width::Large)
+                                ->modalHeading('Grade Component Templates')
+                                ->form([
+                                    Select::make('template_id')
+                                        ->label('Select Template')
+                                        ->options(GradeComponentTemplate::query()->pluck('name', 'id'))
+                                        ->searchable()
+                                        ->preload()
+                                        ->required()
+                                        ->placeholder('Choose a template')
+                                ])
+                                ->action(function (array $data, Repeater $component) {
+                                    $template = GradeComponentTemplate::find($data['template_id']);
+
+                                    if (!$template) {
+                                        Notification::make()
+                                            ->title('Template not found')
+                                            ->danger()
+                                            ->send();
+                                        return;
+                                    }
+
+                                    // Transform template components to repeater format (overwrites everything)
+                                    $templateData = collect($template->components)
+                                        ->map(fn($item) => [
+                                            'name' => data_get($item, 'name', ''),
+                                            'weighted_score' => data_get($item, 'weighted_score', 0),
+                                        ])
+                                        ->toArray();
+
+                                    $component->state($templateData);
+                                })
+                                ->modalSubmitActionLabel('Copy & Paste'),
 
                             Action::make('deleteAll')
                                 ->label('Delete All')
