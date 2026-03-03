@@ -51,13 +51,10 @@ class SchoolClassResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                ...static::formSchema(),
-            ]);
+        return $schema->components(static::getFields());
     }
 
-    public static function formSchema()
+    public static function getFields()
     {
         return [
             'name' =>
@@ -204,10 +201,10 @@ class SchoolClassResource extends Resource
                         ->required()
                         ->columns(2),
 
-                    static::formSchema()['name']->default(fn ($record) => $record->name),
-                    static::formSchema()['year_section']->default(fn ($record) => $record->year_section ?? []),
-                    static::formSchema()['date_start']->default(fn ($record) => $record->date_start),
-                    static::formSchema()['date_end']->default(fn ($record) => $record->date_end),
+                    static::getFields()['name']->default(fn ($record) => $record->name),
+                    static::getFields()['year_section']->default(fn ($record) => $record->year_section ?? []),
+                    static::getFields()['date_start']->default(fn ($record) => $record->date_start),
+                    static::getFields()['date_end']->default(fn ($record) => $record->date_end),
 
                 ])
                 ->action(function (array $data, $record) {

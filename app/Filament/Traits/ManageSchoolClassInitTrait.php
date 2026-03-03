@@ -9,6 +9,13 @@ trait ManageSchoolClassInitTrait
 {
     use ManageActionVisibility;
 
+    protected function getListeners(): array
+    {
+        return [
+            'refreshTable' => '$refresh',
+        ];
+    }
+
     protected function getHeaderWidgets(): array
     {
         return [
