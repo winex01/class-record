@@ -8,86 +8,86 @@ final class Icon
 {
     public static function classes(): Heroicon|string
     {
-        return Heroicon::RectangleGroup;
+        return Heroicon::OutlinedRectangleGroup;
     }
 
     public static function students(): Heroicon|string
     {
-        return Heroicon::Users;
+        return Heroicon::OutlinedUser;
     }
 
     public static function attendances(): Heroicon|string
     {
-        return Heroicon::CalendarDays;
+        return Heroicon::OutlinedCalendarDays;
     }
 
     public static function myFiles(): Heroicon|string
     {
-        return Heroicon::ClipboardDocument;
+        return Heroicon::OutlinedClipboardDocument;
     }
 
     public static function assessments(): Heroicon|string
     {
-        return Heroicon::ClipboardDocumentList;
+        return Heroicon::OutlinedClipboardDocumentList;
     }
 
     public static function assessmentTypes(): Heroicon|string
     {
-        return Heroicon::Square2Stack;
+        return Heroicon::OutlinedSquare2Stack;
     }
 
     public static function groups(): Heroicon|string
     {
-        return Heroicon::Cube;
+        return Heroicon::OutlinedCube;
     }
 
     public static function feeCollections(): Heroicon|string
     {
-        return Heroicon::CircleStack;
+        return Heroicon::OutlinedCircleStack;
     }
 
     public static function events(): Heroicon|string
     {
-        return Heroicon::CalendarDateRange;
+        return Heroicon::OutlinedCalendarDateRange;
     }
 
     public static function tasks(): Heroicon|string
     {
-        return Heroicon::ClipboardDocumentList;
+        return Heroicon::OutlinedClipboardDocumentList;
     }
 
     public static function notes(): Heroicon|string
     {
-        return Heroicon::Clipboard;
+        return Heroicon::OutlinedClipboard;
     }
 
     public static function recurrings(): Heroicon|string
     {
-        return Heroicon::QueueList;
+        return Heroicon::OutlinedQueueList;
     }
 
     public static function grades(): Heroicon|string
     {
-        return Heroicon::ClipboardDocumentCheck;
+        return Heroicon::OutlinedClipboardDocumentCheck;
     }
 
     public static function settings(): Heroicon|string
     {
-        return Heroicon::Cog8Tooth;
+        return Heroicon::OutlinedCog8Tooth;
     }
 
     public static function gradingComponents(): Heroicon|string
     {
-        return Heroicon::AdjustmentsHorizontal;
+        return Heroicon::OutlinedAdjustmentsHorizontal;
     }
 
     public static function transmutations(): Heroicon|string
     {
-        return Heroicon::Scale;
+        return Heroicon::OutlinedScale;
     }
 
     public static function lessons(): Heroicon|string
     {
-        return Heroicon::ViewColumns;
+        return Heroicon::OutlinedViewColumns;
     }
 }

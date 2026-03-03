@@ -12,10 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('grading_component_templates', function (Blueprint $table) {
+        Schema::create('grade_component_templates', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->string('name')->nullable();
+            $table->json('components')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('grading_component_templates');
+        Schema::dropIfExists('grade_component_templates');
     }
 };
