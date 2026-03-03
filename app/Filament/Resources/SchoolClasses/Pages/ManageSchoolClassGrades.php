@@ -430,36 +430,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 ? "{$state['name']} ({$state['weighted_score']}%)"
                                 : ($state['name'] ?? 'New Component')
                         )
-                        ->schema([
-                            Grid::make(3)
-                                ->schema([
-                                    TextInput::make('name')
-                                        ->placeholder('Enter component name...')
-                                        ->helperText('You can type or pick from suggestions.')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->datalist([
-                                            'Written Works',
-                                            'Performance Tasks',
-                                            'Quarterly Assessment',
-                                            'Quiz',
-                                            'Exam',
-                                            'Oral',
-                                        ])
-                                        ->columnSpan(2),
-
-                                    TextInput::make('weighted_score')
-                                        ->label('Weighted Score')
-                                        ->helperText('Value between 1-100')
-                                        ->numeric()
-                                        ->required()
-                                        ->minValue(1)
-                                        ->maxValue(100)
-                                        ->step(0.01)
-                                        ->suffix('%')
-                                        ->columnSpan(1),
-                                ]),
-                        ])
+                        ->schema(static::getComponentFields())
                         ->rules([
                             fn ($get) => function (string $attribute, $value, $fail) use ($get) {
                                 $total = collect($get('gradingComponents'))->sum('weighted_score');
@@ -489,6 +460,40 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 })
                         ])
                     ]);
+    }
+
+    public static function getComponentFields()
+    {
+        return [
+            Grid::make(3)
+            ->schema([
+                TextInput::make('name')
+                    ->placeholder('Enter component name...')
+                    ->helperText('You can type or pick from suggestions.')
+                    ->required()
+                    ->maxLength(255)
+                    ->datalist([
+                        'Written Works',
+                        'Performance Tasks',
+                        'Quarterly Assessment',
+                        'Quiz',
+                        'Exam',
+                        'Oral',
+                    ])
+                    ->columnSpan(2),
+
+                TextInput::make('weighted_score')
+                    ->label('Weighted Score')
+                    ->helperText('Value between 1-100')
+                    ->numeric()
+                    ->required()
+                    ->minValue(1)
+                    ->maxValue(100)
+                    ->step(0.01)
+                    ->suffix('%')
+                    ->columnSpan(1),
+            ]),
+        ];
     }
 
     public static function rangesField(bool $isRepeater = true)

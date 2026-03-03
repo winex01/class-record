@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\GradeComponentTemplates\Pages;
 
-use App\Filament\Resources\GradeComponentTemplates\GradeComponentTemplateResource;
+use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
+use App\Filament\Resources\GradeComponentTemplates\GradeComponentTemplateResource;
 
 class ManageGradeComponentTemplates extends ManageRecords
 {
@@ -13,7 +14,8 @@ class ManageGradeComponentTemplates extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->modalWidth(Width::ExtraLarge),
         ];
     }
 }
