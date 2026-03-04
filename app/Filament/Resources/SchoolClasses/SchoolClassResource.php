@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SchoolClasses;
 
 use App\Services\Icon;
-use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use App\Enums\LessonStatus;
@@ -17,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Size;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TagsInput;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
@@ -67,7 +67,7 @@ class SchoolClassResource extends Resource
                     ->maxLength(255),
 
             'year_section' =>
-            Field::tags('year_section')
+            TagsInput::make('year_section')
                 ->placeholder('e.g. 1st Year, Grade 1, Section A'),
 
             'date_start' =>

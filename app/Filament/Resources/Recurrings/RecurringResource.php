@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Recurrings;
 
-use App\Services\Field;
 use App\Services\Column;
 use App\Services\Helper;
 use App\Models\Recurring;
@@ -12,6 +11,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TagsInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Fields\TimePicker;
@@ -122,7 +122,7 @@ class RecurringResource extends Resource
             Textarea::make('description')
                 ->placeholder('Optional...'),
 
-            Field::tags('tags'),
+            TagsInput::make('tags'),
 
             DatePicker::make('date_start')
                 ->helperText('The recurring event becomes active starting on this date.')

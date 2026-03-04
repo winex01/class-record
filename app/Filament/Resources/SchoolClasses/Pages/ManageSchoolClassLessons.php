@@ -4,7 +4,6 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Lesson;
 use App\Models\MyFile;
-use App\Services\Field;
 use App\Enums\LessonStatus;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -13,6 +12,7 @@ use Relaticle\Flowforge\Column;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TagsInput;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
@@ -189,7 +189,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                                 ->required()
                                 ->maxLength(255),
 
-                            Field::tags('tags'),
+                            TagsInput::make('tags'),
 
                             DatePicker::make('completion_date'),
 

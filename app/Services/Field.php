@@ -2,20 +2,10 @@
 
 namespace  App\Services;
 
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 
 final class Field
 {
-    public static function tags($name = 'tags')
-    {
-        $lowerName = strtolower($name);
-        return TagsInput::make($name)
-            ->hint('Use Tab key or Enter key to add multiple '.$lowerName)
-            ->separator(',')
-            ->splitKeys(['Tab']);
-    }
-
     public static function phone($name)
     {
         return TextInput::make($name)

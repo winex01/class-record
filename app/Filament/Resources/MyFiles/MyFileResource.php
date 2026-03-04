@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\MyFiles;
 
 use App\Models\MyFile;
-use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -12,6 +11,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TagsInput;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
@@ -51,7 +51,7 @@ class MyFileResource extends Resource
                     ->maxLength(255)
                     ->disabled($readonly),
 
-            Field::tags('tags')
+            TagsInput::make('tags')
                 ->placeholder('e.g. Lesson, Assessment')
                 ->disabled($readonly),
 

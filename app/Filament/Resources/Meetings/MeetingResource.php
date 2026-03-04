@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Meetings;
 
 use App\Models\Meeting;
-use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
@@ -11,6 +10,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TagsInput;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
@@ -61,7 +61,7 @@ class MeetingResource extends Resource
             Textarea::make('description')
                 ->placeholder('Optional...'),
 
-            Field::tags('tags'),
+            TagsInput::make('tags'),
 
             DateTimePicker::make('starts_at')
                 ->default(now()->startOfDay())

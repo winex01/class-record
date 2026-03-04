@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Tasks;
 
 use App\Models\Task;
-use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
@@ -11,6 +10,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TagsInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\BooleanToggle;
 use Filament\Actions\DeleteBulkAction;
@@ -62,7 +62,7 @@ class TaskResource extends Resource
             Textarea::make('description')
                 ->placeholder('Optional...'),
 
-            Field::tags('tags'),
+            TagsInput::make('tags'),
 
             DateTimePicker::make('starts_at')
                 ->default(now()->startOfDay())
