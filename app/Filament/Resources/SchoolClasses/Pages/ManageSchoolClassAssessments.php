@@ -23,6 +23,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Columns\BooleanIconColumn;
 use Filament\Forms\Components\ToggleButtons;
 use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -139,9 +140,9 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ->columns([
                 ...static::getColumns(),
 
-                Column::icon('status')
+                BooleanIconColumn::make('status')
                     ->getStateUsing(fn ($record) =>
-                        $record->students()
+                        !$record->students()
                             ->whereNull('score')
                             ->exists()
                     )

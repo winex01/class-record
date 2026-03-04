@@ -13,6 +13,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
 use App\Livewire\Traits\RenderTableTrait;
 use Filament\Actions\Contracts\HasActions;
+use App\Filament\Columns\BooleanIconColumn;
 use App\Filament\Traits\ManageActionVisibility;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -57,7 +58,7 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
             ->columns([
                 Column::date('date'),
 
-                Column::icon('present_status')
+                BooleanIconColumn::make('present_status')
                     ->label('Status')
                     ->state(function ($record) {
                         return $record->students->first()?->pivot->present ?? false;

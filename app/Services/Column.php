@@ -3,9 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
-use Filament\Support\Colors\Color;
-use Filament\Support\Enums\IconSize;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\SelectColumn;
@@ -14,18 +11,6 @@ use Filament\Tables\Columns\TextInputColumn;
 
 final class Column
 {
-    public static function icon($name)
-    {
-        return IconColumn::make($name)
-            ->width('1%')
-            ->alignCenter()
-            ->trueIcon('heroicon-o-check-circle')
-            ->trueColor(Color::Emerald)
-            ->falseIcon('heroicon-o-x-circle')
-            ->falseColor(Color::Rose)
-            ->size(IconSize::Large);
-    }
-
     public static function amount($name)
     {
         return static::text($name)

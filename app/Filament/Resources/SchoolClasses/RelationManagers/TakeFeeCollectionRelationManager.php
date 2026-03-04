@@ -97,7 +97,7 @@ class TakeFeeCollectionRelationManager extends RelationManager
 
                         return $amount > 0
                             ? ['numeric', 'min:0', 'max:' . $amount]
-                            : ['numeric', 'min:0'];
+                            : ['numeric', 'min:0', 'max:99999999'];
                     })
                     ->placeholder(function () {
                         if (!$this->getOwnerRecord()->schoolClass->active) {

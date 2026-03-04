@@ -20,6 +20,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Columns\BooleanIconColumn;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -160,7 +161,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             'total' =>
             Column::amount('total')
                 ->state(fn ($record) => $record->students()->sum('amount'))
-                ->tooltip('Total collected')
+                ->tooltip('Total Collected')
                 ->sortable(
                     query: fn ($query, string $direction) =>
                         $query->withSum('students as total', 'fee_collection_student.amount')
@@ -177,12 +178,28 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 ),
 
             'status' =>
-            Column::icon('status')
-                ->getStateUsing(fn ($record) =>
-                    $record->amount == 0
-                        ? $record->students()->whereNull('amount')->exists()
-                        : $record->students()->where('status', '!=', FeeCollectionStatus::PAID->value)->exists()
-                )
+            BooleanIconColumn::make('status')
+                ->getStateUsing(function ($record) {
+                    // Fee record amount zero = open contribution
+                    if ($record->amount == 0) {
+                        return !$record->students()->wherePivotNull('amount')->exists();
+                    }
+
+                    $students = $record->students()->withPivot(['amount', 'status'])->get();
+
+                    // Every student must have paid at least the required amount
+                    $hasUnderpaidOrUnpaid = $students->contains(function ($student) use ($record) {
+                        $paid = $student->pivot->amount ?? 0;
+                        return $paid < $record->amount;
+                    });
+
+                    // Every student pivot status must be marked as PAID
+                    $hasUnmarkedStatus = $students->contains(function ($student) {
+                        return $student->pivot->status !== FeeCollectionStatus::PAID->value;
+                    });
+
+                    return !$hasUnderpaidOrUnpaid && !$hasUnmarkedStatus;
+                })
                 ->tooltip(function ($record) {
                     $hasUnpaid = $record->students()
                         ->where('status', '!=', FeeCollectionStatus::PAID->value)
