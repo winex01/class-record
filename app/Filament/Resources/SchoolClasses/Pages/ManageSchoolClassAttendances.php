@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Services\Icon;
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -13,6 +12,7 @@ use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
 use App\Filament\Fields\DatePicker;
 use Filament\Tables\Filters\Filter;
+use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
 use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DeleteBulkAction;
@@ -48,7 +48,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->recordTitleAttribute('date')
             ->defaultSort('date', 'desc')
             ->columns([
-                Column::date('date'),
+                DateColumn::make('date'),
 
                 TextColumn::make('present')
                     ->searchable(false)

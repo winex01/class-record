@@ -17,6 +17,7 @@ use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Fields\TimePicker;
+use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
 use Filament\Forms\Components\Radio;
 use Filament\Schemas\Components\Grid;
@@ -170,8 +171,8 @@ class RecurringResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Column::tags('tags'),
-                Column::date('date_start'),
-                Column::date('date_end'),
+                DateColumn::make('date_start'),
+                DateColumn::make('date_end'),
             ])
             ->filters([
                 //

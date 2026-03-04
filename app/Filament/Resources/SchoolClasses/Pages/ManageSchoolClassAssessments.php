@@ -16,6 +16,7 @@ use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
 use App\Filament\Fields\DatePicker;
+use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
 use App\Enums\CompletedPendingStatus;
 use Illuminate\Support\Facades\Blade;
@@ -204,7 +205,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
         return [
             TextColumn::make('name'),
             TextColumn::make('assessmentType.name')->badge()->label('Type'),
-            Column::date('date'),
+            DateColumn::make('date'),
             'max_score' =>
             TextColumn::make('max_score')->label('Max')->alignCenter()->color('info')->tooltip('Max score'),
             TextColumn::make('description')->toggleable(isToggledHiddenByDefault:true),

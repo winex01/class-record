@@ -3,10 +3,10 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Services\Column;
 use App\Models\Attendance;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
+use App\Filament\Columns\DateColumn;
 use Filament\Support\Enums\Alignment;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
@@ -56,7 +56,7 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
                     }])
             )
             ->columns([
-                Column::date('date'),
+                DateColumn::make('date'),
 
                 BooleanIconColumn::make('present_status')
                     ->label('Status')

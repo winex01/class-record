@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -15,6 +14,7 @@ use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
 use App\Filament\Fields\DatePicker;
+use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
 use App\Enums\CompletedPendingStatus;
 use Illuminate\Support\Facades\Blade;
@@ -155,8 +155,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 ->placeholder('—')
                 ->getStateUsing(fn ($record) => $record->amount > 0 ? $record->amount : null),
 
-            Column::date('date')
-                ->width('1%'),
+            DateColumn::make('date')->width('1%'),
 
             TextColumn::make('description')
                 ->toggleable(isToggledHiddenByDefault: true),

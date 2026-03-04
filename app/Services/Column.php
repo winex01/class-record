@@ -9,20 +9,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 final class Column
 {
-    public static function date($name)
-    {
-        return TextColumn::make($name)
-            ->wrap()
-            ->date()
-            ->searchable(
-                query: fn ($query, string $search) =>
-                    $query->whereRaw(
-                        "DATE_FORMAT({$name}, '%b %d, %Y') LIKE ?",
-                        ["%{$search}%"]
-                    )
-            );
-    }
-
     public static function timestamp($name)
     {
         return TextColumn::make($name)

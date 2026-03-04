@@ -16,6 +16,7 @@ use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
+use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Columns\ImageColumn;
 use Filament\Actions\DeleteBulkAction;
@@ -126,7 +127,7 @@ class StudentResource extends Resource
 
             Column::enum('gender', Gender::class)->badge(false),
 
-            Column::date('birth_date'),
+            DateColumn::make('birth_date'),
 
             TextColumn::make('email'),
 
