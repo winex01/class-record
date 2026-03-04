@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Tables\Grouping\Group;
+use App\Filament\Columns\SelectColumn;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -51,8 +52,7 @@ class RecordScoreRelationManager extends RelationManager
             ->columns([
                 ...ManageSchoolClassStudents::getColumns(),
 
-                // when active
-                Column::select('group')
+                SelectColumn::make('group')
                     ->options(function ($record) {
                         $baseOptions = GroupResource::selectOptions();
 

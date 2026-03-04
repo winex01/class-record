@@ -5,24 +5,11 @@ namespace App\Services;
 use Illuminate\Support\Str;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\SelectColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Columns\TextInputColumn;
 
 final class Column
 {
-    public static function select($name)
-    {
-        return SelectColumn::make($name)
-            ->placeholder('-')
-            ->disablePlaceholderSelection()
-            ->sortable()
-            ->searchable()
-            ->native(false)
-            ->width('1%')
-            ->extraAttributes(['style' => 'min-width: 130px; ']);
-    }
-
     public static function textInput($name)
     {
         return TextInputColumn::make($name)
