@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Students;
 
 use App\Enums\Gender;
 use App\Models\Student;
-use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
@@ -14,6 +13,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
+use App\Filament\Fields\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\TextInput;
@@ -68,7 +68,7 @@ class StudentResource extends Resource
                     ->options(Gender::class)
                     ->required(),
 
-                Field::date('birth_date'),
+                DatePicker::make('birth_date'),
 
                 TextInput::make('email')
                     ->label('Email address')

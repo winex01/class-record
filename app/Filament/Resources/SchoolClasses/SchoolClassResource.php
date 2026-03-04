@@ -20,6 +20,7 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
+use App\Filament\Fields\DatePicker;
 use App\Filament\Fields\BooleanToggle;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
@@ -70,12 +71,12 @@ class SchoolClassResource extends Resource
                 ->placeholder('e.g. 1st Year, Grade 1, Section A'),
 
             'date_start' =>
-            Field::date('date_start')
+            DatePicker::make('date_start')
                 ->label('Start Date')
                 ->placeholder('e.g. ' . Carbon::now()->format('M j, Y')), // e.g. Aug 28, 2025
 
             'date_end' =>
-            Field::date('date_end')
+            DatePicker::make('date_end')
                 ->label('End Date')
                 ->placeholder('e.g. ' . Carbon::now()->addMonths(6)->format('M j, Y')), // e.g. Nov 28, 2025
 

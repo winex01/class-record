@@ -13,6 +13,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
+use App\Filament\Fields\DatePicker;
 use App\Filament\Fields\TimePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Schemas\Components\Grid;
@@ -123,12 +124,12 @@ class RecurringResource extends Resource
 
             Field::tags('tags'),
 
-            Field::date('date_start')
+            DatePicker::make('date_start')
                 ->helperText('The recurring event becomes active starting on this date.')
                 ->beforeOrEqual('date_end')
                 ->default(now()),
 
-            Field::date('date_end')
+            DatePicker::make('date_end')
                 ->helperText('The recurring event will stop or end on this date.')
                 ->afterOrEqual('date_start')
                 ->default(now()),

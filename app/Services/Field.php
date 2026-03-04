@@ -4,16 +4,9 @@ namespace  App\Services;
 
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
 
 final class Field
 {
-    public static function date($name)
-    {
-        return DatePicker::make($name)
-            ->native(false);
-    }
-
     public static function tags($name = 'tags')
     {
         $lowerName = strtolower($name);

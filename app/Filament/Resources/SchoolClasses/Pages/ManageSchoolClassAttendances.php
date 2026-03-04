@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Services\Icon;
-use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -12,6 +11,7 @@ use Filament\Actions\EditAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
+use App\Filament\Fields\DatePicker;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DeleteBulkAction;
@@ -34,7 +34,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
     {
         return $schema
             ->components([
-                Field::date('date')
+                DatePicker::make('date')
                     ->required()
                     ->date()
                     ->default(now())
@@ -115,9 +115,9 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->filters([
                 Filter::make('date')
                     ->form([
-                        Field::date('date_from')
+                        DatePicker::make('date_from')
                             ->label('From'),
-                        Field::date('date_to')
+                        DatePicker::make('date_to')
                             ->label('To'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {

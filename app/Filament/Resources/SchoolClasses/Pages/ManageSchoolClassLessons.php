@@ -16,6 +16,7 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
+use App\Filament\Fields\DatePicker;
 use Filament\Support\Enums\TextSize;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -190,7 +191,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
 
                             Field::tags('tags'),
 
-                            Field::date('completion_date'),
+                            DatePicker::make('completion_date'),
 
                             Repeater::make('checklist')
                                 ->table([

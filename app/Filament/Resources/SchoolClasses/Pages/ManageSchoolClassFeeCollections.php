@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -13,6 +12,7 @@ use Filament\Support\Enums\Width;
 use App\Enums\FeeCollectionStatus;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
+use App\Filament\Fields\DatePicker;
 use App\Enums\CompletedPendingStatus;
 use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DeleteBulkAction;
@@ -92,7 +92,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                     ->numeric()
                     ->minValue(0),
 
-                Field::date('date'),
+                DatePicker::make('date'),
 
                 Textarea::make('description')
                         ->rows(2)

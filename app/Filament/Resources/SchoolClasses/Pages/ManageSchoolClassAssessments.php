@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Services\Icon;
-use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -13,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
+use App\Filament\Fields\DatePicker;
 use App\Enums\CompletedPendingStatus;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Blade;
@@ -102,7 +102,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                             ->createOptionForm(AssessmentTypeResource::getForm())
                             ->editOptionForm(AssessmentTypeResource::getForm()),
 
-                        Field::date('date'),
+                        DatePicker::make('date'),
 
                         TextInput::make('max_score')
                             ->helperText('Highest points')
