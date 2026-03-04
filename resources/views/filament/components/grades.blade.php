@@ -193,7 +193,7 @@
                             @if ($hasTransmutedGrade)
                                 <td class="final-grade" title="Transmuted Grade">
                                     <div class="grade-badge transmuted">
-                                        {{ App\Services\GradeCalculation::getTransmutedGrade($schoolClass, $studentInitialGrade) }}
+                                        {{ App\Models\GradeTransmutation::transmute($schoolClass->gradeTransmutations, $studentInitialGrade) }}
                                     </div>
                                 </td>
                             @endif
