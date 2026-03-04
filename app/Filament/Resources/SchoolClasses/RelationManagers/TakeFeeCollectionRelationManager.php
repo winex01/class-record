@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\BulkAction;
 use App\Enums\FeeCollectionStatus;
 use Filament\Support\Enums\Alignment;
 use App\Filament\Columns\SelectColumn;
+use App\Filament\Columns\TextInputColumn;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\Students\StudentResource;
@@ -92,8 +92,7 @@ class TakeFeeCollectionRelationManager extends RelationManager
                     ->visible($this->getOwnerRecord()->amount > 0 ? true : false)
                     ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
 
-                Column::textInput('amount')
-                    ->width('1%')
+                TextInputColumn::make('amount')
                     ->rules(function () {
                         $amount = $this->getOwnerRecord()->amount ?? 0;
 

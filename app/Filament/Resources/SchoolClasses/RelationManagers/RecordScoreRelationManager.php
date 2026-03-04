@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Tables\Grouping\Group;
 use App\Filament\Columns\SelectColumn;
+use App\Filament\Columns\TextInputColumn;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -74,8 +74,7 @@ class RecordScoreRelationManager extends RelationManager
                     ->visible($this->getOwnerRecord()->can_group_students)
                     ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
 
-                Column::textInput('score')
-                    ->width('1%')
+                TextInputColumn::make('score')
                     ->rules(['numeric', 'min:0', 'max:' . ($this->getOwnerRecord()->max_score ?? 0)])
                     ->placeholder(function () {
                         if (!$this->getOwnerRecord()->schoolClass->active) {

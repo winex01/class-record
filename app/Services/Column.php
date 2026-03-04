@@ -6,18 +6,9 @@ use Illuminate\Support\Str;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Columns\TextInputColumn;
 
 final class Column
 {
-    public static function textInput($name)
-    {
-        return TextInputColumn::make($name)
-            ->sortable()
-            ->searchable()
-            ->width('1%');
-    }
-
     public static function text($name)
     {
         return TextColumn::make($name)
