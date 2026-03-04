@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Str;
 use App\Filament\Columns\TextColumn;
 
 final class Column
@@ -26,51 +25,5 @@ final class Column
             ->color(fn($state) => $state ? $trueColor : $falseColor)
             ->description(fn($state) => $state ? $trueDesc : $falseDesc)
             ->badge();
-    }
-
-    public static function enum($name, $enum, $attribute = null)
-    {
-        if (!$attribute) {
-            $attribute = $name;
-        }
-
-        return TextColumn::make($name)
-            ->wrap()
-            ->toggleable(isToggledHiddenByDefault: false)
-            ->sortable()
-            ->searchable()
-            ->label(Str::headline($attribute))
-            ->badge()
-            ->icon(function ($state) use ($enum) {
-                if (is_object($state) && method_exists($state, 'getIcon')) {
-                    return $state->getIcon();
-                }
-
-                $enumInstance = $enum::tryFrom($state);
-                return $enumInstance && method_exists($enumInstance, 'getIcon')
-                    ? $enumInstance->getIcon()
-                    : null;
-            })
-            ->color(function ($state) use ($enum) {
-                if (is_object($state) && method_exists($state, 'getColor')) {
-                    return $state->getColor();
-                }
-
-                $enumInstance = $enum::tryFrom($state);
-                return $enumInstance && method_exists($enumInstance, 'getColor')
-                    ? $enumInstance->getColor()
-                    : null;
-            })
-            ->getStateUsing(fn ($record) => $record->{$attribute})
-            ->formatStateUsing(function ($state) use ($enum) {
-                if (is_object($state) && method_exists($state, 'getLabel')) {
-                    return $state->getLabel();
-                }
-
-                $enumInstance = $enum::tryFrom($state);
-                return $enumInstance && method_exists($enumInstance, 'getLabel')
-                    ? $enumInstance->getLabel()
-                    : ($enumInstance ? $enumInstance->name : $state);
-            });
     }
 }

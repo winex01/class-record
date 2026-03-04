@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Students;
 
 use App\Enums\Gender;
 use App\Models\Student;
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use App\Filament\Fields\Phone;
@@ -17,6 +16,7 @@ use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Columns\DateColumn;
+use App\Filament\Columns\EnumColumn;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Columns\ImageColumn;
 use Filament\Actions\DeleteBulkAction;
@@ -125,7 +125,7 @@ class StudentResource extends Resource
                 })
                 ->searchable(['last_name', 'first_name', 'middle_name', 'suffix_name']),
 
-            Column::enum('gender', Gender::class)->badge(false),
+            EnumColumn::make('gender')->enum(Gender::class),
 
             DateColumn::make('birth_date'),
 
