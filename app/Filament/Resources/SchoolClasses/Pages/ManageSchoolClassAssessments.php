@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Services\Icon;
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -22,6 +21,7 @@ use App\Enums\CompletedPendingStatus;
 use Illuminate\Support\Facades\Blade;
 use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
+use App\Filament\Columns\BooleanColumn;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
@@ -204,12 +204,26 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
     {
         return [
             TextColumn::make('name'),
-            TextColumn::make('assessmentType.name')->badge()->label('Type'),
+
+            TextColumn::make('assessmentType.name')
+                ->label('Type')
+                ->color('primary'),
+
             DateColumn::make('date'),
+
             'max_score' =>
-            TextColumn::make('max_score')->label('Max')->alignCenter()->color('info')->tooltip('Max score'),
-            TextColumn::make('description')->toggleable(isToggledHiddenByDefault:true),
-            Column::boolean('can_group_students')->label('Can group')->toggleable(isToggledHiddenByDefault:true),
+            TextColumn::make('max_score')
+                ->label('Max')
+                ->alignCenter()
+                ->color('info')
+                ->tooltip('Max score'),
+
+            TextColumn::make('description')
+                ->toggleable(isToggledHiddenByDefault:true),
+
+            BooleanColumn::make('can_group_students')
+                ->toggleable(isToggledHiddenByDefault:true)
+                ->label('Can group')
         ];
     }
 

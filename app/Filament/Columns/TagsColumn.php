@@ -14,8 +14,8 @@ class TagsColumn extends BaseTagsColumn
 
         $this
             ->label(fn ($column): string => Str::headline($column->getName()))
-            ->wrap()
             ->toggleable(isToggledHiddenByDefault: false)
+            ->wrap()
             ->separator(',')
             ->searchable(query: function (Builder $query, string $search, $column): Builder {
                 $name = $column->getName();

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SchoolClasses;
 
 use App\Services\Icon;
-use App\Services\Column;
 use Filament\Tables\Table;
 use App\Enums\LessonStatus;
 use App\Models\SchoolClass;
@@ -28,6 +27,7 @@ use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
+use App\Filament\Columns\BooleanColumn;
 use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\Layout\Split;
@@ -123,18 +123,18 @@ class SchoolClassResource extends Resource
                                 return ($record->date_start?->format('M d, Y') ?? 'N/A') . ' → ' . ($record->date_end?->format('M d, Y') ?? 'N/A');
                             }),
 
-                        Column::boolean(
-                            name: 'active',
-                            trueLabel: 'Active',
-                            falseLabel: 'Archived',
-                            falseIcon: 'heroicon-o-lock-closed',
-                            falseColor: 'warning'
-                        )->label('Status')
-                        ->badge(false)
-                        ->grow(false),
+                        BooleanColumn::make('active')
+                            ->trueLabel('Active')
+                            ->falseLabel('Archived')
+                            ->falseIcon('heroicon-o-lock-closed')
+                            ->falseColor('warning')
+                            ->grow(false)
+
                     ]),
 
-                    TagsColumn::make('year_section')->color('primary'),
+                    TagsColumn::make('year_section')
+                        ->color('primary')
+                        ->badge(false)
                 ])
             ])
             ->contentGrid([

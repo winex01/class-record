@@ -155,7 +155,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 ->placeholder('—')
                 ->getStateUsing(fn ($record) => $record->amount > 0 ? $record->amount : null),
 
-            DateColumn::make('date')->width('1%'),
+            DateColumn::make('date'),
 
             TextColumn::make('description')
                 ->toggleable(isToggledHiddenByDefault: true),
@@ -203,6 +203,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
                     return !$hasUnderpaidOrUnpaid && !$hasUnmarkedStatus;
                 })
+                // TODO::BUG double check display tooltip value
                 ->tooltip(function ($record) {
                     $hasUnpaid = $record->students()
                         ->where('status', '!=', FeeCollectionStatus::PAID->value)

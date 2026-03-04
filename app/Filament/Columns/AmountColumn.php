@@ -13,7 +13,6 @@ class AmountColumn extends TextColumn
 
         $this
             ->label(fn ($column): string => Str::headline($column->getName()))
-            ->width('1%')
             ->wrap()
             ->prefix('₱')
             ->formatStateUsing(fn ($state) => number_format($state, 2));
