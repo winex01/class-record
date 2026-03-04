@@ -6,6 +6,7 @@ use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\BulkAction;
 use App\Enums\FeeCollectionStatus;
+use Filament\Support\Enums\Alignment;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\Students\StudentResource;
@@ -141,6 +142,7 @@ class TakeFeeCollectionRelationManager extends RelationManager
                             }
                         }
                     })
+                    ->modalFooterActionsAlignment(Alignment::Center)
                     ->deselectRecordsAfterCompletion()
                     ->successNotificationTitle('Marked as paid')
                     ->visible($this->getOwnerRecord()->amount > 0 ? true : false),
@@ -163,6 +165,7 @@ class TakeFeeCollectionRelationManager extends RelationManager
                                 );
                         }
                     })
+                    ->modalFooterActionsAlignment(Alignment::Center)
                     ->deselectRecordsAfterCompletion()
                     ->successNotificationTitle('Marked as unpaid')
                     ->visible($this->getOwnerRecord()->amount > 0 ? true : false),

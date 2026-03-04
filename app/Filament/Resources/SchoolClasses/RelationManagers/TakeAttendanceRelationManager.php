@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
 use Filament\Tables\Table;
 use Filament\Actions\BulkAction;
+use Filament\Support\Enums\Alignment;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Builder;
@@ -72,19 +73,21 @@ class TakeAttendanceRelationManager extends RelationManager
                             $livewire->getRelationship()->updateExistingPivot($record->id, ['present' => false]);
                         }
                     })
+                    ->modalFooterActionsAlignment(Alignment::Center)
                     ->deselectRecordsAfterCompletion()
                     ->successNotificationTitle('Marked as absent'),
 
                 BulkAction::make('markPresent')
                     ->label('Mark Present')
                     ->icon('heroicon-o-check-circle')
-                    ->color('success')
+                    ->color('primary')
                     ->requiresConfirmation()
                     ->action(function ($records, $livewire) {
                         foreach ($records as $record) {
                             $livewire->getRelationship()->updateExistingPivot($record->id, ['present' => true]);
                         }
                     })
+                    ->modalFooterActionsAlignment(Alignment::Center)
                     ->deselectRecordsAfterCompletion()
                     ->successNotificationTitle('Marked as present'),
 
