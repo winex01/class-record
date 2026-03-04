@@ -16,6 +16,7 @@ use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
+use App\Filament\Columns\DateTimeColumn;
 use App\Filament\Resources\Notes\Pages\ManageNotes;
 
 class NoteResource extends Resource
@@ -79,8 +80,8 @@ class NoteResource extends Resource
             ->columns([
                 TextColumn::make('note'),
                 Column::tags('tags'),
-                Column::timestamp('starts_at')->dateTime(),
-                Column::timestamp('ends_at')->dateTime(),
+                DateTimeColumn::make('starts_at')->dateTime(),
+                DateTimeColumn::make('ends_at')->dateTime(),
             ])
             ->filters([
                 //

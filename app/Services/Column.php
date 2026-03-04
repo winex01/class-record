@@ -9,14 +9,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 final class Column
 {
-    public static function timestamp($name)
-    {
-        return TextColumn::make($name)
-            ->wrap()
-            ->dateTime()
-            ->tooltip(fn ($record) => ('Search: '.$record->{$name}));
-    }
-
     public static function boolean(
         string $name,
         string $trueLabel = 'Yes',

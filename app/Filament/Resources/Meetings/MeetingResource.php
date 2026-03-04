@@ -17,6 +17,7 @@ use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
+use App\Filament\Columns\DateTimeColumn;
 use App\Filament\Resources\Meetings\Pages\ManageMeetings;
 
 class MeetingResource extends Resource
@@ -86,8 +87,8 @@ class MeetingResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Column::tags('tags'),
-                Column::timestamp('starts_at'),
-                Column::timestamp('ends_at'),
+                DateTimeColumn::make('starts_at'),
+                DateTimeColumn::make('ends_at'),
             ])
             ->filters([
                 //

@@ -19,6 +19,7 @@ use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
 use Filament\Forms\Components\Repeater;
+use App\Filament\Columns\DateTimeColumn;
 use App\Filament\Resources\Tasks\Pages\ManageTasks;
 
 class TaskResource extends Resource
@@ -103,8 +104,8 @@ class TaskResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Column::tags('tags'),
-                Column::timestamp('starts_at')->dateTime(),
-                Column::timestamp('ends_at')->dateTime(),
+                DateTimeColumn::make('starts_at')->dateTime(),
+                DateTimeColumn::make('ends_at')->dateTime(),
             ])
             ->filters([
                 //
