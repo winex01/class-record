@@ -213,7 +213,6 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                     Section::make()
                         ->schema([
                             Textarea::make('description')
-                                ->nullable()
                                 ->rows(5)
                                 ->columnSpanFull(),
 

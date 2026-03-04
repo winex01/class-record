@@ -15,6 +15,6 @@ class Textarea extends BaseTextarea
             ->label(fn ($component): string => Str::headline($component->getName()))
             ->maxLength(65535)
             ->rows(3)
-            ->autosize();
+            ->nullable();
     }
 }
