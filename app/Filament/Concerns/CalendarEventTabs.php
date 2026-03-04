@@ -6,6 +6,7 @@ use Illuminate\Support\Carbon;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
+// TODO:: transfer this to Traits folder
 trait CalendarEventTabs
 {
     public function getTabs(): array

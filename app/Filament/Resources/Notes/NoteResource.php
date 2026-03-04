@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use App\Filament\Fields\DateTimePicker;
 use Filament\Forms\Components\Textarea;
 use App\Filament\Resources\Notes\Pages\ManageNotes;
 
@@ -58,12 +59,12 @@ class NoteResource extends Resource
 
             Field::tags('tags'),
 
-            Field::dateTimePicker('starts_at')
+            DateTimePicker::make('starts_at')
                 ->default(now()->startOfDay())
                 ->beforeOrEqual('ends_at')
                 ->required(),
 
-            Field::dateTimePicker('ends_at')
+            DateTimePicker::make('ends_at')
                 ->default(now()->endOfDay())
                 ->afterOrEqual('starts_at')
                 ->required(),

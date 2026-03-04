@@ -8,6 +8,7 @@ use App\Services\Field;
 use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
+use App\Filament\Fields\Phone;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
@@ -62,7 +63,10 @@ class StudentResource extends Resource
                     ->placeholder('Jr. I, II')
                     ->maxLength(255),
 
-                Field::gender(),
+                Select::make('gender')
+                    ->enum(Gender::class)
+                    ->options(Gender::class)
+                    ->required(),
 
                 Field::date('birth_date'),
 
@@ -70,7 +74,7 @@ class StudentResource extends Resource
                     ->label('Email address')
                     ->email(),
 
-                Field::phone('contact_number'),
+                Phone::make('contact_number'),
             ]);
     }
 

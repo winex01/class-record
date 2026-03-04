@@ -2,49 +2,12 @@
 
 namespace  App\Services;
 
-use App\Enums\Gender;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TimePicker;
-use Filament\Forms\Components\DateTimePicker;
 
 final class Field
 {
-    public static function timePicker($name)
-    {
-        return TimePicker::make($name)
-            ->seconds(false)
-            ->extraInputAttributes([
-                'onclick' => 'this.showPicker && this.showPicker()',
-            ])
-            ->suffixAction(
-            Action::make('clear')
-                    ->icon('heroicon-o-x-mark')
-                    ->tooltip('Clear')
-                    ->action(fn ($set) => $set($name, null))
-            );
-    }
-
-    public static function dateTimePicker($name)
-    {
-        return DateTimePicker::make($name)
-            ->extraInputAttributes([
-                'onclick' => 'this.showPicker && this.showPicker()',
-            ])
-            ->seconds(false);
-    }
-
-    public static function gender($name = 'gender')
-    {
-        return Select::make($name)
-            ->enum(Gender::class)
-            ->options(Gender::class)
-            ->required();
-    }
-
     public static function date($name)
     {
         return DatePicker::make($name)

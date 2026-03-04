@@ -13,6 +13,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
+use App\Filament\Fields\TimePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
@@ -141,11 +142,11 @@ class RecurringResource extends Resource
                 ->schema([
                     Grid::make()
                         ->schema([
-                            Field::timePicker('starts_at')
+                            TimePicker::make('starts_at')
                                 ->requiredWith('ends_at')
                                 ->columnSpan(1),
 
-                            Field::timePicker('ends_at')
+                            TimePicker::make('ends_at')
                                 ->requiredWith('starts_at')
                                 ->columnSpan(1),
                         ])
