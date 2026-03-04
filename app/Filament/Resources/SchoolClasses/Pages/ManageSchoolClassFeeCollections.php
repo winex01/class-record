@@ -203,13 +203,30 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
                     return !$hasUnderpaidOrUnpaid && !$hasUnmarkedStatus;
                 })
-                // TODO::BUG double check display tooltip value
                 ->tooltip(function ($record) {
-                    $hasUnpaid = $record->students()
-                        ->where('status', '!=', FeeCollectionStatus::PAID->value)
-                        ->exists();
+                    if ($record->amount == 0) {
+                        $hasPending = $record->students()->wherePivotNull('amount')->exists();
+                        return $hasPending
+                            ? CompletedPendingStatus::PENDING->getLabel()
+                            : CompletedPendingStatus::COMPLETED->getLabel();
+                    }
 
-                    return $hasUnpaid ? CompletedPendingStatus::PENDING->getLabel() : CompletedPendingStatus::COMPLETED->getLabel();
+                    $students = $record->students()->withPivot(['amount', 'status'])->get();
+
+                    $hasUnderpaidOrUnpaid = $students->contains(function ($student) use ($record) {
+                        $paid = $student->pivot->amount ?? 0;
+                        return $paid < $record->amount;
+                    });
+
+                    $hasUnmarkedStatus = $students->contains(function ($student) {
+                        return $student->pivot->status !== FeeCollectionStatus::PAID->value;
+                    });
+
+                    $isCompleted = !$hasUnderpaidOrUnpaid && !$hasUnmarkedStatus;
+
+                    return $isCompleted
+                        ? CompletedPendingStatus::COMPLETED->getLabel()
+                        : CompletedPendingStatus::PENDING->getLabel();
                 })
                 ->sortable(
                     query: fn ($query, string $direction) =>
