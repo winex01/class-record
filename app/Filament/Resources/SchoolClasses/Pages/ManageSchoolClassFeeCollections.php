@@ -13,6 +13,7 @@ use App\Enums\FeeCollectionStatus;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
 use App\Filament\Fields\DatePicker;
+use App\Filament\Columns\TextColumn;
 use App\Enums\CompletedPendingStatus;
 use Illuminate\Support\Facades\Blade;
 use App\Filament\Columns\AmountColumn;
@@ -146,7 +147,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
     public static function getColumns()
     {
         return [
-            Column::text('name'),
+            TextColumn::make('name'),
 
             AmountColumn::make('amount')
                 ->color('info')
@@ -156,7 +157,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             Column::date('date')
                 ->width('1%'),
 
-            Column::text('description')
+            TextColumn::make('description')
                 ->toggleable(isToggledHiddenByDefault: true),
 
             'total' =>

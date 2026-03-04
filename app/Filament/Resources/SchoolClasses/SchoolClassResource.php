@@ -21,6 +21,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
 use App\Filament\Fields\DatePicker;
+use App\Filament\Columns\TextColumn;
 use App\Filament\Fields\BooleanToggle;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
@@ -106,7 +107,7 @@ class SchoolClassResource extends Resource
             ->columns([
                 Stack::make([
                     Split::make([
-                        Column::text('name')
+                        TextColumn::make('name')
                             ->label('Subject')
                             ->searchable(
                                 query: fn ($query, string $search) => $query

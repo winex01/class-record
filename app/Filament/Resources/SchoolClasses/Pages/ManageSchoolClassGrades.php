@@ -4,7 +4,6 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Grade;
 use App\Services\Icon;
-use App\Services\Column;
 use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -17,6 +16,7 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
+use App\Filament\Columns\TextColumn;
 use Filament\Support\Enums\TextSize;
 use App\Models\GradeGradingComponent;
 use Filament\Forms\Components\Hidden;
@@ -231,7 +231,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('grading_period')
             ->columns([
-                Column::text('grading_period')
+                TextColumn::make('grading_period')
                     ->label('Grading Period')
                     ->color('primary')
                     ->size(TextSize::Large)

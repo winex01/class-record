@@ -9,15 +9,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 final class Column
 {
-    public static function text($name)
-    {
-        return TextColumn::make($name)
-            ->toggleable(isToggledHiddenByDefault: false)
-            ->wrap()
-            ->sortable()
-            ->searchable();
-    }
-
     public static function date($name)
     {
         return TextColumn::make($name)

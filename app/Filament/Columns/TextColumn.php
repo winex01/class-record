@@ -7,6 +7,8 @@ use Filament\Tables\Columns\TextColumn as BaseTextColumn;
 
 class TextColumn extends BaseTextColumn
 {
+    protected bool $isUnderlined = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -17,5 +19,19 @@ class TextColumn extends BaseTextColumn
             ->wrap()
             ->sortable()
             ->searchable();
+    }
+
+    public function underline(bool $condition = true): static
+    {
+        $this->isUnderlined = $condition;
+
+        return $this;
+    }
+
+    public function getExtraAttributes(): array
+    {
+        return $this->isUnderlined
+            ? array_merge(parent::getExtraAttributes(), ['class' => 'cursor-pointer hover:underline'])
+            : parent::getExtraAttributes();
     }
 }

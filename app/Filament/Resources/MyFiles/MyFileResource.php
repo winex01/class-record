@@ -13,9 +13,9 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use Filament\Actions\DeleteAction;
+use App\Filament\Columns\TextColumn;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
@@ -119,14 +119,12 @@ class MyFileResource extends Resource
     public static function getColumns()
     {
         return [
-            Column::text('name'),
+            TextColumn::make('name'),
             Column::tags('tags'),
 
             TextColumn::make('path')
                 ->label('Files')
-                ->toggleable(isToggledHiddenByDefault: false)
                 ->html()
-                ->wrap()
                 ->getStateUsing(fn ($record) => collect($record->path)
                     ->map(fn ($path, $index) =>
                         '<a href="' . route('filament.app.myfile.download', ['myFileId' => $record->id, 'index' => $index]) . '" class="text-info-500 hover:text-info-600 hover:underline inline" target="_blank">' . basename($path) . '</a>'

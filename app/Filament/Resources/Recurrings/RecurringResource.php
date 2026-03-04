@@ -15,6 +15,7 @@ use App\Filament\Fields\TagsInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Fields\TimePicker;
+use App\Filament\Columns\TextColumn;
 use Filament\Forms\Components\Radio;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
@@ -164,8 +165,8 @@ class RecurringResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Column::text('name'),
-                Column::text('description')
+                TextColumn::make('name'),
+                TextColumn::make('description')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Column::tags('tags'),

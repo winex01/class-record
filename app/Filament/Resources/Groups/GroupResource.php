@@ -3,13 +3,13 @@
 namespace App\Filament\Resources\Groups;
 
 use App\Models\Group;
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
+use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\Groups\Pages\ManageGroups;
@@ -44,7 +44,7 @@ class GroupResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Column::text('name'),
+                TextColumn::make('name'),
             ])
             ->filters([
                 //

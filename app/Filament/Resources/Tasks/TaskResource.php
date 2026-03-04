@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use Filament\Actions\DeleteAction;
+use App\Filament\Columns\TextColumn;
 use App\Filament\Fields\BooleanToggle;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
@@ -97,8 +98,8 @@ class TaskResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Column::text('name'),
-                Column::text('description')
+                TextColumn::make('name'),
+                TextColumn::make('description')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Column::tags('tags'),

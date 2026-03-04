@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\TransmuteTemplates;
 
 use App\Services\Icon;
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -11,6 +10,7 @@ use Filament\Resources\Resource;
 use App\Models\TransmuteTemplate;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
+use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\TextInput;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
@@ -54,7 +54,7 @@ class TransmuteTemplateResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Column::text('name'),
+                TextColumn::make('name'),
             ])
             ->recordActions([
                 static::createRangesAction(),

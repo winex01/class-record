@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
+use App\Filament\Columns\TextColumn;
 use App\Filament\Columns\ImageColumn;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
@@ -115,7 +116,7 @@ class StudentResource extends Resource
         return [
             ImageColumn::make('photo'),
 
-            Column::text('full_name')
+            TextColumn::make('full_name')
                 ->tooltip(fn ($record) => $record->complete_name)
                 ->sortable(query: function ($query, $direction) {
                     $callback = static::defaultNameSort($direction);
@@ -124,10 +125,13 @@ class StudentResource extends Resource
                 ->searchable(['last_name', 'first_name', 'middle_name', 'suffix_name']),
 
             Column::enum('gender', Gender::class)->badge(false),
+
             Column::date('birth_date'),
-            Column::text('email'),
+
+            TextColumn::make('email'),
+
             'contact_number' =>
-            Column::text('contact_number')->label('Contact'),
+            TextColumn::make('contact_number')->label('Contact'),
         ];
     }
 

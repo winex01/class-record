@@ -13,6 +13,7 @@ use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
 use App\Filament\Fields\DatePicker;
 use Filament\Tables\Filters\Filter;
+use App\Filament\Columns\TextColumn;
 use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,13 +50,11 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->columns([
                 Column::date('date'),
 
-                Column::text('present')
+                TextColumn::make('present')
                     ->searchable(false)
                     ->color('info')
                     ->alignCenter()
-                    ->extraAttributes([
-                        'class' => 'cursor-pointer hover:underline hover:text-primary-600',
-                    ])
+                    ->underline()
                     ->state(fn ($record) => $record->students()->wherePivot('present', true)->count())
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
@@ -80,10 +79,11 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                             ))
                     ),
 
-                Column::text('absent')
+                TextColumn::make('absent')
                     ->searchable(false)
                     ->color('danger')
                     ->alignCenter()
+                    ->underline()
                     ->extraAttributes([
                         'class' => 'cursor-pointer hover:underline hover:text-primary-600',
                     ])

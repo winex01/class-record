@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use Filament\Actions\DeleteAction;
+use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
 use Filament\Forms\Components\Textarea;
@@ -76,7 +77,7 @@ class NoteResource extends Resource
         return $table
             ->recordTitleAttribute('note')
             ->columns([
-                Column::text('note'),
+                TextColumn::make('note'),
                 Column::tags('tags'),
                 Column::timestamp('starts_at')->dateTime(),
                 Column::timestamp('ends_at')->dateTime(),

@@ -13,6 +13,7 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
 use App\Filament\Fields\DatePicker;
+use App\Filament\Columns\TextColumn;
 use App\Enums\CompletedPendingStatus;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Blade;
@@ -207,12 +208,12 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
     public static function getColumns()
     {
         return [
-            Column::text('name'),
-            Column::text('assessmentType.name')->badge()->label('Type'),
+            TextColumn::make('name'),
+            TextColumn::make('assessmentType.name')->badge()->label('Type'),
             Column::date('date'),
             'max_score' =>
-            Column::text('max_score')->label('Max')->alignCenter()->color('info')->tooltip('Max score'),
-            Column::text('description')->toggleable(isToggledHiddenByDefault:true),
+            TextColumn::make('max_score')->label('Max')->alignCenter()->color('info')->tooltip('Max score'),
+            TextColumn::make('description')->toggleable(isToggledHiddenByDefault:true),
             Column::boolean('can_group_students')->label('Can group')->toggleable(isToggledHiddenByDefault:true),
         ];
     }
