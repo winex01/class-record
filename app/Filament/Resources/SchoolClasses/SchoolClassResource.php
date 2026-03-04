@@ -20,6 +20,7 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
+use App\Filament\Fields\BooleanToggle;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Navigation\NavigationItem;
@@ -84,22 +85,10 @@ class SchoolClassResource extends Resource
                 ->placeholder('Brief details about this subject... (optional)')
                 ->rows(5),
 
-            Field::toggleBoolean('active')
-                ->default(true)
-                ->label('Status')
+            BooleanToggle::make('active')
                 ->helperText('Active = editable, Archived = view only')
-                ->options([
-                    true => 'Active',
-                    false => 'Archived',
-                ])
-                ->icons([
-                    true => 'heroicon-o-check',
-                    false => 'heroicon-o-lock-closed',
-                ])
-                ->colors([
-                    true => 'success',
-                    false => 'warning',
-                ])
+                ->icons([true => 'heroicon-o-check', false => 'heroicon-o-lock-closed'])
+                ->colors([true => 'success', false => 'warning'])
         ];
     }
 

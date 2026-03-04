@@ -28,7 +28,6 @@ class Task extends Model implements Eventable
             ->title($this->name)
             ->start($this->starts_at)
             ->end($this->ends_at)
-            ->backgroundColor(Color::Blue[500])
-            ;
+            ->backgroundColor(Color::Blue[500]);
     }
 }

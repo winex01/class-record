@@ -12,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
+use App\Filament\Fields\BooleanToggle;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
@@ -74,15 +75,16 @@ class TaskResource extends Resource
 
             Repeater::make('checklists')
                 ->schema([
-                    TextInput::make('name')
+                    Textarea::make('name')
                         ->placeholder('Subtask name')
                         ->required()
                         ->maxLength(255)
-                        ->columnSpan(2),
+                        ->columnSpan(2)
+                        ->rows(1),
 
-                    Field::toggleBoolean('complete')
+                    BooleanToggle::make('complete')
                         ->columnSpan(1)
-
+                        ->icons(null)
                 ])
                 ->defaultItems(0)
                 ->columns(3)

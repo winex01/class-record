@@ -25,7 +25,7 @@ class MeetingResource extends Resource
 
     protected static string | \UnitEnum | null $navigationGroup = \App\Enums\NavigationGroup::Group2;
 
-    protected static ?int $navigationSort = 250;
+    protected static ?int $navigationSort = 280;
 
     public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
     {
@@ -39,7 +39,7 @@ class MeetingResource extends Resource
 
     public static function getNavigationBadgeColor(): ?string
     {
-        return 'success'; // Filament will use emerald background
+        return 'purple';
     }
 
     public static function form(Schema $schema): Schema

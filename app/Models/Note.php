@@ -27,7 +27,6 @@ class Note extends Model implements Eventable
             ->title($this->note)
             ->start($this->starts_at)
             ->end($this->ends_at)
-            ->backgroundColor(Color::Amber[500])
-            ;
+            ->backgroundColor(Color::Amber[500]);
     }
 }

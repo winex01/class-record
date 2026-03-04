@@ -29,6 +29,6 @@ class Meeting extends Model implements Eventable
             ->title($this->name)
             ->start($this->starts_at)
             ->end($this->ends_at)
-            ;
+            ->backgroundColor(Color::Purple[500]);
     }
 }

@@ -10,7 +10,6 @@ use Carbon\CarbonPeriod;
 use App\Models\Recurring;
 use Illuminate\Support\Carbon;
 use Filament\Support\Enums\Width;
-use Filament\Support\Colors\Color;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
@@ -38,20 +37,13 @@ class MyCalendarWidget extends CalendarWidget
     protected bool $eventResizeEnabled = true;
     protected CalendarViewType $calendarView = CalendarViewType::DayGridMonth;
 
-    // public function getHeaderActions(): array
-    // {
-    //     return [
-    //         $this->createMeetingAction()
-    //     ];
-    // }
-
     protected function getEvents(FetchInfo $info): Collection | array | Builder
     {
         return [
-            ...Note::withinCalendarRange($info)->get()->map->toCalendarEvent(),
+            ...$this->recurringEvents($info),
             ...Task::withinCalendarRange($info)->get()->map->toCalendarEvent(),
+            ...Note::withinCalendarRange($info)->get()->map->toCalendarEvent(),
             ...Meeting::withinCalendarRange($info)->get()->map->toCalendarEvent(),
-            // ...$this->recurringEvents($info),
         ];
     }
 
@@ -84,7 +76,7 @@ class MyCalendarWidget extends CalendarWidget
                                 ->title($item->name)
                                 ->start($startsAt)
                                 ->end($endsAt)
-                                ->backgroundColor(Color::Pink[500]);
+                                ->backgroundColor('primary');
                         }
                     }
                 }
@@ -112,7 +104,7 @@ class MyCalendarWidget extends CalendarWidget
             Notification::make()
                 ->title('You cannot resize this event, but you can modify it using the edit action')
                 ->warning()
-                ->iconColor('pink')
+                ->iconColor('primary')
                 ->send();
             return false;
         }
@@ -137,7 +129,7 @@ class MyCalendarWidget extends CalendarWidget
             Notification::make()
                 ->title('You cannot drag this event to another date, but you can modify it using the edit action')
                 ->warning()
-                ->iconColor('pink')
+                ->iconColor('primary')
                 ->send();
             return false;
         }
@@ -161,7 +153,7 @@ class MyCalendarWidget extends CalendarWidget
             $this->defaultCreateAction(Note::class),
             $this->defaultCreateAction(Task::class)->modalWidth(Width::Large),
             $this->defaultCreateAction(Meeting::class),
-            // $this->recurringCreateAction(Recurring::class)->modalWidth(Width::ExtraLarge),
+            $this->recurringCreateAction(Recurring::class)->modalWidth(Width::ExtraLarge),
         ];
     }
 
