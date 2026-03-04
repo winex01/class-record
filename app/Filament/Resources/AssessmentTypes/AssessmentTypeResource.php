@@ -8,10 +8,10 @@ use App\Models\AssessmentType;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\AssessmentTypes\Pages\ManageAssessmentTypes;
 
 class AssessmentTypeResource extends Resource
@@ -41,8 +41,7 @@ class AssessmentTypeResource extends Resource
     {
         return [
             TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+                ->required()
         ];
     }
 

@@ -10,13 +10,13 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use Filament\Support\Icons\Heroicon;
 use App\Models\GradeComponentTemplate;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
 use App\Filament\Resources\GradeComponentTemplates\Pages\ManageGradeComponentTemplates;
 
@@ -48,7 +48,6 @@ class GradeComponentTemplateResource extends Resource
         return [
             TextInput::make('name')
                 ->required()
-                ->maxLength(255)
                 ->unique(
                     table: 'grade_component_templates',
                     modifyRuleUsing: function ($rule) {
@@ -76,7 +75,6 @@ class GradeComponentTemplateResource extends Resource
                         }
                     },
                 ])
-                ->addActionLabel('Add grading component')
         ];
     }
 

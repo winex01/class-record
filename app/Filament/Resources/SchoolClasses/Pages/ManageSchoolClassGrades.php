@@ -8,11 +8,13 @@ use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
+use App\Filament\Fields\Select;
 use App\Models\GradingComponent;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use App\Models\TransmuteTemplate;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TextInput;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
@@ -20,7 +22,6 @@ use App\Filament\Columns\TextColumn;
 use Filament\Support\Enums\TextSize;
 use App\Models\GradeGradingComponent;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\View;
@@ -28,7 +29,6 @@ use Filament\Support\Enums\Alignment;
 use App\Models\GradeComponentTemplate;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\CheckboxList;
@@ -351,8 +351,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                     ->label('Select Template')
                                     ->options(TransmuteTemplate::query()->pluck('name', 'id'))
                                     ->default(fn () => TransmuteTemplate::query()->first()?->id)
-                                    ->searchable()
-                                    ->preload()
                                     ->required()
                                     ->placeholder('Choose a template')
                             ])
@@ -531,7 +529,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->placeholder('Enter component name...')
                     ->helperText('You can type or pick from suggestions.')
                     ->required()
-                    ->maxLength(255)
                     ->datalist([
                         'Written Works',
                         'Performance Tasks',

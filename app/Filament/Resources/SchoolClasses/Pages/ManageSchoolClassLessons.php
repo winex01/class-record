@@ -8,25 +8,25 @@ use App\Enums\LessonStatus;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Relaticle\Flowforge\Board;
+use App\Filament\Fields\Select;
 use Relaticle\Flowforge\Column;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
+use App\Filament\Fields\TextInput;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
 use App\Filament\Fields\DatePicker;
 use Filament\Support\Enums\TextSize;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\View;
 use Illuminate\Support\Facades\Blade;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Relaticle\Flowforge\Contracts\HasBoard;
 use Filament\Infolists\Components\TextEntry;
@@ -219,6 +219,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
 
                             Select::make('myFiles')
                                 ->multiple()
+                                ->preload(false)
                                 ->options(MyFile::pluck('name', 'id'))
                                 ->dehydrated(false)
                                 ->saveRelationshipsUsing(function ($component, $state, $record) {

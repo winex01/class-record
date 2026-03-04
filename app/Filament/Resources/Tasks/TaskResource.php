@@ -11,6 +11,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
+use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Fields\BooleanToggle;
@@ -18,7 +19,6 @@ use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\Tasks\Pages\ManageTasks;
 
 class TaskResource extends Resource

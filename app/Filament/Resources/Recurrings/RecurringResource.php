@@ -12,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
+use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Fields\TimePicker;
@@ -22,7 +23,6 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Tabs\Tab;
 use App\Filament\Resources\Recurrings\Pages\ManageRecurrings;
 

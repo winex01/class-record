@@ -38,12 +38,9 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
                 TextColumn::make('transmuted_grade')
                     ->formatStateUsing(fn ($state) => $state != floor($state) ? $state : number_format($state, 0))
             ])
-            ->filters([
-                //
-            ])
             ->headerActions([
                 CreateAction::make()
-                    ->label('New range')
+                    ->label('New Range')
                     ->modalWidth(Width::Large)
             ])
             ->recordActions([

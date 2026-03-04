@@ -7,13 +7,13 @@ use App\Models\Assessment;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
 use Filament\Actions\Action;
+use App\Filament\Fields\Select;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TextInput;
 use Illuminate\Support\Facades\DB;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use App\Livewire\Traits\RenderTableTrait;
 use Illuminate\Database\Eloquent\Builder;
@@ -188,7 +188,6 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                                 $set('group', '-');
                             }
                         })
-                        ->searchable()
                 ])
                 ->action(function ($record, array $data) {
                     // If group is empty, set to '-'

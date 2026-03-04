@@ -8,17 +8,17 @@ use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use App\Filament\Fields\Phone;
+use App\Filament\Fields\Select;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Columns\ImageColumn;
-use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Filters\SelectFilter;
 use App\Filament\Resources\Students\Pages\ManageStudents;
@@ -66,6 +66,7 @@ class StudentResource extends Resource
                     ->maxLength(255),
 
                 Select::make('gender')
+                    ->searchable(false)
                     ->enum(Gender::class)
                     ->options(Gender::class)
                     ->required(),

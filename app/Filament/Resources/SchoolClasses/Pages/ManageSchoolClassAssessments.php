@@ -7,19 +7,19 @@ use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
+use App\Filament\Fields\Select;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Columns\TextColumn;
 use App\Enums\CompletedPendingStatus;
-use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
@@ -99,8 +99,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                         Select::make('assessment_type_id')
                             ->relationship('assessmentType', 'name')
                             ->required()
-                            ->preload()
-                            ->searchable()
                             ->createOptionForm(AssessmentTypeResource::getForm())
                             ->editOptionForm(AssessmentTypeResource::getForm()),
 

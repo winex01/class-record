@@ -8,10 +8,10 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\Groups\Pages\ManageGroups;
 
 class GroupResource extends Resource

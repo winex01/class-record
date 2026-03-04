@@ -7,17 +7,17 @@ use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
+use App\Filament\Fields\Select;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
+use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
-use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Support\Facades\Storage;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use App\Filament\Resources\MyFiles\Pages\ManageMyFiles;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -146,8 +146,6 @@ class MyFileResource extends Resource
         return Select::make('my_file_id')
                 ->relationship('myFile', 'name')
                 ->helperText('Optional')
-                ->preload()
-                ->searchable()
                 ->nullable()
                 ->createOptionForm(static::getForm(false))
                 ->createOptionAction(
