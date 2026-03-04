@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
+use App\Filament\Columns\TextColumn;
 use Filament\Tables\Columns\TagsColumn;
-use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 
 final class Column
@@ -12,15 +12,15 @@ final class Column
     public static function text($name)
     {
         return TextColumn::make($name)
-            ->wrap()
             ->toggleable(isToggledHiddenByDefault: false)
+            ->wrap()
             ->sortable()
             ->searchable();
     }
 
     public static function date($name)
     {
-        return static::text($name)
+        return TextColumn::make($name)
             ->wrap()
             ->date()
             ->searchable(
@@ -34,7 +34,7 @@ final class Column
 
     public static function timestamp($name)
     {
-        return static::text($name)
+        return TextColumn::make($name)
             ->wrap()
             ->dateTime()
             ->tooltip(fn ($record) => ('Search: '.$record->{$name}));

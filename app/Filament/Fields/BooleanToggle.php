@@ -2,6 +2,7 @@
 
 namespace App\Filament\Fields;
 
+use Illuminate\Support\Str;
 use Filament\Forms\Components\ToggleButtons;
 
 class BooleanToggle extends ToggleButtons
@@ -11,6 +12,7 @@ class BooleanToggle extends ToggleButtons
         parent::setUp();
 
         $this
+            ->label(fn ($component): string => Str::headline($component->getName()))
             ->boolean()
             ->default(false)
             ->inline()

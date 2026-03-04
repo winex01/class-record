@@ -3,9 +3,9 @@
 namespace App\Filament\Columns;
 
 use Illuminate\Support\Str;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextColumn as BaseTextColumn;
 
-class AmountColumn extends TextColumn
+class TextColumn extends BaseTextColumn
 {
     protected function setUp(): void
     {
@@ -13,9 +13,9 @@ class AmountColumn extends TextColumn
 
         $this
             ->label(fn ($column): string => Str::headline($column->getName()))
-            ->width('1%')
+            ->toggleable(isToggledHiddenByDefault: false)
             ->wrap()
-            ->prefix('₱')
-            ->formatStateUsing(fn ($state) => number_format($state, 2));
+            ->sortable()
+            ->searchable();
     }
 }

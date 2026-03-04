@@ -2,6 +2,7 @@
 
 namespace App\Filament\Columns;
 
+use Illuminate\Support\Str;
 use Filament\Tables\Columns\TextInputColumn as BaseTextInputColumn;
 
 class TextInputColumn extends BaseTextInputColumn
@@ -11,9 +12,10 @@ class TextInputColumn extends BaseTextInputColumn
         parent::setUp();
 
         $this
+            ->label(fn ($column): string => Str::headline($column->getName()))
+            ->width('1%')
             ->sortable()
             ->searchable()
-            ->width('1%')
             ->rules(['numeric', 'min:0', 'max:99999999']);
     }
 }

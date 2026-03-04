@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\TransmuteTemplates\RelationManagers;
 
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use App\Filament\Columns\TextColumn;
 use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -33,9 +33,9 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Column::text('initial_min'),
-                Column::text('initial_max'),
-                Column::text('transmuted_grade')
+                TextColumn::make('initial_min'),
+                TextColumn::make('initial_max'),
+                TextColumn::make('transmuted_grade')
                     ->formatStateUsing(fn ($state) => $state != floor($state) ? $state : number_format($state, 0))
             ])
             ->filters([

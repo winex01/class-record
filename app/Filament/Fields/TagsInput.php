@@ -2,6 +2,7 @@
 
 namespace App\Filament\Fields;
 
+use Illuminate\Support\Str;
 use Filament\Forms\Components\TagsInput as BaseTagsInput;
 
 class TagsInput extends BaseTagsInput
@@ -11,6 +12,7 @@ class TagsInput extends BaseTagsInput
         parent::setUp();
 
         $this
+            ->label(fn ($component): string => Str::headline($component->getName()))
             ->separator(',')
             ->splitKeys(['Tab'])
             ->hint(function ($component) {
