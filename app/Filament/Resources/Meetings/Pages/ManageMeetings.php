@@ -18,6 +18,7 @@ class ManageMeetings extends ManageRecords
     {
         return [
             CreateAction::make()
+                ->label('New Meeting')
                 ->modalWidth(Width::Medium)
         ];
     }

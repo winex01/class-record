@@ -117,7 +117,9 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 //
             ])
             ->headerActions([
-                SchoolClassResource::createAction($this->getOwnerRecord())->modalWidth(Width::Large),
+                SchoolClassResource::createAction($this->getOwnerRecord())
+                    ->label('New Fee Collection')
+                    ->modalWidth(Width::Large),
 
                 static::getOverviewAction(),
             ])

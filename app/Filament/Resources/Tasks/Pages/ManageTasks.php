@@ -18,6 +18,7 @@ class ManageTasks extends ManageRecords
     {
         return [
             CreateAction::make()
+                ->label('New Task')
                 ->modalWidth(Width::Large)
         ];
     }

@@ -17,6 +17,7 @@ use Filament\Support\Enums\Size;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
@@ -311,7 +312,7 @@ class SchoolClassResource extends Resource
 
     public static function createAction($getOwnerRecord)
     {
-        return \Filament\Actions\CreateAction::make()
+        return CreateAction::make()
             ->after(function ($record) use ($getOwnerRecord) {
                 $record->students()->sync(static::getClassStudents($getOwnerRecord));
             });

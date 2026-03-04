@@ -15,6 +15,7 @@ class ManageRecurrings extends ManageRecords
     {
         return [
             CreateAction::make()
+                ->label('New Recurring')
                 ->modalWidth(Width::ExtraLarge)
         ];
     }

@@ -15,6 +15,7 @@ class ManageGroups extends ManageRecords
     {
         return [
             CreateAction::make()
+                ->label('New Group')
                 ->modalWidth(Width::Medium)
         ];
     }

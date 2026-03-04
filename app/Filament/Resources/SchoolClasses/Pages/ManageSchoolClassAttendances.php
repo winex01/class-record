@@ -142,6 +142,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ])
             ->headerActions([
                 SchoolClassResource::createAction($this->getOwnerRecord())
+                    ->label('New Attendance')
                     ->modalWidth(Width::Medium),
 
                 static::getOverviewAction(),

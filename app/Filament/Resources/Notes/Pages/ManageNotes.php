@@ -18,6 +18,7 @@ class ManageNotes extends ManageRecords
     {
         return [
             CreateAction::make()
+                ->label('New Note')
                 ->modalWidth(Width::Medium)
         ];
     }

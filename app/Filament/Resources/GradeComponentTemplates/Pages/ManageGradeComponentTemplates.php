@@ -15,6 +15,7 @@ class ManageGradeComponentTemplates extends ManageRecords
     {
         return [
             CreateAction::make()
+                ->label('New Template')
                 ->modalWidth(Width::ExtraLarge),
         ];
     }

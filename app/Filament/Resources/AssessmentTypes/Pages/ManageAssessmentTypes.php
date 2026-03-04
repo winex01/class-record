@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\AssessmentTypes\Pages;
 
-use App\Filament\Resources\AssessmentTypes\AssessmentTypeResource;
+use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
-use Filament\Support\Enums\Width;
+use App\Filament\Resources\AssessmentTypes\AssessmentTypeResource;
 
 class ManageAssessmentTypes extends ManageRecords
 {
@@ -15,6 +15,7 @@ class ManageAssessmentTypes extends ManageRecords
     {
         return [
             CreateAction::make()
+                ->label('New Type')
                 ->modalWidth(Width::Medium),
         ];
     }

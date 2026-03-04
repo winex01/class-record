@@ -68,7 +68,10 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 ...StudentResource::getFilters()
             ])
             ->headerActions([
-                CreateAction::make()->modalWidth(Width::Large),
+                CreateAction::make()
+                    ->label('New Student')
+                    ->modalWidth(Width::Large),
+
                 static::attachAction(),
             ])
             ->recordActions([
@@ -84,7 +87,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
     public static function attachAction($ownerRecord = null)
     {
         $attachAction = AttachAction::make()
-            ->label('Attach students')
+            ->label('Attach Students')
             ->closeModalByClickingAway(false)
             ->preloadRecordSelect()
             ->multiple()

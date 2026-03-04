@@ -167,7 +167,8 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 ...static::getFilters(),
             ])
             ->headerActions([
-                SchoolClassResource::createAction($this->getOwnerRecord()),
+                SchoolClassResource::createAction($this->getOwnerRecord())
+                    ->label('New Assessment'),
 
                 static::getOverviewAction(),
             ])

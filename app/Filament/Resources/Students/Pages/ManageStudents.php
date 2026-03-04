@@ -18,6 +18,7 @@ class ManageStudents extends ManageRecords
     {
         return [
             CreateAction::make()
+                ->label('New Student')
                 ->modalWidth(Width::Large),
         ];
     }

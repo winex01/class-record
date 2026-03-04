@@ -240,7 +240,9 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->paginated(false)
             ->actionsAlignment('start')
             ->headerActions([
-                CreateAction::make()->modalWidth(Width::TwoExtraLarge),
+                CreateAction::make()
+                    ->label('New Grade')
+                    ->modalWidth(Width::TwoExtraLarge),
             ])
             ->recordActions([
                 static::viewGrades($this->getOwnerRecord()),
