@@ -3,13 +3,11 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\SelectColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Columns\TextInputColumn;
@@ -26,27 +24,6 @@ final class Column
             ->falseIcon('heroicon-o-x-circle')
             ->falseColor(Color::Rose)
             ->size(IconSize::Large);
-    }
-
-    public static function timePickerFromAndTo($name, $starts_at = 'starts_at', $ends_at = 'ends_at')
-    {
-        return TextColumn::make($name)
-            ->wrap()
-            ->formatStateUsing(function ($state) use ($starts_at, $ends_at) {
-                if (!is_array($state)) {
-                    return '-';
-                }
-
-                $start = isset($state[$starts_at])
-                    ? Carbon::parse($state[$starts_at])->format('g:i a')
-                    : '-';
-
-                $end = isset($state[$ends_at])
-                    ? Carbon::parse($state[$ends_at])->format('g:i a')
-                    : '-';
-
-                return "{$start} - {$end}";
-            });
     }
 
     public static function amount($name)
@@ -140,16 +117,6 @@ final class Column
             ->searchable(query: function (Builder $query, string $search) use ($name): Builder {
                 return $query->whereRaw('LOWER('. $name .') LIKE ?', ['%' . strtolower($search) . '%']);
             });
-    }
-
-    public static function image($name)
-    {
-        return ImageColumn::make($name)
-            ->toggleable(isToggledHiddenByDefault:false)
-            ->circular()
-            ->extraHeaderAttributes([
-                'class' => 'w-8' // fix table column width
-            ]);
     }
 
     public static function enum($name, $enum, $attribute = null)

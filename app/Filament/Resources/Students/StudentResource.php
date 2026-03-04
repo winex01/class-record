@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
+use App\Filament\Columns\ImageColumn;
 use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\TextInput;
@@ -112,7 +113,7 @@ class StudentResource extends Resource
     public static function getColumns()
     {
         return [
-            Column::image('photo'),
+            ImageColumn::make('photo'),
 
             Column::text('full_name')
                 ->tooltip(fn ($record) => $record->complete_name)
