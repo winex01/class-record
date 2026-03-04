@@ -87,9 +87,14 @@ class SchoolClassResource extends Resource
                 ->rows(5),
 
             BooleanToggle::make('active')
-                ->helperText('Active = editable, Archived = view only')
+                ->label('Status')
+                ->helperText('Active records can be edited. Archived records are view-only.')
                 ->icons([true => 'heroicon-o-check', false => 'heroicon-o-lock-closed'])
                 ->colors([true => 'success', false => 'warning'])
+                ->options([
+                    true => 'Active',
+                    false => 'Archived',
+                ])
         ];
     }
 

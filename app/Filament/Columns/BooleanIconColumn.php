@@ -13,7 +13,7 @@ class BooleanIconColumn extends IconColumn
         parent::setUp();
 
         $this
-            // ->width('1%')
+            ->width('1%')
             ->alignCenter()
             ->trueIcon('heroicon-o-check-circle')
             ->trueColor(Color::Emerald)

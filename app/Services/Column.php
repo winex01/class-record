@@ -15,7 +15,7 @@ final class Column
         return TextInputColumn::make($name)
             ->sortable()
             ->searchable()
-            ->extraAttributes(['style' => 'min-width: 120px; max-width: 120px;']);
+            ->width('1%');
     }
 
     public static function text($name)
