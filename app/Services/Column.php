@@ -4,8 +4,6 @@ namespace App\Services;
 
 use Illuminate\Support\Str;
 use App\Filament\Columns\TextColumn;
-use Filament\Tables\Columns\TagsColumn;
-use Illuminate\Database\Eloquent\Builder;
 
 final class Column
 {
@@ -28,17 +26,6 @@ final class Column
             ->color(fn($state) => $state ? $trueColor : $falseColor)
             ->description(fn($state) => $state ? $trueDesc : $falseDesc)
             ->badge();
-    }
-
-    public static function tags($name = 'tags')
-    {
-        return TagsColumn::make($name)
-            ->wrap()
-            ->toggleable(isToggledHiddenByDefault:false)
-            ->separator(',')
-            ->searchable(query: function (Builder $query, string $search) use ($name): Builder {
-                return $query->whereRaw('LOWER('. $name .') LIKE ?', ['%' . strtolower($search) . '%']);
-            });
     }
 
     public static function enum($name, $enum, $attribute = null)

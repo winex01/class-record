@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\MyFiles;
 
 use App\Models\MyFile;
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -15,6 +14,7 @@ use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
+use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Support\Facades\Storage;
@@ -120,7 +120,7 @@ class MyFileResource extends Resource
     {
         return [
             TextColumn::make('name'),
-            Column::tags('tags'),
+            TagsColumn::make('tags'),
 
             TextColumn::make('path')
                 ->label('Files')

@@ -24,6 +24,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
 use App\Filament\Fields\DatePicker;
+use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
@@ -133,7 +134,7 @@ class SchoolClassResource extends Resource
                         ->grow(false),
                     ]),
 
-                    Column::tags('year_section')->badge(false)->color('primary'),
+                    TagsColumn::make('year_section')->color('primary'),
                 ])
             ])
             ->contentGrid([

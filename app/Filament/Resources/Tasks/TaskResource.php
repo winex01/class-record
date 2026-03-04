@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Tasks;
 
 use App\Models\Task;
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -14,6 +13,7 @@ use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
+use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
@@ -103,7 +103,7 @@ class TaskResource extends Resource
                 TextColumn::make('description')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Column::tags('tags'),
+                TagsColumn::make('tags'),
                 DateTimeColumn::make('starts_at')->dateTime(),
                 DateTimeColumn::make('ends_at')->dateTime(),
             ])

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Notes;
 
 use App\Models\Note;
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -13,6 +12,7 @@ use App\Filament\Fields\Textarea;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use Filament\Actions\DeleteAction;
+use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
@@ -79,7 +79,7 @@ class NoteResource extends Resource
             ->recordTitleAttribute('note')
             ->columns([
                 TextColumn::make('note'),
-                Column::tags('tags'),
+                TagsColumn::make('tags'),
                 DateTimeColumn::make('starts_at')->dateTime(),
                 DateTimeColumn::make('ends_at')->dateTime(),
             ])

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Recurrings;
 
-use App\Services\Column;
 use App\Services\Helper;
 use App\Models\Recurring;
 use Filament\Tables\Table;
@@ -18,6 +17,7 @@ use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Fields\TimePicker;
 use App\Filament\Columns\DateColumn;
+use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 use Filament\Forms\Components\Radio;
 use Filament\Schemas\Components\Grid;
@@ -170,7 +170,7 @@ class RecurringResource extends Resource
                 TextColumn::make('description')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Column::tags('tags'),
+                TagsColumn::make('tags'),
                 DateColumn::make('date_start'),
                 DateColumn::make('date_end'),
             ])

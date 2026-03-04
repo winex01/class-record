@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Meetings;
 
 use App\Models\Meeting;
-use App\Services\Column;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -14,6 +13,7 @@ use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
+use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
@@ -86,7 +86,7 @@ class MeetingResource extends Resource
                 TextColumn::make('description')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Column::tags('tags'),
+                TagsColumn::make('tags'),
                 DateTimeColumn::make('starts_at'),
                 DateTimeColumn::make('ends_at'),
             ])
