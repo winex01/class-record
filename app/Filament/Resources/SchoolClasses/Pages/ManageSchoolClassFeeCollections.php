@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use App\Filament\Fields\Textarea;
 use Filament\Support\Enums\Width;
 use App\Enums\FeeCollectionStatus;
 use App\Filament\Fields\TextInput;
@@ -19,7 +20,6 @@ use App\Enums\CompletedPendingStatus;
 use Illuminate\Support\Facades\Blade;
 use App\Filament\Columns\AmountColumn;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Columns\BooleanIconColumn;
@@ -98,9 +98,8 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 DatePicker::make('date'),
 
                 Textarea::make('description')
-                        ->rows(2)
-                        ->placeholder('Additional details...')
-                        ->autosize(),
+                    ->rows(2)
+                    ->placeholder('Additional details...')
 
             ]);
     }

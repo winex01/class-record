@@ -9,6 +9,7 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
+use App\Filament\Fields\Textarea;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use App\Filament\Fields\TextInput;
@@ -16,7 +17,6 @@ use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
-use Filament\Forms\Components\Textarea;
 use App\Filament\Resources\Meetings\Pages\ManageMeetings;
 
 class MeetingResource extends Resource

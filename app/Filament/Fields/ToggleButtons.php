@@ -3,9 +3,9 @@
 namespace App\Filament\Fields;
 
 use Illuminate\Support\Str;
-use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\ToggleButtons as BaseToggleButtons;
 
-class BooleanToggle extends ToggleButtons
+class ToggleButtons extends BaseToggleButtons
 {
     protected function setUp(): void
     {

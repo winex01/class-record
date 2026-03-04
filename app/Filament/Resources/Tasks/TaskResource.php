@@ -9,16 +9,16 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
+use App\Filament\Fields\Textarea;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
-use App\Filament\Fields\BooleanToggle;
+use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
 use App\Filament\Resources\Tasks\Pages\ManageTasks;
 
 class TaskResource extends Resource
@@ -84,7 +84,7 @@ class TaskResource extends Resource
                         ->columnSpan(2)
                         ->rows(1),
 
-                    BooleanToggle::make('complete')
+                    ToggleButtons::make('complete')
                         ->columnSpan(1)
                         ->icons(null)
                 ])

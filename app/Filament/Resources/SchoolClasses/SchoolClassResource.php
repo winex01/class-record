@@ -14,6 +14,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Size;
+use App\Filament\Fields\Textarea;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
@@ -24,9 +25,8 @@ use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Columns\TextColumn;
-use App\Filament\Fields\BooleanToggle;
+use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms\Components\Textarea;
 use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\Layout\Split;
@@ -84,11 +84,10 @@ class SchoolClassResource extends Resource
 
             'description' =>
             Textarea::make('description')
-                ->label('Description')
                 ->placeholder('Brief details about this subject... (optional)')
                 ->rows(5),
 
-            BooleanToggle::make('active')
+            ToggleButtons::make('active')
                 ->label('Status')
                 ->helperText('Active records can be edited. Archived records are view-only.')
                 ->icons([true => 'heroicon-o-check', false => 'heroicon-o-lock-closed'])

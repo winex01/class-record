@@ -74,7 +74,6 @@ class StudentResource extends Resource
                 DatePicker::make('birth_date'),
 
                 TextInput::make('email')
-                    ->label('Email address')
                     ->email(),
 
                 Phone::make('contact_number'),

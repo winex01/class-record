@@ -10,6 +10,7 @@ use Filament\Schemas\Schema;
 use App\Filament\Fields\Select;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use App\Filament\Fields\Textarea;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
@@ -18,14 +19,13 @@ use App\Filament\Fields\DatePicker;
 use App\Filament\Columns\TextColumn;
 use App\Enums\CompletedPendingStatus;
 use Illuminate\Support\Facades\Blade;
+use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Columns\BooleanIconColumn;
-use Filament\Forms\Components\ToggleButtons;
 use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
@@ -113,18 +113,13 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                         Textarea::make('description')
                             ->rows(2)
                             ->placeholder('Additional notes or instructions...')
-                            ->autosize(),
                     ])
                     ->columnSpan(1),
 
                 Section::make()
                     ->schema([
                         MyFileResource::selectMyFileAndCreateOption(),
-
                         ToggleButtons::make('can_group_students')
-                            ->inline()
-                            ->default(false)
-                            ->boolean(),
                     ])
                     ->columnSpan(1),
             ])
