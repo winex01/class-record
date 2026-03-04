@@ -15,6 +15,7 @@ use Illuminate\Support\HtmlString;
 use App\Filament\Fields\DatePicker;
 use App\Enums\CompletedPendingStatus;
 use Illuminate\Support\Facades\Blade;
+use App\Filament\Columns\AmountColumn;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -147,10 +148,10 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
         return [
             Column::text('name'),
 
-            Column::amount('amount')
+            AmountColumn::make('amount')
+                ->color('info')
                 ->placeholder('—')
-                ->getStateUsing(fn ($record) => $record->amount > 0 ? $record->amount : null)
-                ->color('info'),
+                ->getStateUsing(fn ($record) => $record->amount > 0 ? $record->amount : null),
 
             Column::date('date')
                 ->width('1%'),
@@ -159,7 +160,8 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 ->toggleable(isToggledHiddenByDefault: true),
 
             'total' =>
-            Column::amount('total')
+            AmountColumn::make('total')
+                ->color('primary')
                 ->state(fn ($record) => $record->students()->sum('amount'))
                 ->tooltip('Total Collected')
                 ->sortable(

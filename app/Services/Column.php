@@ -11,16 +11,6 @@ use Filament\Tables\Columns\TextInputColumn;
 
 final class Column
 {
-    public static function amount($name)
-    {
-        return static::text($name)
-            ->wrap()
-            ->prefix('₱')
-            ->width('1%')
-            ->color('primary')
-            ->formatStateUsing(fn ($state) => number_format($state, 2));
-    }
-
     public static function select($name)
     {
         return SelectColumn::make($name)
