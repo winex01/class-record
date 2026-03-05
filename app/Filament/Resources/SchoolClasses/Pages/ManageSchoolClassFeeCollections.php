@@ -113,13 +113,6 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ->columns([
                 ...static::getColumns(),
             ])
-            ->headerActions([
-                SchoolClassResource::createAction($this->getOwnerRecord())
-                    ->label('New Fee Collection')
-                    ->modalWidth(Width::Large),
-
-                static::getOverviewAction(),
-            ])
             ->recordActions([
                 RelationManagerAction::make('takeFeeCollectionRelationManager')
                     ->label('Fee')
@@ -138,6 +131,12 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                SchoolClassResource::createAction($this->getOwnerRecord())
+                    ->label('New Fee Collection')
+                    ->modalWidth(Width::Large),
+
+                static::getOverviewAction(),
+
                 DeleteBulkAction::make(),
             ])
             ->recordAction('takeFeeCollectionRelationManager');;

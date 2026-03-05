@@ -114,10 +114,9 @@ class TakeFeeCollectionRelationManager extends RelationManager
             ->filters([
                 ...StudentResource::getFilters()
             ])
-            ->headerActions([
-                ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
-            ])
             ->toolbarActions([
+                ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
+
                 // Mark as Paid Bulk Action
                 BulkAction::make('markPaid')
                     ->label('Mark as Paid')

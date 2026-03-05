@@ -100,10 +100,8 @@ class RecordScoreRelationManager extends RelationManager
 
                     ...StudentResource::getFilters(),
             ])
-            ->headerActions([
-                ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
-            ])
             ->toolbarActions([
+                ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
                 ManageSchoolClassStudents::detachBulkAction(),
             ])
             ->groups(
