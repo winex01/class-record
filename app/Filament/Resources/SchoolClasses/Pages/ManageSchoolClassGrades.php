@@ -329,7 +329,10 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         TableColumn::make('Grade'),
                     ])
                     ->schema([
-                        ...static::rangesField(),
+                        ...array_map(
+                            fn ($field) => $field->distinct(),
+                            static::rangesField()
+                        ),
                     ])
                     ->afterStateHydrated(function (Repeater $component, $state) {
                         if (is_array($state) && count($state) > 0) {
@@ -555,15 +558,13 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         ];
     }
 
-    public static function rangesField(bool $isRepeater = true)
+    public static function rangesField()
     {
+        // NOTE:: the distinct() and scopeUniqued() i place it where it will be used not here to make it reusable both in normal forms and in repeater
         return [
             NumericInput::make('initial_min')
                 ->numeric()
                 ->required()
-                ->minValue(0)
-                ->maxValue(100)
-                ->step(0.01)
                 ->placeholder('e.g., 0.00')
                 ->live(onBlur: true)
                 ->rules([
@@ -574,16 +575,10 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         }
                     }
                 ])
-                ->when($isRepeater, fn ($field) => $field->distinct())
-                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
                 ->columnSpan(1),
 
             NumericInput::make('initial_max')
                 ->required()
-                ->numeric()
-                ->minValue(0)
-                ->maxValue(100)
-                ->step(0.01)
                 ->placeholder('e.g., 99.99')
                 ->live(onBlur: true)
                 ->rules([
@@ -594,16 +589,12 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         }
                     }
                 ])
-                ->when($isRepeater, fn ($field) => $field->distinct())
-                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
                 ->columnSpan(1),
 
             TextInput::make('transmuted_grade')
                 ->placeholder('e.g., 99, 1.00, A+')
                 ->required()
                 ->maxLength(10)
-                ->when($isRepeater, fn ($field) => $field->distinct())
-                ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
                 ->columnSpan(1),
 
         ];

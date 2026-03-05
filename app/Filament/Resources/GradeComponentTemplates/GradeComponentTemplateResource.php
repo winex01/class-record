@@ -10,6 +10,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use Filament\Support\Icons\Heroicon;
@@ -112,6 +113,10 @@ class GradeComponentTemplateResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                CreateAction::make()
+                    ->label('New Template')
+                    ->modalWidth(Width::ExtraLarge),
+
                 DeleteBulkAction::make(),
             ])
             ->recordAction('edit');

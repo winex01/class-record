@@ -3,12 +3,14 @@
 namespace App\Filament\Resources\TransmuteTemplates;
 
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use App\Models\TransmuteTemplate;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use Filament\Support\Icons\Heroicon;
@@ -63,7 +65,20 @@ class TransmuteTemplateResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                CreateAction::make()
+                    ->label('New Template')
+                    ->modalWidth(Width::Large)
+                    ->after(function ($livewire, $record, $action) {
+                        $action->close();
+                        $livewire->js("
+                            setTimeout(() => {
+                                \$wire.mountTableAction('createRanges', {$record->getKey()})
+                            }, 150)
+                        ");
+                    }),
+
                 DeleteBulkAction::make(),
+
             ])
             ->recordAction('createRanges');
     }

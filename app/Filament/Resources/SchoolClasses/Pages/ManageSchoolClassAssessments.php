@@ -84,6 +84,19 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 ),
         ];
 
+        $tabs['unassigned'] = Tab::make()
+            ->label('Unassigned')
+            ->modifyQueryUsing(fn (Builder $query) =>
+                $query->whereDoesntHave('gradeGradingComponents')
+            )
+            ->badgeColor('warning')
+            ->badge(fn () =>
+                $this->getOwnerRecord()
+                    ->{static::$relationship}()
+                    ->whereDoesntHave('gradeGradingComponents')
+                    ->count()
+            );
+
         // Dynamically fetch distinct grading periods linked to this school class's assessments
         $gradingPeriods = $this->getOwnerRecord()
             ->grades()
@@ -188,12 +201,6 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ->filters([
                 ...static::getFilters(),
             ])
-            ->headerActions([
-                SchoolClassResource::createAction($this->getOwnerRecord())
-                    ->label('New Assessment'),
-
-                static::getOverviewAction(),
-            ])
             ->recordActions([
                 RelationManagerAction::make('recordScoreRelationManager')
                     ->label('Score')
@@ -212,6 +219,8 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                SchoolClassResource::createAction($this->getOwnerRecord())->label('New Assessment'),
+                static::getOverviewAction(),
                 DeleteBulkAction::make(),
             ])
             ->recordAction('recordScoreRelationManager');

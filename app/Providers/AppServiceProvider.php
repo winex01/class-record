@@ -53,6 +53,8 @@ class AppServiceProvider extends ServiceProvider
     public function tableConfig()
     {
         Table::configureUsing(function (Table $table): void {
+            $table->defaultSort('created_at', 'desc');
+
             // Session persistence
             $table->persistFiltersInSession();
             $table->persistSortInSession();

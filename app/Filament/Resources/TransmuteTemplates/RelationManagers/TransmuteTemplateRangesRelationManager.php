@@ -24,7 +24,21 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
             ->components([
                 Grid::make(3)
                     ->schema([
-                        ...ManageSchoolClassGrades::rangesField(false),
+                        // NOTE: Using modifyRuleUsing() to scope the unique rule to
+                        // $this->getOwnerRecord()->id so validation only applies per template.
+                        ...array_map(
+                            fn ($field) => $field
+                                ->unique(
+                                    table: 'transmute_template_ranges',
+                                    column: 'initial_min',
+                                    modifyRuleUsing: fn ($rule) =>
+                                        $rule->where(
+                                            'transmute_template_id',
+                                            $this->getOwnerRecord()->getKey()
+                                        )
+                                ),
+                            ManageSchoolClassGrades::rangesField()
+                        ),
                     ])
             ]);
     }
@@ -32,6 +46,7 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->defaultSort('initial_min', 'desc')
             ->columns([
                 TextColumn::make('initial_min'),
                 TextColumn::make('initial_max'),

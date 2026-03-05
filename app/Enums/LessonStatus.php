@@ -25,7 +25,7 @@ enum LessonStatus: string implements HasLabel, HasColor
     public function getColor(): string | array | null
     {
         return match ($this) {
-            self::TOPICS => 'gray',
+            self::TOPICS => 'info',
             self::IN_PROGRESS => 'warning',
             self::DONE => 'success',
             self::NEED_REVIEW => 'danger',
