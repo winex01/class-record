@@ -253,27 +253,34 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->label('New Grade')
                     ->modalWidth(Width::TwoExtraLarge),
 
-                $this->getSettingsAction(),
+                $this->getGradingSettingsAction(),
 
                 DeleteBulkAction::make(),
             ])
             ->recordAction('grades');
     }
 
-    public function getSettingsAction(): Action
+    protected function getHeaderActions(): array
+    {
+        return [
+            // TODO:: using it here worked, but in the toolbar actions not! lets investigate later
+            $this->getGradingSettingsAction()
+        ];
+    }
+
+    // TODO:: bug transmutable table tab, always empty not display ranges
+    public function getGradingSettingsAction(): Action
     {
         return Action::make('settingsAction')
-            ->model($this->getOwnerRecord()::class)
+            ->model(SchoolClass::class)
             ->disabledForm(fn () => !$this->getOwnerRecord()->active)
             ->label('Grading Settings')
             ->icon(Heroicon::OutlinedCog8Tooth)
             ->color('pink')
             ->modalWidth(Width::TwoExtraLarge)
             ->fillForm(function () {
-                $owner = $this->getOwnerRecord();
-
                 return [
-                    'gradingComponents' => $owner->gradingComponents()
+                    'gradingComponents' => $this->getOwnerRecord()->gradingComponents()
                         ->get(['id', 'name', 'weighted_score'])
                         ->map(fn ($item) => [
                             'id' => $item->id,
@@ -284,13 +291,12 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ];
             })
             ->form(function () {
-                $owner = $this->getOwnerRecord();
-
                 return [
                     Tabs::make('Tabs')
                         ->tabs([
-                            static::formTabGradingComponents($owner),
-                            static::formTabTransmutationTable($owner),
+                            // TODO:: dont use static function
+                            static::formTabGradingComponents($this->getOwnerRecord()),
+                            static::formTabTransmutationTable($this->getOwnerRecord()),
                         ])
                 ];
             })
@@ -301,8 +307,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->send();
             })
             ->modalSubmitActionLabel(function () {
-                $owner = $this->getOwnerRecord();
-                return $owner->gradingComponents()->exists() ? 'Save Changes' : 'Save';
+                return $this->getOwnerRecord()->gradingComponents()->exists() ? 'Save Changes' : 'Save';
             });
     }
 
