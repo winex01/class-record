@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Filament\Concerns;
+namespace App\Filament\Traits;
 
 use Illuminate\Support\Carbon;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
-// TODO:: transfer this to Traits folder
-trait CalendarEventTabs
+trait CalendarEventTabFilter
 {
     public function getTabs(): array
     {
