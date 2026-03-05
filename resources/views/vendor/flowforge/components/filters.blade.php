@@ -121,7 +121,7 @@
             @if ($hasHeaderToolbar)
                 <div class="fi-ta-header-toolbar flex items-center gap-x-4 mb-4 px-0">
                     @if ($isSearchable)
-                        <div class="flex-1"></div>
+                        <x-filament::actions :actions="$this->getCachedHeaderActions()" />
                         <x-filament-tables::search-field
                             :debounce="$table->getSearchDebounce()"
                             :on-blur="$table->isSearchOnBlur()"
@@ -324,3 +324,13 @@
         </div>
     </div>
 @endif
+
+
+@push('styles')
+<style>
+/* Hide the original header actions container */
+.fi-header-actions-ctn {
+    display: none !important;
+}
+</style>
+@endpush

@@ -21,6 +21,11 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->json('tags')->nullable();
+            // Virtual generated column for case-insensitive search on tags JSON column.
+            // MySQL's JSON columns use utf8mb4_bin (case-sensitive) collation, so LIKE searches
+            // are case-sensitive by default. This column stores LOWER(tags) so the Flowforge
+            // kanban searchable plugin can search tags regardless of case.
+            $table->string('tags_search')->virtualAs('LOWER(tags)')->nullable();
             $table->date('completion_date')->nullable();
             $table->json('checklist')->nullable();
             $table->string('status');

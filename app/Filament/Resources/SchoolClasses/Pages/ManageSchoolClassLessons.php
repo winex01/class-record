@@ -68,7 +68,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                     ->color(LessonStatus::NEED_REVIEW->getColor()),
             ])
             ->cardSchema(fn(Schema $schema) => $schema->components($this->getColumns()))
-            ->searchable(['title', 'description', 'tags'])
+            ->searchable(['title', 'description', 'tags_search']) // tags_search is a virtual column i added bec, the fcking flowforge plugin is case sensitive on search
             ->columnActions([
                 CreateAction::make()
                     ->hiddenLabel()
