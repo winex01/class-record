@@ -14,9 +14,11 @@ use App\Filament\Fields\TagsInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
 use App\Filament\Columns\DateTimeColumn;
+use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\Notes\Pages\ManageNotes;
 
 class NoteResource extends Resource
@@ -29,9 +31,9 @@ class NoteResource extends Resource
 
     protected static ?int $navigationSort = 270;
 
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    public static function getNavigationIcon(): string | \BackedEnum | Htmlable | null
     {
-        return \App\Services\Icon::notes();
+        return Heroicon::OutlinedClipboard;
     }
 
     public static function getNavigationBadge(): ?string

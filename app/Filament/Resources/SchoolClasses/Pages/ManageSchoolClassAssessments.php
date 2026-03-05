@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use App\Services\Icon;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -30,6 +29,7 @@ use App\Filament\Columns\BooleanIconColumn;
 use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
+use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\AssessmentTypes\AssessmentTypeResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
@@ -169,7 +169,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ->recordActions([
                 RelationManagerAction::make('recordScoreRelationManager')
                     ->label('Score')
-                    ->icon(Icon::students())
+                    ->icon(StudentResource::getNavigationIcon())
                     ->color('info')
                     ->slideOver()
                     ->relationManager(RecordScoreRelationManager::make())

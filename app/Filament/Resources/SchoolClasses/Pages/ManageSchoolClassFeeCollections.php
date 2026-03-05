@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Columns\BooleanIconColumn;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
+use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 use App\Filament\Resources\SchoolClasses\RelationManagers\TakeFeeCollectionRelationManager;
@@ -112,9 +113,6 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ->columns([
                 ...static::getColumns(),
             ])
-            ->filters([
-                //
-            ])
             ->headerActions([
                 SchoolClassResource::createAction($this->getOwnerRecord())
                     ->label('New Fee Collection')
@@ -125,7 +123,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ->recordActions([
                 RelationManagerAction::make('takeFeeCollectionRelationManager')
                     ->label('Fee')
-                    ->icon(\App\Services\Icon::students())
+                    ->icon(StudentResource::getNavigationIcon())
                     ->color('info')
                     ->slideOver()
                     ->relationManager(TakeFeeCollectionRelationManager::make())

@@ -20,11 +20,13 @@ use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 use Filament\Forms\Components\Radio;
+use Filament\Support\Icons\Heroicon;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\Recurrings\Pages\ManageRecurrings;
 
 class RecurringResource extends Resource
@@ -35,9 +37,9 @@ class RecurringResource extends Resource
     protected static ?int $navigationSort = 250;
     protected static bool $shouldRegisterNavigation = true;
 
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    public static function getNavigationIcon(): string | \BackedEnum | Htmlable | null
     {
-        return \App\Services\Icon::recurrings();
+        return Heroicon::OutlinedQueueList;
     }
 
     public static function getNavigationBadge(): ?string

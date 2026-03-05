@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use App\Services\Icon;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -19,6 +18,7 @@ use Filament\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
+use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 use App\Filament\Resources\SchoolClasses\RelationManagers\TakeAttendanceRelationManager;
@@ -162,7 +162,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
     {
         return RelationManagerAction::make('takeAttendanceRelationManager')
                 ->label('Attendance')
-                ->icon(Icon::students())
+                ->icon(StudentResource::getNavigationIcon())
                 ->color('info')
                 ->slideOver()
                 ->relationManager(TakeAttendanceRelationManager::make())

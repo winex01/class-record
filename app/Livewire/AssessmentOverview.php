@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Services\Icon;
 use App\Models\Student;
 use Livewire\Component;
 use Filament\Tables\Table;
@@ -11,6 +10,7 @@ use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\HtmlString;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Blade;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
@@ -89,7 +89,7 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
             ->recordActions([
                 Action::make('assessmentLists')
                     ->label('Assessments')
-                    ->icon(Icon::assessments())
+                    ->icon(Heroicon::OutlinedClipboardDocumentList)
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false)
                     ->modalWidth(Width::TwoExtraLarge)

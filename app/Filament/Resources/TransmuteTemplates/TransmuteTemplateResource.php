@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\TransmuteTemplates;
 
-use App\Services\Icon;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -12,7 +11,9 @@ use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
+use Illuminate\Contracts\Support\Htmlable;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 use App\Filament\Resources\TransmuteTemplates\Pages\ManageTransmuteTemplates;
 use App\Filament\Resources\TransmuteTemplates\RelationManagers\TransmuteTemplateRangesRelationManager;
@@ -27,9 +28,9 @@ class TransmuteTemplateResource extends Resource
 
     protected static ?int $navigationSort = 400;
 
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    public static function getNavigationIcon(): string | \BackedEnum | Htmlable | null
     {
-        return Icon::transmutations();
+        return Heroicon::OutlinedScale;
     }
 
     public static function form(Schema $schema): Schema

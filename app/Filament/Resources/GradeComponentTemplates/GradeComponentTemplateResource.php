@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\GradeComponentTemplates;
 
 use BackedEnum;
-use App\Services\Icon;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -17,6 +16,7 @@ use Filament\Support\Icons\Heroicon;
 use App\Models\GradeComponentTemplate;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Repeater;
+use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
 use App\Filament\Resources\GradeComponentTemplates\Pages\ManageGradeComponentTemplates;
 
@@ -32,9 +32,9 @@ class GradeComponentTemplateResource extends Resource
 
     protected static ?int $navigationSort = 450;
 
-    public static function getNavigationIcon(): string | BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
-        return Icon::gradingComponents();
+        return Heroicon::OutlinedAdjustmentsHorizontal;
     }
 
     public static function form(Schema $schema): Schema

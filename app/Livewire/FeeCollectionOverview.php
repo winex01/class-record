@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Services\Icon;
 use App\Models\Student;
 use Livewire\Component;
 use Filament\Tables\Table;
@@ -187,7 +186,6 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
     public static function getStudentFeePaidAndBalance()
     {
         return Action::make('studentFeePaidAndBalance')
-                ->icon(Icon::assessments())
                 ->modalSubmitAction(false)
                 ->modalCancelAction(false)
                 ->modalWidth(Width::TwoExtraLarge)

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses;
 
-use App\Services\Icon;
 use Filament\Tables\Table;
 use App\Enums\LessonStatus;
 use App\Models\SchoolClass;
@@ -25,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
+use Filament\Support\Icons\Heroicon;
 use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Columns\BooleanColumn;
@@ -32,7 +32,9 @@ use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
+use Illuminate\Contracts\Support\Htmlable;
 use Filament\Forms\Components\CheckboxList;
+use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassLessons;
@@ -49,9 +51,9 @@ class SchoolClassResource extends Resource
 
     protected static ?string $modelLabel = 'Class Subject';
 
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    public static function getNavigationIcon(): string | \BackedEnum | Htmlable | null
     {
-        return Icon::classes();
+        return Heroicon::OutlinedRectangleGroup;
     }
 
     public static function form(Schema $schema): Schema
@@ -148,7 +150,7 @@ class SchoolClassResource extends Resource
                         ->label(false)
                         ->color('info')
                         ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
-                        ->icon(Icon::students()),
+                        ->icon(StudentResource::getNavigationIcon()),
 
                     static::cloneClassAction()
                         ->tooltip('Clone Class')
@@ -338,42 +340,42 @@ class SchoolClassResource extends Resource
         return [
             NavigationItem::make('Students')
                 ->url(ManageSchoolClassStudents::getUrl(['record' => $record]))
-                ->icon(Icon::students())
+                ->icon(StudentResource::getNavigationIcon())
                 ->badge(fn () => $record->students()->count() ?: null, 'success')
                 ->badgeTooltip('Total Students')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassStudents),
 
             NavigationItem::make('Attendances')
                 ->url(ManageSchoolClassAttendances::getUrl(['record' => $record]))
-                ->icon(Icon::attendances())
+                ->icon(Heroicon::OutlinedCalendarDays)
                 ->badge(fn () => $record->attendances()->count() ?: null, 'success')
                 ->badgeTooltip('Attendance Records')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAttendances),
 
             NavigationItem::make('Lessons')
                 ->url(ManageSchoolClassLessons::getUrl(['record' => $record]))
-                ->icon(Icon::lessons())
+                ->icon(Heroicon::OutlinedViewColumns)
                 ->badge(fn () => $record->lessons()->whereNot('status', LessonStatus::DONE)->count() ?: null, 'success')
                 ->badgeTooltip('Remaining Lessons')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassLessons),
 
             NavigationItem::make('Assessments')
                 ->url(ManageSchoolClassAssessments::getUrl(['record' => $record]))
-                ->icon(Icon::assessments())
+                ->icon(Heroicon::OutlinedClipboardDocumentList)
                 ->badge(fn () => $record->assessments()->count() ?: null, 'success')
                 ->badgeTooltip('Number of Assessments')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassAssessments),
 
             NavigationItem::make('Fee Collections')
                 ->url(ManageSchoolClassFeeCollections::getUrl(['record' => $record]))
-                ->icon(Icon::feeCollections())
+                ->icon(Heroicon::OutlinedCircleStack)
                 ->badge(fn () => $record->feeCollections()->count() ?: null, 'success')
                 ->badgeTooltip('Number of Collections')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassFeeCollections),
 
             NavigationItem::make('Grades')
                 ->url(ManageSchoolClassGrades::getUrl(['record' => $record]))
-                ->icon(Icon::grades())
+                ->icon(Heroicon::OutlinedClipboardDocumentCheck)
                 ->badge(fn () => $record->grades()->count() ?: null, 'success')
                 ->badgeTooltip('Grading Periods')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassGrades),

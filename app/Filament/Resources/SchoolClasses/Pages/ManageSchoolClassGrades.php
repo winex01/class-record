@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Grade;
-use App\Services\Icon;
 use App\Models\Assessment;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -20,6 +19,7 @@ use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
 use App\Filament\Columns\TextColumn;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Icons\Heroicon;
 use App\Models\GradeGradingComponent;
 use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Grid;
@@ -36,6 +36,7 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use App\Filament\Resources\TransmuteTemplates\TransmuteTemplateResource;
 use App\Filament\Resources\GradeComponentTemplates\GradeComponentTemplateResource;
 
 class ManageSchoolClassGrades extends ManageRelatedRecords
@@ -262,7 +263,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             Action::make('settingsAction')
                 ->disabledForm(fn () => !$this->getOwnerRecord()->active)
                 ->label('Grading Settings')
-                ->icon(Icon::settings())
+                ->icon(Heroicon::OutlinedCog8Tooth)
                 ->color('primary')
                 ->modalWidth(Width::TwoExtraLarge)
                 ->fillForm(function ($livewire) {
@@ -308,7 +309,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     private static function formTabTransmutationTable($ownerRecord)
     {
         return Tab::make('Transmutation Table')
-                ->icon(Icon::transmutations())
+                ->icon(TransmuteTemplateResource::getNavigationIcon())
                 ->schema([
                     Repeater::make('gradeTransmutations')
                     ->relationship('gradeTransmutations')
@@ -408,7 +409,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     private static function formTabGradingComponents($ownerRecord)
     {
         return Tab::make('Grading Components')
-                ->icon(Icon::gradingComponents())
+                ->icon(GradeComponentTemplateResource::getNavigationIcon())
                 ->schema([
                     Repeater::make('gradingComponents')
                         ->relationship('gradingComponents') // repeater tied to hasMany relation

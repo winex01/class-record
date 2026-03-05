@@ -15,11 +15,13 @@ use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
+use Filament\Support\Icons\Heroicon;
 use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Fields\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use App\Filament\Columns\DateTimeColumn;
+use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\Tasks\Pages\ManageTasks;
 
 class TaskResource extends Resource
@@ -31,9 +33,9 @@ class TaskResource extends Resource
 
     protected static ?int $navigationSort = 260;
 
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    public static function getNavigationIcon(): string | \BackedEnum | Htmlable | null
     {
-        return \App\Services\Icon::tasks();
+        return Heroicon::OutlinedClipboardDocumentList;
     }
 
     public static function getNavigationBadge(): ?string

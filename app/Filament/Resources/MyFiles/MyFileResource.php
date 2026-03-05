@@ -16,9 +16,11 @@ use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\FileUpload;
+use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\MyFiles\Pages\ManageMyFiles;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -30,9 +32,9 @@ class MyFileResource extends Resource
 
     protected static ?int $navigationSort = 200;
 
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    public static function getNavigationIcon(): string | \BackedEnum | Htmlable | null
     {
-        return \App\Services\Icon::myFiles();
+        return Heroicon::OutlinedClipboardDocument;
     }
 
     public static function form(Schema $schema): Schema

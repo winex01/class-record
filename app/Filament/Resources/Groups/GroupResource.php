@@ -11,7 +11,9 @@ use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
+use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\Groups\Pages\ManageGroups;
 
 class GroupResource extends Resource
@@ -24,9 +26,9 @@ class GroupResource extends Resource
 
     protected static ?int $navigationSort = 300;
 
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    public static function getNavigationIcon(): string | \BackedEnum | Htmlable | null
     {
-        return \App\Services\Icon::groups();
+        return Heroicon::OutlinedCube;
     }
 
     public static function form(Schema $schema): Schema

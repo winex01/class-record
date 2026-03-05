@@ -18,28 +18,28 @@ use App\Filament\Fields\DatePicker;
 use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\EnumColumn;
 use App\Filament\Columns\TextColumn;
+use Filament\Support\Icons\Heroicon;
 use App\Filament\Columns\ImageColumn;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\Students\Pages\ManageStudents;
 
 class StudentResource extends Resource
 {
-
-
     protected static ?string $model = Student::class;
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
+    public static function getNavigationIcon(): string | \BackedEnum | Htmlable | null
+    {
+        return Heroicon::OutlinedUser;
+    }
+
     public static function getGloballySearchableAttributes(): array
     {
         return ['last_name', 'first_name', 'middle_name', 'suffix_name'];
-    }
-
-    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
-    {
-        return \App\Services\Icon::students();
     }
 
     public static function form(Schema $schema): Schema
