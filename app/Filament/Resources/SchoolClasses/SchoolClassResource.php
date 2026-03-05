@@ -95,6 +95,7 @@ class SchoolClassResource extends Resource
                 ->helperText('Active records can be edited. Archived records are view-only.')
                 ->icons([true => 'heroicon-o-check', false => 'heroicon-o-lock-closed'])
                 ->colors([true => 'success', false => 'warning'])
+                ->default(true)
                 ->options([
                     true => 'Active',
                     false => 'Archived',
