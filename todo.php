@@ -5,6 +5,8 @@ TODO:: Notification & calendar for:
         * Assessments date
         * Fee collections date
 
+TODO:: Grade Summary (Overall Grade) action modal / Manage Grae Overview
+
 TODO:: find a way to that the attendance will be converted to assessment if they want
 
 TODO:: Grades: review computations on components and etc
@@ -18,4 +20,3 @@ TODO:: import student
 TODO:: export student
 TODO:: download active classs in excel
 TODO:: download app backup
-TODO:: Grade Summary (Overall Grade) action modal / Manage Grae Overview
