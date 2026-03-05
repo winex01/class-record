@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use Filament\Support\Enums\Width;
-use Filament\Actions\CreateAction;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRecords;
@@ -12,14 +10,6 @@ use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 class ManageSchoolClasses extends ManageRecords
 {
     protected static string $resource = SchoolClassResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make()
-                ->modalWidth(Width::Large),
-        ];
-    }
 
     public function getTabs(): array
     {

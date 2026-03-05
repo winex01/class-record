@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use App\Filament\Fields\Textarea;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
@@ -85,15 +86,16 @@ class NoteResource extends Resource
                 DateTimeColumn::make('starts_at')->dateTime(),
                 DateTimeColumn::make('ends_at')->dateTime(),
             ])
-            ->filters([
-                //
-            ])
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Medium),
                 EditAction::make()->modalWidth(Width::Medium),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                CreateAction::make()
+                    ->label('New Note')
+                    ->modalWidth(Width::Medium),
+
                 DeleteBulkAction::make(),
             ]);
     }

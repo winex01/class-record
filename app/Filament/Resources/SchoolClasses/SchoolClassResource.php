@@ -176,6 +176,9 @@ class SchoolClassResource extends Resource
                 ->size(Size::Small)
             ])
             ->toolbarActions([
+                CreateAction::make()
+                    ->modalWidth(Width::Large),
+
                 DeleteBulkAction::make(),
             ])
             ->recordUrl(fn ($record) => route('filament.app.resources.school-classes.students', $record));

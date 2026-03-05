@@ -13,6 +13,7 @@ use App\Filament\Fields\Textarea;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use App\Filament\Fields\TextInput;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Fields\TimePicker;
@@ -176,15 +177,16 @@ class RecurringResource extends Resource
                 DateColumn::make('date_start'),
                 DateColumn::make('date_end'),
             ])
-            ->filters([
-                //
-            ])
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::ExtraLarge),
                 EditAction::make()->modalWidth(Width::ExtraLarge),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                CreateAction::make()
+                    ->label('New Recurring')
+                    ->modalWidth(Width::ExtraLarge),
+
                 DeleteBulkAction::make(),
             ]);
     }

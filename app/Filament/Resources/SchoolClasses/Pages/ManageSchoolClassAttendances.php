@@ -140,19 +140,18 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     })
                     ->columnSpan(2)
             ])
-            ->headerActions([
-                SchoolClassResource::createAction($this->getOwnerRecord())
-                    ->label('New Attendance')
-                    ->modalWidth(Width::Medium),
-
-                static::getOverviewAction(),
-            ])
             ->recordActions([
                 static::getTakeAttendanceAction(),
                 EditAction::make()->modalWidth(Width::Medium),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                SchoolClassResource::createAction($this->getOwnerRecord())
+                    ->label('New Attendance')
+                    ->modalWidth(Width::Medium),
+
+                static::getOverviewAction(),
+
                 DeleteBulkAction::make(),
             ])
             ->recordAction('takeAttendanceRelationManager');

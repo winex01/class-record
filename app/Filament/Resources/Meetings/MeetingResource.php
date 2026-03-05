@@ -12,6 +12,7 @@ use App\Filament\Fields\Textarea;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use App\Filament\Fields\TextInput;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
@@ -92,15 +93,16 @@ class MeetingResource extends Resource
                 DateTimeColumn::make('starts_at'),
                 DateTimeColumn::make('ends_at'),
             ])
-            ->filters([
-                //
-            ])
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Medium),
                 EditAction::make()->modalWidth(Width::Medium),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                CreateAction::make()
+                    ->label('New Meeting')
+                    ->modalWidth(Width::Medium),
+
                 DeleteBulkAction::make(),
             ]);
     }

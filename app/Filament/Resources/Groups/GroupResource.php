@@ -9,6 +9,7 @@ use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use Filament\Support\Icons\Heroicon;
@@ -48,15 +49,16 @@ class GroupResource extends Resource
             ->columns([
                 TextColumn::make('name'),
             ])
-            ->filters([
-                //
-            ])
             ->recordActions([
                 EditAction::make()
                     ->modalWidth(Width::Medium),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                CreateAction::make()
+                    ->label('New Group')
+                    ->modalWidth(Width::Medium),
+
                 DeleteBulkAction::make(),
             ]);
     }

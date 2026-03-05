@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TagsInput;
 use App\Filament\Fields\TextInput;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
@@ -108,6 +109,10 @@ class MyFileResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                CreateAction::make()
+                    ->label('Upload File')
+                    ->modalHeading('Upload File')
+                    ->modalWidth(Width::Medium),
                 DeleteBulkAction::make(),
             ])
             ->recordAction(false);

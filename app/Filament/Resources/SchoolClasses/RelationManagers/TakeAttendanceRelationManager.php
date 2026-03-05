@@ -59,10 +59,9 @@ class TakeAttendanceRelationManager extends RelationManager
             ->filters([
                 ...StudentResource::getFilters()
             ])
-            ->headerActions([
-                ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
-            ])
             ->toolbarActions([
+                ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
+
                 BulkAction::make('markAbsent')
                     ->label('Mark Absent')
                     ->icon('heroicon-o-x-circle')

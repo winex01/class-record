@@ -67,19 +67,18 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ->filters([
                 ...StudentResource::getFilters()
             ])
-            ->headerActions([
-                CreateAction::make()
-                    ->label('New Student')
-                    ->modalWidth(Width::Large),
-
-                static::attachAction(),
-            ])
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Large),
                 EditAction::make()->modalWidth(Width::Large),
                 DetachAction::make()->color('warning'),
             ])
             ->toolbarActions([
+                CreateAction::make()
+                    ->label('New Student')
+                    ->modalWidth(Width::Large),
+
+                static::attachAction(),
+
                 static::detachBulkAction(),
             ]);
     }
@@ -88,9 +87,10 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
     {
         $attachAction = AttachAction::make()
             ->label('Attach Students')
-            ->closeModalByClickingAway(false)
-            ->preloadRecordSelect()
+            ->color('info')
             ->multiple()
+            ->preloadRecordSelect()
+            ->closeModalByClickingAway(false)
             ->recordSelectSearchColumns([
                 'last_name',
                 'first_name',

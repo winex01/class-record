@@ -13,6 +13,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Columns\DateColumn;
@@ -93,6 +94,10 @@ class StudentResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                CreateAction::make()
+                    ->label('New Student')
+                    ->modalWidth(Width::Large),
+
                 DeleteBulkAction::make(),
             ])
             ->recordAction('edit');
