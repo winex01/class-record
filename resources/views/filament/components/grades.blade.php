@@ -112,12 +112,21 @@
                 @foreach ($students as $gender => $studentByGender)
                     <tr class="gender-divider">
                         <td class="frozen-column gender-label">
-                            <div class="gender-badge">
-                                <svg class="gender-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                                {{ $gender }}
-                            </div>
+                            @if ($gender === \App\Enums\Gender::MALE->value)
+                                <div class="gender-badge-male">
+                                    <svg class="gender-icon" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M14 2v2h2.586l-3.537 3.537A6 6 0 1 0 14.83 9l3.17-3.17V8h2V2h-6zm-2 18a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>
+                                    </svg>
+                                    {{ $gender }}
+                                </div>
+                            @else
+                                <div class="gender-badge-female">
+                                    <svg class="gender-icon" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2a7 7 0 1 0 7 7 7 7 0 0 0-7-7zm0 12a5 5 0 1 1 5-5 5 5 0 0 1-5 5zm1 2h-2v2H9v2h2v2h2v-2h2v-2h-2z"/>
+                                    </svg>
+                                    {{ $gender }}
+                                </div>
+                            @endif
                         </td>
                         <td colspan="{{ $totalColumns }}" class="gender-spacer"></td>
                     </tr>
@@ -635,17 +644,32 @@
         padding: 0.75rem 1rem;
     }
 
-    .gender-badge {
+    .gender-badge-male {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
         padding: 0.375rem 0.75rem;
-        background: #4f46e5;
+        background: #3b82f6 ;
         color: white;
         border-radius: 0.5rem;
         font-weight: 600;
         font-size: 0.875rem;
         text-transform: capitalize;
+        gap: 0.25rem;
+    }
+
+    .gender-badge-female {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.375rem 0.75rem;
+        background: #ec4899;
+        color: white;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: capitalize;
+        gap: 0.25rem;
     }
 
     .gender-icon {
