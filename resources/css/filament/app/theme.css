@@ -14,8 +14,8 @@
    These overrides make tabs WRAP to next line instead of
    scrolling, and keep them CENTER-ALIGNED at any screen size.
    ============================================================ */
-.fi-tabs {
-    flex-wrap: wrap !important;       /* wrap tabs to next line instead of scrolling */
-    overflow-x: visible !important;   /* prevent horizontal scroll container clipping */
-    justify-content: center !important; /* center tabs at all screen sizes */
+.fi-tabs:not(.fi-contained) {
+    flex-wrap: wrap !important;
+    overflow-x: visible !important;
+    justify-content: center !important;
 }

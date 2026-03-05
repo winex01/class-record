@@ -328,9 +328,9 @@
 
 @push('styles')
 <style>
-/* Hide the original header actions container */
-.fi-header-actions-ctn {
-    display: none !important;
-}
+    [wire\:id="{{ $this->getId() }}"] ~ * .fi-header-actions-ctn,
+    [wire\:id="{{ $this->getId() }}"] .fi-header-actions-ctn {
+        display: none !important;
+    }
 </style>
 @endpush
