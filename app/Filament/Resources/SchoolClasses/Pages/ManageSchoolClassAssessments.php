@@ -45,15 +45,14 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
     public function getTabs(): array
     {
-        return [
+        $tabs = [
             'all' => Tab::make()
                 ->badge(fn () =>
                     $this->getOwnerRecord()->{static::$relationship}()->count()
                 ),
 
-           CompletedPendingStatus::COMPLETED->getLabel() => Tab::make()
+            CompletedPendingStatus::COMPLETED->getLabel() => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) =>
-                    // No student with a null score => all students have scores
                     $query->whereDoesntHave('students', function ($q) {
                         $q->whereNull('score');
                     })
@@ -71,7 +70,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             CompletedPendingStatus::PENDING->getLabel() => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) =>
                     $query->whereHas('students', function ($q) {
-                        $q->whereNull('score'); // pivot score is null
+                        $q->whereNull('score');
                     })
                 )
                 ->badgeColor('danger')
@@ -84,6 +83,35 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                         ->count()
                 ),
         ];
+
+        // Dynamically fetch distinct grading periods linked to this school class's assessments
+        $gradingPeriods = $this->getOwnerRecord()
+            ->grades()
+            ->whereHas('gradeGradingComponents.assessments')
+            ->pluck('grading_period')
+            ->unique()
+            ->filter()
+            ->values();
+
+        foreach ($gradingPeriods as $period) {
+            $tabs[$period] = Tab::make()
+                ->label($period)
+                ->modifyQueryUsing(fn (Builder $query) =>
+                    $query->whereHas('gradeGradingComponents.grade', function (Builder $q) use ($period) {
+                        $q->where('grading_period', $period);
+                    })
+                )
+                ->badge(fn () =>
+                    $this->getOwnerRecord()
+                        ->{static::$relationship}()
+                        ->whereHas('gradeGradingComponents.grade', function ($q) use ($period) {
+                            $q->where('grading_period', $period);
+                        })
+                        ->count()
+                );
+        }
+
+        return $tabs;
     }
 
     public function form(Schema $schema): Schema

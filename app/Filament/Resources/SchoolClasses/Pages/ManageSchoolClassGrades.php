@@ -20,6 +20,7 @@ use Illuminate\Support\HtmlString;
 use App\Filament\Columns\TextColumn;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
+use App\Filament\Fields\NumericInput;
 use App\Models\GradeGradingComponent;
 use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Grid;
@@ -557,7 +558,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     public static function rangesField(bool $isRepeater = true)
     {
         return [
-            TextInput::make('initial_min')
+            NumericInput::make('initial_min')
                 ->numeric()
                 ->required()
                 ->minValue(0)
@@ -577,9 +578,9 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ->when(!$isRepeater, fn ($field) => $field->scopedUnique())
                 ->columnSpan(1),
 
-            TextInput::make('initial_max')
-                ->numeric()
+            NumericInput::make('initial_max')
                 ->required()
+                ->numeric()
                 ->minValue(0)
                 ->maxValue(100)
                 ->step(0.01)
