@@ -54,6 +54,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
     public function form(Schema $schema): Schema
     {
         return StudentResource::form($schema);
+
     }
 
     public function table(Table $table): Table
