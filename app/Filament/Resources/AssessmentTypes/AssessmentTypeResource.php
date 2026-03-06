@@ -21,11 +21,8 @@ use App\Filament\Resources\AssessmentTypes\Pages\ManageAssessmentTypes;
 class AssessmentTypeResource extends Resource
 {
     protected static ?string $model = AssessmentType::class;
-
     protected static ?string $recordTitleAttribute = 'name';
-
     protected static string | \UnitEnum | null $navigationGroup = NavigationGroup::Group1;
-
     protected static ?int $navigationSort = 400;
 
     public static function getNavigationIcon(): string | \BackedEnum | Htmlable | null
