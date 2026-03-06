@@ -6,6 +6,7 @@ use App\Models\Grade;
 use App\Models\Assessment;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -299,9 +300,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->form(function () {
                 return [
                     Tabs::make('Tabs')->tabs([
-                        // TODO: fix bug re arrange of components order item
                         $this->formTabGradingComponents(),
-                        // TODO: fix bug re arrange of components order item
                         $this->formTabTransmutationTable(),
                     ])
                 ];
@@ -340,92 +339,93 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ->icon(TransmuteTemplateResource::getNavigationIcon())
                 ->schema([
                     Repeater::make('gradeTransmutations')
-                    ->hiddenLabel()
-                    ->compact()
-                    ->table([
-                        TableColumn::make('Initial Min'),
-                        TableColumn::make('Initial Max'),
-                        TableColumn::make('Grade'),
-                    ])
-                    ->schema(array_map(fn ($field) => $field->distinct(), static::rangesField()))
-                    ->afterStateHydrated(function (Repeater $component, $state) {
-                        if (is_array($state) && count($state) > 0) {
-                            // Sort by initial_max - DESCENDING
-                            usort($state, function ($a, $b) {
-                                return ($b['initial_max'] ?? 0) <=> ($a['initial_max'] ?? 0);
-                            });
-
-                            $component->state($state);
-                        }
-                    })
-                    ->addActionLabel('Add range')
-                    ->aboveContent([
-                        Action::make('copyTransmuteTemplate')
-                            ->label('Copy from Templates')
-                            ->icon(icon: 'heroicon-o-document-duplicate')
-                            ->modalWidth(Width::Large)
-                            ->modalHeading('Transmute Templates')
-                            ->form([
-                                Select::make('template_id')
-                                    ->label('Select Template')
-                                    ->options(TransmuteTemplate::query()->pluck('name', 'id'))
-                                    ->default(fn () => TransmuteTemplate::query()->first()?->id)
-                                    ->required()
-                                    ->placeholder('Choose a template')
-                            ])
-                            ->action(function (array $data, Repeater $component) {
-                                $template = TransmuteTemplate::find($data['template_id']);
-
-                                if (!$template) {
-                                    Notification::make()
-                                        ->title('Template not found')
-                                        ->danger()
-                                        ->send();
-                                    return;
-                                }
-
-                                // Build the transmutation data from template (overwrites everything)
-                                $templateData = $template->transmuteTemplateRanges
-                                    ->map(function ($range) {
-                                        return [
-                                            'initial_min' => $range->initial_min,
-                                            'initial_max' => $range->initial_max,
-                                            'transmuted_grade' => $range->transmuted_grade,
-                                        ];
-                                    })
-                                    ->toArray();
-
+                        ->hiddenLabel()
+                        ->compact()
+                        ->orderable(false)
+                        ->table([
+                            TableColumn::make('Initial Min'),
+                            TableColumn::make('Initial Max'),
+                            TableColumn::make('Grade'),
+                        ])
+                        ->schema(array_map(fn ($field) => $field->distinct(), static::rangesField()))
+                        ->afterStateHydrated(function (Repeater $component, $state) {
+                            if (is_array($state) && count($state) > 0) {
                                 // Sort by initial_max - DESCENDING
-                                usort($templateData, function ($a, $b) {
+                                usort($state, function ($a, $b) {
                                     return ($b['initial_max'] ?? 0) <=> ($a['initial_max'] ?? 0);
                                 });
 
-                                // Set the template data directly (no merging)
-                                $component->state($templateData);
-                            })
-                            ->modalSubmitActionLabel('Copy & Paste'),
+                                $component->state($state);
+                            }
+                        })
+                        ->addActionLabel('Add range')
+                        ->aboveContent([
+                            Action::make('copyTransmuteTemplate')
+                                ->label('Copy from Templates')
+                                ->icon(icon: 'heroicon-o-document-duplicate')
+                                ->modalWidth(Width::Large)
+                                ->modalHeading('Transmute Templates')
+                                ->form([
+                                    Select::make('template_id')
+                                        ->label('Select Template')
+                                        ->options(TransmuteTemplate::query()->pluck('name', 'id'))
+                                        ->default(fn () => TransmuteTemplate::query()->first()?->id)
+                                        ->required()
+                                        ->placeholder('Choose a template')
+                                ])
+                                ->action(function (array $data, Repeater $component) {
+                                    $template = TransmuteTemplate::find($data['template_id']);
 
-                        Action::make('deleteAll')
-                            ->label('Delete All')
-                            ->icon('heroicon-o-trash')
-                            ->color('danger')
-                            ->requiresConfirmation()
-                            ->modalHeading('Delete All')
-                            ->modalDescription('Are you sure you want to delete all transmutation ranges?')
-                            ->modalFooterActionsAlignment(Alignment::Center)
-                            ->action(function (Repeater $component) {
-                                // Clear all items
-                                $component->state([]);
-                            })
-                    ])
-                    ->deleteAction(
-                        fn (Action $action) => $action
-                            ->requiresConfirmation(
-                                fn (array $arguments, Repeater $component): bool =>
-                                    isset($component->getRawItemState($arguments['item'])['id'])
-                            )
-                            ->modalFooterActionsAlignment(Alignment::Center)
-                    )
+                                    if (!$template) {
+                                        Notification::make()
+                                            ->title('Template not found')
+                                            ->danger()
+                                            ->send();
+                                        return;
+                                    }
+
+                                    // Build the transmutation data from template (overwrites everything)
+                                    $templateData = $template->transmuteTemplateRanges
+                                        ->map(function ($range) {
+                                            return [
+                                                'initial_min' => $range->initial_min,
+                                                'initial_max' => $range->initial_max,
+                                                'transmuted_grade' => $range->transmuted_grade,
+                                            ];
+                                        })
+                                        ->toArray();
+
+                                    // Sort by initial_max - DESCENDING
+                                    usort($templateData, function ($a, $b) {
+                                        return ($b['initial_max'] ?? 0) <=> ($a['initial_max'] ?? 0);
+                                    });
+
+                                    // Set the template data directly (no merging)
+                                    $component->state($templateData);
+                                })
+                                ->modalSubmitActionLabel('Copy & Paste'),
+
+                            Action::make('deleteAll')
+                                ->label('Delete All')
+                                ->icon('heroicon-o-trash')
+                                ->color('danger')
+                                ->requiresConfirmation()
+                                ->modalHeading('Delete All')
+                                ->modalDescription('Are you sure you want to delete all transmutation ranges?')
+                                ->modalFooterActionsAlignment(Alignment::Center)
+                                ->action(function (Repeater $component) {
+                                    // Clear all items
+                                    $component->state([]);
+                                })
+                        ])
+                        ->deleteAction(
+                            fn (Action $action) => $action
+                                ->requiresConfirmation(
+                                    fn (array $arguments, Repeater $component): bool =>
+                                        isset($component->getRawItemState($arguments['item'])['id'])
+                                )
+                                ->modalFooterActionsAlignment(Alignment::Center)
+                        )
                 ]); // end schema
     }
 
@@ -442,10 +442,20 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                         ->collapsed($this->getOwnerRecord()?->gradingComponents()->exists())
                         ->schema(static::getComponentFields())
                         ->afterStateHydrated(function ($component, $state) {
-                            // When editing: if no data is loaded, create 1 empty row.
                             if (blank($state)) {
                                 $component->state([[]]);
+                                return;
                             }
+
+                            // Fix orderable bug - use UUID keys
+                            $updatedItems = [];
+                            foreach ($state as $item) {
+                                if (is_array($item)) {
+                                    $updatedItems[(string) Str::uuid()] = $item;
+                                }
+                            }
+
+                            $component->state($updatedItems);
                         })
                         ->itemLabel(fn (array $state): ?string =>
                             isset($state['name'], $state['weighted_score'])
