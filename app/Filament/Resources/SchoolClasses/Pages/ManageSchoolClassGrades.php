@@ -6,6 +6,7 @@ use App\Models\Grade;
 use App\Models\Assessment;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
+use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use App\Filament\Fields\Select;
@@ -49,15 +50,19 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
     protected static string $relationship = 'grades';
 
-    public $defaultAction = 'settingsAction';
-
     public function mount(int|string $record): void
     {
         parent::mount($record);
 
-        if ($this->getOwnerRecord()->gradingComponents()->exists()) {
-            $this->defaultAction = null;
+        if (!$this->getOwnerRecord()->gradingComponents()->exists()) {
+            $this->dispatch('mountGradingSettings');
         }
+    }
+
+    #[On('mountGradingSettings')]
+    public function openGradingSettings(): void
+    {
+        $this->mountTableAction('gradingSettingsAction');
     }
 
     public function form(Schema $schema): Schema
@@ -262,7 +267,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
     public function getGradingSettingsAction(): Action
     {
-        return Action::make('settingsAction')
+        return Action::make('gradingSettingsAction')
             ->model(SchoolClass::class)
             ->disabledForm(fn () => !$this->getOwnerRecord()->active)
             ->label('Grading Settings')
@@ -294,7 +299,9 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->form(function () {
                 return [
                     Tabs::make('Tabs')->tabs([
+                        // TODO: fix bug re arrange of components order item
                         $this->formTabGradingComponents(),
+                        // TODO: fix bug re arrange of components order item
                         $this->formTabTransmutationTable(),
                     ])
                 ];
@@ -334,25 +341,13 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                 ->schema([
                     Repeater::make('gradeTransmutations')
                     ->hiddenLabel()
-                    ->collapsible()
-                    ->collapsed($this->getOwnerRecord()?->gradeTransmutations()->exists())
-                    ->itemLabel(fn (array $state): ?string =>
-                        isset($state['initial_min'], $state['initial_max'], $state['transmuted_grade'])
-                            ? number_format((float) $state['initial_min'], 2, '.', '') . "-" . number_format((float) $state['initial_max'], 2, '.', '') . " → {$state['transmuted_grade']}"
-                            : 'New Transmutation Range'
-                    )
                     ->compact()
                     ->table([
                         TableColumn::make('Initial Min'),
                         TableColumn::make('Initial Max'),
                         TableColumn::make('Grade'),
                     ])
-                    ->schema([
-                        ...array_map(
-                            fn ($field) => $field->distinct(),
-                            static::rangesField()
-                        ),
-                    ])
+                    ->schema(array_map(fn ($field) => $field->distinct(), static::rangesField()))
                     ->afterStateHydrated(function (Repeater $component, $state) {
                         if (is_array($state) && count($state) > 0) {
                             // Sort by initial_max - DESCENDING
@@ -442,7 +437,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     Repeater::make('gradingComponents')
                         ->hiddenLabel()
                         ->collapsible()
-                        ->orderable()
+                        ->orderable('sort')
                         ->minItems(1)
                         ->collapsed($this->getOwnerRecord()?->gradingComponents()->exists())
                         ->schema(static::getComponentFields())
@@ -550,7 +545,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 )
                                 ->modalFooterActionsAlignment(Alignment::Center)
                         )
-                    ]);
+                ]);
     }
 
     public static function getComponentFields()
