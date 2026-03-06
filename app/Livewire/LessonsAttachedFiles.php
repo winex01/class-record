@@ -13,8 +13,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
-use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Actions\Concerns\InteractsWithActions;
+use App\Filament\Resources\MyFiles\Forms\MyFileForm;
+use App\Filament\Resources\MyFiles\Actions\MyFileActions;
+use App\Filament\Resources\MyFiles\Columns\MyFileColumns;
 
 class LessonsAttachedFiles extends Component implements HasForms, HasTable, HasActions
 {
@@ -43,11 +45,11 @@ class LessonsAttachedFiles extends Component implements HasForms, HasTable, HasA
                 MyFile::query()
                     ->whereHas('lessons', fn (Builder $query) => $query->whereIn('lessons.id', $lessonIds))
             )
-            ->columns([
-                ...MyFileResource::getColumns(),
-            ])
+            ->columns(MyFileColumns::schema())
             ->recordActions([
-                MyFileResource::getViewAction()->form(MyFileResource::getForm())->modalCancelAction(false)
+                MyFileActions::viewAction()
+                    ->modalCancelAction(false)
+                    ->form(MyFileForm::schema())
             ])
             ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')

@@ -26,7 +26,6 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Columns\BooleanIconColumn;
-use App\Filament\Resources\MyFiles\MyFileResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
@@ -160,7 +159,25 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
                 Section::make()
                     ->schema([
-                        MyFileResource::selectMyFileAndCreateOption(),
+                        Select::make('my_file_id')
+                            ->relationship('myFile', 'name')
+                            ->helperText('Optional')
+                            ->nullable()
+                            ->createOptionForm(static::getForm(false))
+                            ->createOptionAction(
+                                fn (Action $action) => $action->modalWidth(Width::Medium),
+                            )
+                            ->editOptionForm(static::getForm(true))
+                            ->editOptionAction(function (Action $action) {
+                                return $action
+                                    ->icon('heroicon-o-eye')
+                                    ->tooltip('View')
+                                    ->modalHeading('View File Details')
+                                    ->modalWidth(Width::Medium)
+                                    ->modalSubmitAction(false)
+                                    ->modalCancelActionLabel('Close');
+                            }),
+
                         ToggleButtons::make('can_group_students')
                     ])
                     ->columnSpan(1),
