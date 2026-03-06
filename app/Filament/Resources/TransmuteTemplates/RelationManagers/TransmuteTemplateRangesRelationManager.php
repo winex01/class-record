@@ -9,10 +9,9 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
-use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
-use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
+use App\Filament\Resources\TransmuteTemplates\Forms\TransmuteTemplateRangesForm;
 
 class TransmuteTemplateRangesRelationManager extends RelationManager
 {
@@ -21,26 +20,7 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                Grid::make(3)
-                    ->schema([
-                        // NOTE: Using modifyRuleUsing() to scope the unique rule to
-                        // $this->getOwnerRecord()->id so validation only applies per template.
-                        ...array_map(
-                            fn ($field) => $field
-                                ->unique(
-                                    table: 'transmute_template_ranges',
-                                    column: 'initial_min',
-                                    modifyRuleUsing: fn ($rule) =>
-                                        $rule->where(
-                                            'transmute_template_id',
-                                            $this->getOwnerRecord()->getKey()
-                                        )
-                                ),
-                            ManageSchoolClassGrades::rangesField()
-                        ),
-                    ])
-            ]);
+            ->components(TransmuteTemplateRangesForm::schema());
     }
 
     public function table(Table $table): Table
@@ -51,7 +31,6 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
                 TextColumn::make('initial_min'),
                 TextColumn::make('initial_max'),
                 TextColumn::make('transmuted_grade')
-                    ->formatStateUsing(fn ($state) => $state != floor($state) ? $state : number_format($state, 0))
             ])
             ->headerActions([
                 CreateAction::make()
