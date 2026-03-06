@@ -5,33 +5,25 @@ namespace App\Filament\Resources\Tasks;
 use App\Models\Task;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
+use App\Enums\NavigationGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
-use App\Filament\Fields\Textarea;
 use Filament\Support\Enums\Width;
-use App\Filament\Fields\TagsInput;
-use App\Filament\Fields\TextInput;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
-use App\Filament\Columns\TagsColumn;
-use App\Filament\Columns\TextColumn;
 use Filament\Support\Icons\Heroicon;
-use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\Fields\DateTimePicker;
-use Filament\Forms\Components\Repeater;
-use App\Filament\Columns\DateTimeColumn;
 use Illuminate\Contracts\Support\Htmlable;
+use App\Filament\Resources\Tasks\Forms\TaskForm;
 use App\Filament\Resources\Tasks\Pages\ManageTasks;
+use App\Filament\Resources\Notes\Columns\NoteColumns;
 
 class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
-
     protected static ?string $recordTitleAttribute = 'name';
-    protected static string | \UnitEnum | null $navigationGroup = \App\Enums\NavigationGroup::Group2;
-
+    protected static string | \UnitEnum | null $navigationGroup = NavigationGroup::Group2;
     protected static ?int $navigationSort = 260;
 
     public static function getNavigationIcon(): string | \BackedEnum | Htmlable | null
@@ -52,64 +44,14 @@ class TaskResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                ...static::getForm(),
-            ]);
-    }
-
-    public static function getForm()
-    {
-        return [
-            TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-
-            Textarea::make('description')
-                ->placeholder('Optional...'),
-
-            TagsInput::make('tags'),
-
-            DateTimePicker::make('starts_at')
-                ->default(now()->startOfDay())
-                ->beforeOrEqual('ends_at')
-                ->required(),
-
-            DateTimePicker::make('ends_at')
-                ->default(now()->endOfDay())
-                ->afterOrEqual('starts_at')
-                ->required(),
-
-            Repeater::make('checklists')
-                ->schema([
-                    Textarea::make('name')
-                        ->placeholder('Subtask name')
-                        ->required()
-                        ->maxLength(255)
-                        ->columnSpan(2)
-                        ->rows(1),
-
-                    ToggleButtons::make('complete')
-                        ->columnSpan(1)
-                        ->icons(null)
-                ])
-                ->defaultItems(0)
-                ->columns(3)
-        ];
+            ->components(TaskForm::schema());
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('name')
-            ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('description')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                TagsColumn::make('tags'),
-                DateTimeColumn::make('starts_at')->dateTime(),
-                DateTimeColumn::make('ends_at')->dateTime(),
-            ])
+            ->columns(NoteColumns::schema())
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Large),
                 EditAction::make()->modalWidth(Width::Large),

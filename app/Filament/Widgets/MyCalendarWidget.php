@@ -18,12 +18,12 @@ use Guava\Calendar\Enums\CalendarViewType;
 use Guava\Calendar\ValueObjects\FetchInfo;
 use Guava\Calendar\Filament\CalendarWidget;
 use Guava\Calendar\Contracts\ContextualInfo;
-use App\Filament\Resources\Tasks\TaskResource;
 use Guava\Calendar\ValueObjects\CalendarEvent;
 use Guava\Calendar\ValueObjects\DateClickInfo;
 use Guava\Calendar\ValueObjects\EventDropInfo;
 use Guava\Calendar\ValueObjects\DateSelectInfo;
 use App\Filament\Resources\Notes\Forms\NoteForm;
+use App\Filament\Resources\Tasks\Forms\TaskForm;
 use Guava\Calendar\ValueObjects\EventResizeInfo;
 use App\Filament\Resources\Meetings\Forms\MeetingForm;
 use App\Filament\Resources\Recurrings\RecurringResource;
@@ -239,7 +239,7 @@ class MyCalendarWidget extends CalendarWidget
                     }
 
                     if ($record instanceof Task) {
-                        return TaskResource::getForm();
+                        return TaskForm::schema();
                     }
 
                     if ($record instanceof Note) {
