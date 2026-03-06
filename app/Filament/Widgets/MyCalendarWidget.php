@@ -26,7 +26,7 @@ use App\Filament\Resources\Notes\Forms\NoteForm;
 use App\Filament\Resources\Tasks\Forms\TaskForm;
 use Guava\Calendar\ValueObjects\EventResizeInfo;
 use App\Filament\Resources\Meetings\Forms\MeetingForm;
-use App\Filament\Resources\Recurrings\RecurringResource;
+use App\Filament\Resources\Recurrings\Forms\RecurringForm;
 
 class MyCalendarWidget extends CalendarWidget
 {
@@ -247,7 +247,7 @@ class MyCalendarWidget extends CalendarWidget
                     }
 
                     if ($record instanceof Recurring) {
-                        return RecurringResource::getForm();
+                        return RecurringForm::schema();
                     }
 
                     return [];
