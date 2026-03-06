@@ -9,7 +9,7 @@ use App\Filament\Columns\TextInputColumn;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\Groups\GroupResource;
+use App\Filament\Resources\Groups\Forms\GroupForm;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
@@ -54,7 +54,7 @@ class RecordScoreRelationManager extends RelationManager
 
                 SelectColumn::make('group')
                     ->options(function ($record) {
-                        $baseOptions = GroupResource::selectOptions();
+                        $baseOptions = GroupForm::selectOptions();
 
                         // Get current value and add it if it doesn't exist
                         $currentValue = $record->pivot->group ?? null;
@@ -90,7 +90,7 @@ class RecordScoreRelationManager extends RelationManager
                 SelectFilter::make('group')
                     ->searchable()
                     ->multiple()
-                    ->options(GroupResource::selectOptions())
+                    ->options(GroupForm::selectOptions())
                     ->query(function (Builder $query, array $data) {
                         if (filled($data['values'])) {
                             $query->whereIn('assessment_student.group', $data['values']);

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Groups;
 use App\Models\Group;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
+use App\Enums\NavigationGroup;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
@@ -20,11 +21,8 @@ use App\Filament\Resources\Groups\Pages\ManageGroups;
 class GroupResource extends Resource
 {
     protected static ?string $model = Group::class;
-
     protected static ?string $recordTitleAttribute = 'name';
-
-    protected static string | \UnitEnum | null $navigationGroup = \App\Enums\NavigationGroup::Group1;
-
+    protected static string | \UnitEnum | null $navigationGroup = NavigationGroup::Group1;
     protected static ?int $navigationSort = 300;
 
     public static function getNavigationIcon(): string | \BackedEnum | Htmlable | null
@@ -38,7 +36,6 @@ class GroupResource extends Resource
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
             ]);
     }
 
@@ -68,13 +65,5 @@ class GroupResource extends Resource
         return [
             'index' => ManageGroups::route('/'),
         ];
-    }
-
-    public static function selectOptions()
-    {
-        return Group::all()
-            ->pluck('name', 'name')
-            ->prepend('-', '-')
-            ->toArray();
     }
 }

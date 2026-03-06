@@ -20,8 +20,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
 use App\Filament\Traits\ManageActionVisibility;
 use Filament\Forms\Concerns\InteractsWithForms;
-use App\Filament\Resources\Groups\GroupResource;
 use Filament\Tables\Concerns\InteractsWithTable;
+use App\Filament\Resources\Groups\Forms\GroupForm;
 use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAssessments;
 
@@ -171,7 +171,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                     Select::make('group')
                         ->label('Group')
                         ->options(function ($record) {
-                            $baseOptions = GroupResource::selectOptions();
+                            $baseOptions = GroupForm::selectOptions();
 
                             // Get current value and add it if it doesn't exist
                             $currentValue = $record->students->first()?->pivot->group ?? null;
