@@ -22,3 +22,18 @@ TODO:: import student
 TODO:: export student
 TODO:: download active classs in excel
 TODO:: download app backup
+
+
+Architecture convention
+Forms
+    -StudentForm.php
+        ->schema()
+        ->selectOptions()
+Columns
+    -StudentColumns.php
+        ->schema()
+Actions
+    -StudentActions.php
+        ->createAction()
+        ->createRangesAction()
+

@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Filament\Resources\Notes\Forms;
+
+use App\Filament\Fields\Textarea;
+use App\Filament\Fields\TagsInput;
+use App\Filament\Fields\DateTimePicker;
+
+class NoteForm
+{
+    public static function schema()
+    {
+        return [
+            Textarea::make('note')
+                ->rows(5)
+                ->required(),
+
+            TagsInput::make('tags'),
+
+            DateTimePicker::make('starts_at')
+                ->default(now()->startOfDay())
+                ->beforeOrEqual('ends_at')
+                ->required(),
+
+            DateTimePicker::make('ends_at')
+                ->default(now()->endOfDay())
+                ->afterOrEqual('starts_at')
+                ->required(),
+        ];
+    }
+}
