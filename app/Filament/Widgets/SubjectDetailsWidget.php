@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Actions\Concerns\InteractsWithActions;
-use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use App\Filament\Resources\SchoolClasses\Forms\SchoolClassForm;
 
 class SubjectDetailsWidget extends Widget implements HasActions, HasForms
 {
@@ -35,7 +35,7 @@ class SubjectDetailsWidget extends Widget implements HasActions, HasForms
             ->label('Edit')
             ->link()
             ->icon('heroicon-m-pencil-square')
-            ->form(SchoolClassResource::getFields())
+            ->form(SchoolClassForm::schema())
             ->modalWidth(Width::Large)
             ->after(fn () => $this->dispatch('refreshTable'));
     }

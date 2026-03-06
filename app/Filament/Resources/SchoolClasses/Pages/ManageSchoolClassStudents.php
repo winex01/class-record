@@ -104,7 +104,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
 
         if ($ownerRecord) {
             $attachAction->recordSelectOptionsQuery(function ($query) use ($ownerRecord) {
-                return $query->whereIn('students.id', SchoolClassResource::getClassStudents($ownerRecord->school_class_id));
+                return $query->whereIn('students.id', SchoolClassResource::getStudents($ownerRecord->school_class_id));
             });
         }
 

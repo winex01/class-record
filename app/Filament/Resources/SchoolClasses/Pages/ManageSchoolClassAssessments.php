@@ -31,6 +31,7 @@ use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\AssessmentTypes\Forms\AssessmentTypeForm;
+use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 use App\Filament\Resources\SchoolClasses\RelationManagers\RecordScoreRelationManager;
 
@@ -236,7 +237,8 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                SchoolClassResource::createAction($this->getOwnerRecord())->label('New Assessment'),
+                SchoolClassActions::createWithStudentsAction($this->getOwnerRecord())
+                    ->label('New Assessment'),
                 static::getOverviewAction(),
                 DeleteBulkAction::make(),
             ])

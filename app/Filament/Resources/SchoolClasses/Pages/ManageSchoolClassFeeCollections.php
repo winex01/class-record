@@ -27,6 +27,7 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 use App\Filament\Resources\SchoolClasses\RelationManagers\TakeFeeCollectionRelationManager;
 
@@ -131,7 +132,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                SchoolClassResource::createAction($this->getOwnerRecord())
+                SchoolClassActions::createWithStudentsAction($this->getOwnerRecord())
                     ->label('New Fee Collection')
                     ->modalWidth(Width::Large),
 

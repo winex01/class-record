@@ -36,7 +36,6 @@ Actions
     -StudentActions.php
         ->createAction()
         ->createRangesAction()
-
 Filters
     -StudentFilters.php
         ->genderFilter()
