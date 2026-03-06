@@ -260,15 +260,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->recordAction('grades');
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            // TODO:: using it here worked, but in the toolbar actions not! lets investigate later
-            $this->getGradingSettingsAction()
-        ];
-    }
-
-    // TODO:: bug transmutable table tab, always empty not display ranges
     public function getGradingSettingsAction(): Action
     {
         return Action::make('settingsAction')
@@ -288,39 +279,63 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             'weighted_score' => $item->weighted_score,
                         ])
                         ->toArray(),
+
+                    'gradeTransmutations' => $this->getOwnerRecord()->gradeTransmutations()
+                        ->get(['id', 'initial_min', 'initial_max', 'transmuted_grade'])
+                        ->map(fn ($item) => [
+                            'id' => $item->id,
+                            'initial_min' => $item->initial_min,
+                            'initial_max' => $item->initial_max,
+                            'transmuted_grade' => $item->transmuted_grade,
+                        ])
+                        ->toArray(),
                 ];
             })
             ->form(function () {
                 return [
-                    Tabs::make('Tabs')
-                        ->tabs([
-                            // TODO:: dont use static function
-                            static::formTabGradingComponents($this->getOwnerRecord()),
-                            static::formTabTransmutationTable($this->getOwnerRecord()),
-                        ])
+                    Tabs::make('Tabs')->tabs([
+                        $this->formTabGradingComponents(),
+                        $this->formTabTransmutationTable(),
+                    ])
                 ];
             })
-            ->action(function ($data) {
-                Notification::make()
-                    ->title('Saved')
-                    ->success()
-                    ->send();
+            ->action(function (array $data, $livewire) {
+                $record = $livewire->record;
+
+                $record->gradingComponents()->delete();
+                // working and no problem
+                foreach ($data['gradingComponents'] as $component) {
+                    $record->gradingComponents()->create([
+                        'name' => $component['name'],
+                        'weighted_score' => $component['weighted_score'],
+                    ]);
+                }
+
+                $record->gradeTransmutations()->delete();
+                foreach ($data['gradeTransmutations'] as $component) {
+                    $record->gradeTransmutations()->create([
+                        'initial_min' => $component['initial_min'],
+                        'initial_max' => $component['initial_max'],
+                        'transmuted_grade' => $component['transmuted_grade'],
+                    ]);
+                }
+
+                Notification::make()->title('Saved')->success()->send();
             })
             ->modalSubmitActionLabel(function () {
                 return $this->getOwnerRecord()->gradingComponents()->exists() ? 'Save Changes' : 'Save';
             });
     }
 
-    private static function formTabTransmutationTable($ownerRecord)
+    private function formTabTransmutationTable()
     {
         return Tab::make('Transmutation Table')
                 ->icon(TransmuteTemplateResource::getNavigationIcon())
                 ->schema([
                     Repeater::make('gradeTransmutations')
-                    ->relationship('gradeTransmutations')
                     ->hiddenLabel()
                     ->collapsible()
-                    ->collapsed($ownerRecord?->gradeTransmutations()->exists())
+                    ->collapsed($this->getOwnerRecord()?->gradeTransmutations()->exists())
                     ->itemLabel(fn (array $state): ?string =>
                         isset($state['initial_min'], $state['initial_max'], $state['transmuted_grade'])
                             ? number_format((float) $state['initial_min'], 2, '.', '') . "-" . number_format((float) $state['initial_max'], 2, '.', '') . " → {$state['transmuted_grade']}"
@@ -409,23 +424,28 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             })
                     ])
                     ->deleteAction(
-                        fn (Action $action) => $action->requiresConfirmation()->modalFooterActionsAlignment(Alignment::Center)
+                        fn (Action $action) => $action
+                            ->requiresConfirmation(
+                                fn (array $arguments, Repeater $component): bool =>
+                                    isset($component->getRawItemState($arguments['item'])['id'])
+                            )
+                            ->modalFooterActionsAlignment(Alignment::Center)
                     )
                 ]); // end schema
     }
 
-    private static function formTabGradingComponents($ownerRecord)
+    private function formTabGradingComponents()
     {
         return Tab::make('Grading Components')
                 ->icon(GradeComponentTemplateResource::getNavigationIcon())
                 ->schema([
                     Repeater::make('gradingComponents')
-                        ->relationship('gradingComponents') // repeater tied to hasMany relation
                         ->hiddenLabel()
                         ->collapsible()
                         ->orderable()
                         ->minItems(1)
-                        ->collapsed($ownerRecord?->gradingComponents()->exists())
+                        ->collapsed($this->getOwnerRecord()?->gradingComponents()->exists())
+                        ->schema(static::getComponentFields())
                         ->afterStateHydrated(function ($component, $state) {
                             // When editing: if no data is loaded, create 1 empty row.
                             if (blank($state)) {
@@ -437,7 +457,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 ? "{$state['name']} ({$state['weighted_score']}%)"
                                 : ($state['name'] ?? 'New Component')
                         )
-                        ->schema(static::getComponentFields())
                         ->rules([
                             fn ($get) => function (string $attribute, $value, $fail) use ($get) {
                                 $total = collect($get('gradingComponents'))->sum('weighted_score');
@@ -446,9 +465,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                 }
                             },
                         ])
-                        ->deleteAction(
-                            fn (Action $action) => $action->requiresConfirmation()->modalFooterActionsAlignment(Alignment::Center)
-                        )
                         ->addActionLabel('Add grading component')
                         ->aboveContent([
                             Action::make('copyGradeComponentTemplate')
@@ -526,6 +542,14 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                     $component->state([]);
                                 })
                         ])
+                        ->deleteAction(
+                            fn (Action $action) => $action
+                                ->requiresConfirmation(
+                                    fn (array $arguments, Repeater $component): bool =>
+                                        isset($component->getRawItemState($arguments['item'])['id'])
+                                )
+                                ->modalFooterActionsAlignment(Alignment::Center)
+                        )
                     ]);
     }
 
