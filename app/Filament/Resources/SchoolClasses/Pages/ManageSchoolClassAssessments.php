@@ -31,7 +31,7 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Filament\Resources\AssessmentTypes\AssessmentTypeResource;
+use App\Filament\Resources\AssessmentTypes\Forms\AssessmentTypeForm;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
 use App\Filament\Resources\SchoolClasses\RelationManagers\RecordScoreRelationManager;
 
@@ -141,8 +141,8 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
                         Select::make('assessment_type_id')
                             ->relationship('assessmentType', 'name')
                             ->required()
-                            ->createOptionForm(AssessmentTypeResource::getForm())
-                            ->editOptionForm(AssessmentTypeResource::getForm()),
+                            ->createOptionForm(AssessmentTypeForm::schema())
+                            ->editOptionForm(AssessmentTypeForm::schema()),
 
                         DatePicker::make('date'),
 

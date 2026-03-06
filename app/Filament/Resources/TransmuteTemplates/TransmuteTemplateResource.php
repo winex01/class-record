@@ -40,7 +40,9 @@ class TransmuteTemplateResource extends Resource
     {
         return $table
             ->recordTitleAttribute('name')
-            ->columns([TextColumn::make('name')])
+            ->columns([
+                TextColumn::make('name')
+            ])
             ->recordActions([
                 TransmuteTemplateActions::createRangesAction(),
                 EditAction::make()->modalWidth(Width::Large),

@@ -4,17 +4,18 @@ namespace App\Filament\Resources\AssessmentTypes;
 
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
+use App\Enums\NavigationGroup;
 use App\Models\AssessmentType;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
-use App\Filament\Fields\TextInput;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Contracts\Support\Htmlable;
+use App\Filament\Resources\AssessmentTypes\Forms\AssessmentTypeForm;
 use App\Filament\Resources\AssessmentTypes\Pages\ManageAssessmentTypes;
 
 class AssessmentTypeResource extends Resource
@@ -23,7 +24,7 @@ class AssessmentTypeResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string | \UnitEnum | null $navigationGroup = \App\Enums\NavigationGroup::Group1;
+    protected static string | \UnitEnum | null $navigationGroup = NavigationGroup::Group1;
 
     protected static ?int $navigationSort = 400;
 
@@ -35,17 +36,7 @@ class AssessmentTypeResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                ...static::getForm()
-            ]);
-    }
-
-    public static function getForm()
-    {
-        return [
-            TextInput::make('name')
-                ->required()
-        ];
+            ->components(AssessmentTypeForm::schema());
     }
 
     public static function table(Table $table): Table
