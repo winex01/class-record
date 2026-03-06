@@ -20,6 +20,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
+use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 
 class AssessmentOverview extends Component implements HasForms, HasTable, HasActions
@@ -82,7 +83,7 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
                 ...ManageSchoolClassStudents::getColumns(),
             ])
             ->filters([
-                ...StudentResource::getFilters()
+                StudentFilters::gender()
             ])
             ->emptyStateHeading(false)
             ->emptyStateDescription(false)

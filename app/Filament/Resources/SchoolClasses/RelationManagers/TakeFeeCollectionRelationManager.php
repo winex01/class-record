@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 
 class TakeFeeCollectionRelationManager extends RelationManager
@@ -112,7 +113,7 @@ class TakeFeeCollectionRelationManager extends RelationManager
                     ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
             ])
             ->filters([
-                ...StudentResource::getFilters()
+                StudentFilters::gender()
             ])
             ->toolbarActions([
                 ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),

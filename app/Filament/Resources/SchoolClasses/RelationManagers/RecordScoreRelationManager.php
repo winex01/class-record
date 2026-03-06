@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\Groups\Forms\GroupForm;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 
 class RecordScoreRelationManager extends RelationManager
@@ -98,7 +99,7 @@ class RecordScoreRelationManager extends RelationManager
                     })
                     ->visible($this->getOwnerRecord()->can_group_students),
 
-                    ...StudentResource::getFilters(),
+                StudentFilters::gender()
             ])
             ->toolbarActions([
                 ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),

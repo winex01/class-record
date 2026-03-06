@@ -10,6 +10,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 
 class TakeAttendanceRelationManager extends RelationManager
@@ -57,7 +58,7 @@ class TakeAttendanceRelationManager extends RelationManager
 
             ])
             ->filters([
-                ...StudentResource::getFilters()
+                StudentFilters::gender(),
             ])
             ->toolbarActions([
                 ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),

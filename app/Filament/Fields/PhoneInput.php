@@ -5,7 +5,7 @@ namespace App\Filament\Fields;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\TextInput;
 
-class Phone extends TextInput
+class PhoneInput extends TextInput
 {
     protected function setUp(): void
     {

@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
+use App\Filament\Resources\Students\Forms\StudentForm;
+use App\Filament\Resources\Students\Columns\StudentColumns;
+use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 
 class ManageSchoolClassStudents extends ManageRelatedRecords
@@ -53,8 +56,8 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
 
     public function form(Schema $schema): Schema
     {
-        return StudentResource::form($schema);
-
+        return $schema
+            ->components(StudentForm::schema());
     }
 
     public function table(Table $table): Table
@@ -66,7 +69,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 ...static::getColumns(['photo', 'full_name', 'gender', 'birth_date', 'email'])
             ])
             ->filters([
-                ...StudentResource::getFilters()
+                StudentFilters::gender(),
             ])
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Large),
@@ -122,7 +125,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
 
     public static function getColumns($defaultShownColumns = ['photo', 'full_name', 'gender'])
     {
-        $columns = StudentResource::getColumns();
+        $columns = StudentColumns::schema();
 
         foreach ($columns as $key => $col) {
             if (!in_array($col->getName(), $defaultShownColumns)) {

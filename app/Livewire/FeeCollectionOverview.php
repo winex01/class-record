@@ -22,6 +22,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use App\Filament\Resources\Students\StudentResource;
+use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
 
 class FeeCollectionOverview extends Component implements HasForms, HasTable, HasActions
@@ -177,7 +178,7 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
 
             ])
             ->filters([
-                ...StudentResource::getFilters()
+                StudentFilters::gender()
             ])
             ->emptyStateHeading(false)
             ->emptyStateDescription(false);
