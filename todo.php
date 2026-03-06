@@ -2,6 +2,8 @@
 /*
 TODO:: refactor transfer all forms/fields into the schema
 
+TODO:: TBD:: show close button on livewire table modal?
+
 TODO:: Notification & calendar for:
         * Lessons Completion date
         * Assessments date

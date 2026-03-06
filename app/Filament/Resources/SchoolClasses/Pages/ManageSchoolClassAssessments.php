@@ -5,34 +5,27 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
-use App\Filament\Fields\Select;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use App\Filament\Fields\Textarea;
 use Filament\Support\Enums\Width;
-use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\HtmlString;
-use App\Filament\Fields\DatePicker;
 use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
 use App\Enums\CompletedPendingStatus;
 use Illuminate\Support\Facades\Blade;
-use App\Filament\Fields\ToggleButtons;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Columns\BooleanColumn;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Columns\BooleanIconColumn;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Filament\Resources\AssessmentTypes\Forms\AssessmentTypeForm;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
 use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
+use App\Filament\Resources\SchoolClasses\Forms\SchoolClassAssessmentForm;
+use App\Filament\Resources\SchoolClasses\Filters\SchoolClassAssessmentFilters;
 use App\Filament\Resources\SchoolClasses\RelationManagers\RecordScoreRelationManager;
 
 class ManageSchoolClassAssessments extends ManageRelatedRecords
@@ -45,147 +38,17 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
     public function getTabs(): array
     {
-        $tabs = [
-            'all' => Tab::make()
-                ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->count()
-                ),
-
-            CompletedPendingStatus::COMPLETED->getLabel() => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->whereDoesntHave('students', function ($q) {
-                        $q->whereNull('score');
-                    })
-                )
-                ->badgeColor('info')
-                ->badge(fn () =>
-                    $this->getOwnerRecord()
-                        ->{static::$relationship}()
-                        ->whereDoesntHave('students', function ($q) {
-                            $q->whereNull('score');
-                        })
-                        ->count()
-                ),
-
-            CompletedPendingStatus::PENDING->getLabel() => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->whereHas('students', function ($q) {
-                        $q->whereNull('score');
-                    })
-                )
-                ->badgeColor('danger')
-                ->badge(fn () =>
-                    $this->getOwnerRecord()
-                        ->{static::$relationship}()
-                        ->whereHas('students', function ($q) {
-                            $q->whereNull('score');
-                        })
-                        ->count()
-                ),
-        ];
-
-        $tabs['unassigned'] = Tab::make()
-            ->label('Unassigned')
-            ->modifyQueryUsing(fn (Builder $query) =>
-                $query->whereDoesntHave('gradeGradingComponents')
-            )
-            ->badgeColor('warning')
-            ->badge(fn () =>
-                $this->getOwnerRecord()
-                    ->{static::$relationship}()
-                    ->whereDoesntHave('gradeGradingComponents')
-                    ->count()
-            );
-
-        // Dynamically fetch distinct grading periods linked to this school class's assessments
-        $gradingPeriods = $this->getOwnerRecord()
-            ->grades()
-            ->whereHas('gradeGradingComponents.assessments')
-            ->pluck('grading_period')
-            ->unique()
-            ->filter()
-            ->values();
-
-        foreach ($gradingPeriods as $period) {
-            $tabs[$period] = Tab::make()
-                ->label($period)
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->whereHas('gradeGradingComponents.grade', function (Builder $q) use ($period) {
-                        $q->where('grading_period', $period);
-                    })
-                )
-                ->badge(fn () =>
-                    $this->getOwnerRecord()
-                        ->{static::$relationship}()
-                        ->whereHas('gradeGradingComponents.grade', function ($q) use ($period) {
-                            $q->where('grading_period', $period);
-                        })
-                        ->count()
-                );
-        }
-
-        return $tabs;
+        return SchoolClassAssessmentFilters::getTabs($this->getOwnerRecord());
     }
 
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                Section::make()
-                    ->schema([
-                        TextInput::make('name')
-                            ->placeholder('e.g., Quiz #1, Midterm Exam, Chapter 5 Test, etc.')
-                            ->required()
-                            ->maxLength(255),
-
-                        Select::make('assessment_type_id')
-                            ->relationship('assessmentType', 'name')
-                            ->required()
-                            ->createOptionForm(AssessmentTypeForm::schema())
-                            ->editOptionForm(AssessmentTypeForm::schema()),
-
-                        DatePicker::make('date'),
-
-                        TextInput::make('max_score')
-                            ->helperText('Highest points')
-                            ->required()
-                            ->placeholder('100')
-                            ->numeric(),
-
-                        Textarea::make('description')
-                            ->rows(2)
-                            ->placeholder('Additional notes or instructions...')
-                    ])
-                    ->columnSpan(1),
-
-                Section::make()
-                    ->schema([
-                        Select::make('my_file_id')
-                            ->relationship('myFile', 'name')
-                            ->helperText('Optional')
-                            ->nullable()
-                            ->createOptionForm(static::getForm(false))
-                            ->createOptionAction(
-                                fn (Action $action) => $action->modalWidth(Width::Medium),
-                            )
-                            ->editOptionForm(static::getForm(true))
-                            ->editOptionAction(function (Action $action) {
-                                return $action
-                                    ->icon('heroicon-o-eye')
-                                    ->tooltip('View')
-                                    ->modalHeading('View File Details')
-                                    ->modalWidth(Width::Medium)
-                                    ->modalSubmitAction(false)
-                                    ->modalCancelActionLabel('Close');
-                            }),
-
-                        ToggleButtons::make('can_group_students')
-                    ])
-                    ->columnSpan(1),
-            ])
+            ->components(SchoolClassAssessmentForm::schema())
             ->columns(2);
     }
 
+    // TODO:: to be continued here!!
     public function table(Table $table): Table
     {
         return $table
