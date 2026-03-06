@@ -42,6 +42,7 @@ use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\TransmuteTemplates\TransmuteTemplateResource;
 use App\Filament\Resources\GradeComponentTemplates\GradeComponentTemplateResource;
+use App\Filament\Resources\GradeComponentTemplates\Forms\GradeComponentTemplateForm;
 
 class ManageSchoolClassGrades extends ManageRelatedRecords
 {
@@ -491,7 +492,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                                                 ->modalWidth(Width::ExtraLarge)
                                                 ->modalHeading('Create Grade Component Template')
                                                 ->model(GradeComponentTemplate::class) // i added this
-                                                ->form(GradeComponentTemplateResource::getFields())
+                                                ->form(GradeComponentTemplateForm::schema())
                                                 ->action(function (array $data, Select $component) {
                                                     // Create the new template
                                                     $template = GradeComponentTemplate::create($data);

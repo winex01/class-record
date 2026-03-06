@@ -5,32 +5,26 @@ namespace App\Filament\Resources\GradeComponentTemplates;
 use BackedEnum;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
+use App\Enums\NavigationGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
-use App\Filament\Fields\TextInput;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
-use App\Filament\Columns\TextColumn;
 use Filament\Support\Icons\Heroicon;
 use App\Models\GradeComponentTemplate;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms\Components\Repeater;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
+use App\Filament\Resources\GradeComponentTemplates\Forms\GradeComponentTemplateForm;
 use App\Filament\Resources\GradeComponentTemplates\Pages\ManageGradeComponentTemplates;
+use App\Filament\Resources\GradeComponentTemplates\Columns\GradeComponentTemplateColumns;
 
 class GradeComponentTemplateResource extends Resource
 {
     protected static ?string $model = GradeComponentTemplate::class;
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
     protected static ?string $recordTitleAttribute = 'name';
-
-    protected static string | \UnitEnum | null $navigationGroup = \App\Enums\NavigationGroup::Group1;
-
+    protected static string | \UnitEnum | null $navigationGroup = NavigationGroup::Group1;
     protected static ?int $navigationSort = 450;
 
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
@@ -41,72 +35,14 @@ class GradeComponentTemplateResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(static::getFields());
-    }
-
-    public static function getFields()
-    {
-        return [
-            TextInput::make('name')
-                ->required()
-                ->unique(
-                    table: 'grade_component_templates',
-                    modifyRuleUsing: function ($rule) {
-                        return $rule->where('user_id', auth()->id());
-                    }
-                ),
-
-            Repeater::make('components')
-                ->hiddenLabel()
-                ->collapsible()
-                ->orderable()
-                ->minItems(1)
-                ->collapsed(fn ($operation) => $operation == 'view' ? true : false)
-                ->itemLabel(fn (array $state): ?string =>
-                    isset($state['name'], $state['weighted_score'])
-                        ? "{$state['name']} ({$state['weighted_score']}%)"
-                        : ($state['name'] ?? 'New Component')
-                )
-                ->schema(ManageSchoolClassGrades::getComponentFields())
-                ->rules([
-                    fn ($get) => function (string $attribute, $value, $fail) use ($get) {
-                        $total = collect($get('components'))->sum('weighted_score');
-                        if ($total != 100) {
-                            $fail("The total weighted score of all components must equal 100%. Current total: {$total}%");
-                        }
-                    },
-                ])
-        ];
+            ->components(GradeComponentTemplateForm::schema());
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('name')
-            ->columns([
-                TextColumn::make('name'),
-
-                TextColumn::make('components')
-                    ->listWithLineBreaks()
-                    ->formatStateUsing(fn ($state) =>
-                        "{$state['name']} ({$state['weighted_score']}%)"
-                    )
-                    ->searchable(query: function ($query, string $search) {
-                        $query->whereRaw(
-                            "LOWER(JSON_EXTRACT(components, '$')) LIKE ?",
-                            ['%' . strtolower($search) . '%']
-                        );
-                    })
-                    ->color(function ($state, $rowLoop) {
-                        return match ($rowLoop->iteration % 5) {
-                            1 => 'primary',
-                            2 => 'info',
-                            3 => 'warning',
-                            4 => 'pink',
-                            default => 'purple',
-                        };
-                    })
-            ])
+            ->columns(GradeComponentTemplateColumns::schema())
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::ExtraLarge),
                 EditAction::make()->modalWidth(Width::ExtraLarge),

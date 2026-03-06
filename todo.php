@@ -1,5 +1,7 @@
 <?php
 /*
+TODO:: refactor transfer all forms/fields into the schema
+
 TODO:: Notification & calendar for:
         * Lessons Completion date
         * Assessments date
