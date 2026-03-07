@@ -20,7 +20,7 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components(TransmuteTemplateRangesForm::schema());
+            ->components(TransmuteTemplateRangesForm::schema($this->getOwnerRecord()));
     }
 
     public function table(Table $table): Table

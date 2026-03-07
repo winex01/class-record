@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\GradeComponentTemplates\Forms;
 
 use App\Filament\Fields\TextInput;
+use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
 
@@ -31,7 +32,7 @@ class GradeComponentTemplateForm
                         ? "{$state['name']} ({$state['weighted_score']}%)"
                         : ($state['name'] ?? 'New Component')
                 )
-                ->schema(ManageSchoolClassGrades::getComponentFields())
+                ->schema(static::gradeComponentFields())
                 ->rules([
                     fn ($get) => function (string $attribute, $value, $fail) use ($get) {
                         $total = collect($get('components'))->sum('weighted_score');
@@ -40,6 +41,38 @@ class GradeComponentTemplateForm
                         }
                     },
                 ])
+        ];
+    }
+
+    public static function gradeComponentFields()
+    {
+        return [
+            Grid::make(3)->schema([
+                TextInput::make('name')
+                    ->placeholder('Enter component name...')
+                    ->helperText('You can type or pick from suggestions.')
+                    ->required()
+                    ->datalist([
+                        'Written Works',
+                        'Performance Tasks',
+                        'Quarterly Assessment',
+                        'Quiz',
+                        'Exam',
+                        'Oral',
+                    ])
+                    ->columnSpan(2),
+
+                TextInput::make('weighted_score')
+                    ->label('Weighted Score')
+                    ->helperText('Value between 1-100')
+                    ->numeric()
+                    ->required()
+                    ->minValue(1)
+                    ->maxValue(100)
+                    ->step(0.01)
+                    ->suffix('%')
+                    ->columnSpan(1),
+            ])
         ];
     }
 }
