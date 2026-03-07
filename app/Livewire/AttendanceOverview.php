@@ -20,7 +20,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Filters\StudentFilters;
-use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
+use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 
 class AttendanceOverview extends Component implements HasForms, HasTable, HasActions
 {
@@ -105,7 +105,7 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
             ->query(Student::query()->whereIn('id', array_column($this->getCurrentStudentsData(), 'id')))
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
-                ...ManageSchoolClassStudents::getColumns(),
+                ...SchoolClassStudentColumns::schema(),
 
                 TextColumn::make('present_count')
                     ->label('Present')

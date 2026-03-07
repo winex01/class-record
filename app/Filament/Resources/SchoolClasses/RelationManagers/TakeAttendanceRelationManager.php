@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\Students\Filters\StudentFilters;
-use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
+use App\Filament\Resources\SchoolClasses\Actions\SchoolClassStudentActions;
+use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 
 class TakeAttendanceRelationManager extends RelationManager
 {
@@ -47,7 +48,7 @@ class TakeAttendanceRelationManager extends RelationManager
             ->recordTitleAttribute('full_name')
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
-                ...ManageSchoolClassStudents::getColumns(),
+                ...SchoolClassStudentColumns::schema(),
 
                 ToggleColumn::make('present')
                     ->offColor('danger')
@@ -61,7 +62,7 @@ class TakeAttendanceRelationManager extends RelationManager
                 StudentFilters::gender(),
             ])
             ->toolbarActions([
-                ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
+                SchoolClassStudentActions::attachAction($this->getOwnerRecord()),
 
                 BulkAction::make('markAbsent')
                     ->label('Mark Absent')
@@ -91,7 +92,7 @@ class TakeAttendanceRelationManager extends RelationManager
                     ->deselectRecordsAfterCompletion()
                     ->successNotificationTitle('Marked as present'),
 
-                ManageSchoolClassStudents::detachBulkAction(),
+                SchoolClassStudentActions::detachBulkAction(),
             ]);
     }
 }

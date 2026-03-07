@@ -13,7 +13,8 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\Students\Filters\StudentFilters;
-use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
+use App\Filament\Resources\SchoolClasses\Actions\SchoolClassStudentActions;
+use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 
 class TakeFeeCollectionRelationManager extends RelationManager
 {
@@ -66,7 +67,7 @@ class TakeFeeCollectionRelationManager extends RelationManager
             ->recordTitleAttribute('full_name')
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
-                ...ManageSchoolClassStudents::getColumns(),
+                ...SchoolClassStudentColumns::schema(),
 
                 SelectColumn::make('status')
                     ->options(FeeCollectionStatus::class)
@@ -116,7 +117,7 @@ class TakeFeeCollectionRelationManager extends RelationManager
                 StudentFilters::gender()
             ])
             ->toolbarActions([
-                ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
+                SchoolClassStudentActions::attachAction($this->getOwnerRecord()),
 
                 // Mark as Paid Bulk Action
                 BulkAction::make('markPaid')
@@ -171,7 +172,7 @@ class TakeFeeCollectionRelationManager extends RelationManager
                     ->visible($this->getOwnerRecord()->amount > 0 ? true : false),
 
 
-                ManageSchoolClassStudents::detachBulkAction(),
+                SchoolClassStudentActions::detachBulkAction(),
             ]);
     }
 }

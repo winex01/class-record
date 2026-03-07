@@ -6,7 +6,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Grouping\Group;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
-use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
+use App\Filament\Resources\SchoolClasses\Actions\SchoolClassStudentActions;
 use App\Filament\Resources\SchoolClasses\Filters\RecordScoreRelationFilters;
 use App\Filament\Resources\SchoolClasses\Colulmns\RecordScoreRelationColumns;
 
@@ -27,8 +27,8 @@ class RecordScoreRelationManager extends RelationManager
             ->columns(RecordScoreRelationColumns::schema($this->getOwnerRecord()))
             ->filters(RecordScoreRelationFilters::filters($this->getOwnerRecord()))
             ->toolbarActions([
-                ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
-                ManageSchoolClassStudents::detachBulkAction(),
+                SchoolClassStudentActions::attachAction($this->getOwnerRecord()),
+                SchoolClassStudentActions::detachBulkAction(),
             ])
             ->defaultGroup($this->getOwnerRecord()->can_group_students ? 'group' : null)
             ->groups(function () {

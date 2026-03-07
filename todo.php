@@ -2,6 +2,8 @@
 /*
 TODO:: refactor transfer all forms/fields into the schema
 
+TODO:: in manage nav class in school class modify the attach action instead of select we will use a select with checkbox datatable
+
 TODO:: TBD:: show close button on livewire table modal?
 
 TODO:: Notification & calendar for:
