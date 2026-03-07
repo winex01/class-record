@@ -3,16 +3,14 @@
 namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
 use Filament\Tables\Table;
-use Filament\Actions\BulkAction;
-use Filament\Support\Enums\Alignment;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\ToggleColumn;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassStudentActions;
 use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
+use App\Filament\Resources\SchoolClasses\Actions\TakeAttendanceRelationActions;
+use App\Filament\Resources\SchoolClasses\Filters\TakeAttendanceRelationFilters;
 
 class TakeAttendanceRelationManager extends RelationManager
 {
@@ -20,26 +18,7 @@ class TakeAttendanceRelationManager extends RelationManager
 
     public function getTabs(): array
     {
-        return [
-            'all' => Tab::make()
-                ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->count()
-                ),
-
-            'present' => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('present', true))
-                ->badgeColor('info')
-                ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->where('present', true)->count()
-                ),
-
-            'absent' => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('present', false))
-                ->badgeColor('danger')
-                ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->where('present', false)->count()
-                )
-        ];
+        return TakeAttendanceRelationFilters::getTabs($this->getOwnerRecord());
     }
 
     public function table(Table $table): Table
@@ -56,42 +35,14 @@ class TakeAttendanceRelationManager extends RelationManager
                     ->alignCenter()
                     ->sortable()
                     ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
-
             ])
             ->filters([
                 StudentFilters::gender(),
             ])
             ->toolbarActions([
                 SchoolClassStudentActions::attachAction($this->getOwnerRecord()),
-
-                BulkAction::make('markAbsent')
-                    ->label('Mark Absent')
-                    ->icon('heroicon-o-x-circle')
-                    ->color('danger')
-                    ->requiresConfirmation()
-                    ->action(function ($records, $livewire) {
-                        foreach ($records as $record) {
-                            $livewire->getRelationship()->updateExistingPivot($record->id, ['present' => false]);
-                        }
-                    })
-                    ->modalFooterActionsAlignment(Alignment::Center)
-                    ->deselectRecordsAfterCompletion()
-                    ->successNotificationTitle('Marked as absent'),
-
-                BulkAction::make('markPresent')
-                    ->label('Mark Present')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('primary')
-                    ->requiresConfirmation()
-                    ->action(function ($records, $livewire) {
-                        foreach ($records as $record) {
-                            $livewire->getRelationship()->updateExistingPivot($record->id, ['present' => true]);
-                        }
-                    })
-                    ->modalFooterActionsAlignment(Alignment::Center)
-                    ->deselectRecordsAfterCompletion()
-                    ->successNotificationTitle('Marked as present'),
-
+                TakeAttendanceRelationActions::bulkMarkAbsentAction(),
+                TakeAttendanceRelationActions::bulkMarkPresentAction(),
                 SchoolClassStudentActions::detachBulkAction(),
             ]);
     }
