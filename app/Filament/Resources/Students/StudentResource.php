@@ -45,9 +45,7 @@ class StudentResource extends Resource
         return $table
             ->recordTitleAttribute('full_name')
             ->columns(StudentColumns::schema())
-            ->filters([
-                StudentFilters::gender()
-            ])
+            ->filters([StudentFilters::gender()])
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Large),
                 EditAction::make()->modalWidth(Width::Large),
