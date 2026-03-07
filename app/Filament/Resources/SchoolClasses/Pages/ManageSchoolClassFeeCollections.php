@@ -3,107 +3,37 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use Filament\Tables\Table;
-use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use App\Filament\Fields\Textarea;
 use Filament\Support\Enums\Width;
-use App\Enums\FeeCollectionStatus;
-use App\Filament\Fields\TextInput;
 use Filament\Actions\DeleteAction;
-use Illuminate\Support\HtmlString;
-use App\Filament\Fields\DatePicker;
-use App\Filament\Columns\DateColumn;
-use App\Filament\Columns\TextColumn;
-use App\Enums\CompletedPendingStatus;
-use Illuminate\Support\Facades\Blade;
-use App\Filament\Columns\AmountColumn;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Schemas\Components\Tabs\Tab;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Columns\BooleanIconColumn;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
-use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
-use Guava\FilamentModalRelationManagers\Actions\RelationManagerAction;
-use App\Filament\Resources\SchoolClasses\RelationManagers\TakeFeeCollectionRelationManager;
+use App\Filament\Resources\SchoolClasses\Forms\SchoolClassFeeCollectionForm;
+use App\Filament\Resources\SchoolClasses\Actions\SchoolClassFeeCollectionActions;
+use App\Filament\Resources\SchoolClasses\Filters\SchoolClassFeeCollectionFilters;
+use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassFeeCollectionColumns;
 
 class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 {
     use ManageSchoolClassInitTrait;
 
     protected static string $resource = SchoolClassResource::class;
-
     protected static string $relationship = 'feeCollections';
 
     public function getTabs(): array
     {
-        return [
-            'all' => Tab::make()
-                ->badge(fn () =>
-                    $this->getOwnerRecord()->{static::$relationship}()->count()
-                ),
-
-            CompletedPendingStatus::COMPLETED->getLabel() => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->whereDoesntHave('students', function ($q) {
-                        $q->where('status', '!=', FeeCollectionStatus::PAID->value);
-                    })
-                )
-                ->badgeColor('info')
-                ->badge(fn () =>
-                    $this->getOwnerRecord()
-                        ->feeCollections()
-                        ->whereDoesntHave('students', function ($q) {
-                            $q->where('status', '!=', FeeCollectionStatus::PAID->value);
-                        })
-                        ->count()
-                ),
-
-            CompletedPendingStatus::PENDING->getLabel() => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->whereHas('students', function ($q) {
-                        $q->where('status', '!=', FeeCollectionStatus::PAID->value);
-                    })
-                )
-                ->badgeColor('danger')
-                ->badge(fn () =>
-                    $this->getOwnerRecord()
-                        ->{static::$relationship}()
-                        ->whereHas('students', function ($q) {
-                            $q->where('status', '!=', FeeCollectionStatus::PAID->value);
-                        })
-                        ->count()
-                ),
-
-        ];
+        return SchoolClassFeeCollectionFilters::getTabs($this->getOwnerRecord());
     }
 
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-
-                TextInput::make('amount')
-                    ->default(0)
-                    ->helperText('Enter required amount (0 for open contribution)')
-                    ->required()
-                    ->numeric()
-                    ->minValue(0),
-
-                DatePicker::make('date'),
-
-                Textarea::make('description')
-                    ->rows(2)
-                    ->placeholder('Additional details...')
-
-            ]);
+            ->components(SchoolClassFeeCollectionForm::schema());
     }
 
     public function table(Table $table): Table
@@ -111,22 +41,9 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('name')
             ->defaultSort('created_at', 'desc')
-            ->columns([
-                ...static::getColumns(),
-            ])
+            ->columns(SchoolClassFeeCollectionColumns::schema())
             ->recordActions([
-                RelationManagerAction::make('takeFeeCollectionRelationManager')
-                    ->label('Fee')
-                    ->icon(StudentResource::getNavigationIcon())
-                    ->color('info')
-                    ->slideOver()
-                    ->relationManager(TakeFeeCollectionRelationManager::make())
-                    ->modalDescription(fn ($record) => new HtmlString(
-                        view('filament.components.fee-collection-modal-heading', [
-                            'record' => $record,
-                        ])->render()
-                    )),
-
+                SchoolClassFeeCollectionActions::takeFeeAction(),
                 ViewAction::make()->modalWidth(Width::Large),
                 EditAction::make()->modalWidth(Width::Large),
                 DeleteAction::make(),
@@ -134,123 +51,10 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ->toolbarActions([
                 SchoolClassActions::createWithStudentsAction($this->getOwnerRecord())
                     ->label('New Fee Collection')
-                    ->modalWidth(Width::Large),
-
-                static::getOverviewAction(),
-
+                    ->modalWidth(width: Width::Large),
+                SchoolClassFeeCollectionActions::overviewAction(),
                 DeleteBulkAction::make(),
             ])
             ->recordAction('takeFeeCollectionRelationManager');;
-    }
-
-    public static function getColumns()
-    {
-        return [
-            TextColumn::make('name'),
-
-            AmountColumn::make('amount')
-                ->color('info')
-                ->placeholder('—')
-                ->getStateUsing(fn ($record) => $record->amount > 0 ? $record->amount : null),
-
-            DateColumn::make('date'),
-
-            TextColumn::make('description')
-                ->toggleable(isToggledHiddenByDefault: true),
-
-            'total' =>
-            AmountColumn::make('total')
-                ->color('primary')
-                ->state(fn ($record) => $record->students()->sum('amount'))
-                ->tooltip('Total Collected')
-                ->sortable(
-                    query: fn ($query, string $direction) =>
-                        $query->withSum('students as total', 'fee_collection_student.amount')
-                            ->orderBy('total', $direction)
-                )
-                ->searchable(
-                    query: fn ($query, string $search) =>
-                        $query->whereRaw(
-                            '(SELECT COALESCE(SUM(fee_collection_student.amount), 0)
-                            FROM fee_collection_student
-                            WHERE fee_collection_student.fee_collection_id = fee_collections.id) LIKE ?',
-                            ["%{$search}%"]
-                        )
-                ),
-
-            'status' =>
-            BooleanIconColumn::make('status')
-                ->getStateUsing(function ($record) {
-                    // Fee record amount zero = open contribution
-                    if ($record->amount == 0) {
-                        return !$record->students()->wherePivotNull('amount')->exists();
-                    }
-
-                    $students = $record->students()->withPivot(['amount', 'status'])->get();
-
-                    // Every student must have paid at least the required amount
-                    $hasUnderpaidOrUnpaid = $students->contains(function ($student) use ($record) {
-                        $paid = $student->pivot->amount ?? 0;
-                        return $paid < $record->amount;
-                    });
-
-                    // Every student pivot status must be marked as PAID
-                    $hasUnmarkedStatus = $students->contains(function ($student) {
-                        return $student->pivot->status !== FeeCollectionStatus::PAID->value;
-                    });
-
-                    return !$hasUnderpaidOrUnpaid && !$hasUnmarkedStatus;
-                })
-                ->tooltip(function ($record) {
-                    if ($record->amount == 0) {
-                        $hasPending = $record->students()->wherePivotNull('amount')->exists();
-                        return $hasPending
-                            ? CompletedPendingStatus::PENDING->getLabel()
-                            : CompletedPendingStatus::COMPLETED->getLabel();
-                    }
-
-                    $students = $record->students()->withPivot(['amount', 'status'])->get();
-
-                    $hasUnderpaidOrUnpaid = $students->contains(function ($student) use ($record) {
-                        $paid = $student->pivot->amount ?? 0;
-                        return $paid < $record->amount;
-                    });
-
-                    $hasUnmarkedStatus = $students->contains(function ($student) {
-                        return $student->pivot->status !== FeeCollectionStatus::PAID->value;
-                    });
-
-                    $isCompleted = !$hasUnderpaidOrUnpaid && !$hasUnmarkedStatus;
-
-                    return $isCompleted
-                        ? CompletedPendingStatus::COMPLETED->getLabel()
-                        : CompletedPendingStatus::PENDING->getLabel();
-                })
-                ->sortable(
-                    query: fn ($query, string $direction) =>
-                        $query->withExists([
-                            'students as has_unpaid' => fn ($q) =>
-                                $q->where('fee_collection_student.status', '!=', FeeCollectionStatus::PAID->value)
-                        ])
-                        ->orderBy('has_unpaid', $direction)
-                )
-        ];
-    }
-
-    public static function getOverviewAction(): Action
-    {
-        return Action::make('overview')
-            ->color('info')
-            ->modalSubmitAction(false)
-            ->modalCancelAction(false)
-            ->modalWidth(Width::TwoExtraLarge)
-            ->modalHeading('Student Fee Collection Overview')
-            ->modalDescription(fn ($livewire) => 'Overview of students across all fee collections records for ' . $livewire->getOwnerRecord()->name)
-            ->modalContent(fn ($livewire) => new HtmlString(
-                Blade::render(
-                    '@livewire("fee-collection-overview", ["schoolClassId" => $schoolClassId])',
-                    ['schoolClassId' => $livewire->getOwnerRecord()->id]
-                )
-            ));
     }
 }

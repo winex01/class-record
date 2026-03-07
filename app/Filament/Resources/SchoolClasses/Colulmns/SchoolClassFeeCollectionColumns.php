@@ -1,0 +1,107 @@
+<?php
+
+namespace App\Filament\Resources\SchoolClasses\Colulmns;
+
+use App\Enums\FeeCollectionStatus;
+use App\Filament\Columns\DateColumn;
+use App\Filament\Columns\TextColumn;
+use App\Enums\CompletedPendingStatus;
+use App\Filament\Columns\AmountColumn;
+use App\Filament\Columns\BooleanIconColumn;
+
+class SchoolClassFeeCollectionColumns
+{
+    public static function schema()
+    {
+        return [
+            TextColumn::make('name'),
+
+            AmountColumn::make('amount')
+                ->color('info')
+                ->placeholder('—')
+                ->getStateUsing(fn ($record) => $record->amount > 0 ? $record->amount : null),
+
+            DateColumn::make('date'),
+
+            TextColumn::make('description')
+                ->toggleable(isToggledHiddenByDefault: true),
+
+            'total' =>
+            AmountColumn::make('total')
+                ->color('primary')
+                ->state(fn ($record) => $record->students()->sum('amount'))
+                ->tooltip('Total Collected')
+                ->sortable(
+                    query: fn ($query, string $direction) =>
+                        $query->withSum('students as total', 'fee_collection_student.amount')
+                            ->orderBy('total', $direction)
+                )
+                ->searchable(
+                    query: fn ($query, string $search) =>
+                        $query->whereRaw(
+                            '(SELECT COALESCE(SUM(fee_collection_student.amount), 0)
+                            FROM fee_collection_student
+                            WHERE fee_collection_student.fee_collection_id = fee_collections.id) LIKE ?',
+                            ["%{$search}%"]
+                        )
+                ),
+
+            'status' =>
+            BooleanIconColumn::make('status')
+                ->getStateUsing(function ($record) {
+                    // Fee record amount zero = open contribution
+                    if ($record->amount == 0) {
+                        return !$record->students()->wherePivotNull('amount')->exists();
+                    }
+
+                    $students = $record->students()->withPivot(['amount', 'status'])->get();
+
+                    // Every student must have paid at least the required amount
+                    $hasUnderpaidOrUnpaid = $students->contains(function ($student) use ($record) {
+                        $paid = $student->pivot->amount ?? 0;
+                        return $paid < $record->amount;
+                    });
+
+                    // Every student pivot status must be marked as PAID
+                    $hasUnmarkedStatus = $students->contains(function ($student) {
+                        return $student->pivot->status !== FeeCollectionStatus::PAID->value;
+                    });
+
+                    return !$hasUnderpaidOrUnpaid && !$hasUnmarkedStatus;
+                })
+                ->tooltip(function ($record) {
+                    if ($record->amount == 0) {
+                        $hasPending = $record->students()->wherePivotNull('amount')->exists();
+                        return $hasPending
+                            ? CompletedPendingStatus::PENDING->getLabel()
+                            : CompletedPendingStatus::COMPLETED->getLabel();
+                    }
+
+                    $students = $record->students()->withPivot(['amount', 'status'])->get();
+
+                    $hasUnderpaidOrUnpaid = $students->contains(function ($student) use ($record) {
+                        $paid = $student->pivot->amount ?? 0;
+                        return $paid < $record->amount;
+                    });
+
+                    $hasUnmarkedStatus = $students->contains(function ($student) {
+                        return $student->pivot->status !== FeeCollectionStatus::PAID->value;
+                    });
+
+                    $isCompleted = !$hasUnderpaidOrUnpaid && !$hasUnmarkedStatus;
+
+                    return $isCompleted
+                        ? CompletedPendingStatus::COMPLETED->getLabel()
+                        : CompletedPendingStatus::PENDING->getLabel();
+                })
+                ->sortable(
+                    query: fn ($query, string $direction) =>
+                        $query->withExists([
+                            'students as has_unpaid' => fn ($q) =>
+                                $q->where('fee_collection_student.status', '!=', FeeCollectionStatus::PAID->value)
+                        ])
+                        ->orderBy('has_unpaid', $direction)
+                )
+        ];
+    }
+}

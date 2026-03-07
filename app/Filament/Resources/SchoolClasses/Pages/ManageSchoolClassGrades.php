@@ -597,8 +597,9 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
         // NOTE:: the distinct() and scopeUniqued() i place it where it will be used not here to make it reusable both in normal forms and in repeater
         return [
             NumericInput::make('initial_min')
-                ->numeric()
                 ->required()
+                ->minValue(0)
+                ->maxValue(100)
                 ->placeholder('e.g., 0.00')
                 ->live(onBlur: true)
                 ->rules([
@@ -613,6 +614,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
             NumericInput::make('initial_max')
                 ->required()
+                ->minValue(0)
+                ->maxValue(100)
                 ->placeholder('e.g., 99.99')
                 ->live(onBlur: true)
                 ->rules([

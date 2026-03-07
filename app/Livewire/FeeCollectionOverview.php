@@ -10,9 +10,9 @@ use Filament\Actions\Action;
 use App\Models\FeeCollection;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\HtmlString;
+use App\Filament\Columns\TextColumn;
 use Illuminate\Support\Facades\Blade;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use App\Livewire\Traits\RenderTableTrait;
 use Illuminate\Database\Eloquent\Builder;
@@ -82,6 +82,7 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                     ->color('success')
                     ->money('PHP')
                     ->alignCenter()
+                    ->underline()
                     ->placeholder('—')
                     ->getStateUsing(function ($record) {
                         $totalPaid = $record->feeCollections()
@@ -90,6 +91,7 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
 
                         return $totalPaid > 0 ? $totalPaid : null;
                     })
+                    ->searchable(false)
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query->withSum([
                             'feeCollections as total_paid_sort' => function ($q) {
@@ -110,9 +112,6 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                                     ->sum('fee_collection_student.amount');
                             })
                     )
-                    ->extraAttributes([
-                        'class' => 'cursor-pointer hover:underline hover:text-primary-600',
-                    ])
                     ->action(static::getStudentFeePaidAndBalance()),
 
                 TextColumn::make('remaining')
@@ -132,6 +131,7 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
 
                         return $remaining > 0 ? $remaining : null;
                     })
+                    ->searchable(false)
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query->withSum([
                             'feeCollections as total_due_sort' => function ($q) {

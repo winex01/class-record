@@ -14,8 +14,6 @@ class NumericInput extends TextInput
         $this
             ->label(fn ($component): string => Str::headline($component->getName()))
             ->numeric()
-            ->minValue(0)
-            ->maxValue(100)
             ->step(0.01);
     }
 }
