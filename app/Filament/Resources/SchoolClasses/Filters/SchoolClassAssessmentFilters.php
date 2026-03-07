@@ -5,10 +5,21 @@ namespace App\Filament\Resources\SchoolClasses\Filters;
 use App\Models\SchoolClass;
 use App\Enums\CompletedPendingStatus;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 
 class SchoolClassAssessmentFilters
 {
+    public static function types()
+    {
+        return
+            SelectFilter::make('assessmentType')
+            ->relationship('assessmentType', 'name')
+            ->multiple()
+            ->searchable()
+            ->preload();
+    }
+
     public static function getTabs(SchoolClass $ownerRecord)
     {
         $tabs = [

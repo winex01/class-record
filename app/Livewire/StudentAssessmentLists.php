@@ -23,7 +23,8 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use App\Filament\Resources\Groups\Forms\GroupForm;
 use Filament\Actions\Concerns\InteractsWithActions;
-use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassAssessments;
+use App\Filament\Resources\SchoolClasses\Filters\SchoolClassAssessmentFilters;
+use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassAssessmentColumns;
 
 class StudentAssessmentLists extends Component implements HasForms, HasTable, HasActions
 {
@@ -64,9 +65,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
             ->columns([
                 ...$this->getCOlumns(),
             ])
-            ->filters([
-                ...ManageSchoolClassAssessments::getFilters(),
-            ])
+            ->filters([SchoolClassAssessmentFilters::types()])
             ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
             ->emptyStateDescription('No attendance records found.');
@@ -74,8 +73,9 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
 
     protected function getCOlumns()
     {
-        $columns = ManageSchoolClassAssessments::getColumns();
+        $columns = SchoolClassAssessmentColumns::schema();
         $columns['max_score']->alignCenter();
+        unset($columns['status']);
 
         return [
             ...$columns,

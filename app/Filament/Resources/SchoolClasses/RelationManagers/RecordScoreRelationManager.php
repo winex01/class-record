@@ -4,16 +4,11 @@ namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
 use Filament\Tables\Table;
 use Filament\Tables\Grouping\Group;
-use App\Filament\Columns\SelectColumn;
-use App\Filament\Columns\TextInputColumn;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\Groups\Forms\GroupForm;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
-use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
+use App\Filament\Resources\SchoolClasses\Filters\RecordScoreRelationFilters;
+use App\Filament\Resources\SchoolClasses\Colulmns\RecordScoreRelationColumns;
 
 class RecordScoreRelationManager extends RelationManager
 {
@@ -21,28 +16,7 @@ class RecordScoreRelationManager extends RelationManager
 
     public function getTabs(): array
     {
-        $tabs['all'] = Tab::make()
-            ->badge(fn () =>
-                $this->getOwnerRecord()->{static::$relationship}()->count()
-            );
-
-        if ($this->getOwnerRecord()->can_group_students) {
-            $tabs['With Group'] = Tab::make()
-                    ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('group', '-'))
-                    ->badgeColor('info')
-                    ->badge(fn () =>
-                        $this->getOwnerRecord()->{static::$relationship}()->whereNot('group', '-')->count()
-            );
-
-            $tabs['No Group'] = Tab::make()
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('group', '-'))
-                    ->badgeColor('danger')
-                    ->badge(fn () =>
-                        $this->getOwnerRecord()->{static::$relationship}()->where('group', '-')->count()
-            );
-        }
-
-        return $tabs;
+        return RecordScoreRelationFilters::getTabs($this->getOwnerRecord());
     }
 
     public function table(Table $table): Table
@@ -50,72 +24,24 @@ class RecordScoreRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('full_name')
             ->defaultSort(StudentResource::defaultNameSort('asc'))
-            ->columns([
-                ...ManageSchoolClassStudents::getColumns(),
-
-                SelectColumn::make('group')
-                    ->options(function ($record) {
-                        $baseOptions = GroupForm::selectOptions();
-
-                        // Get current value and add it if it doesn't exist
-                        $currentValue = $record->pivot->group ?? null;
-                            if ($currentValue && !array_key_exists($currentValue, $baseOptions)) {
-                                $baseOptions[$currentValue] = $currentValue;
-                            }
-
-                        return $baseOptions;
-                    })
-                    ->afterStateUpdated(function ($state, $record) {
-                        // If the state is null or empty, set it to '-'
-                        if (empty($state)) {
-                            $record->pivot->group = '-';
-                            $record->pivot->save();
-                        }
-                    })
-                    ->visible($this->getOwnerRecord()->can_group_students)
-                    ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
-
-                TextInputColumn::make('score')
-                    ->rules(['numeric', 'min:0', 'max:' . ($this->getOwnerRecord()->max_score ?? 0)])
-                    ->placeholder(function () {
-                        if (!$this->getOwnerRecord()->schoolClass->active) {
-                            return null;
-                        }
-
-                        return 'Max: ' . ($this->getOwnerRecord()->max_score ?? 0);
-                    })
-                    ->disabled(fn () => !$this->getOwnerRecord()->schoolClass->active),
-
-            ])
-            ->filters([
-                SelectFilter::make('group')
-                    ->searchable()
-                    ->multiple()
-                    ->options(GroupForm::selectOptions())
-                    ->query(function (Builder $query, array $data) {
-                        if (filled($data['values'])) {
-                            $query->whereIn('assessment_student.group', $data['values']);
-                        }
-                    })
-                    ->visible($this->getOwnerRecord()->can_group_students),
-
-                StudentFilters::gender()
-            ])
+            ->columns(RecordScoreRelationColumns::schema($this->getOwnerRecord()))
+            ->filters(RecordScoreRelationFilters::filters($this->getOwnerRecord()))
             ->toolbarActions([
                 ManageSchoolClassStudents::attachAction($this->getOwnerRecord()),
                 ManageSchoolClassStudents::detachBulkAction(),
             ])
-            ->groups(
-                $this->getOwnerRecord()->can_group_students
-                    ? [
-                        Group::make('group')
-                            ->titlePrefixedWithLabel(false)
-                            ->collapsible()
-                    ]
-                    : []
-            )
-            ->defaultGroup(
-                $this->getOwnerRecord()->can_group_students ? 'group' : null
-            );
+            ->defaultGroup($this->getOwnerRecord()->can_group_students ? 'group' : null)
+            ->groups(function () {
+                if (!$this->getOwnerRecord()->can_group_students) {
+                    return [];
+                }
+
+                return [
+                    Group::make('group')
+                        ->titlePrefixedWithLabel(false)
+                        ->collapsible(),
+                ];
+            });
+
     }
 }
