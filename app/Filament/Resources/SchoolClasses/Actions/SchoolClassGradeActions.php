@@ -18,7 +18,7 @@ class SchoolClassGradeActions
             Action::make('grades')
             ->icon('heroicon-o-list-bullet')
             ->disabled(fn ($record) => ! $record->isComplete)
-            ->tooltip(fn ($record) => ! $record->isComplete ? 'Disabled' : null)
+            ->tooltip(fn ($record) => ! $record->isComplete ? 'Please complete all grading components first.' : null)
             ->color(fn ($record) => ! $record->isComplete ? 'gray' : 'info')
             ->modalHeading(fn ($record) => $record->grading_period)
             ->modalDescription(new HtmlString(
