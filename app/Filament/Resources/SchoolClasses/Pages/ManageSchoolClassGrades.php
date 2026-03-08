@@ -65,12 +65,14 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->defaultSort('grading_period', 'asc')
             ->columns([
                 TextColumn::make('grading_period')
+                    ->toggleable(false)
                     ->label('Grading Period')
                     ->color('primary')
                     ->size(TextSize::Large)
                     ->searchable(false),
 
                 EnumColumn::make('status')
+                    ->toggleable(false)
                     ->enum(GradeCompletionStatus::class)
                     ->sortable(false)
                     ->searchable(false)
