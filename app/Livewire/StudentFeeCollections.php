@@ -9,8 +9,8 @@ use Filament\Actions\Action;
 use App\Models\FeeCollection;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
+use App\Filament\Columns\TextColumn;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
@@ -85,6 +85,7 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                 ->money('PHP')
                 ->color('success')
                 ->alignCenter()
+                ->underline(!$this->isReadOnly)
                 ->placeholder('—')
                 ->getStateUsing(function (FeeCollection $record) {
                     $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
@@ -115,15 +116,13 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                                 });
                         })
                 )
-                ->extraAttributes(fn () => ! $this->isReadOnly
-                ? ['class' => 'cursor-pointer hover:underline hover:text-primary-600']
-                : [])
                 ->action($this->isReadOnly ? null : $this->updateAmountAction()),
 
             TextColumn::make('remaining')
                 ->money('PHP')
                 ->color('danger')
                 ->alignCenter()
+                ->underline(!$this->isReadOnly)
                 ->placeholder('—')
                 ->getStateUsing(function (FeeCollection $record) {
                     $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
@@ -164,9 +163,6 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                                 });
                         })
                 )
-                ->extraAttributes(fn () => ! $this->isReadOnly
-                ? ['class' => 'cursor-pointer hover:underline hover:text-primary-600']
-                : [])
                 ->action($this->isReadOnly ? null : $this->updateAmountAction()),
         ];
     }

@@ -172,9 +172,6 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                                 return $remaining > 0 ? $remaining : 0;
                             })
                     )
-                    ->extraAttributes([
-                        'class' => 'cursor-pointer hover:underline hover:text-primary-600',
-                    ])
                     ->action(static::getStudentFeePaidAndBalance()),
 
             ])
