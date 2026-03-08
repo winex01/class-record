@@ -12,9 +12,7 @@ class MeetingColumns
     {
         return [
             TextColumn::make('name'),
-            TextColumn::make('description')
-                ->toggleable(isToggledHiddenByDefault: true),
-
+            TextColumn::make('description'),
             TagsColumn::make('tags'),
             DateTimeColumn::make('starts_at'),
             DateTimeColumn::make('ends_at'),

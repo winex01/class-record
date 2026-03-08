@@ -17,7 +17,7 @@ use Filament\Actions\DeleteBulkAction;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\Tasks\Forms\TaskForm;
 use App\Filament\Resources\Tasks\Pages\ManageTasks;
-use App\Filament\Resources\Notes\Columns\NoteColumns;
+use App\Filament\Resources\Tasks\Columns\TaskColumns;
 
 class TaskResource extends Resource
 {
@@ -51,7 +51,7 @@ class TaskResource extends Resource
     {
         return $table
             ->recordTitleAttribute('name')
-            ->columns(NoteColumns::schema())
+            ->columns(TaskColumns::schema())
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Large),
                 EditAction::make()->modalWidth(Width::Large),

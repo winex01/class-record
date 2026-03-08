@@ -12,9 +12,7 @@ class TaskColumns
     {
         return [
             TextColumn::make('name'),
-            TextColumn::make('description')
-                ->toggleable(isToggledHiddenByDefault: true),
-
+            TextColumn::make('description'),
             TagsColumn::make('tags'),
             DateTimeColumn::make('starts_at')->dateTime(),
             DateTimeColumn::make('ends_at')->dateTime(),

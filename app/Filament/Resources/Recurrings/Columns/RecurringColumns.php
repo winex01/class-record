@@ -12,9 +12,7 @@ class RecurringColumns
     {
         return [
             TextColumn::make('name'),
-            TextColumn::make('description')
-                ->toggleable(isToggledHiddenByDefault: true),
-
+            TextColumn::make('description'),
             TagsColumn::make('tags'),
             DateColumn::make('date_start'),
             DateColumn::make('date_end'),

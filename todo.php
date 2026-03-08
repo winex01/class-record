@@ -1,16 +1,14 @@
 <?php
 /*
+TODO:: review all search and sortable in all columns
+
 TODO:: in manage nav class in school class modify the attach action instead of select we will use a select with checkbox datatable
 TODO:: grade overview
-
-TODO:: TBD:: show close button on livewire table modal?
 
 TODO:: Notification & calendar for:
         * Lessons Completion date
         * Assessments date
         * Fee collections date
-
-TODO:: Grade Summary (Overall Grade) action modal / Manage Grae Overview
 
 TODO:: find a way to that the attendance will be converted to assessment if they want
 

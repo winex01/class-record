@@ -70,20 +70,13 @@ class RecurringForm
     public static function detailsField()
     {
         return [
-            TextInput::make('name')
-                ->required()
-                ->maxLength(255),
-
-            Textarea::make('description')
-                ->placeholder('Optional...'),
-
+            TextInput::make('name')->required(),
+            Textarea::make('description')->placeholder('Optional...'),
             TagsInput::make('tags'),
-
             DatePicker::make('date_start')
                 ->helperText('The recurring event becomes active starting on this date.')
                 ->beforeOrEqual('date_end')
                 ->default(now()),
-
             DatePicker::make('date_end')
                 ->helperText('The recurring event will stop or end on this date.')
                 ->afterOrEqual('date_start')
