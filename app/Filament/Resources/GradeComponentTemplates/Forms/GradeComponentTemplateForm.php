@@ -5,7 +5,6 @@ namespace App\Filament\Resources\GradeComponentTemplates\Forms;
 use App\Filament\Fields\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
 
 class GradeComponentTemplateForm
 {

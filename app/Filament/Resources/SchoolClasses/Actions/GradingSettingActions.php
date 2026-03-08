@@ -8,7 +8,9 @@ use Filament\Actions\Action;
 use App\Filament\Fields\Select;
 use App\Models\TransmuteTemplate;
 use Filament\Support\Enums\Width;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
+use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Tabs;
 use App\Models\GradeComponentTemplate;
 use Filament\Forms\Components\Repeater;
@@ -68,7 +70,10 @@ class GradingSettingActions
                                 ->orderColumn()
                                 ->minItems(1)
                                 ->collapsed($ownerRecord?->gradingComponents()->exists())
-                                ->schema(GradeComponentTemplateForm::gradeComponentFields())
+                                ->schema([
+                                    Hidden::make('id'),
+                                    ...GradeComponentTemplateForm::gradeComponentFields()
+                                ])
                                 ->afterStateHydrated(function ($component, $state) {
                                     if (blank($state)) {
                                         $component->state([[]]);
@@ -142,15 +147,24 @@ class GradingSettingActions
             ->action(function (array $data, $livewire) {
                 $record = $livewire->record;
 
-                $record->gradingComponents()->delete();
-                // working and no problem
-                foreach ($data['gradingComponents'] as $component) {
-                    $record->gradingComponents()->create([
-                        'name' => $component['name'],
-                        'weighted_score' => $component['weighted_score'],
-                    ]);
-                }
+                $submittedComponents = collect($data['gradingComponents']);
 
+                $savedIds = $submittedComponents->map(fn ($component, $index) =>
+                    $record->gradingComponents()->updateOrCreate(
+                        ['id' => $component['id'] ?? null],
+                        [
+                            'name' => $component['name'],
+                            'weighted_score' => $component['weighted_score'],
+                            'sort' => $index,
+                        ]
+                    )->id
+                );
+
+                $record->gradingComponents()
+                    ->whereNotIn('id', $savedIds)
+                    ->delete();
+
+                // Grade Transmutations - delete all and re-insert
                 $record->gradeTransmutations()->delete();
                 foreach ($data['gradeTransmutations'] as $component) {
                     $record->gradeTransmutations()->create([
