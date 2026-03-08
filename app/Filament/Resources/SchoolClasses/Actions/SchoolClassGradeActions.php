@@ -137,7 +137,7 @@ class SchoolClassGradeActions
             })
             ->modalWidth(Width::SevenExtraLarge)
             ->modalSubmitAction(false)
-            ->modalCancelAction(false)
+            ->modalCancelActionLabel('Close')
             ->modalAutofocus(false);
     }
 }
