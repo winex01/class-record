@@ -1,6 +1,5 @@
 <?php
 /*
-TODO:: add filters for counts and mount a range filter like date from and to
 TODO:: in manage nav class in school class modify the attach action instead of select we will use a select with checkbox datatable
 TODO:: grade overview
 

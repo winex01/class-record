@@ -11,8 +11,8 @@ use App\Filament\Fields\Select;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
 use Illuminate\Support\Facades\DB;
+use App\Filament\Columns\TextColumn;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
 use App\Livewire\Traits\RenderTableTrait;
@@ -84,6 +84,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                 ->color('success')
                 ->label('Score')
                  ->alignCenter()
+                 ->underline()
                 ->getStateUsing(function ($record) {
                     return $record->students->first()?->pivot->score;
                 })
@@ -98,13 +99,11 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                             $direction
                         );
                 })
-                ->extraAttributes(fn () => ! $this->isReadOnly
-                ? ['class' => 'cursor-pointer hover:underline hover:text-primary-600']
-                : [])
                 ->action($this->isReadOnly ? null : $this->updateStudentScore()),
 
             TextColumn::make('students.pivot.group')
                 ->label('Group')
+                ->underline(fn ($record) => $record->can_group_students)
                 ->color(fn ($record) => $record->can_group_students ? 'info' : null)
                 ->getStateUsing(function ($record) {
                     return $record->students->first()?->pivot->group;
@@ -122,9 +121,6 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                 })
                 ->toggleable()
                 ->toggledHiddenByDefault(true)
-                ->extraAttributes(fn () => ! $this->isReadOnly
-                ? ['class' => 'cursor-pointer hover:underline hover:text-primary-600']
-                : [])
                 ->action($this->isReadOnly ? null : $this->updateStudentGroup()),
         ];
     }
