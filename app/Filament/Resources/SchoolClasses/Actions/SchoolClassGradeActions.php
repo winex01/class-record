@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use App\Filament\Fields\Select;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\HtmlString;
+use App\Filament\Actions\ClearAction;
 use Filament\Schemas\Components\View;
 
 class SchoolClassGradeActions
@@ -24,30 +25,19 @@ class SchoolClassGradeActions
             ->form(function () use ($ownerRecord) {
                 return [
                     Select::make('student_filter')
-                        ->label('Filter by Student')
+                        ->label('Filter Student')
                         ->placeholder('All Students')
                         ->options(function () use ($ownerRecord) {
                             return $ownerRecord->students()
-                                ->orderBy('last_name')
-                                ->orderBy('first_name')
-                                ->get()
-                                ->pluck('full_name', 'id')
+                                ->orderBy('last_name')->orderBy('first_name')
+                                ->get()->pluck('full_name', 'id')
                                 ->toArray();
                         })
-                        ->searchable()
                         ->native(false)
                         ->live()
                         ->multiple()
-                        ->extraAttributes([
-                            'style' => 'position: relative; z-index: 50;',
-                        ])
-                        ->suffixAction(
-                            Action::make('clearAll')
-                                ->icon('heroicon-m-x-mark')
-                                ->color('gray')
-                                ->action(fn ($set) => $set('student_filter', []))
-                                ->hidden(fn ($get) => blank($get('student_filter')))
-                        ),
+                        ->extraAttributes(['style' => 'position: relative; z-index: 50;'])
+                        ->suffixAction(ClearAction::make()),
 
                         View::make('filament.components.grades')
                             ->viewData(function ($get, $record) use ($ownerRecord) {
