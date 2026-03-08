@@ -10,11 +10,12 @@ use App\Models\TransmuteTemplate;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Schemas\Components\Tabs;
-use Filament\Support\Enums\Alignment;
 use App\Models\GradeComponentTemplate;
 use Filament\Forms\Components\Repeater;
 use Filament\Notifications\Notification;
+use App\Filament\Actions\DeleteAllAction;
 use Filament\Schemas\Components\Tabs\Tab;
+use App\Filament\Actions\RemoveItemAction;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\TransmuteTemplates\TransmuteTemplateResource;
 use App\Filament\Resources\TransmuteTemplates\Forms\TransmuteTemplateRangesForm;
@@ -100,9 +101,9 @@ class GradingSettingActions
                                 ->addActionLabel('Add grading component')
                                 ->aboveContent([
                                     static::copyGradeComponentTemplateAction(),
-                                    static::deleteAllTemplateAction()
+                                    DeleteAllAction::make()
                                 ])
-                                ->deleteAction(fn (Action $action) => static::repeaterDeleteAction($action))
+                                ->deleteAction(fn (Action $action) => RemoveItemAction::confirmIfSaved($action))
                         ]),
 
                         Tab::make('Transmutation Table')
@@ -131,9 +132,9 @@ class GradingSettingActions
                                 ->addActionLabel('Add range')
                                 ->aboveContent([
                                     static::copyTransmuteTemplateAction(),
-                                    static::deleteAllTemplateAction(),
+                                    DeleteAllAction::make(),
                                 ])
-                                ->deleteAction(fn (Action $action) => static::repeaterDeleteAction($action))
+                                ->deleteAction(fn (Action $action) => RemoveItemAction::confirmIfSaved($action))
                         ]),
                     ])
                 ];
@@ -279,32 +280,5 @@ class GradingSettingActions
                 $component->state($templateData);
             })
             ->modalSubmitActionLabel('Copy & Paste');
-    }
-
-    public static function deleteAllTemplateAction()
-    {
-        return
-            Action::make('deleteAll')
-            ->label('Delete All')
-            ->icon('heroicon-o-trash')
-            ->color('danger')
-            ->requiresConfirmation()
-            ->modalHeading('Delete All')
-            ->modalDescription('Are you sure you want to delete all transmutation ranges?')
-            ->modalFooterActionsAlignment(Alignment::Center)
-            ->action(function ($component) {
-                // Clear all items
-                $component->state([]);
-            });
-    }
-
-    public static function repeaterDeleteAction(Action $action): Action
-    {
-        return $action->modalFooterActionsAlignment(Alignment::Center)
-            ->requiresConfirmation(
-                function (array $arguments, $component): bool {
-                    return isset($component->getRawItemState($arguments['item'])['id']);
-                }
-            );
     }
 }
