@@ -1,8 +1,5 @@
 <?php
 /*
-TODO:: add status column in manage grade, the status would show okay or no problem if all components has assign assessments, otherse display warning
-TODO:: refactor transfer all forms/fields into the schema
-
 TODO:: add filters for counts and mount a range filter like date from and to
 
 TODO:: in manage nav class in school class modify the attach action instead of select we will use a select with checkbox datatable
