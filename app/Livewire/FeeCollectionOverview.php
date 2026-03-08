@@ -118,6 +118,7 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                     ->color('danger')
                     ->money('PHP')
                     ->alignCenter()
+                    ->underline()
                     ->placeholder('—')
                     ->getStateUsing(function ($record) {
                         $fixedFees = $record->feeCollections

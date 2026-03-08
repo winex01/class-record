@@ -111,6 +111,7 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
                     ->label('Present')
                     ->color('success')
                     ->alignCenter()
+                    ->underline()
                     ->state(function ($record) {
                         $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
                         return $studentData['present_count'] ?? 0;
@@ -121,9 +122,6 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
 
                         return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
                     })
-                    ->extraAttributes([
-                        'class' => 'cursor-pointer hover:underline hover:text-primary-600',
-                    ])
                     ->action(
                         Action::make('viewPresences')
                             ->modalHeading(fn ($record) => $record->full_name . ' - Present Dates')
@@ -137,6 +135,7 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
                     ->label('Absent')
                     ->color('danger')
                     ->alignCenter()
+                    ->underline()
                     ->state(function ($record) {
                         $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
                         return $studentData['absent_count'] ?? 0;
@@ -147,9 +146,6 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
 
                         return $query->orderByRaw('FIELD(id, ' . implode(',', $orderMap) . ')');
                     })
-                    ->extraAttributes([
-                        'class' => 'cursor-pointer hover:underline hover:text-primary-600',
-                    ])
                     ->action(
                         Action::make('viewAbsences')
                             ->modalHeading(fn ($record) => $record->full_name . ' - Absent Dates')
