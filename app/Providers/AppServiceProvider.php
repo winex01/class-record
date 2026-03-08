@@ -33,10 +33,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::automaticallyEagerLoadRelationships();
-
-        if (!app()->isProduction()) {
-            Model::preventLazyLoading();
-        }
+        Model::preventLazyLoading(! app()->isProduction());
 
         // align submit buttons of page to the right
         Page::formActionsAlignment(Alignment::Right);

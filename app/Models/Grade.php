@@ -26,4 +26,15 @@ class Grade extends Model
                     ->whereColumn('grading_components.id', 'grade_grading_component.grading_component_id')
             );
     }
+
+    public function getIsCompleteAttribute(): bool
+    {
+        $this->loadMissing('gradeGradingComponents', 'schoolClass.gradingComponents');
+
+        if (! $this->schoolClass) {
+            return false;
+        }
+
+        return $this->gradeGradingComponents->count() === $this->schoolClass->gradingComponents()->count();
+    }
 }

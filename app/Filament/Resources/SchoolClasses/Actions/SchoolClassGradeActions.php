@@ -17,7 +17,9 @@ class SchoolClassGradeActions
         return
             Action::make('grades')
             ->icon('heroicon-o-list-bullet')
-            ->color('info')
+            ->disabled(fn ($record) => ! $record->isComplete)
+            ->tooltip(fn ($record) => ! $record->isComplete ? 'Disabled' : null)
+            ->color(fn ($record) => ! $record->isComplete ? 'gray' : 'info')
             ->modalHeading(fn ($record) => $record->grading_period)
             ->modalDescription(new HtmlString(
                 '💡 <strong>Tip:</strong> Hold <kbd style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 6px; border-radius: 3px; font-size: 0.75rem;">Shift</kbd> + scroll to navigate horizontally across all columns.'
