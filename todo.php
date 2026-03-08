@@ -1,7 +1,5 @@
 <?php
 /*
-TODO:: review all search and sortable in all columns
-
 TODO:: in manage nav class in school class modify the attach action instead of select we will use a select with checkbox datatable
 TODO:: grade overview
 

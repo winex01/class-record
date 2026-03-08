@@ -116,6 +116,7 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
                         $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
                         return $studentData['present_count'] ?? 0;
                     })
+                    ->searchable(false)
                     ->sortable(query: function ($query, $direction) {
                         $studentsData = $this->getCurrentStudentsData();
                         $orderMap = collect($studentsData)->sortBy('present_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();
@@ -140,6 +141,7 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
                         $studentData = collect($this->getCurrentStudentsData())->firstWhere('id', $record->id);
                         return $studentData['absent_count'] ?? 0;
                     })
+                    ->searchable(false)
                     ->sortable(query: function ($query, $direction) {
                         $studentsData = $this->getCurrentStudentsData();
                         $orderMap = collect($studentsData)->sortBy('absent_count', SORT_REGULAR, $direction === 'desc')->pluck('id')->toArray();

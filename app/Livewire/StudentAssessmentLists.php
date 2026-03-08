@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Group;
 use Livewire\Component;
 use App\Models\Assessment;
 use Filament\Tables\Table;
@@ -16,6 +17,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
 use App\Livewire\Traits\RenderTableTrait;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
 use App\Filament\Traits\ManageActionVisibility;
@@ -65,7 +67,23 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
             ->columns([
                 ...$this->getCOlumns(),
             ])
-            ->filters([SchoolClassAssessmentFilters::types()])
+            ->filters([
+                SchoolClassAssessmentFilters::types(),
+
+                SelectFilter::make('group')
+                ->options(Group::query()->pluck('name', 'name'))
+                ->multiple()
+                ->query(function (Builder $query, array $data): Builder {
+                    return $query->when(
+                        !empty($data['values']),
+                        fn ($query) => $query->whereHas('students', function ($query) use ($data) {
+                            $query->where('assessment_student.student_id', $this->studentId)
+                                ->whereIn('assessment_student.group', $data['values']);
+                        })
+                    );
+                })
+
+            ])
             ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
             ->emptyStateDescription('No attendance records found.');
@@ -83,11 +101,12 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
             TextColumn::make('students.pivot.score')
                 ->color('success')
                 ->label('Score')
-                 ->alignCenter()
-                 ->underline()
+                ->alignCenter()
+                ->underline(!$this->isReadOnly)
                 ->getStateUsing(function ($record) {
                     return $record->students->first()?->pivot->score;
                 })
+                ->searchable(false)
                 ->sortable(query: function (Builder $query, string $direction): Builder {
                     return $query
                         ->orderBy(
@@ -103,15 +122,16 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
 
             TextColumn::make('students.pivot.group')
                 ->label('Group')
-                ->underline(fn ($record) => $record->can_group_students)
+                ->underline(fn ($record) => $record->can_group_students && !$this->isReadOnly)
                 ->color(fn ($record) => $record->can_group_students ? 'info' : null)
                 ->getStateUsing(function ($record) {
                     return $record->students->first()?->pivot->group;
                 })
+                ->searchable(false)
                 ->sortable(query: function (Builder $query, string $direction): Builder {
                     return $query
                         ->orderBy(
-                            \DB::table('assessment_student')
+                            DB::table('assessment_student')
                                 ->select('group')
                                 ->whereColumn('assessment_student.assessment_id', 'assessments.id')
                                 ->where('assessment_student.student_id', $this->studentId)

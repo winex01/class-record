@@ -72,6 +72,8 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                 EnumColumn::make('status')
                     ->enum(GradeCompletionStatus::class)
+                    ->sortable(false)
+                    ->searchable(false)
                     ->state(function ($record) {
                         return $record->isComplete
                             ? GradeCompletionStatus::COMPLETE->value

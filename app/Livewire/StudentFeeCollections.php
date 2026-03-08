@@ -61,12 +61,7 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                         $query->where('student_id', $this->studentId);
                     }])
             )
-            ->columns([
-                ...$this->getColumns(),
-            ])
-            ->filters([
-                //
-            ])
+            ->columns($this->getColumns())
             ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
             ->emptyStateDescription('No fee collection records found.');
@@ -91,6 +86,7 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                     $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
                     return $paidAmount > 0 ? $paidAmount : null;
                 })
+                ->searchable(false)
                 ->sortable(query: function (Builder $query, string $direction): Builder {
                     return $query->orderByRaw(
                         'CAST(COALESCE((
@@ -129,7 +125,7 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                     $remaining = $record->amount - $paidAmount;
                     return $remaining > 0 ? $remaining : null;
                 })
-
+                ->searchable(false)
                 ->sortable(query: function (Builder $query, string $direction): Builder {
                     return $query->orderByRaw(
                         'CASE

@@ -17,6 +17,7 @@ class TagsColumn extends BaseTagsColumn
             ->toggleable(isToggledHiddenByDefault: false)
             ->wrap()
             ->separator(',')
+            ->sortable()
             ->searchable(query: function (Builder $query, string $search, $column): Builder {
                 $name = $column->getName();
                 return $query->whereRaw('LOWER(' . $name . ') LIKE ?', ['%' . strtolower($search) . '%']);

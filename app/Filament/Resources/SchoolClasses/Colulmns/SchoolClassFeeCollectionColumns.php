@@ -19,6 +19,8 @@ class SchoolClassFeeCollectionColumns
             AmountColumn::make('amount')
                 ->color('info')
                 ->placeholder('—')
+                ->sortable()
+                ->searchable()
                 ->getStateUsing(fn ($record) => $record->amount > 0 ? $record->amount : null),
 
             DateColumn::make('date'),
