@@ -62,7 +62,6 @@ class SchoolClassLessonForm
                 Section::make()
                 ->schema([
                     Textarea::make('description')
-                        ->rows(5)
                         ->columnSpanFull(),
                     Select::make('myFiles')
                         ->multiple()

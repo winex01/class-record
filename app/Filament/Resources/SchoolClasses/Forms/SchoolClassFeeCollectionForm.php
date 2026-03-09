@@ -24,7 +24,6 @@ class SchoolClassFeeCollectionForm
             DatePicker::make('date'),
 
             Textarea::make('description')
-                ->rows(2)
                 ->placeholder('Additional details...')
         ];
     }

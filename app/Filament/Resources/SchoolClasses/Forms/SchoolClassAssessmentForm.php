@@ -41,7 +41,6 @@ class SchoolClassAssessmentForm
                     ->numeric(),
 
                 Textarea::make('description')
-                    ->rows(2)
                     ->placeholder('Additional notes or instructions...')
             ])
             ->columnSpan(1),

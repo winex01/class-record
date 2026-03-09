@@ -12,7 +12,6 @@ class NoteForm
     {
         return [
             Textarea::make('note')
-                ->rows(5)
                 ->required(),
 
             TagsInput::make('tags'),

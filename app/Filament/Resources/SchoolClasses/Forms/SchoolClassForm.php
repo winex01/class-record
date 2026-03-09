@@ -37,8 +37,7 @@ class SchoolClassForm
 
             'description' =>
             Textarea::make('description')
-                ->placeholder('Brief details about this subject... (optional)')
-                ->rows(5),
+                ->placeholder('Brief details about this subject... (optional)'),
 
             ToggleButtons::make('active')
                 ->label('Status')
