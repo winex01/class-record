@@ -6,7 +6,6 @@ use Filament\Tables\Table;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\Students\Filters\StudentFilters;
-use App\Filament\Resources\SchoolClasses\Actions\SchoolClassStudentActions;
 use App\Filament\Resources\SchoolClasses\Actions\TakeFeeCollectionRelationActions;
 use App\Filament\Resources\SchoolClasses\Filters\TakeFeeCollectionRelationFilters;
 use App\Filament\Resources\SchoolClasses\Colulmns\TakeFeeCollectionRelationColumns;
@@ -28,10 +27,8 @@ class TakeFeeCollectionRelationManager extends RelationManager
             ->columns(TakeFeeCollectionRelationColumns::schema($this->getOwnerRecord()))
             ->filters([StudentFilters::gender()])
             ->toolbarActions([
-                SchoolClassStudentActions::attachAction($this->getOwnerRecord()),
                 TakeFeeCollectionRelationActions::bulkMarkPaidAction($this->getOwnerRecord()),
                 TakeFeeCollectionRelationActions::bulkMarkUnpaidAction($this->getOwnerRecord()),
-                SchoolClassStudentActions::detachBulkAction(),
             ]);
     }
 }

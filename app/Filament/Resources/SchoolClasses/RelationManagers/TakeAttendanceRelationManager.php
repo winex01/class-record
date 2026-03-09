@@ -7,7 +7,6 @@ use Filament\Tables\Columns\ToggleColumn;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\Students\Filters\StudentFilters;
-use App\Filament\Resources\SchoolClasses\Actions\SchoolClassStudentActions;
 use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 use App\Filament\Resources\SchoolClasses\Actions\TakeAttendanceRelationActions;
 use App\Filament\Resources\SchoolClasses\Filters\TakeAttendanceRelationFilters;
@@ -40,10 +39,8 @@ class TakeAttendanceRelationManager extends RelationManager
                 StudentFilters::gender(),
             ])
             ->toolbarActions([
-                SchoolClassStudentActions::attachAction($this->getOwnerRecord()),
                 TakeAttendanceRelationActions::bulkMarkAbsentAction(),
                 TakeAttendanceRelationActions::bulkMarkPresentAction(),
-                SchoolClassStudentActions::detachBulkAction(),
             ]);
     }
 }

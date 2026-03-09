@@ -12,6 +12,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
 use App\Livewire\Traits\RenderTableTrait;
+use App\Events\SchoolClassStudentsChanged;
 use Filament\Actions\Contracts\HasActions;
 use App\Filament\Traits\ManageActionVisibility;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -64,36 +65,46 @@ class AttachStudents extends Component implements HasForms, HasTable, HasActions
                 ...SchoolClassStudentColumns::schema(),
             ])
             ->filters([StudentFilters::gender()])
-            ->bulkActions([
-                BulkAction::make('attachSelectedStudents')
-                    ->label('Attach Selected')
-                    ->action(function () {
-                        $selectedIds = $this->getSelectedTableRecords()->pluck('id');
-
-                        $this->schoolClass
-                            ->students()
-                            ->syncWithoutDetaching($selectedIds);
-
-                        $this->attachedStudentsIds = $this->schoolClass
-                            ->students()
-                            ->pluck('students.id')
-                            ->map(fn($id) => (int) $id)
-                            ->toArray();
-
-                        Notification::make()
-                            ->title('Students Attached')
-                            ->body($selectedIds->count() . ' student(s) successfully enrolled.')
-                            ->success()
-                            ->send();
-                    })
-                    ->requiresConfirmation()
-                    ->modalFooterActionsAlignment(Alignment::Center)
-                    ->after(fn() => $this->resetTable()),
-            ])
+            ->bulkActions([$this->attachSelectedStudents()])
             ->checkIfRecordIsSelectableUsing(
                 fn (Student $record): bool => !in_array($record->id, $this->attachedStudentsIds)
             )
             ->paginated([5, 10, 25, 50])
             ->defaultPaginationPageOption(5);
+    }
+
+    public function attachSelectedStudents()
+    {
+        return
+            BulkAction::make('attachSelectedStudents')
+            ->label('Attach Selected')
+            ->action(function () {
+                $selectedIds = $this->getSelectedTableRecords()->pluck('id');
+
+                $this->schoolClass
+                    ->students()
+                    ->syncWithoutDetaching($selectedIds);
+
+                $this->attachedStudentsIds = $this->schoolClass
+                    ->students()
+                    ->pluck('students.id')
+                    ->map(fn($id) => (int) $id)
+                    ->toArray();
+
+                event(new SchoolClassStudentsChanged(
+                    $this->schoolClass,
+                    $selectedIds->toArray(),
+                    'attach')
+                );
+
+                Notification::make()
+                    ->title('Students Attached')
+                    ->body($selectedIds->count() . ' student(s) successfully enrolled.')
+                    ->success()
+                    ->send();
+            })
+            ->requiresConfirmation()
+            ->modalFooterActionsAlignment(Alignment::Center)
+            ->after(fn() => $this->resetTable());
     }
 }

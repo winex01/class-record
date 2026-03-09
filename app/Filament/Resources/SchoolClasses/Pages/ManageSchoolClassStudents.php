@@ -12,13 +12,14 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Blade;
+use Filament\Actions\DetachBulkAction;
+use App\Events\SchoolClassStudentsChanged;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Forms\StudentForm;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Filament\Resources\SchoolClasses\Actions\SchoolClassStudentActions;
 use App\Filament\Resources\SchoolClasses\Filters\SchoolClassStudentFilters;
 use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 
@@ -50,7 +51,14 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Large),
                 EditAction::make()->modalWidth(Width::Large),
-                DetachAction::make()->color('warning'),
+                DetachAction::make()->color('warning')
+                    ->after(function ($record) {
+                        event(new SchoolClassStudentsChanged(
+                            $this->getOwnerRecord(),
+                            [$record->id],
+                            'detach')
+                        );
+                    }),
             ])
             ->toolbarActions([
                 CreateAction::make()->label('New Student') ->modalWidth(Width::Large),
@@ -68,7 +76,16 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                         )
                     )),
 
-                SchoolClassStudentActions::detachBulkAction(),
+                DetachBulkAction::make()
+                    ->color('warning')
+                    ->after(function ($records) {
+                        event(new SchoolClassStudentsChanged(
+                            $this->getOwnerRecord(),
+                            $records->pluck('id')->toArray(),
+                            'detach')
+                        );
+                    }),
+
             ]);
     }
 }
