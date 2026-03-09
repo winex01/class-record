@@ -2,7 +2,7 @@
 /*
 TODO:: grade overview
 
-TODO:: Notification & calendar for:
+TODO:: add widgets in ManageStudents:: TBD::ex. What's the activities today or Note or message to display if there are assessment, or lessons deadline incoming or etc.
         * Lessons Completion date
         * Assessments date
         * Fee collections date
