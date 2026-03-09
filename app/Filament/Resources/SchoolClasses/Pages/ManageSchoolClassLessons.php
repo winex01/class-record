@@ -39,14 +39,17 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
             ->cardSchema(fn(Schema $schema) => $schema->components(SchoolClassLessonColumns::cardSchema()))
             ->searchable(['title', 'description', 'tags_search']) // tags_search = virtual col
             ->columnActions([
-                CreateAction::make()
-                ->form(SchoolClassLessonForm::schema($this->getOwnerRecord()))
-                ->hiddenLabel()->iconButton()
-                ->icon('heroicon-o-plus')
-                ->model(static::$model)
-                ->after(function ($livewire) {
-                    $livewire->form->saveRelationships();
-                })
+                // NOTE:: We do it this way bec. when use ->visible it only disabled it perhaps its because of the board plugin flowforge that i use.
+                ...($this->getOwnerRecord()->active ? [
+                    CreateAction::make()
+                        ->form(SchoolClassLessonForm::schema($this->getOwnerRecord()))
+                        ->hiddenLabel()->iconButton()
+                        ->icon('heroicon-o-plus')
+                        ->model(static::$model)
+                        ->after(function ($livewire) {
+                            $livewire->form->saveRelationships();
+                        })
+                ] : [])
             ])
             ->cardActions([
                 SchoolClassLessonActions::downloadFilesAction(),
