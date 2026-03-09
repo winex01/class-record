@@ -39,8 +39,8 @@ class TakeAttendanceRelationManager extends RelationManager
                 StudentFilters::gender(),
             ])
             ->toolbarActions([
-                TakeAttendanceRelationActions::bulkMarkAbsentAction(),
                 TakeAttendanceRelationActions::bulkMarkPresentAction(),
+                TakeAttendanceRelationActions::bulkMarkAbsentAction(),
             ]);
     }
 }

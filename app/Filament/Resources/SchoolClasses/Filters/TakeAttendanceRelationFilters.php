@@ -18,7 +18,7 @@ class TakeAttendanceRelationFilters
 
             'present' => Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('present', true))
-                ->badgeColor('info')
+                ->badgeColor('success')
                 ->badge(fn () =>
                     $ownerRecord->students()->where('present', true)->count()
                 ),
