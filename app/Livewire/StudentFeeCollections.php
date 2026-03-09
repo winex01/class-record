@@ -62,9 +62,10 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                     }])
             )
             ->columns($this->getColumns())
-            ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
-            ->emptyStateDescription('No fee collection records found.');
+            ->emptyStateDescription('No fee collection records found.')
+            ->paginated([5, 10, 25, 50])
+            ->defaultPaginationPageOption(5);
     }
 
     protected function getCOlumns()

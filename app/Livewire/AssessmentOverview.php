@@ -102,6 +102,8 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
                             ]
                         )
                     ))
-            ]);
+            ])
+            ->paginated([5, 10, 25, 50])
+            ->defaultPaginationPageOption(5);
     }
 }

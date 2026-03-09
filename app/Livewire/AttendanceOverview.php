@@ -161,7 +161,9 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
                 StudentFilters::gender()
             ])
             ->emptyStateHeading(false)
-            ->emptyStateDescription(false);
+            ->emptyStateDescription(false)
+            ->paginated([5, 10, 25, 50])
+            ->defaultPaginationPageOption(5);
     }
 
     private static function studentAttendanceDatesModal(bool $isPresent)

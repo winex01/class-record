@@ -49,6 +49,8 @@ class StudentAttendancePresentAbsent extends Component implements HasForms, HasT
                 StudentFilters::gender()
             ])
             ->emptyStateHeading(false)
-            ->emptyStateDescription(false);
+            ->emptyStateDescription(false)
+            ->paginated([5, 10, 25, 50])
+            ->defaultPaginationPageOption(5);
     }
 }

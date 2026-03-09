@@ -51,8 +51,9 @@ class LessonsAttachedFiles extends Component implements HasForms, HasTable, HasA
                     ->modalCancelAction(false)
                     ->form(MyFileForm::schema())
             ])
-            ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
-            ->emptyStateDescription('No attached files found.');
+            ->emptyStateDescription('No attached files found.')
+            ->paginated([5, 10, 25, 50])
+            ->defaultPaginationPageOption(5);
     }
 }

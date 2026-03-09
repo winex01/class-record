@@ -84,9 +84,10 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                 })
 
             ])
-            ->paginated([10, 25, 50])
             ->emptyStateHeading('No Records')
-            ->emptyStateDescription('No attendance records found.');
+            ->emptyStateDescription('No attendance records found.')
+            ->paginated([5, 10, 25, 50])
+            ->defaultPaginationPageOption(5);
     }
 
     protected function getCOlumns()

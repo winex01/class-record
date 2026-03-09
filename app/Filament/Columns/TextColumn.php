@@ -36,6 +36,6 @@ class TextColumn extends BaseTextColumn
 
         return $isUnderlined
             ? array_merge(parent::getExtraAttributes(), ['class' => 'cursor-pointer hover:underline'])
-            : array_merge(parent::getExtraAttributes(), ['class' => 'cursor-default']);
+            : array_merge(parent::getExtraAttributes(), []);
     }
 }

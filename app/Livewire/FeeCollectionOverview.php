@@ -179,7 +179,9 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                 StudentFilters::gender()
             ])
             ->emptyStateHeading(false)
-            ->emptyStateDescription(false);
+            ->emptyStateDescription(false)
+            ->paginated([5, 10, 25, 50])
+            ->defaultPaginationPageOption(5);
     }
 
     public static function getStudentFeePaidAndBalance()
