@@ -17,6 +17,9 @@ trait ManageActionVisibility
 
             'overview',
 
+            // manage students
+            'attachSelectedStudents',
+
             // manage attendances
             'presentStudents',
             'absentStudents',

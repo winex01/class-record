@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Blade;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
@@ -51,7 +54,20 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ])
             ->toolbarActions([
                 CreateAction::make()->label('New Student') ->modalWidth(Width::Large),
-                SchoolClassStudentActions::attachAction(),
+
+                Action::make('attachStudentsAction')
+                    ->label('Attach Students')
+                    ->color('info')
+                    ->modalWidth(Width::Large)
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(false)
+                    ->modalContent(fn ($livewire) => new HtmlString(
+                        Blade::render(
+                            '@livewire("student-lists", ["schoolClass" => $schoolClass])',
+                            ['schoolClass' => $livewire->getOwnerRecord()]
+                        )
+                    )),
+
                 SchoolClassStudentActions::detachBulkAction(),
             ]);
     }
