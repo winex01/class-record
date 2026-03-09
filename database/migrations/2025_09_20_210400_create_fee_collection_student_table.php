@@ -2,7 +2,6 @@
 
 use App\Models\Student;
 use App\Models\FeeCollection;
-use App\Enums\FeeCollectionStatus;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -19,7 +18,6 @@ return new class extends Migration
             $table->foreignIdFor(FeeCollection::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Student::class)->constrained()->cascadeOnDelete();
             $table->decimal('amount')->unsigned()->nullable();
-            $table->string('status')->default(FeeCollectionStatus::UNPAID->value);
             $table->timestamps();
         });
     }

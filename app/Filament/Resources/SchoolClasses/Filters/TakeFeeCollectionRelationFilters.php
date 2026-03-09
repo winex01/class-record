@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SchoolClasses\Filters;
 
 use App\Models\FeeCollection;
-use App\Enums\FeeCollectionStatus;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -13,38 +12,59 @@ class TakeFeeCollectionRelationFilters
     {
         $tabs = [
             'all' => Tab::make()
-                ->badge(fn () =>
-                    $ownerRecord->students()->count()
-                ),
+                ->badge(fn () => $ownerRecord->students()->count())
+                ->badgeColor('info'),
         ];
 
-        if ((float) $ownerRecord->amount === 0.0) { // open contribution
-            $tabs[FeeCollectionStatus::PAID->getLabel()] = Tab::make()
+        if ((float) $ownerRecord->amount === 0.0) {
+            $tabs['Paid'] = Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('amount', '>', 0))
-                ->badgeColor(FeeCollectionStatus::PAID->getColor())
+                ->badgeColor('success')
                 ->badge(fn () =>
                     $ownerRecord->students()->where('amount', '>', 0)->count()
                 );
 
-            $tabs[FeeCollectionStatus::UNPAID->getLabel()] = Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where(function ($query) {
-                    $query->where('amount', 0)->orWhereNull('amount');
-                }))
-                ->badgeColor(FeeCollectionStatus::UNPAID->getColor())
+            $tabs['Unpaid'] = Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where(fn ($q) =>
+                    $q->whereNull('amount')->orWhere('amount', '<=', 0)
+                ))
+                ->badgeColor('danger')
                 ->badge(fn () =>
-                    $ownerRecord->students()->where(function ($query) {
-                        $query->where('amount', 0)->orWhereNull('amount');
-                    })->count()
+                    $ownerRecord->students()->where(fn ($q) =>
+                        $q->whereNull('amount')->orWhere('amount', '<=', 0)
+                    )->count()
                 );
         } else {
-            foreach (FeeCollectionStatus::cases() as $tab) {
-                $tabs[$tab->getLabel()] = Tab::make()
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('status', $tab->value))
-                    ->badgeColor($tab->getColor())
-                    ->badge(fn () =>
-                        $ownerRecord->students()->where('status', $tab->value)->count()
-                    );
-            }
+            $tabs['Paid'] = Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('amount', '>=', $ownerRecord->amount))
+                ->badgeColor('success')
+                ->badge(fn () =>
+                    $ownerRecord->students()->where('amount', '>=', $ownerRecord->amount)->count()
+                );
+
+            $tabs['Partial'] = Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query
+                    ->where('amount', '>', 0)
+                    ->where('amount', '<', $ownerRecord->amount)
+                )
+                ->badgeColor('warning')
+                ->badge(fn () =>
+                    $ownerRecord->students()
+                        ->where('amount', '>', 0)
+                        ->where('amount', '<', $ownerRecord->amount)
+                        ->count()
+                );
+
+            $tabs['Unpaid'] = Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where(fn ($q) =>
+                    $q->whereNull('amount')->orWhere('amount', '<=', 0)
+                ))
+                ->badgeColor('danger')
+                ->badge(fn () =>
+                    $ownerRecord->students()->where(fn ($q) =>
+                        $q->whereNull('amount')->orWhere('amount', '<=', 0)
+                    )->count()
+                );
         }
 
         return $tabs;

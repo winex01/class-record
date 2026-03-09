@@ -4,66 +4,78 @@ namespace App\Filament\Resources\SchoolClasses\Actions;
 
 use App\Models\FeeCollection;
 use Filament\Actions\BulkAction;
-use App\Enums\FeeCollectionStatus;
+use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
+use App\Filament\Fields\NumericInput;
 use Filament\Support\Enums\Alignment;
 
 class TakeFeeCollectionRelationActions
 {
     public static function bulkMarkPaidAction(FeeCollection $ownerRecord)
     {
-        return
-            BulkAction::make('markPaid')
+        $action = BulkAction::make('markPaid')
                 ->label('Mark as Paid')
-                ->icon(FeeCollectionStatus::PAID->getIcon())
-                ->color(FeeCollectionStatus::PAID->getColor())
-                ->requiresConfirmation()
-                ->action(function ($records, $livewire) {
-                    foreach ($records as $record) {
-                        // Check pivot amount first
-                        $currentAmount = $record->pivot?->amount;
-
-                        // Only update if amount is empty or zero
-                        if (empty($currentAmount) || $currentAmount == 0) {
-                            $record->feeCollections()
-                                ->updateExistingPivot(
-                                    $livewire->getOwnerRecord()->getKey(),
-                                    [
-                                        'amount' => $livewire->getOwnerRecord()->amount,
-                                        'status' => FeeCollectionStatus::PAID->value,
-                                    ]
-                                );
-                        }
-                    }
-                })
-                ->modalFooterActionsAlignment(Alignment::Center)
+                ->icon(Heroicon::CheckCircle)
+                ->color('primary')
                 ->deselectRecordsAfterCompletion()
-                ->successNotificationTitle('Marked as paid')
-                ->visible($ownerRecord->amount > 0 ? true : false);
+                ->successNotificationTitle('Marked as paid');
+
+        if ($ownerRecord->is_open_contribution) {
+            return
+                $action
+                ->modalWidth(Width::Small)
+                ->modalFooterActionsAlignment(Alignment::Right)
+                ->form([
+                    NumericInput::make('amount')
+                        ->label('Amount')
+                        ->minValue(0)
+                        ->required()
+                        ->prefix('₱'),
+                ])
+                ->action(function ($records, array $data) use ($ownerRecord) {
+                    foreach ($records as $record) {
+                        $record->feeCollections()
+                            ->updateExistingPivot(
+                                $ownerRecord->getKey(),
+                                ['amount' => $data['amount']]
+                            );
+                    }
+                });
+        }
+
+        return
+            $action
+            ->requiresConfirmation()
+            ->modalFooterActionsAlignment(Alignment::Center)
+            ->action(function ($records) use ($ownerRecord) {
+                foreach ($records as $record) {
+                    $record->feeCollections()
+                        ->updateExistingPivot(
+                            $ownerRecord->getKey(),
+                            ['amount' => $ownerRecord->amount]
+                        );
+                }
+            });
     }
 
     public static function bulkMarkUnpaidAction(FeeCollection $ownerRecord)
     {
-        return
-            BulkAction::make('markUnpaid')
-                ->label('Mark as Unpaid')
-                ->icon(FeeCollectionStatus::UNPAID->getIcon())
-                ->color(FeeCollectionStatus::UNPAID->getColor())
-                ->requiresConfirmation()
-                ->action(function ($records, $livewire) {
-                    foreach ($records as $record) {
-                        $record->feeCollections()
-                            ->updateExistingPivot(
-                                $livewire->getOwnerRecord()->getKey(),
-                                [
-                                    'amount' => null,
-                                    'status' => FeeCollectionStatus::UNPAID->value,
-                                ]
-                            );
-                    }
-                })
-                ->modalFooterActionsAlignment(Alignment::Center)
-                ->deselectRecordsAfterCompletion()
-                ->successNotificationTitle('Marked as unpaid')
-                ->visible($ownerRecord->amount > 0 ? true : false);
+        return BulkAction::make('markUnpaid')
+            ->label('Mark as Unpaid')
+            ->icon(Heroicon::XCircle)
+            ->color('danger')
+            ->requiresConfirmation()
+            ->action(function ($records) use ($ownerRecord) {
+                foreach ($records as $record) {
+                    $record->feeCollections()
+                        ->updateExistingPivot(
+                            $ownerRecord->getKey(),
+                            ['amount' => null]
+                        );
+                }
+            })
+            ->modalFooterActionsAlignment(Alignment::Center)
+            ->deselectRecordsAfterCompletion()
+            ->successNotificationTitle('Marked as unpaid');
     }
 }

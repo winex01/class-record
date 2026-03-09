@@ -21,6 +21,11 @@ class FeeCollection extends Model
     {
         return $this->belongsToMany(Student::class)
             ->withTimestamps()
-            ->withPivot(['amount', 'status']);
+            ->withPivot(['amount']);
+    }
+
+    public function getIsOpenContributionAttribute(): bool
+    {
+        return $this->amount === 0.0;
     }
 }

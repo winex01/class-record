@@ -63,7 +63,7 @@ class Student extends Model
     {
         return $this->belongsToMany(FeeCollection::class)
             ->withTimestamps()
-            ->withPivot(['amount', 'status']);
+            ->withPivot(['amount']);
     }
 
     public function getFullNameAttribute(): string
