@@ -24,8 +24,8 @@ enum FeeCollectionStatus: string implements HasLabel, HasColor, HasIcon
     public function getColor(): string | array | null
     {
         return match ($this) {
-            self::PAID => 'primary',
-            self::PARTIAL => 'info',
+            self::PAID => 'info',
+            self::PARTIAL => 'warning',
             self::UNPAID => 'danger',
         };
     }
