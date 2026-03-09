@@ -12,25 +12,29 @@ class RecordScoreRelationFilters
 {
     public static function getTabs($ownerRecord)
     {
-        $tabs['all'] = Tab::make()
-            ->badge(fn () =>
-                $ownerRecord->students()->count()
-            );
+        $tabs['All'] = Tab::make()
+            ->badge(fn () => $ownerRecord->students()->count());
+
+        $tabs['Scored'] = Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereNotNull('score'))
+            ->badge(fn () => $ownerRecord->students()->whereNotNull('score')->count())
+            ->badgeColor('info');
+
+        $tabs['Not Scored'] = Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereNull('score'))
+            ->badge(fn () => $ownerRecord->students()->whereNull('score')->count())
+            ->badgeColor('danger');
 
         if ($ownerRecord->can_group_students) {
-            $tabs['With Group'] = Tab::make()
-                    ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('group', '-'))
-                    ->badgeColor('info')
-                    ->badge(fn () =>
-                        $ownerRecord->students()->whereNot('group', '-')->count()
-            );
+            $tabs['Grouped'] = Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereNot('group', '-'))
+                ->badge(fn () => $ownerRecord->students()->whereNot('group', '-')->count())
+                ->badgeColor('success');
 
-            $tabs['No Group'] = Tab::make()
-                    ->modifyQueryUsing(fn (Builder $query) => $query->where('group', '-'))
-                    ->badgeColor('danger')
-                    ->badge(fn () =>
-                        $ownerRecord->students()->where('group', '-')->count()
-            );
+            $tabs['Ungrouped'] = Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('group', '-'))
+                ->badge(fn () => $ownerRecord->students()->where('group', '-')->count())
+                ->badgeColor('warning');
         }
 
         return $tabs;
