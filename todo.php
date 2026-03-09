@@ -1,6 +1,7 @@
 <?php
 /*
-TODO:: in manage nav class in school class modify the attach action instead of select we will use a select with checkbox datatable
+TODO:: remove attach students in relation manager and also add observer to attach to pivot tables and detach automatically
+
 TODO:: grade overview
 
 TODO:: Notification & calendar for:

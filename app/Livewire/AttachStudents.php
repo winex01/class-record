@@ -21,7 +21,7 @@ use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 
-class StudentLists extends Component implements HasForms, HasTable, HasActions
+class AttachStudents extends Component implements HasForms, HasTable, HasActions
 {
     use InteractsWithForms;
     use InteractsWithTable;

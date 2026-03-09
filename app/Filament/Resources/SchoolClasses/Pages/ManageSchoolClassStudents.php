@@ -63,7 +63,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                     ->modalCancelAction(false)
                     ->modalContent(fn ($livewire) => new HtmlString(
                         Blade::render(
-                            '@livewire("student-lists", ["schoolClass" => $schoolClass])',
+                            '@livewire("attach-students", ["schoolClass" => $schoolClass])',
                             ['schoolClass' => $livewire->getOwnerRecord()]
                         )
                     )),
