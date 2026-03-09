@@ -32,13 +32,13 @@ class SchoolClassAssessmentForm
                     ->createOptionForm(AssessmentTypeForm::schema())
                     ->editOptionForm(AssessmentTypeForm::schema()),
 
-                DatePicker::make('date'),
-
                 TextInput::make('max_score')
                     ->helperText('Highest points')
                     ->required()
                     ->placeholder('100')
                     ->numeric(),
+
+                DatePicker::make('date'),
 
                 Textarea::make('description')
                     ->placeholder('Additional notes or instructions...')

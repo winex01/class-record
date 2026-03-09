@@ -19,14 +19,13 @@ class SchoolClassAssessmentColumns
                 ->label('Type')
                 ->color('primary'),
 
-            DateColumn::make('date'),
-
             'max_score' =>
             TextColumn::make('max_score')
                 ->label('Max')
-                ->alignCenter()
                 ->color('info')
                 ->tooltip('Max score'),
+
+            DateColumn::make('date'),
 
             TextColumn::make('description')
                 ->toggleable(isToggledHiddenByDefault:true),
