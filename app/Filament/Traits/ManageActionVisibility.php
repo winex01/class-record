@@ -38,6 +38,7 @@ trait ManageActionVisibility
             'grades',
             'clearAll',
             'settingsAction',
+            'clearAction',
         ];
 
         Action::configureUsing(function (Action $action) use ($excludedActions) {
