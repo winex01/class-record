@@ -76,15 +76,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                         )
                     )),
 
-                DetachBulkAction::make()
-                    ->color('warning')
-                    ->after(function ($records) {
-                        event(new SchoolClassStudentsChanged(
-                            $this->getOwnerRecord(),
-                            $records->pluck('id')->toArray(),
-                            'detach')
-                        );
-                    }),
+                DetachBulkAction::make()->color('warning'),
 
             ]);
     }

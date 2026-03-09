@@ -91,11 +91,10 @@ class AttachStudents extends Component implements HasForms, HasTable, HasActions
                     ->map(fn($id) => (int) $id)
                     ->toArray();
 
-                event(new SchoolClassStudentsChanged(
-                    $this->schoolClass,
-                    $selectedIds->toArray(),
-                    'attach')
-                );
+                // NOTE:: When attaching or detaching students, the pivot model SchoolClassStudent
+                // automatically handles events for each change (created/deleted).
+                // This ensures all related logic for the SchoolClass-Student relationship is triggered.
+                // Any sync, attach, or detach operation on this relation will fire the corresponding event.
 
                 Notification::make()
                     ->title('Students Attached')

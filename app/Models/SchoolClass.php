@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\SchoolClassStudent;
 use App\Models\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +23,9 @@ class SchoolClass extends Model
 
     public function students()
     {
-        return $this->belongsToMany(Student::class)->withTimestamps();
+        return $this->belongsToMany(Student::class)
+            ->using(SchoolClassStudent::class)
+            ->withTimestamps();
     }
 
     public function attendances()
