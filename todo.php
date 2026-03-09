@@ -1,7 +1,5 @@
 <?php
 /*
-TODO:: remove attach students in relation manager and also add observer to attach to pivot tables and detach automatically
-
 TODO:: grade overview
 
 TODO:: Notification & calendar for:
