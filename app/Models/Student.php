@@ -66,6 +66,26 @@ class Student extends Model
             ->withPivot(['amount']);
     }
 
+    // SCOPE
+    public function scopeUpcomingBirthdays($query)
+    {
+        return $query->whereRaw(
+                'DATE_FORMAT(birth_date, "%m-%d") BETWEEN ? AND ?',
+                [now()->format('m-d'), now()->addDays(30)->format('m-d')]
+            )
+            ->orderByRaw('DATE_FORMAT(birth_date, "%m-%d") ASC');
+    }
+
+    public function scopeRecentBirthdays($query)
+    {
+        return $query->whereRaw(
+                'DATE_FORMAT(birth_date, "%m-%d") BETWEEN ? AND ?',
+                [now()->subDays(30)->format('m-d'), now()->subDay()->format('m-d')]
+            )
+            ->orderByRaw('DATE_FORMAT(birth_date, "%m-%d") DESC');
+    }
+
+    // ATTRIBUTES
     public function getFullNameAttribute(): string
     {
         // Middle initial if middle_name exists

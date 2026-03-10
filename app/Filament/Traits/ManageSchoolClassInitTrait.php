@@ -19,8 +19,15 @@ trait ManageSchoolClassInitTrait
     protected function getHeaderWidgets(): array
     {
         return [
+            ...static::myWidgets($this->getOwnerRecord()),
+        ];
+    }
+
+    public static function myWidgets($ownerRecord)
+    {
+        return [
             SubjectDetailsWidget::make([
-                'record' => $this->getOwnerRecord(),
+                'record' => $ownerRecord,
             ]),
         ];
     }

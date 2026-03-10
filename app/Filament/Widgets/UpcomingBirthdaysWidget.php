@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Enums\Gender;
+use App\Models\Student;
+use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
+use App\Filament\Columns\DateColumn;
+use App\Filament\Columns\EnumColumn;
+use App\Filament\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
+use App\Filament\Columns\ImageColumn;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
+use App\Filament\Widgets\CollapsibleTableWidget;
+
+class UpcomingBirthdaysWidget extends CollapsibleTableWidget
+{
+    protected static ?string $heading = '🎂 Upcoming Birthdays';
+    protected int | string | array $columnSpan = 'half';
+    public ?Model $ownerRecord = null;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                Student::whereHas('schoolClasses', function ($query) {
+                    $query->where('school_classes.id', $this->ownerRecord->id);
+                })->upcomingBirthdays()
+            )
+            ->heading(false)
+            ->searchable(false)
+            ->columnManager(false)
+            ->emptyStateHeading(false)
+            ->emptyStateDescription(false)
+            ->columns(static::columnSchema());
+    }
+
+    public static function columnSchema()
+    {
+        return [
+            Split::make([
+                ImageColumn::make('photo')
+                    ->circular()
+                    ->grow(false)
+                    ->imageSize(32),
+
+                'full_name' =>
+                TextColumn::make('full_name')
+                    ->tooltip(fn ($record) => $record->complete_name)
+                    ->searchable(['last_name', 'first_name', 'middle_name', 'suffix_name'])
+                    ->sortable(false)
+                    ->grow(true)
+                    ->size(TextSize::ExtraSmall)
+                    ->description(function ($record) {
+                        if (Carbon::parse($record->birth_date)->format('m-d') === now()->format('m-d')) {
+                            return '🎂 Today!';
+                        }
+                        $days = (int) now()->copy()->startOfDay()->diffInDays(
+                            Carbon::parse($record->birth_date)->setYear(now()->year)->startOfDay()
+                        );
+                        return match($days) {
+                            1 => '🎉 Tomorrow!',
+                            default => 'in ' . $days . ' days'
+                        };
+                    }),
+
+                Stack::make([
+                    EnumColumn::make('gender')
+                        ->enum(Gender::class)
+                        ->sortable(false)
+                        ->grow(false)
+                        ->size(TextSize::ExtraSmall),
+
+                    DateColumn::make('birth_date')
+                        ->sortable(false)
+                        ->grow(false)
+                        ->size(TextSize::ExtraSmall),
+                ])
+            ]),
+        ];
+    }
+}

@@ -14,6 +14,8 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DetachBulkAction;
 use App\Events\SchoolClassStudentsChanged;
+use App\Filament\Widgets\RecentBirthdaysWidget;
+use App\Filament\Widgets\UpcomingBirthdaysWidget;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
@@ -29,6 +31,21 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
 
     protected static string $resource = SchoolClassResource::class;
     protected static string $relationship = 'students';
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ...static::myWidgets($this->getOwnerRecord()),
+
+            UpcomingBirthdaysWidget::make([
+                'ownerRecord' => $this->getOwnerRecord(),
+            ]),
+
+            RecentBirthdaysWidget::make([
+                'ownerRecord' => $this->getOwnerRecord(),
+            ]),
+        ];
+    }
 
     public function getTabs(): array
     {
@@ -58,6 +75,8 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                             [$record->id],
                             'detach')
                         );
+
+                        $this->dispatch('refreshBirthdayWidgets');
                     }),
             ])
             ->toolbarActions([
@@ -76,7 +95,10 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                         )
                     )),
 
-                DetachBulkAction::make()->color('warning'),
+                DetachBulkAction::make()->color('warning')
+                    ->after(function () {
+                        $this->dispatch('refreshBirthdayWidgets');
+                    }),
 
             ]);
     }

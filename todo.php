@@ -1,7 +1,6 @@
 <?php
 /*
 TODO:: add Widgets in manage resources:
-    -students:: Display last 5 birthdays and 5 coming birthdays or TBD shotuld i put it as Overview modal?
     -attendances::
     -lessons:: completion dates alert
     -assessments:: upcoming dates alert
