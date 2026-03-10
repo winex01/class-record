@@ -67,20 +67,26 @@ class Student extends Model
     }
 
     // SCOPE
-    public function scopeUpcomingBirthdays($query)
+    public function scopeUpcomingBirthdays($query, int $days = 10)
     {
         return $query->whereRaw(
-                'DATE_FORMAT(birth_date, "%m-%d") BETWEEN ? AND ?',
-                [now()->format('m-d'), now()->addDays(30)->format('m-d')]
+                'DATE_FORMAT(birth_date, "%m-%d") >= ?', [now()->format('m-d')]
+            )
+            ->whereRaw(
+                'DATE_FORMAT(birth_date, "%m-%d") <= ?', [now()->addDays($days)->format('m-d')]
             )
             ->orderByRaw('DATE_FORMAT(birth_date, "%m-%d") ASC');
     }
 
-    public function scopeRecentBirthdays($query)
+    public function scopeRecentBirthdays($query, int $days = 10)
     {
+        $yesterday = now()->subDay()->copy();
+
         return $query->whereRaw(
-                'DATE_FORMAT(birth_date, "%m-%d") BETWEEN ? AND ?',
-                [now()->subDays(30)->format('m-d'), now()->subDay()->format('m-d')]
+                'DATE_FORMAT(birth_date, "%m-%d") >= ?', [now()->subDays($days)->format('m-d')]
+            )
+            ->whereRaw(
+                'DATE_FORMAT(birth_date, "%m-%d") <= ?', [$yesterday->format('m-d')]
             )
             ->orderByRaw('DATE_FORMAT(birth_date, "%m-%d") DESC');
     }

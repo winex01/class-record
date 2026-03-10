@@ -29,7 +29,7 @@ class RecentBirthdaysWidget extends CollapsibleTableWidget
             ->query(
                 Student::whereHas('schoolClasses', function ($query) {
                     $query->where('school_classes.id', $this->ownerRecord->id);
-                })->upcomingBirthdays()
+                })->recentBirthdays()
             )
             ->heading(false)
             ->searchable(false)
