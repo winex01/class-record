@@ -76,7 +76,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                             'detach')
                         );
 
-                        $this->dispatch('refreshBirthdayWidgets');
+                        $this->dispatch('refreshCollapsibleTableWidget');
                     }),
             ])
             ->toolbarActions([
@@ -97,7 +97,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
 
                 DetachBulkAction::make()->color('warning')
                     ->after(function () {
-                        $this->dispatch('refreshBirthdayWidgets');
+                        $this->dispatch('refreshCollapsibleTableWidget');
                     }),
 
             ]);

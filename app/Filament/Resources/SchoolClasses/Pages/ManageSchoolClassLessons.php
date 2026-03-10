@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\Lesson;
+use Livewire\Attributes\On;
 use Filament\Schemas\Schema;
 use Relaticle\Flowforge\Board;
 use Filament\Actions\EditAction;
@@ -10,6 +11,7 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Relaticle\Flowforge\Contracts\HasBoard;
+use App\Filament\Widgets\LessonRemindersWidget;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use Relaticle\Flowforge\Concerns\InteractsWithBoard;
@@ -27,6 +29,23 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
     protected static string $resource = SchoolClassResource::class;
     protected static string $relationship = 'lessons';
     protected static ?string $model = Lesson::class;
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ...static::myWidgets($this->getOwnerRecord()),
+
+            LessonRemindersWidget::make([
+                'ownerRecord' => $this->getOwnerRecord(),
+            ]),
+        ];
+    }
+
+    #[On('kanban-card-moved')]
+    public function onCardMoved(): void
+    {
+        $this->dispatch('refreshCollapsibleTableWidget');
+    }
 
     public function board(Board $board): Board
     {
@@ -48,6 +67,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                         ->model(static::$model)
                         ->after(function ($livewire) {
                             $livewire->form->saveRelationships();
+                            $livewire->dispatch('refreshCollapsibleTableWidget');
                         })
                 ] : [])
             ])
@@ -59,8 +79,12 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                     ->form(SchoolClassLessonForm::schema($this->getOwnerRecord()))
                     ->after(function ($livewire) {
                         $livewire->form->saveRelationships();
+                        $livewire->dispatch('refreshCollapsibleTableWidget');
                     }),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->after(function ($livewire) {
+                        $livewire->dispatch('refreshCollapsibleTableWidget');
+                    }),
             ])
             ->cardAction('view');
     }

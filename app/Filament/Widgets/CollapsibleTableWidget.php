@@ -8,7 +8,7 @@ abstract class CollapsibleTableWidget extends \Filament\Widgets\TableWidget
 {
     protected string $view = 'filament.widgets.collapsible-table-widget';
 
-    #[On('refreshBirthdayWidgets')]
+    #[On('refreshCollapsibleTableWidget')]
     public function refreshWidget(): void
     {
         $this->resetTable();

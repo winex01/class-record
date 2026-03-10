@@ -35,6 +35,7 @@ class UpcomingBirthdaysWidget extends CollapsibleTableWidget
             ->columnManager(false)
             ->emptyStateHeading(false)
             ->emptyStateDescription(false)
+            ->defaultPaginationPageOption(5)
             ->columns(static::columnSchema());
     }
 

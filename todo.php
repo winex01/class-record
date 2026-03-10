@@ -1,8 +1,6 @@
 <?php
 /*
 TODO:: add Widgets in manage resources:
-    -attendances::
-    -lessons:: completion dates alert
     -assessments:: upcoming dates alert
     -fee collections:: upcoming dates alert
 TODO:: grade overview

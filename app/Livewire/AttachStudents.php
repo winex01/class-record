@@ -96,7 +96,7 @@ class AttachStudents extends Component implements HasForms, HasTable, HasActions
                 // This ensures all related logic for the SchoolClass-Student relationship is triggered.
                 // Any sync, attach, or detach operation on this relation will fire the corresponding event.
 
-                $this->dispatch('refreshBirthdayWidgets');
+                $this->dispatch('refreshCollapsibleTableWidget');
 
                 Notification::make()
                     ->title('Students Attached')
