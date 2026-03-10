@@ -67,6 +67,12 @@ class Student extends Model
     }
 
     // SCOPE
+    public function scopeBirthdayToday($query)
+    {
+        return $query->whereMonth('birth_date', now()->month)
+                    ->whereDay('birth_date', now()->day);
+    }
+
     public function scopeUpcomingBirthdays($query, int $days = 10)
     {
         return $query->whereRaw(

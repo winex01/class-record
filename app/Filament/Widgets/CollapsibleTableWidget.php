@@ -13,4 +13,14 @@ abstract class CollapsibleTableWidget extends \Filament\Widgets\TableWidget
     {
         $this->resetTable();
     }
+
+    public function getCollapsibleBadge(): int|string|null
+    {
+        return null; // override in child class to show a badge
+    }
+
+    public function getCollapsibleBadgeColor(): string
+    {
+        return 'success';
+    }
 }

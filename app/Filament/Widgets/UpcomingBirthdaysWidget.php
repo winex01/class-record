@@ -22,6 +22,17 @@ class UpcomingBirthdaysWidget extends CollapsibleTableWidget
     protected int | string | array $columnSpan = 'half';
     public ?Model $ownerRecord = null;
 
+    public function getCollapsibleBadge(): int|string|null
+    {
+        $count = Student::whereHas('schoolClasses', function ($query) {
+                $query->where('school_classes.id', $this->ownerRecord->id);
+            })
+            ->birthdayToday()
+            ->count();
+
+        return $count > 0 ? $count : null;
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -55,6 +66,11 @@ class UpcomingBirthdaysWidget extends CollapsibleTableWidget
                     ->sortable(false)
                     ->grow(true)
                     ->size(TextSize::ExtraSmall)
+                    ->color(fn ($record) =>
+                        Carbon::parse($record->birth_date)->format('m-d') === now()->format('m-d')
+                            ? 'primary'
+                            : null
+                    )
                     ->description(function ($record) {
                         if (Carbon::parse($record->birth_date)->format('m-d') === now()->format('m-d')) {
                             return '🎂 Today!';

@@ -20,6 +20,23 @@ class LessonRemindersWidget extends CollapsibleTableWidget
 
     public ?Model $ownerRecord = null;
 
+    public function getCollapsibleBadge(): int|string|null
+    {
+        $count = Lesson::query()
+            ->where('school_class_id', $this->ownerRecord->id)
+            ->whereNotNull('completion_date')
+            ->where('status', '!=', LessonStatus::DONE->value)
+            ->whereDate('completion_date', '<', now()->today())
+            ->count();
+
+        return $count > 0 ? $count : null;
+    }
+
+    public function getCollapsibleBadgeColor(): string
+    {
+        return 'danger';
+    }
+
     public function table(Table $table): Table
     {
         $schoolClassId = $this->ownerRecord->id;
@@ -50,6 +67,11 @@ class LessonRemindersWidget extends CollapsibleTableWidget
                     TextColumn::make('title')
                         ->sortable(false)
                         ->grow(true)
+                        ->color(fn ($record) =>
+                            Carbon::parse($record->completion_date)->startOfDay()->lt(now()->startOfDay())
+                                ? 'danger'
+                                : null
+                        )
                         ->description(function ($record) {
                             $days = (int) now()->startOfDay()->diffInDays(
                                 Carbon::parse($record->completion_date)->startOfDay(),
