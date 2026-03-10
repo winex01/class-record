@@ -83,11 +83,21 @@ class LessonRemindersWidget extends CollapsibleTableWidget
                             if ($days > 1) return 'in ' . $days . ' days';
 
                             return trans_choice(
-                                ':count day overdue|:count days overdue',
+                                '🚨 :count day overdue|🚨 :count days overdue',
                                 abs($days),
                                 ['count' => abs($days)]
                             );
                         }),
+
+                    EnumColumn::make('status')
+                        ->enum(LessonStatus::class)
+                        ->badge()
+                        ->sortable(false)
+                        ->description(fn ($record) =>
+                            $record->completion_date
+                                ? Carbon::parse($record->completion_date)->format('M d, Y')
+                                : null
+                        ),
 
                     TextColumn::make('myFiles.path')
                         ->label('Files')
@@ -105,19 +115,6 @@ class LessonRemindersWidget extends CollapsibleTableWidget
                             ->join('<span class="mx-1">, </span>')
                         )
                         ->description(fn($record) => $record->tags),
-
-                    Stack::make([
-                        EnumColumn::make('status')
-                            ->enum(LessonStatus::class)
-                            ->badge()
-                            ->sortable(false)
-                            ->description(fn ($record) =>
-                                $record->completion_date
-                                    ? Carbon::parse($record->completion_date)->format('M d, Y')
-                                    : null
-                            ),
-
-                    ])->grow(false),
                 ]),
             ]);
     }

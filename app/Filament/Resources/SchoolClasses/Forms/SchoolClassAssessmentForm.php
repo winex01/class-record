@@ -48,6 +48,8 @@ class SchoolClassAssessmentForm
         Section::make()
             ->schema([
                 Select::make('my_file_id')
+                    ->label('File')
+                    ->hint('Attach some files') // TODO::
                     ->relationship('myFile', 'name')
                     ->helperText('Optional')
                     ->nullable()

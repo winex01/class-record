@@ -10,6 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
+use App\Filament\Widgets\UpcomingAssessmentsWidget;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
 use App\Filament\Resources\SchoolClasses\Forms\SchoolClassAssessmentForm;
@@ -23,6 +24,17 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
 
     protected static string $resource = SchoolClassResource::class;
     protected static string $relationship = 'assessments';
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ...static::myWidgets($this->getOwnerRecord()),
+
+            UpcomingAssessmentsWidget::make([
+                'ownerRecord' => $this->getOwnerRecord(),
+            ]),
+        ];
+    }
 
     public function getTabs(): array
     {

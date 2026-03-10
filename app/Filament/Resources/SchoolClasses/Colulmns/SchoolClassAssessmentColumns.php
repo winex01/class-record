@@ -30,6 +30,24 @@ class SchoolClassAssessmentColumns
             TextColumn::make('description')
                 ->toggleable(isToggledHiddenByDefault:true),
 
+
+            TextColumn::make('myFile.path')
+                ->label('File')
+                ->toggleable(isToggledHiddenByDefault:true)
+                ->html()
+                ->state(fn ($record) => $record->myFile
+                    ? collect($record->myFile->path)
+                        ->map(fn ($path, $index) =>
+                            '<a href="' .
+                                route('filament.app.myfile.download', ['myFileId' => $record->myFile->id, 'index' => $index]) .
+                            '" class="text-info-500 hover:text-info-600 hover:underline inline" target="_blank">' .
+                            basename($path) . '</a>'
+                        )
+                        ->join('<span class="mx-1">, </span>')
+                    : null
+                )
+                ->description(fn ($record) => $record->myFile->name),
+
             BooleanColumn::make('can_group_students')
                 ->toggleable(isToggledHiddenByDefault:true)
                 ->label('Can group'),
