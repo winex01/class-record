@@ -13,13 +13,13 @@ class TakeFeeCollectionRelationFilters
         $tabs = [
             'all' => Tab::make()
                 ->badge(fn () => $ownerRecord->students()->count())
-                ->badgeColor('info'),
+                ->badgeColor('success'),
         ];
 
         if ((float) $ownerRecord->amount === 0.0) {
             $tabs['Paid'] = Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('amount', '>', 0))
-                ->badgeColor('success')
+                ->badgeColor('info')
                 ->badge(fn () =>
                     $ownerRecord->students()->where('amount', '>', 0)->count()
                 );
@@ -37,7 +37,7 @@ class TakeFeeCollectionRelationFilters
         } else {
             $tabs['Paid'] = Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('amount', '>=', $ownerRecord->amount))
-                ->badgeColor('success')
+                ->badgeColor('info')
                 ->badge(fn () =>
                     $ownerRecord->students()->where('amount', '>=', $ownerRecord->amount)->count()
                 );
