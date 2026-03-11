@@ -6,14 +6,11 @@ use App\Enums\Gender;
 use App\Models\Student;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
-use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\EnumColumn;
 use App\Filament\Columns\TextColumn;
-use Filament\Support\Enums\TextSize;
 use App\Filament\Columns\ImageColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Columns\Layout\Split;
-use Filament\Tables\Columns\Layout\Stack;
 use App\Filament\Widgets\CollapsibleTableWidget;
 
 class UpcomingBirthdaysWidget extends CollapsibleTableWidget
@@ -55,7 +52,6 @@ class UpcomingBirthdaysWidget extends CollapsibleTableWidget
         return [
             Split::make([
                 ImageColumn::make('photo')
-                    ->circular()
                     ->grow(false)
                     ->imageSize(32),
 
@@ -65,7 +61,6 @@ class UpcomingBirthdaysWidget extends CollapsibleTableWidget
                     ->searchable(['last_name', 'first_name', 'middle_name', 'suffix_name'])
                     ->sortable(false)
                     ->grow(true)
-                    ->size(TextSize::ExtraSmall)
                     ->color(fn ($record) =>
                         Carbon::parse($record->birth_date)->format('m-d') === now()->format('m-d')
                             ? 'primary'
@@ -84,18 +79,11 @@ class UpcomingBirthdaysWidget extends CollapsibleTableWidget
                         };
                     }),
 
-                Stack::make([
                     EnumColumn::make('gender')
                         ->enum(Gender::class)
                         ->sortable(false)
-                        ->grow(false)
-                        ->size(TextSize::ExtraSmall),
-
-                    DateColumn::make('birth_date')
-                        ->sortable(false)
-                        ->grow(false)
-                        ->size(TextSize::ExtraSmall),
-                ])
+                        ->description(fn ($record) => $record->birth_date->format('M d, Y'))
+                        ->grow(false),
             ]),
         ];
     }

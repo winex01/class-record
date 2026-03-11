@@ -13,6 +13,7 @@ use Filament\Widgets\AccountWidget;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Filament\Widgets\FilamentInfoWidget;
+use App\Filament\Widgets\MyCalendarWidget;
 use Filament\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckStudentBirthdays;
 use Illuminate\Session\Middleware\StartSession;
@@ -52,10 +53,10 @@ class AppPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
+                MyCalendarWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

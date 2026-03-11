@@ -68,7 +68,8 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
             ->filters([StudentFilters::gender()])
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Large),
-                EditAction::make()->modalWidth(Width::Large),
+                EditAction::make()->modalWidth(Width::Large)
+                    ->after(fn ($record) => $this->dispatch('refreshCollapsibleTableWidget')),
                 DetachAction::make()->color('warning')
                     ->after(function ($record) {
                         event(new SchoolClassStudentsChanged(
@@ -81,7 +82,8 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                     }),
             ])
             ->toolbarActions([
-                CreateAction::make()->label('New Student') ->modalWidth(Width::Large),
+                CreateAction::make()->label('New Student') ->modalWidth(Width::Large)
+                    ->after(fn ($record) => $this->dispatch('refreshCollapsibleTableWidget')),
 
                 Action::make('attachStudentsAction')
                     ->label('Attach Students')
@@ -97,10 +99,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                     )),
 
                 DetachBulkAction::make()->color('warning')
-                    ->after(function () {
-                        $this->dispatch('refreshCollapsibleTableWidget');
-                    }),
-
+                    ->after(fn ($record) => $this->dispatch('refreshCollapsibleTableWidget')),
             ]);
     }
 }

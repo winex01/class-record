@@ -19,11 +19,11 @@ class UpcomingAssessmentsWidget extends CollapsibleTableWidget
 
     /*
         TODO:: events
-            assessment created
-            assessment deleted
-            assessment edited
+            assessment create
+            assessment delete
+            assessment bulk delete
+            assessment edit
             assessment->students pivot
-
     */
 
     public function getCollapsibleBadge(): int|string|null
