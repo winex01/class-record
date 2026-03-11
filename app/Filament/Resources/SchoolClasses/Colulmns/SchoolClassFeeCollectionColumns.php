@@ -49,41 +49,11 @@ class SchoolClassFeeCollectionColumns
 
             'status' =>
             BooleanIconColumn::make('status')
-                ->getStateUsing(function ($record) {
-                    if ($record->is_open_contribution) {
-                        return !$record->students()->wherePivotNull('amount')->exists();
-                    }
-
-                    $students = $record->students()->withPivot(['amount', 'status'])->get();
-
-                    // TODO:: create accessor
-                    // Every student must have paid at least the required amount
-                    $hasUnderpaidOrUnpaid = $students->contains(function ($student) use ($record) {
-                        $paid = $student->pivot->amount ?? 0;
-                        return $paid < $record->amount;
-                    });
-
-                    return !$hasUnderpaidOrUnpaid;
-                })
-                ->tooltip(function ($record) {
-                    if ($record->is_open_contribution) {
-                        $hasPending = $record->students()->wherePivotNull('amount')->exists();
-                        return $hasPending
-                            ? CompletedPendingStatus::PENDING->getLabel()
-                            : CompletedPendingStatus::COMPLETED->getLabel();
-                    }
-
-                    $students = $record->students()->withPivot(['amount', 'status'])->get();
-
-                    $hasUnderpaidOrUnpaid = $students->contains(function ($student) use ($record) {
-                        $paid = $student->pivot->amount ?? 0;
-                        return $paid < $record->amount;
-                    });
-
-                    return !$hasUnderpaidOrUnpaid
-                        ? CompletedPendingStatus::COMPLETED->getLabel()
-                        : CompletedPendingStatus::PENDING->getLabel();
-                })
+                ->state(fn ($record) => $record->is_completed)
+                ->tooltip(fn ($record) => $record->is_completed
+                    ? CompletedPendingStatus::COMPLETED->getLabel()
+                    : CompletedPendingStatus::PENDING->getLabel()
+                )
                 ->sortable(
                     query: fn ($query, string $direction) => $query
                         ->withExists([

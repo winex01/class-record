@@ -24,8 +24,21 @@ class FeeCollection extends Model
             ->withPivot(['amount']);
     }
 
+    // ACCESORS
     public function getIsOpenContributionAttribute(): bool
     {
         return $this->amount === 0.0;
+    }
+
+    public function getIsCompletedAttribute(): bool
+    {
+        if ($this->is_open_contribution) {
+            return !$this->students()->wherePivotNull('amount')->exists();
+        }
+
+        return !$this->students()
+            ->withPivot(['amount'])
+            ->get()
+            ->contains(fn ($student) => ($student->pivot->amount ?? 0) < $this->amount);
     }
 }
