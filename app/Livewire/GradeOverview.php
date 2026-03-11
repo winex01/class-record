@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Student;
 use Livewire\Component;
 use Filament\Tables\Table;
+use App\Models\SchoolClass;
 use Filament\Actions\Action;
 use App\Models\FeeCollection;
 use Filament\Support\Enums\Width;
@@ -22,10 +23,9 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Filters\StudentFilters;
-use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 
-class FeeCollectionOverview extends Component implements HasForms, HasTable, HasActions
+class GradeOverview extends Component implements HasForms, HasTable, HasActions
 {
     use InteractsWithForms;
     use InteractsWithTable;
@@ -33,20 +33,50 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
     use RenderTableTrait;
 
     public $schoolClassId;
+    public $studentsData = [];
 
+    // TODO::
     public function mount($schoolClassId)
     {
         $this->schoolClassId = $schoolClassId;
+        $this->loadData();
         $this->resetTable();
+    }
+
+    public function loadData()
+    {
+        $records = SchoolClass::find($this->schoolClassId)
+            ->feeCollections()
+            ->with('students')
+            ->get();
+
+        dd($records);
+
+        $this->studentsData = static::processData($records);
+    }
+
+    private static function processData($records): array
+    {
+        $studentsData = [];
+
+        foreach ($records as $record) {
+            foreach ($record->students as $student) {
+                if (!isset($studentsData[$student->id])) {
+                    $studentsData[$student->id] = [
+                        'id' => $student->id,
+                        'name' => $student->full_name,
+                    ];
+                }
+            }
+        }
+
+        return array_values($studentsData);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(
-                Student::query()
-                    ->whereIn('id', SchoolClassResource::getStudents($this->schoolClassId))
-            )
+            ->query(Student::query()->whereIn('id', array_column($this->studentsData, 'id')))
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
                 ...SchoolClassStudentColumns::schema(),

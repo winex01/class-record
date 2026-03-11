@@ -6,10 +6,6 @@ trait RenderTableTrait
 {
     public function render()
     {
-        return <<<'HTML'
-            <div>
-                {{ $this->table }}
-            </div>
-        HTML;
+        return view('livewire.base-livewire');
     }
 }

@@ -69,7 +69,7 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
                 Action::make('toggle')
                     ->label(fn ($record) => $record->students->first()?->pivot->present ? 'Mark Absent' : 'Mark Present')
                     ->icon('heroicon-o-arrow-path-rounded-square')
-                    ->color(fn ($record) => $record->students->first()?->pivot->present ? 'danger' : 'success')
+                    ->color(fn ($record) => $record->students->first()?->pivot->present ? 'danger' : 'primary')
                     ->modalDescription(fn ($record) =>
                         'Update attendance for ' . $record->date->format('M d, Y') . '?'
                     )
@@ -87,6 +87,7 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
                             'present' => $newState,
                         ]);
 
+                        // TODO:: dispatch refresh
                         // Dispatch event to refresh the overview table
                         $this->dispatch('refresh-attendance-overview-data');
 

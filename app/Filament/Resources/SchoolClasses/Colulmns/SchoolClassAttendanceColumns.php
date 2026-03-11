@@ -51,9 +51,6 @@ class SchoolClassAttendanceColumns
                 ->color('danger')
                 ->alignCenter()
                 ->underline()
-                ->extraAttributes([
-                    'class' => 'cursor-pointer hover:underline hover:text-primary-600',
-                ])
                 ->state(fn ($record) => $record->students()->wherePivot('present', false)->count())
                 ->sortable(query: function (Builder $query, string $direction): Builder {
                     return $query

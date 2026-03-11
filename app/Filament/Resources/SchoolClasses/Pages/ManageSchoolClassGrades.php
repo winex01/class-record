@@ -4,16 +4,19 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use Filament\Tables\Table;
 use Livewire\Attributes\On;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Illuminate\Support\HtmlString;
 use App\Enums\GradeCompletionStatus;
 use App\Filament\Columns\EnumColumn;
 use App\Filament\Columns\TextColumn;
 use Filament\Support\Enums\TextSize;
+use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -104,6 +107,21 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ])
             ->toolbarActions([
                 CreateAction::make()->label('New Grade')->modalWidth(Width::TwoExtraLarge),
+
+                Action::make('overview')
+                    ->color('info')
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(false)
+                    ->modalWidth(Width::TwoExtraLarge)
+                    ->modalHeading('Student Grade Overview')
+                    ->modalDescription(fn ($livewire) => 'Overview of student grades across all grading period for ' . $livewire->getOwnerRecord()->name)
+                    ->modalContent(fn ($livewire) => new HtmlString(
+                        Blade::render(
+                            '@livewire("grade-overview", ["schoolClassId" => $schoolClassId])',
+                            ['schoolClassId' => $livewire->getOwnerRecord()->id]
+                        )
+                    )),
+
                 GradingSettingActions::action($this->getOwnerRecord()),
                 DeleteBulkAction::make(),
             ]);
