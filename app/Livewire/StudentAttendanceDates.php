@@ -87,10 +87,6 @@ class StudentAttendanceDates extends Component implements HasForms, HasTable, Ha
                             'present' => $newState,
                         ]);
 
-                        // TODO:: dispatch refresh
-                        // Dispatch event to refresh the overview table
-                        $this->dispatch('refresh-attendance-overview-data');
-
                         // Show notification
                         Notification::make()
                             ->title('Attendance Updated')
