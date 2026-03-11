@@ -37,6 +37,15 @@ class PendingFeesWidget extends CollapsibleTableWidget
     }
 
     // TODO:: events CRUD actions, refresh table widget // dont remove this this is my remidner for later tasks
+    /*
+        events
+        create action
+        edit action
+        delete action
+        bulk delete action
+        InputColumn score
+        overview update fee amount
+    */
 
     public function table(Table $table): Table
     {

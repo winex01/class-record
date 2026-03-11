@@ -164,11 +164,13 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
                         ->placeholder(fn ($record) => 'Max: ' . ($record->max_score))
                         ->helperText(fn ($record) => 'Maximum allowed score: ' . ($record->max_score)),
                 ])
-                ->action(function ($record, array $data) {
+                ->action(function ($livewire, $record, array $data) {
                     // Update only the score
                     $record->students()->updateExistingPivot($this->studentId, [
                         'score' => $data['score'],
                     ]);
+
+                    $livewire->dispatch('refreshCollapsibleTableWidget');
 
                     Notification::make()
                         ->title('Score updated successfully')
