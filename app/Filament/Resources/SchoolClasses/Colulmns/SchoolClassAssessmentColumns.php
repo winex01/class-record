@@ -54,17 +54,9 @@ class SchoolClassAssessmentColumns
 
             'status' =>
             BooleanIconColumn::make('status')
-                ->getStateUsing(fn ($record) =>
-                    !$record->students()
-                        ->whereNull('score')
-                        ->exists()
-                )
+                ->state(fn ($record) => $record->is_completed)
                 ->tooltip(function ($record) {
-                    $status = $record->students()
-                        ->whereNull('score')
-                        ->exists();
-
-                    return $status ? CompletedPendingStatus::PENDING->getLabel() : CompletedPendingStatus::COMPLETED->getLabel();
+                    return $record->is_completed ? CompletedPendingStatus::PENDING->getLabel() : CompletedPendingStatus::COMPLETED->getLabel();
                 })
                 ->sortable(
                     query: fn ($query, string $direction) =>

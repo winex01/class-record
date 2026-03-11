@@ -54,4 +54,10 @@ class Assessment extends Model
                 : $q->whereNull('score');
         });
     }
+
+    // ACCESSORS
+    public function getIsCompletedAttribute(): bool
+    {
+        return !$this->students()->whereNull('score')->exists();
+    }
 }
