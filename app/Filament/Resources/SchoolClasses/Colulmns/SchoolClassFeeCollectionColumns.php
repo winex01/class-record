@@ -56,6 +56,7 @@ class SchoolClassFeeCollectionColumns
 
                     $students = $record->students()->withPivot(['amount', 'status'])->get();
 
+                    // TODO:: create accessor
                     // Every student must have paid at least the required amount
                     $hasUnderpaidOrUnpaid = $students->contains(function ($student) use ($record) {
                         $paid = $student->pivot->amount ?? 0;

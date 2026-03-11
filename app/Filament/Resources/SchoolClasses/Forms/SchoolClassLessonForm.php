@@ -64,6 +64,7 @@ class SchoolClassLessonForm
                     Textarea::make('description')
                         ->columnSpanFull(),
                     Select::make('myFiles')
+                        ->hint('Attach related files')
                         ->multiple()
                         ->preload(false)
                         ->options(MyFile::pluck('name', 'id'))
