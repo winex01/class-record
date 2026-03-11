@@ -1,7 +1,5 @@
 <?php
 /*
-TODO:: attendance widgets: Perfect Attendance and Tirediness(count morethan 5 absent)
-
 TODO:: grade overview
 TODO:: table seeders: fee collections
 TODO:: Grades: review computations on components and etc
