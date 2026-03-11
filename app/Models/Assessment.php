@@ -44,4 +44,14 @@ class Assessment extends Model
             'ggc_id'
         )->withTimestamps();
     }
+
+    // SCOPES
+    public function scopeWithScoreStatus($query, bool $completed = false)
+    {
+        return $query->whereHas('students', function ($q) use ($completed) {
+            $completed
+                ? $q->whereNotNull('score')
+                : $q->whereNull('score');
+        });
+    }
 }
