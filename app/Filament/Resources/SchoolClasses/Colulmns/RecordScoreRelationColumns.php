@@ -45,6 +45,9 @@ class RecordScoreRelationColumns
 
                     return 'Max: ' . ($ownerRecord->max_score ?? 0);
                 })
+                ->afterStateUpdated(function ($livewire) {
+                    $livewire->dispatch('refreshCollapsibleTableWidget');
+                })
                 ->disabled(fn () => !$ownerRecord->schoolClass->active),
         ];
     }

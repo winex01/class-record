@@ -17,15 +17,6 @@ class UpcomingAssessmentsWidget extends CollapsibleTableWidget
 
     public ?Model $ownerRecord = null;
 
-    /*
-        TODO:: events
-            assessment create
-            assessment delete
-            assessment bulk delete
-            assessment edit
-            assessment->students pivot
-    */
-
     public function getCollapsibleBadge(): int|string|null
     {
         return Assessment::query()
@@ -84,8 +75,8 @@ class UpcomingAssessmentsWidget extends CollapsibleTableWidget
                                 false
                             );
 
-                            if ($days === 0) return '📝 Today!';
-                            if ($days === 1) return '⏰ Tomorrow!';
+                            if ($days === 0) return '🔥Due Today!';
+                            if ($days === 1) return '⚠️ Due Tomorrow!';
                             if ($days > 1) return 'in ' . $days . ' days';
 
                             return trans_choice(

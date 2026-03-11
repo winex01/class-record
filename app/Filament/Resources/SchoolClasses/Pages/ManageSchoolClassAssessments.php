@@ -58,13 +58,13 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
             ->recordActions([
                 SchoolClassAssessmentActions::recordScoreAction(),
                 ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()->after(fn () => $this->dispatch('refreshCollapsibleTableWidget')),
+                DeleteAction::make()->after(fn () => $this->dispatch('refreshCollapsibleTableWidget')),
             ])
             ->toolbarActions([
                 SchoolClassActions::createWithStudentsAction($this->getOwnerRecord())->label('New Assessment'),
                 SchoolClassAssessmentActions::overviewAction(),
-                DeleteBulkAction::make(),
+                DeleteBulkAction::make()->after(fn () => $this->dispatch('refreshCollapsibleTableWidget')),
             ])
             ->recordAction('recordScoreRelationManager');
     }

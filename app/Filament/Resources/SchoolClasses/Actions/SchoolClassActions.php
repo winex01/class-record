@@ -18,8 +18,9 @@ class SchoolClassActions
     {
         return
             CreateAction::make()
-            ->after(function ($record) use ($getOwnerRecord) {
+            ->after(function ($livewire, $record) use ($getOwnerRecord) {
                 $record->students()->sync(SchoolClassResource::getStudents($getOwnerRecord));
+                $livewire->dispatch('refreshCollapsibleTableWidget');
             });
     }
 
