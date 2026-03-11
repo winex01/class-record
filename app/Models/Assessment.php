@@ -48,10 +48,14 @@ class Assessment extends Model
     // SCOPES
     public function scopeWithScoreStatus($query, bool $completed = false)
     {
-        return $query->whereHas('students', function ($q) use ($completed) {
-            $completed
-                ? $q->whereNotNull('score')
-                : $q->whereNull('score');
+        if ($completed) {
+            return $query->whereDoesntHave('students', function ($q) {
+                $q->whereNull('score');
+            });
+        }
+
+        return $query->whereHas('students', function ($q) {
+            $q->whereNull('score');
         });
     }
 

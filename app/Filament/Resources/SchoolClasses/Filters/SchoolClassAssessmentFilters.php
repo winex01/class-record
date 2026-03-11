@@ -29,36 +29,14 @@ class SchoolClassAssessmentFilters
                 ),
 
             CompletedPendingStatus::COMPLETED->getLabel() => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->whereDoesntHave('students', function ($q) {
-                        $q->whereNull('score');
-                    })
-                )
+                ->modifyQueryUsing(fn ($query) => $query->withScoreStatus(true))
                 ->badgeColor('info')
-                ->badge(fn () =>
-                    $ownerRecord
-                        ->assessments()
-                        ->whereDoesntHave('students', function ($q) {
-                            $q->whereNull('score');
-                        })
-                        ->count()
-                ),
+                ->badge(fn () => $ownerRecord->assessments()->withScoreStatus(true)->count()),
 
             CompletedPendingStatus::PENDING->getLabel() => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) =>
-                    $query->whereHas('students', function ($q) {
-                        $q->whereNull('score');
-                    })
-                )
+                ->modifyQueryUsing(fn ($query) => $query->withScoreStatus(false))
                 ->badgeColor('danger')
-                ->badge(fn () =>
-                    $ownerRecord
-                        ->assessments()
-                        ->whereHas('students', function ($q) {
-                            $q->whereNull('score');
-                        })
-                        ->count()
-                ),
+                ->badge(fn () => $ownerRecord->assessments()->withScoreStatus(false)->count()),
         ];
 
         $tabs['unassigned'] = Tab::make()

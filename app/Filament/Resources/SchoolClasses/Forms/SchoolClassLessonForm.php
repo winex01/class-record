@@ -38,44 +38,44 @@ class SchoolClassLessonForm
             Grid::make(2)
             ->schema([
                 Section::make()
-                ->schema([
-                    TextInput::make('title')
-                        ->required()
-                        ->maxLength(255),
-                    TagsInput::make('tags'),
-                    DatePicker::make('completion_date'),
-                    Repeater::make('checklist')
-                    ->table([
-                        TableColumn::make('Item'),
-                        TableColumn::make('Done')->width(1),
-                    ])
                     ->schema([
-                        TextInput::make('item')->placeholder('Enter checklist item'),
-                        Toggle::make('done')->default(false)
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(255),
+                        TagsInput::make('tags'),
+                        DatePicker::make('completion_date'),
+                        Repeater::make('checklist')
+                        ->table([
+                            TableColumn::make('Item'),
+                            TableColumn::make('Done')->width(1),
+                        ])
+                        ->schema([
+                            TextInput::make('item')->placeholder('Enter checklist item'),
+                            Toggle::make('done')->default(false)
+                        ])
+                        ->compact()
+                        ->minItems(0)
+                        ->defaultItems(0),
                     ])
-                    ->compact()
-                    ->minItems(0)
-                    ->defaultItems(0),
-                ])
-                ->columnSpan(1), // end Section 1
+                    ->columnSpan(1), // end Section 1
 
                 Section::make()
-                ->schema([
-                    Textarea::make('description')
-                        ->columnSpanFull(),
-                    Select::make('myFiles')
-                        ->hint('Attach related files')
-                        ->multiple()
-                        ->preload(false)
-                        ->options(MyFile::pluck('name', 'id'))
-                        ->dehydrated(false)
-                        ->saveRelationshipsUsing(function ($component, $state, $record) {
-                            $record->myFiles()->sync($state ?? []);
-                        })
-                        ->loadStateFromRelationshipsUsing(function ($component, $record) {
-                            $component->state($record->myFiles->pluck('id')->toArray());
-                        }),
-                ])->columnSpan(1), // end Section 2
+                    ->schema([
+                        Textarea::make('description')
+                            ->columnSpanFull(),
+                        Select::make('myFiles')
+                            ->hint('Attach related files')
+                            ->multiple()
+                            ->preload(false)
+                            ->options(MyFile::pluck('name', 'id'))
+                            ->dehydrated(false)
+                            ->saveRelationshipsUsing(function ($component, $state, $record) {
+                                $record->myFiles()->sync($state ?? []);
+                            })
+                            ->loadStateFromRelationshipsUsing(function ($component, $record) {
+                                $component->state($record->myFiles->pluck('id')->toArray());
+                            }),
+                    ])->columnSpan(1), // end Section 2
             ]), // end Grid
         ];
     }
