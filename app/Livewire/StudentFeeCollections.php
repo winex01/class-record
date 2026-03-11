@@ -235,11 +235,13 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                                 }),
                         ]),
                 ])
-                ->action(function ($record, array $data) {
+                ->action(function ($livewire, $record, array $data) {
                     // Update only the score
                     $record->students()->updateExistingPivot($this->studentId, [
                         'amount' => $data['amount'],
                     ]);
+
+                    $livewire->dispatch('refreshCollapsibleTableWidget');
 
                     Notification::make()
                         ->title('Amount updated successfully')

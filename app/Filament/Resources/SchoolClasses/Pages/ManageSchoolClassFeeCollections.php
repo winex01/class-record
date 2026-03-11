@@ -57,15 +57,18 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ->recordActions([
                 SchoolClassFeeCollectionActions::takeFeeAction(),
                 ViewAction::make()->modalWidth(Width::Large),
-                EditAction::make()->modalWidth(Width::Large),
-                DeleteAction::make(),
+                EditAction::make()->modalWidth(Width::Large)
+                    ->after(fn ($livewire) => $livewire->dispatch('refreshCollapsibleTableWidget')),
+                DeleteAction::make()
+                    ->after(fn ($livewire) => $livewire->dispatch('refreshCollapsibleTableWidget')),
             ])
             ->toolbarActions([
                 SchoolClassActions::createWithStudentsAction($this->getOwnerRecord())
                     ->label('New Fee Collection')
                     ->modalWidth(width: Width::Large),
                 SchoolClassFeeCollectionActions::overviewAction(),
-                DeleteBulkAction::make(),
+                DeleteBulkAction::make()
+                    ->after(fn ($livewire) => $livewire->dispatch('refreshCollapsibleTableWidget')),
             ])
             ->recordAction('takeFeeCollectionRelationManager');;
     }

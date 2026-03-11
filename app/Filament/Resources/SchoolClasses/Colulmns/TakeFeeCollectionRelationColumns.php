@@ -29,6 +29,7 @@ class TakeFeeCollectionRelationColumns
                         ? '₱'
                         : 'Fee ₱' . ($ownerRecord->amount ?? 0);
                 })
+                ->afterStateUpdated(fn ($livewire) => $livewire->dispatch('refreshCollapsibleTableWidget'))
                 ->disabled(fn () => !$ownerRecord->schoolClass->active),
         ];
     }

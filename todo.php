@@ -1,7 +1,6 @@
 <?php
 /*
-TODO:: add Widgets in manage resources:
-    -fee collections:: upcoming widgets
+TODO:: attendance widgets: Perfect Attendance and Tirediness(count morethan 5 absent)
 
 TODO:: grade overview
 TODO:: table seeders: fee collections
