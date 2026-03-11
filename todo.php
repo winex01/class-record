@@ -4,8 +4,8 @@ TODO:: add Widgets in manage resources:
     -fee collections:: upcoming widgets
 
 TODO:: grade overview
-TODO:: Grades: review computations on components and etc
 TODO:: table seeders: fee collections
+TODO:: Grades: review computations on components and etc
 TODO:: check all table search if there is an error, including the modals and tables.
 TODO:: check all tables column sortable/order
 TODO:: import student
@@ -14,9 +14,7 @@ TODO:: download active classs in excel
 TODO:: download app backup
 TODO:: licensed Payment
 
---END
-
-Architecture convention
+Code Convention
 Forms
     -StudentForm.php
         ->schema()
