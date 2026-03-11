@@ -89,11 +89,7 @@ class UpcomingAssessmentsWidget extends CollapsibleTableWidget
 
                     TextColumn::make('status')
                         ->state(function ($record) {
-                            $state = $record->students()
-                                ->whereNull('score')
-                                ->exists();
-
-                            return $state ? CompletedPendingStatus::PENDING->getLabel() : CompletedPendingStatus::COMPLETED->getLabel();
+                            return $record->is_completed ? CompletedPendingStatus::COMPLETED->getLabel() : CompletedPendingStatus::PENDING->getLabel();
                         })
                         ->badge()
                         ->color('danger')

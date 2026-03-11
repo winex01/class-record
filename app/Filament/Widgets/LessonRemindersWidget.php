@@ -6,7 +6,9 @@ use Carbon\Carbon;
 use App\Models\Lesson;
 use Filament\Tables\Table;
 use App\Enums\LessonStatus;
+use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\EnumColumn;
+use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Columns\Layout\Split;
@@ -89,6 +91,12 @@ class LessonRemindersWidget extends CollapsibleTableWidget
                             );
                         }),
 
+                    TagsColumn::make('tags')
+                        ->sortable(false)
+                        ->color('primary')
+                        ->badge(false)
+                        ->description('Tags'),
+
                     EnumColumn::make('status')
                         ->enum(LessonStatus::class)
                         ->badge()
@@ -114,7 +122,7 @@ class LessonRemindersWidget extends CollapsibleTableWidget
                             )
                             ->join('<span class="mx-1">, </span>')
                         )
-                        ->description(fn($record) => $record->tags),
+                        ->description(fn ($record) => $record->myFiles->pluck('name')->join(', '))
                 ]),
             ]);
     }

@@ -9,6 +9,7 @@ use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use App\Filament\Widgets\PendingFeesWidget;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -24,6 +25,17 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 
     protected static string $resource = SchoolClassResource::class;
     protected static string $relationship = 'feeCollections';
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ...static::myWidgets($this->getOwnerRecord()),
+
+            PendingFeesWidget::make([
+                'ownerRecord' => $this->getOwnerRecord(),
+            ]),
+        ];
+    }
 
     public function getTabs(): array
     {

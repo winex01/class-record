@@ -10,6 +10,7 @@ use App\Filament\Fields\Textarea;
 use App\Filament\Fields\TagsInput;
 use App\Filament\Fields\TextInput;
 use App\Filament\Fields\DatePicker;
+use App\Filament\Actions\ClearAction;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
@@ -74,7 +75,8 @@ class SchoolClassLessonForm
                             })
                             ->loadStateFromRelationshipsUsing(function ($component, $record) {
                                 $component->state($record->myFiles->pluck('id')->toArray());
-                            }),
+                            })
+                            ->suffixAction(ClearAction::make()),
                     ])->columnSpan(1), // end Section 2
             ]), // end Grid
         ];
