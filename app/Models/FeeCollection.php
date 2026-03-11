@@ -43,14 +43,14 @@ class FeeCollection extends Model
     }
 
     // ACCESORS
-    public function getIsOpenContributionAttribute(): bool
+    public function getIsVoluntaryAttribute(): bool
     {
         return $this->amount === 0.0;
     }
 
     public function getIsCompletedAttribute(): bool
     {
-        if ($this->is_open_contribution) {
+        if ($this->is_voluntary) {
             return !$this->students()->wherePivotNull('amount')->exists();
         }
 

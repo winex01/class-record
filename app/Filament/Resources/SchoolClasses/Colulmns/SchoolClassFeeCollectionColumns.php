@@ -16,11 +16,11 @@ class SchoolClassFeeCollectionColumns
             TextColumn::make('name'),
 
             AmountColumn::make('amount')
-                ->color('info')
-                ->placeholder('—')
                 ->sortable()
                 ->searchable()
-                ->getStateUsing(fn ($record) => $record->amount > 0 ? $record->amount : null),
+                ->color(fn ($record) => $record->is_voluntary ? 'gray' : 'info')
+                ->prefix(fn ($record) => $record->is_voluntary ? false : '₱')
+                ->state(fn ($record) => $record->is_voluntary ? 'Voluntary' : $record->amount),
 
             DateColumn::make('date'),
 

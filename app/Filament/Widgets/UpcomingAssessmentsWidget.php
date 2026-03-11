@@ -21,8 +21,8 @@ class UpcomingAssessmentsWidget extends CollapsibleTableWidget
     {
         return Assessment::query()
             ->where('school_class_id', $this->ownerRecord->id)
-            ->whereNotNull('date')
             ->withScoreStatus(false)
+            ->whereNotNull('date')
             ->where(function ($query) {
                 $query->Where('date', '<', now()->today());
             })->count();

@@ -16,7 +16,7 @@ class SchoolClassFeeCollectionForm
                 ->required(),
 
             NumericInput::make('amount')
-                ->helperText('Enter required amount (0 for open contribution)')
+                ->helperText('Enter 0 for voluntary contribution')
                 ->default(0)
                 ->required()
                 ->minValue(0),

@@ -15,6 +15,6 @@ class AmountColumn extends TextColumn
             ->label(fn ($column): string => Str::headline($column->getName()))
             ->wrap()
             ->prefix('₱')
-            ->formatStateUsing(fn ($state) => number_format($state, 2));
+            ->formatStateUsing(fn ($state) => is_numeric($state) ? number_format((float) $state, 2) : $state);
     }
 }
