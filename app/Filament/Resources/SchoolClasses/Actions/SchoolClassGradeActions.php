@@ -49,20 +49,20 @@ class SchoolClassGradeActions
                             $schoolClass = $ownerRecord;
 
                             // 1. Get All assessment and grouped it by component using grade->id
-                            $groupedAssessments = Grade::assessmentsByComponent(
+                            $assessmentsByComponent = Grade::assessmentsByComponent(
                                 $record->id,
                                 $studentFilter ?? []
                             );
 
                             // 2: Pre-calculate assessment totals
-                            $assessmentMeta = Grade::componentSummary(
+                            $componentSummary = Grade::componentSummary(
                                 $record->id,
-                                $groupedAssessments
+                                $assessmentsByComponent
                             );
 
                             // 3: Pre-process student scores into a lookup array
                             $studentScores = [];
-                            foreach ($groupedAssessments as $label => $assessments) {
+                            foreach ($assessmentsByComponent as $label => $assessments) {
                                 foreach ($assessments as $assessment) {
                                     foreach ($assessment->students as $student) {
                                         $studentScores[$student->id][$assessment->id] = $student->pivot->score ?? null;
@@ -87,7 +87,7 @@ class SchoolClassGradeActions
                             }
 
                             $students = $studentsQuery->get()->groupBy('gender');
-                            $totalAssessmentColumns = $groupedAssessments->sum(fn($assessments) => $assessments->count() + 3);
+                            $totalAssessmentColumns = $assessmentsByComponent->sum(fn($assessments) => $assessments->count() + 3);
                             $totalColumns = $totalAssessmentColumns + 2;
                             $percentageScore = 100;
                             $hasTransmutedGrade = $schoolClass->gradeTransmutations()->exists();
@@ -95,14 +95,14 @@ class SchoolClassGradeActions
                             return compact(
                                 'record',
                                 'schoolClass',
-                                'groupedAssessments',
+                                'assessmentsByComponent',
+                                'componentSummary',
                                 'totalAssessmentColumns',
                                 'totalColumns',
                                 'students',
                                 'percentageScore',
                                 'studentFilter',
                                 'hasTransmutedGrade',
-                                'assessmentMeta',
                                 'studentScores'
                             );
                         }),

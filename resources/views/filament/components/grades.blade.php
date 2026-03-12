@@ -32,9 +32,9 @@
 
                 {{-- ROW 2: Components Label --}}
                 <tr class="component-row">
-                    @foreach($groupedAssessments->keys() as $gradingComponentId)
+                    @foreach($assessmentsByComponent->keys() as $gradingComponentId)
                         @php
-                            $colspan = $groupedAssessments->get($gradingComponentId)->count() + 3;
+                            $colspan = $assessmentsByComponent->get($gradingComponentId)->count() + 3;
                         @endphp
                         <th colspan="{{ $colspan }}" class="component-header">
                             <div class="component-badge">{{ \App\Models\GradingComponent::getLabel($gradingComponentId) }}</div>
@@ -61,7 +61,7 @@
 
                 {{-- ROW 3: Assessment Numbers --}}
                 <tr class="assessment-row">
-                    @foreach($groupedAssessments as $assessments)
+                    @foreach($assessmentsByComponent as $assessments)
                         @foreach($assessments as $item)
                             <th class="assessment-number" title="{{ $item->name }}">
                                 <span class="assessment-badge">{{ $loop->iteration }}</span>
@@ -83,7 +83,7 @@
                             Highest Possible Score
                         </div>
                     </th>
-                    @foreach($groupedAssessments as $gradingComponentId => $assessments)
+                    @foreach($assessmentsByComponent as $gradingComponentId => $assessments)
                         @foreach($assessments as $item)
                             <th class="max-score-value" title="{{ $item->name }} Max Score">
                                 {{ $item->max_score }}
@@ -91,7 +91,7 @@
                         @endforeach
 
                         @php
-                            $meta = $assessmentMeta[$gradingComponentId];
+                            $meta = $componentSummary[$gradingComponentId];
                         @endphp
 
                         <th class="summary-value ts" title="{{ $meta['component_label'] }} Total Score">
@@ -150,10 +150,10 @@
                                 </div>
                             </td>
 
-                            @foreach($groupedAssessments as $gradingComponentId => $assessments)
+                            @foreach($assessmentsByComponent as $gradingComponentId => $assessments)
                                 @php
                                     $TS = 0;
-                                    $meta = $assessmentMeta[$gradingComponentId];
+                                    $meta = $componentSummary[$gradingComponentId];
                                 @endphp
 
                                 @foreach($assessments as $assessment)
