@@ -10,7 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
-use App\Filament\Widgets\UpcomingAssessmentsWidget;
+use App\Filament\Widgets\AssessmentRemindersWidget;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
 use App\Filament\Resources\SchoolClasses\Forms\SchoolClassAssessmentForm;
@@ -30,7 +30,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
         return [
             ...static::myWidgets($this->getOwnerRecord()),
 
-            UpcomingAssessmentsWidget::make([
+            AssessmentRemindersWidget::make([
                 'ownerRecord' => $this->getOwnerRecord(),
             ]),
         ];

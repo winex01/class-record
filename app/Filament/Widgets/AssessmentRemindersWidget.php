@@ -10,9 +10,9 @@ use App\Enums\CompletedPendingStatus;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Columns\Layout\Split;
 
-class UpcomingAssessmentsWidget extends CollapsibleTableWidget
+class AssessmentRemindersWidget extends CollapsibleTableWidget
 {
-    protected static ?string $heading = '📝 Upcoming Assessments';
+    protected static ?string $heading = '📝 Assessment Reminders';
     protected int | string | array $columnSpan = 'full';
 
     public ?Model $ownerRecord = null;
