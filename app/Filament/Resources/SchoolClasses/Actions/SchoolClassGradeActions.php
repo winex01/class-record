@@ -54,26 +54,11 @@ class SchoolClassGradeActions
                                 $studentFilter ?? []
                             );
 
-                            dd($groupedAssessments->toArray());
-
                             // 2: Pre-calculate assessment totals
-                            $assessmentMeta = [];
-                            foreach ($groupedAssessments as $label => $assessments) {
-                                $totalScore = 0;
-                                $firstAssessment = $assessments->first();
-                                $gradeGradingComponent = $firstAssessment->gradeGradingComponents->first();
-
-                                foreach ($assessments as $assessment) {
-                                    $totalScore += $assessment->max_score;
-                                }
-
-                                $assessmentMeta[$label] = [
-                                    'total_score' => $totalScore,
-                                    'weighted_score' => $gradeGradingComponent->gradingComponent->weighted_score,
-                                    'weighted_score_label' => $gradeGradingComponent->gradingComponent->weighted_score_percentage_label,
-                                    'component_label' => $gradeGradingComponent->gradingComponent->name,
-                                ];
-                            }
+                            $assessmentMeta = Grade::componentSummary(
+                                $record->id,
+                                $groupedAssessments
+                            );
 
                             // 3: Pre-process student scores into a lookup array
                             $studentScores = [];
@@ -102,7 +87,6 @@ class SchoolClassGradeActions
                             }
 
                             $students = $studentsQuery->get()->groupBy('gender');
-
                             $totalAssessmentColumns = $groupedAssessments->sum(fn($assessments) => $assessments->count() + 3);
                             $totalColumns = $totalAssessmentColumns + 2;
                             $percentageScore = 100;

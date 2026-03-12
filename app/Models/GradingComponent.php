@@ -27,4 +27,15 @@ class GradingComponent extends Model
     {
         return (int) round(floatval($this->weighted_score)) . "%";
     }
+
+    /**
+     * Static — use when you only have the ID
+     * GradingComponent::getLabel(id: 107)
+     */
+    public static function getLabel(int $id): string
+    {
+        $gradingComponent = static::findOrFail($id);
+
+        return $gradingComponent->label;
+    }
 }

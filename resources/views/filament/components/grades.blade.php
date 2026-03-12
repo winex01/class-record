@@ -32,13 +32,12 @@
 
                 {{-- ROW 2: Components Label --}}
                 <tr class="component-row">
-                    @foreach($groupedAssessments->keys() as $label)
+                    @foreach($groupedAssessments->keys() as $gradingComponentId)
                         @php
-                            $currentAssessments = $groupedAssessments->get($label);
-                            $colspan = $currentAssessments->count() + 3;
+                            $colspan = $groupedAssessments->get($gradingComponentId)->count() + 3;
                         @endphp
                         <th colspan="{{ $colspan }}" class="component-header">
-                            <div class="component-badge">{{ $label }}</div>
+                            <div class="component-badge">{{ \App\Models\GradingComponent::getLabel($gradingComponentId) }}</div>
                         </th>
                     @endforeach
 
@@ -84,7 +83,7 @@
                             Highest Possible Score
                         </div>
                     </th>
-                    @foreach($groupedAssessments as $label => $assessments)
+                    @foreach($groupedAssessments as $gradingComponentId => $assessments)
                         @foreach($assessments as $item)
                             <th class="max-score-value" title="{{ $item->name }} Max Score">
                                 {{ $item->max_score }}
@@ -92,7 +91,7 @@
                         @endforeach
 
                         @php
-                            $meta = $assessmentMeta[$label];
+                            $meta = $assessmentMeta[$gradingComponentId];
                         @endphp
 
                         <th class="summary-value ts" title="{{ $meta['component_label'] }} Total Score">
@@ -151,10 +150,10 @@
                                 </div>
                             </td>
 
-                            @foreach($groupedAssessments as $label => $assessments)
+                            @foreach($groupedAssessments as $gradingComponentId => $assessments)
                                 @php
                                     $TS = 0;
-                                    $meta = $assessmentMeta[$label];
+                                    $meta = $assessmentMeta[$gradingComponentId];
                                 @endphp
 
                                 @foreach($assessments as $assessment)
