@@ -62,7 +62,7 @@ class SchoolClassGradeActions
 
                             // 3: Pre-process student scores into a lookup array
                             $studentScores = [];
-                            foreach ($assessmentsByComponent as $label => $assessments) {
+                            foreach ($assessmentsByComponent as $assessments) {
                                 foreach ($assessments as $assessment) {
                                     foreach ($assessment->students as $student) {
                                         $studentScores[$student->id][$assessment->id] = $student->pivot->score ?? null;
@@ -97,11 +97,10 @@ class SchoolClassGradeActions
                                 'schoolClass',
                                 'assessmentsByComponent',
                                 'componentSummary',
+                                'students',
                                 'totalAssessmentColumns',
                                 'totalColumns',
-                                'students',
                                 'percentageScore',
-                                'studentFilter',
                                 'hasTransmutedGrade',
                                 'studentScores'
                             );
