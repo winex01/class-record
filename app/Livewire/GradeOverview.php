@@ -5,10 +5,6 @@ namespace App\Livewire;
 use App\Models\Student;
 use Livewire\Component;
 use Filament\Tables\Table;
-use Filament\Actions\Action;
-use Filament\Support\Enums\Width;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Facades\Blade;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use App\Livewire\Traits\RenderTableTrait;
@@ -44,12 +40,15 @@ class GradeOverview extends Component implements HasForms, HasTable, HasActions
             ->columns([
                 ...SchoolClassStudentColumns::schema(),
 
+                /* TODO::
+
+                    | Grading Period | Final Grade|
+                    | 1 | 2 | 3 | 4 |             |
+                */
+
             ])
             ->filters([
                 StudentFilters::gender()
-            ])
-            ->recordActions([
-                // TODO::
             ])
             ->emptyStateHeading(false)
             ->emptyStateDescription(false)
