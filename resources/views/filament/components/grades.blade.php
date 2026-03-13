@@ -177,7 +177,7 @@
 
                             @php $initialGrade = $gradeService->initialGrade($student->id); @endphp
 
-                            <td class="final-grade" title="Initial Grade">
+                            <td class="final-grade" title="{{ $hasTransmutedGrade ? 'Initial ' : null }} Grade">
                                 <div class="grade-badge initial">{{ number_format($initialGrade, 2) }}</div>
                             </td>
 
