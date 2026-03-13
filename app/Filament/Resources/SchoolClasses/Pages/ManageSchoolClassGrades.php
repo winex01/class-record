@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use Filament\Tables\Table;
+use App\Models\SchoolClass;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -126,6 +127,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ])
             ->paginated(false)
             ->actionsAlignment('start')
-            ->reorderable('sort');
+            ->reorderable('sort', $this->getOwnerRecord()->active);
     }
 }
