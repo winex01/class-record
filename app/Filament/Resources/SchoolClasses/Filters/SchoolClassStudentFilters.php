@@ -11,19 +11,19 @@ class SchoolClassStudentFilters
     public static function getTabs($ownerRecord)
     {
         return [
-            'all' => Tab::make()
+            'all' => Tab::make('All')
                 ->badge(fn () =>
                     $ownerRecord->students()->count()
                 ),
 
-            'Male' => Tab::make()
+            'male' => Tab::make('Male')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('gender', Gender::MALE->value))
                 ->badgeColor(Gender::MALE->getColor())
                 ->badge(fn () =>
                     $ownerRecord->students()->where('gender', Gender::MALE->value)->count()
                 ),
 
-            'Female' => Tab::make()
+            'female' => Tab::make('Female')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('gender', Gender::FEMALE->value))
                 ->badgeColor(Gender::FEMALE->getColor())
                 ->badge(fn () =>

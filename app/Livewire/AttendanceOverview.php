@@ -32,9 +32,6 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
 
     public $schoolClassId;
 
-    // Define the activeTab property as public
-    public ?string $activeTab = null;
-
     public function mount($schoolClassId)
     {
         $this->schoolClassId = $schoolClassId;
@@ -65,12 +62,6 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
                 ->badge($perfectAttendanceCount)
                 ->badgeColor('success'), // Optional: set badge color
         ];
-    }
-
-    // This method is called when activeTab changes
-    public function updatedActiveTab()
-    {
-        $this->resetTable();
     }
 
     public function table(Table $table): Table

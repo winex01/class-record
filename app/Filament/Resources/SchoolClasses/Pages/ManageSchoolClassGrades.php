@@ -108,16 +108,16 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ->toolbarActions([
                 CreateAction::make()->label('New Grade')->modalWidth(Width::TwoExtraLarge),
 
-                Action::make('overview')
+                Action::make('finalGrades')
+                    ->label('Final Grades')
                     ->color('info')
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false)
-                    ->modalWidth(Width::TwoExtraLarge)
-                    ->modalHeading('Student Grade Overview')
-                    ->modalDescription(fn ($livewire) => 'Overview of student grades across all grading period for ' . $livewire->getOwnerRecord()->name)
+                    ->modalWidth(Width::FiveExtraLarge)
+                    ->modalHeading('Student Final Grades')
                     ->modalContent(fn ($livewire) => new HtmlString(
                         Blade::render(
-                            '@livewire("grade-overview", ["schoolClassId" => $schoolClassId])',
+                            '@livewire("final-grades", ["schoolClassId" => $schoolClassId])',
                             ['schoolClassId' => $livewire->getOwnerRecord()->id]
                         )
                     )),

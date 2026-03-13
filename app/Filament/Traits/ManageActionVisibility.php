@@ -16,6 +16,7 @@ trait ManageActionVisibility
             'openColumnManager',
 
             'overview',
+            'finalGrades',
 
             // manage students
             'attachSelectedStudents',
