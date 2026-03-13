@@ -15,6 +15,10 @@ trait ManageActionVisibility
             'openFilters',
             'openColumnManager',
 
+            'clearAll',
+            'settingsAction',
+            'clearAction',
+
             'overview',
             'finalGrades',
 
@@ -37,9 +41,7 @@ trait ManageActionVisibility
 
             // manage grades
             'grades',
-            'clearAll',
-            'settingsAction',
-            'clearAction',
+            'gradingSettingsAction',
         ];
 
         Action::configureUsing(function (Action $action) use ($excludedActions) {

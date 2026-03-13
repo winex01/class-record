@@ -2,12 +2,10 @@
 
 namespace App\Livewire;
 
-use App\Enums\Gender;
 use App\Models\Grade;
 use App\Models\Student;
 use Livewire\Component;
 use Filament\Tables\Table;
-use App\Models\SchoolClass;
 use App\Filament\Columns\TextColumn;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
@@ -20,7 +18,6 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Filament\Resources\SchoolClasses\Filters\SchoolClassStudentFilters;
 use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 
 class FinalGrades extends Component implements HasForms, HasTable, HasActions
@@ -36,24 +33,11 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
     {
         $this->schoolClassId = $schoolClassId;
         $this->resetTable();
-
-        $this->activeTab = array_key_first($this->getTabs());
-    }
-
-    public function getTabs(): array
-    {
-        return SchoolClassStudentFilters::getTabs(SchoolClass::findOrFail($this->schoolClassId));
     }
 
     public function table(Table $table): Table
     {
         $query = Student::query()->whereIn('id', SchoolClassResource::getStudents($this->schoolClassId));
-
-        if ($this->activeTab === 'male') {
-            $query->where('gender', Gender::MALE->value);
-        } elseif ($this->activeTab === 'female') {
-            $query->where('gender', Gender::FEMALE->value);
-        }
 
         return $table
             ->query($query)

@@ -1,6 +1,8 @@
 <?php
 /*
+TODO:: manage class grade add modal description in Final Grades action
 TODO:: add order row in ManageGrade table
+TODO:: if school class / subject is archived show grading settings but readonly
 TODO:: transfer all short actions into the page dont create uunecessary actions function/file except for those complicated long ations or reusable actions
 TODO:: remove split columns in school class table
 TODO:: table seeders: fee collections
