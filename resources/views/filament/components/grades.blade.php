@@ -32,12 +32,14 @@
 
                 {{-- ROW 2: Components Label --}}
                 <tr class="component-row">
-                    @foreach($assessmentsByComponent->keys() as $gradingComponentId)
+                    @foreach($gradeService->assessmentsByComponent()->keys() as $gradingComponentId)
                         @php
-                            $colspan = $assessmentsByComponent->get($gradingComponentId)->count() + 3;
+                            $colspan = $gradeService->assessmentsByComponent()->get($gradingComponentId)->count() + 3;
                         @endphp
                         <th colspan="{{ $colspan }}" class="component-header">
-                            <div class="component-badge">{{ \App\Models\GradingComponent::getLabel($gradingComponentId) }}</div>
+                            <div class="component-badge">
+                                {{ \App\Models\GradingComponent::getLabel($gradingComponentId) }}
+                            </div>
                         </th>
                     @endforeach
 
@@ -61,7 +63,7 @@
 
                 {{-- ROW 3: Assessment Numbers --}}
                 <tr class="assessment-row">
-                    @foreach($assessmentsByComponent as $assessments)
+                    @foreach($gradeService->assessmentsByComponent() as $assessments)
                         @foreach($assessments as $item)
                             <th class="assessment-number" title="{{ $item->name }}">
                                 <span class="assessment-badge">{{ $loop->iteration }}</span>
@@ -83,21 +85,23 @@
                             Highest Possible Score
                         </div>
                     </th>
-                    @foreach($assessmentsByComponent as $gradingComponentId => $assessments)
+                    @foreach($gradeService->assessmentsByComponent() as $gradingComponentId => $assessments)
                         @foreach($assessments as $item)
                             <th class="max-score-value" title="{{ $item->name }} Max Score">
                                 {{ $item->max_score }}
                             </th>
                         @endforeach
 
-                        <th class="summary-value ts" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Total Score">
-                            {{ $componentSummary[$gradingComponentId]['total_score'] }}
+                        @php $meta = $gradeService->componentSummary()[$gradingComponentId]; @endphp
+
+                        <th class="summary-value ts" title="{{ $meta['component_label'] }} Total Score">
+                            {{ $meta['total_score'] }}
                         </th>
-                        <th class="summary-value ps" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Percentage Score">
-                            {{ $percentageScore }}
+                        <th class="summary-value ps" title="{{ $meta['component_label'] }} Percentage Score">
+                            100
                         </th>
-                        <th class="summary-value ws" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Weighted Score">
-                            {{ $componentSummary[$gradingComponentId]['weighted_score_label'] ?? '-' }}
+                        <th class="summary-value ws" title="{{ $meta['component_label'] }} Weighted Score">
+                            {{ $meta['weighted_score_label'] ?? '-' }}
                         </th>
                     @endforeach
                 </tr>
@@ -126,11 +130,7 @@
                         <td colspan="{{ $totalColumns }}" class="gender-spacer"></td>
                     </tr>
 
-
                     @foreach ($studentByGender as $student)
-                        @php
-                            $weightedScores = [];
-                        @endphp
                         <tr class="student-row">
                             <td class="frozen-column student-name">
                                 <div class="name-cell">
@@ -147,11 +147,9 @@
                                 </div>
                             </td>
 
-                            @foreach($assessmentsByComponent as $gradingComponentId => $assessments)
+                            @foreach($gradeService->assessmentsByComponent() as $gradingComponentId => $assessments)
                                 @foreach($assessments as $assessment)
-                                    @php
-                                        $score = $assessment->getScore($student->id);
-                                    @endphp
+                                    @php $score = $assessment->getScore($student->id); @endphp
                                     <td class="score-cell" title="{{ $assessment->name }} Raw Score">
                                         <span class="{{ $score !== null ? 'score-value' : 'score-empty' }}">
                                             {{ $score ?? '-' }}
@@ -160,27 +158,24 @@
                                 @endforeach
 
                                 @php
-                                    $TS = \App\Models\Grade::totalScore($assessments, $student->id);
-                                    $PS = \App\Models\Grade::percentageScore($TS, $componentSummary[$gradingComponentId]['total_score']);
-                                    $WS = \App\Models\Grade::weightedScore($PS, $componentSummary[$gradingComponentId]['weighted_score']);
-
-                                    $weightedScores[] = $WS;
+                                    $meta = $gradeService->componentSummary()[$gradingComponentId];
+                                    $TS   = $gradeService->totalScore($assessments, $student->id);
+                                    $PS   = $gradeService->percentageScore($TS, $meta['total_score']);
+                                    $WS   = $gradeService->weightedScore($PS, $meta['weighted_score']);
                                 @endphp
 
-                                <td class="summary-cell ts" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Total Score">
+                                <td class="summary-cell ts" title="{{ $meta['component_label'] }} Total Score">
                                     {{ $TS }}
                                 </td>
-                                <td class="summary-cell ps" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Percentage Score">
+                                <td class="summary-cell ps" title="{{ $meta['component_label'] }} Percentage Score">
                                     {{ number_format($PS, 2) }}
                                 </td>
-                                <td class="summary-cell ws" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Weighted Score">
+                                <td class="summary-cell ws" title="{{ $meta['component_label'] }} Weighted Score">
                                     {{ number_format($WS, 2) }}
                                 </td>
                             @endforeach
 
-                            @php
-                                $initialGrade = \App\Models\Grade::initialGrade($weightedScores);
-                            @endphp
+                            @php $initialGrade = $gradeService->initialGrade($student->id); @endphp
 
                             <td class="final-grade" title="Initial Grade">
                                 <div class="grade-badge initial">{{ number_format($initialGrade, 2) }}</div>
@@ -189,13 +184,12 @@
                             @if ($hasTransmutedGrade)
                                 <td class="final-grade" title="Transmuted Grade">
                                     <div class="grade-badge transmuted">
-                                        {{ \App\Models\Grade::transmutedGrade($initialGrade, $record->id) }}
+                                        {{ $gradeService->transmutedGrade($initialGrade) }}
                                     </div>
                                 </td>
                             @endif
                         </tr>
                     @endforeach
-
                 @endforeach
             </tbody>
         </table>

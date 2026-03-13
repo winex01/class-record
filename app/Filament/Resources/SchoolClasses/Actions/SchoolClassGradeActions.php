@@ -10,6 +10,7 @@ use Filament\Support\Enums\Width;
 use Illuminate\Support\HtmlString;
 use App\Filament\Actions\ClearAction;
 use Filament\Schemas\Components\View;
+use App\Services\GradeComputationService;
 
 class SchoolClassGradeActions
 {
@@ -45,21 +46,10 @@ class SchoolClassGradeActions
                     View::make('filament.components.grades')
                         ->viewData(function ($get, $record) use ($ownerRecord) {
                             $studentFilter = $get('student_filter');
-                            $schoolClass = $ownerRecord;
+                            $schoolClass   = $ownerRecord;
 
-                            // 1. Get All assessment and grouped it by component using grade->id
-                            $assessmentsByComponent = Grade::assessmentsByComponent(
-                                $record->id,
-                                $studentFilter ?? []
-                            );
+                            $gradeService = new GradeComputationService($record, $studentFilter ?? []);
 
-                            // 2: Pre-calculate assessment totals
-                            $componentSummary = Grade::componentSummary(
-                                $record->id,
-                                $assessmentsByComponent
-                            );
-
-                            // Filter students - select actual columns, not accessors
                             $studentsQuery = $schoolClass->students()
                                 ->select(
                                     'students.id',
@@ -75,21 +65,16 @@ class SchoolClassGradeActions
                                 $studentsQuery->whereIn('students.id', $studentFilter);
                             }
 
-                            $students = $studentsQuery->get()->groupBy('gender');
-                            $totalAssessmentColumns = $assessmentsByComponent->sum(fn($assessments) => $assessments->count() + 3);
-                            $totalColumns = $totalAssessmentColumns + 2;
-                            $percentageScore = 100;
+                            $students           = $studentsQuery->get()->groupBy('gender');
+                            $totalColumns       = $gradeService->assessmentsByComponent()->sum(fn($a) => $a->count() + 3) + 2;
                             $hasTransmutedGrade = $schoolClass->gradeTransmutations()->exists();
 
                             return compact(
                                 'record',
                                 'schoolClass',
-                                'assessmentsByComponent',
-                                'componentSummary',
+                                'gradeService',
                                 'students',
-                                'totalAssessmentColumns',
                                 'totalColumns',
-                                'percentageScore',
                                 'hasTransmutedGrade',
                             );
                         }),
