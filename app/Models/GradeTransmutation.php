@@ -13,13 +13,4 @@ class GradeTransmutation extends Model
     use BelongsToSchoolClass;
 
     protected $guarded = [];
-
-    public static function transmute(Collection $transmutations, float $rawGrade): float
-    {
-        $match = $transmutations->first(
-            fn($t) => $rawGrade >= $t->initial_min && $rawGrade <= $t->initial_max
-        );
-
-        return $match?->transmuted_grade ?? $rawGrade;
-    }
 }

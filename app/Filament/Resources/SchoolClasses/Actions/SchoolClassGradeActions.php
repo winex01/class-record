@@ -42,7 +42,6 @@ class SchoolClassGradeActions
                         ->extraAttributes(['style' => 'position: relative; z-index: 50;'])
                         ->suffixAction(ClearAction::make()),
 
-                    // TODO:: refactor
                     View::make('filament.components.grades')
                         ->viewData(function ($get, $record) use ($ownerRecord) {
                             $studentFilter = $get('student_filter');
@@ -59,16 +58,6 @@ class SchoolClassGradeActions
                                 $record->id,
                                 $assessmentsByComponent
                             );
-
-                            // 3: Pre-process student scores into a lookup array
-                            $studentScores = [];
-                            foreach ($assessmentsByComponent as $assessments) {
-                                foreach ($assessments as $assessment) {
-                                    foreach ($assessment->students as $student) {
-                                        $studentScores[$student->id][$assessment->id] = $student->pivot->score ?? null;
-                                    }
-                                }
-                            }
 
                             // Filter students - select actual columns, not accessors
                             $studentsQuery = $schoolClass->students()
@@ -102,7 +91,6 @@ class SchoolClassGradeActions
                                 'totalColumns',
                                 'percentageScore',
                                 'hasTransmutedGrade',
-                                'studentScores'
                             );
                         }),
                     ];

@@ -90,18 +90,14 @@
                             </th>
                         @endforeach
 
-                        @php
-                            $meta = $componentSummary[$gradingComponentId];
-                        @endphp
-
-                        <th class="summary-value ts" title="{{ $meta['component_label'] }} Total Score">
-                            {{ $meta['total_score'] }}
+                        <th class="summary-value ts" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Total Score">
+                            {{ $componentSummary[$gradingComponentId]['total_score'] }}
                         </th>
-                        <th class="summary-value ps" title="{{ $meta['component_label'] }} Percentage Score">
+                        <th class="summary-value ps" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Percentage Score">
                             {{ $percentageScore }}
                         </th>
-                        <th class="summary-value ws" title="{{ $meta['component_label'] }} Weighted Score">
-                            {{ $meta['weighted_score_label'] ?? '-' }}
+                        <th class="summary-value ws" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Weighted Score">
+                            {{ $componentSummary[$gradingComponentId]['weighted_score_label'] ?? '-' }}
                         </th>
                     @endforeach
                 </tr>
@@ -130,9 +126,10 @@
                         <td colspan="{{ $totalColumns }}" class="gender-spacer"></td>
                     </tr>
 
+
                     @foreach ($studentByGender as $student)
                         @php
-                            $studentInitialGrade = 0;
+                            $weightedScores = [];
                         @endphp
                         <tr class="student-row">
                             <td class="frozen-column student-name">
@@ -151,62 +148,54 @@
                             </td>
 
                             @foreach($assessmentsByComponent as $gradingComponentId => $assessments)
-                                @php
-                                    $TS = 0;
-                                    $meta = $componentSummary[$gradingComponentId];
-                                @endphp
-
                                 @foreach($assessments as $assessment)
                                     @php
-                                        $score = $studentScores[$student->id][$assessment->id] ?? null;
-                                        $TS += $score ?? 0;
+                                        $score = $assessment->getScore($student->id);
                                     @endphp
                                     <td class="score-cell" title="{{ $assessment->name }} Raw Score">
-                                        @if($score !== null)
-                                            <span class="score-value">{{ $score }}</span>
-                                        @else
-                                            <span class="score-empty">-</span>
-                                        @endif
+                                        <span class="{{ $score !== null ? 'score-value' : 'score-empty' }}">
+                                            {{ $score ?? '-' }}
+                                        </span>
                                     </td>
                                 @endforeach
 
                                 @php
-                                    $PS_raw = round(($TS / $meta['total_score']) * $percentageScore, 2);
-                                    $WS_raw = round($PS_raw * ($meta['weighted_score'] / 100), 2);
-                                    $studentInitialGrade += $WS_raw;
+                                    $TS = \App\Models\Grade::totalScore($assessments, $student->id);
+                                    $PS = \App\Models\Grade::percentageScore($TS, $componentSummary[$gradingComponentId]['total_score']);
+                                    $WS = \App\Models\Grade::weightedScore($PS, $componentSummary[$gradingComponentId]['weighted_score']);
 
-                                    $PS_display = number_format($PS_raw, 2);
-                                    $WS_display = number_format($WS_raw, 2);
+                                    $weightedScores[] = $WS;
                                 @endphp
 
-                                <td class="summary-cell ts" title="{{ $meta['component_label'] }} Total Score">
+                                <td class="summary-cell ts" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Total Score">
                                     {{ $TS }}
                                 </td>
-                                <td class="summary-cell ps" title="{{ $meta['component_label'] }} Percentage Score">
-                                    {{ $PS_display }}
+                                <td class="summary-cell ps" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Percentage Score">
+                                    {{ number_format($PS, 2) }}
                                 </td>
-                                <td class="summary-cell ws" title="{{ $meta['component_label'] }} Weighted Score">
-                                    {{ $WS_display }}
+                                <td class="summary-cell ws" title="{{ $componentSummary[$gradingComponentId]['component_label'] }} Weighted Score">
+                                    {{ number_format($WS, 2) }}
                                 </td>
                             @endforeach
 
                             @php
-                                $studentInitialGrade = number_format(round($studentInitialGrade, 2), 2);
+                                $initialGrade = \App\Models\Grade::initialGrade($weightedScores);
                             @endphp
 
                             <td class="final-grade" title="Initial Grade">
-                                <div class="grade-badge initial">{{ $studentInitialGrade }}</div>
+                                <div class="grade-badge initial">{{ number_format($initialGrade, 2) }}</div>
                             </td>
 
                             @if ($hasTransmutedGrade)
                                 <td class="final-grade" title="Transmuted Grade">
                                     <div class="grade-badge transmuted">
-                                        {{ App\Models\GradeTransmutation::transmute($schoolClass->gradeTransmutations, $studentInitialGrade) }}
+                                        {{ \App\Models\Grade::transmutedGrade($initialGrade, $record->id) }}
                                     </div>
                                 </td>
                             @endif
                         </tr>
                     @endforeach
+
                 @endforeach
             </tbody>
         </table>

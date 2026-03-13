@@ -64,4 +64,10 @@ class Assessment extends Model
     {
         return !$this->students()->whereNull('score')->exists();
     }
+
+    // Helper
+    public function getScore(int $studentId): int|float|null
+    {
+        return $this->students->firstWhere('id', $studentId)?->pivot->score ?? null;
+    }
 }

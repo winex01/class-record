@@ -89,4 +89,43 @@ class Grade extends Model
 
         return $summary;
     }
+
+    public static function totalScore(Collection $assessments, int $studentId): int|float
+    {
+        return $assessments->sum(fn($assessment) => $assessment->getScore($studentId) ?? 0);
+    }
+
+    public static function percentageScore(int|float $totalScore, int|float $maxTotalScore): float
+    {
+        if ($maxTotalScore == 0) return 0;
+
+        return round(($totalScore / $maxTotalScore) * 100, 2);
+    }
+
+    public static function weightedScore(float $percentageScore, int|float $componentWeightedScore): float
+    {
+        return round($percentageScore * ($componentWeightedScore / 100), 2);
+    }
+
+    public static function initialGrade(array $weightedScores): float
+    {
+        return round(array_sum($weightedScores), 2);
+    }
+
+    public static function transmutedGrade(float $initialGrade, int $gradeId): float|string|null
+    {
+        $grade = static::with('schoolClass.gradeTransmutations')->findOrFail($gradeId);
+
+        $transmutations = $grade->schoolClass->gradeTransmutations;
+
+        if ($transmutations->isEmpty()) {
+            return null;
+        }
+
+        $match = $transmutations
+            ->filter(fn($t) => $initialGrade >= $t->initial_min && $initialGrade <= $t->initial_max)
+            ->first();
+
+        return $match?->transmuted_grade ?? $initialGrade;
+    }
 }
