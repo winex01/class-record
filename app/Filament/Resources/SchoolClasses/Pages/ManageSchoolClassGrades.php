@@ -64,14 +64,15 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     {
         return $table
             ->recordTitleAttribute('grading_period')
-            ->defaultSort('grading_period', 'asc')
+            ->defaultSort('sort', 'asc')
             ->columns([
                 TextColumn::make('grading_period')
                     ->toggleable(false)
                     ->label('Grading Period')
                     ->color('primary')
                     ->size(TextSize::Large)
-                    ->searchable(false),
+                    ->searchable(false)
+                    ->sortable(false),
 
                 EnumColumn::make('status')
                     ->toggleable(false)
@@ -97,8 +98,6 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                             : null;
                     })
             ])
-            ->paginated(false)
-            ->actionsAlignment('start')
             ->recordActions([
                 SchoolClassGradeActions::viewGradesAction($this->getOwnerRecord()),
                 ViewAction::make()->modalWidth(Width::TwoExtraLarge),
@@ -124,6 +123,9 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
 
                 GradingSettingActions::action($this->getOwnerRecord()),
                 DeleteBulkAction::make(),
-            ]);
+            ])
+            ->paginated(false)
+            ->actionsAlignment('start')
+            ->reorderable('sort');
     }
 }

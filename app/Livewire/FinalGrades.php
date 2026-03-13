@@ -57,7 +57,7 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
 
     public function columnsSchema()
     {
-        $grades = Grade::where('school_class_id', $this->schoolClassId)->get();
+        $grades = Grade::where('school_class_id', $this->schoolClassId)->orderBy('sort', 'asc')->get();
 
         // Cache services outside the closure — one per grade, not one per student
         $gradeServices = $grades->mapWithKeys(fn(Grade $grade) => [
