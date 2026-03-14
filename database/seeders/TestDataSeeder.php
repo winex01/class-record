@@ -7,6 +7,7 @@ use App\Enums\Gender;
 use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\SchoolClass;
+use App\Models\FeeCollection;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -60,8 +61,31 @@ class TestDataSeeder extends Seeder
         $this->generateAssessment($class, 4, 4, '50-60'); // Project
         $this->generateAssessment($class, 5, 4, '50-80'); // oral
 
-        // lesson
         Lesson::factory()->count(5)->forUser(1)->forSchoolClass(1)->create();
+
+        $this->generateFeeCollections($class);
+    }
+
+    private function generateFeeCollections(SchoolClass $class)
+    {
+        $feeCollections = collect([
+            ...FeeCollection::factory()->count(9)->forUser($class->user_id)->forSchoolClass($class->id)->create(),
+            ...FeeCollection::factory()->count(1)->forUser($class->user_id)->forSchoolClass($class->id)->forOpenContribution()->create(),
+        ]);
+
+        $feeCollections->each(function ($feeCollection) use ($class) {
+            $pivotData = $class->students->mapWithKeys(function ($student) use ($feeCollection) {
+                return [
+                    $student->id => [
+                        'amount' => $feeCollection->amount == 0
+                            ? fake()->randomElement([50, 100, 150, 200, 250, 300, 500])
+                            : $feeCollection->amount,
+                    ],
+                ];
+            });
+
+            $feeCollection->students()->attach($pivotData);
+        });
     }
 
     private function generateAssessment(SchoolClass $class, $assessmentTypeId, $count = 5, $maxScoreRange = '15-100')
