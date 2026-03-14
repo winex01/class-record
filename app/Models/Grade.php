@@ -16,11 +16,6 @@ class Grade extends Model
 
     public function gradeGradingComponents()
     {
-        return $this->hasMany(GradeGradingComponent::class);
-    }
-
-    public function orderedGradeGradingComponents()
-    {
         return $this->hasMany(GradeGradingComponent::class)
             ->orderBy(
                 GradingComponent::select('sort')
