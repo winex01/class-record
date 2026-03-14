@@ -57,7 +57,7 @@ class SchoolClassResource extends Resource
             ->columns(SchoolClassColumns::schema())
             ->recordActions([
                 Action::make('manageClass')
-                    ->label('Class')
+                    ->label('Manage')
                     ->color('info')
                     ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
                     ->icon(StudentResource::getNavigationIcon()),
@@ -88,8 +88,8 @@ class SchoolClassResource extends Resource
 
                 DeleteBulkAction::make(),
             ])
-            ->reorderable('sort', direction: 'desc')
-            ->recordUrl(fn ($record) => route('filament.app.resources.school-classes.students', $record));
+            ->reorderable('sort', direction: 'desc');
+            // ->recordUrl(fn ($record) => route('filament.app.resources.school-classes.students', $record));
     }
 
     public static function getStudents(SchoolClass|int $schoolClassOrId): array
