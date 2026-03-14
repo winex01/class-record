@@ -8,11 +8,8 @@ use Livewire\Component;
 use Filament\Tables\Table;
 use App\Models\SchoolClass;
 use Filament\Actions\Action;
-use App\Filament\Fields\Select;
 use Filament\Support\Enums\Width;
-use Illuminate\Support\HtmlString;
 use App\Filament\Columns\TextColumn;
-use App\Filament\Actions\ClearAction;
 use Filament\Schemas\Components\View;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
@@ -26,7 +23,6 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Filament\Resources\SchoolClasses\Actions\SchoolClassGradeActions;
 use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 
 class FinalGrades extends Component implements HasForms, HasTable, HasActions
@@ -106,8 +102,52 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
 
                     return $query->orderByRaw("CASE id {$case} END");
                 })
-                // TODO:: action here
-                ;
+                ->action(
+                    Action::make('studentViewGrade' . $snakeCase)
+                        ->modalHeading(fn ($record) => $record->full_name .' - '. $grade->grading_period)
+                        ->form(function () use ($grade) {
+                            return [
+                                View::make('filament.components.grades')
+                                    ->viewData(function ($get, $record) use ($grade) {
+                                        $schoolClass  = $this->schoolClass;
+
+                                        /** @var Grade $grade */
+                                        $gradeService = new GradeComputationService($grade, [$record->id]);
+
+                                        $students = $schoolClass->students()
+                                            ->select(
+                                                'students.id',
+                                                'students.first_name',
+                                                'students.last_name',
+                                                'students.middle_name',
+                                                'students.suffix_name',
+                                                'students.gender',
+                                                'students.photo',
+                                            )
+                                            ->where('students.id', $record->id)
+                                            ->get()->groupBy('gender');
+
+                                        $totalColumns       = $gradeService->assessmentsByComponent()->sum(fn($a) => $a->count() + 3) + 2;
+                                        $hasTransmutedGrade = $schoolClass->gradeTransmutations()->exists();
+                                        $gradingPeriod = $grade->grading_period;
+
+                                        return compact(
+                                            'gradingPeriod',
+                                            'schoolClass',
+                                            'gradeService',
+                                            'students',
+                                            'totalColumns',
+                                            'hasTransmutedGrade',
+                                        );
+                                    }),
+                            ];
+                        })
+                        ->modalWidth(Width::SevenExtraLarge)
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel('Close')
+                        ->modalAutofocus(false)
+                );
+
         }
 
         // Final grade column — average of all grading period grades

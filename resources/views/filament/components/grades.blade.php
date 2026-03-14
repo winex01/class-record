@@ -18,7 +18,7 @@
                     @endphp
                     <th colspan="{{ $colspan }}" class="meta-info">
                         <span class="info-label">Grading Period</span>
-                        <span class="info-value">{{ $record->grading_period }}</span>
+                        <span class="info-value">{{ $gradingPeriod ?? $record->grading_period }}</span>
                     </th>
                     <th colspan="{{ $colspan }}" class="meta-info">
                         <span class="info-label">Subject</span>
