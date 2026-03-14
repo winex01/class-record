@@ -6,7 +6,14 @@ use App\Models\Grade;
 use App\Models\Student;
 use Livewire\Component;
 use Filament\Tables\Table;
+use App\Models\SchoolClass;
+use Filament\Actions\Action;
+use App\Filament\Fields\Select;
+use Filament\Support\Enums\Width;
+use Illuminate\Support\HtmlString;
 use App\Filament\Columns\TextColumn;
+use App\Filament\Actions\ClearAction;
+use Filament\Schemas\Components\View;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use App\Livewire\Traits\RenderTableTrait;
@@ -19,6 +26,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use App\Filament\Resources\SchoolClasses\Actions\SchoolClassGradeActions;
 use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 
 class FinalGrades extends Component implements HasForms, HasTable, HasActions
@@ -29,10 +37,12 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
     use RenderTableTrait;
 
     public $schoolClassId;
+    public $schoolClass;
 
     public function mount($schoolClassId)
     {
         $this->schoolClassId = $schoolClassId;
+        $this->schoolClass = SchoolClass::findOrFail($schoolClassId);
         $this->resetTable();
     }
 
@@ -95,8 +105,9 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
                     $case = $sorted->map(fn($id, $index) => "WHEN {$id} THEN {$index}")->implode(' ');
 
                     return $query->orderByRaw("CASE id {$case} END");
-                });
-
+                })
+                // TODO:: action here
+                ;
         }
 
         // Final grade column — average of all grading period grades
