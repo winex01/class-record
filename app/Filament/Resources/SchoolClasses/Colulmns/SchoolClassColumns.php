@@ -24,7 +24,7 @@ class SchoolClassColumns
                 BooleanColumn::make('active')
                     ->trueLabel('Active')
                     ->falseLabel('Archived')
-                    ->falseIcon('heroicon-o-lock-closed')
+                    ->falseIcon('heroicon-o-archive-box')
                     ->falseColor('warning')
                     ->description(function ($record) {
                         if (!$record->date_start && !$record->date_end) {

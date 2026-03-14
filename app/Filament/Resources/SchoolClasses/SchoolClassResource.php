@@ -7,6 +7,7 @@ use App\Enums\LessonStatus;
 use App\Models\SchoolClass;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
+use Filament\Actions\BulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
@@ -15,6 +16,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\Enums\Alignment;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Contracts\Support\Htmlable;
@@ -67,6 +69,23 @@ class SchoolClassResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make()->modalWidth(Width::Large),
+
+                BulkAction::make('archiveSelected')
+                ->label('Mark as Archived')
+                ->icon('heroicon-o-archive-box')
+                ->color('warning')
+                ->requiresConfirmation()
+                ->modalHeading('Archive Selected')
+                ->modalDescription('Are you sure you want to archive the selected records?')
+                ->modalSubmitActionLabel('Yes, Archive')
+                ->deselectRecordsAfterCompletion()
+                ->modalFooterActionsAlignment(Alignment::Center)
+                ->action(function ($records) {
+                    $records->each(function ($record) {
+                        $record->update(['active' => false]);
+                    });
+                }),
+
                 DeleteBulkAction::make(),
             ])
             ->reorderable('sort', direction: 'desc')
