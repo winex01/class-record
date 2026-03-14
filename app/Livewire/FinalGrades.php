@@ -11,6 +11,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use App\Livewire\Traits\RenderTableTrait;
 use App\Services\GradeComputationService;
+use Filament\Tables\Enums\PaginationMode;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -52,7 +53,8 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
             ->emptyStateHeading(false)
             ->emptyStateDescription(false)
             ->paginated([5, 10, 25, 50])
-            ->defaultPaginationPageOption(5);
+            ->defaultPaginationPageOption(5)
+            ->paginationMode(PaginationMode::Simple);
     }
 
     public function columnsSchema()
