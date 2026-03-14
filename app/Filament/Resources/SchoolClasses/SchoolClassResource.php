@@ -10,8 +10,6 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\Size;
-use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -55,35 +53,17 @@ class SchoolClassResource extends Resource
             ->recordTitleAttribute('name')
             ->defaultSort('created_at', 'desc')
             ->columns(SchoolClassColumns::schema())
-            ->contentGrid(['md' => 3,'xl' => 3])
             ->recordActions([
-                ActionGroup::make([
-                    Action::make('manageClass')
-                        ->tooltip('Manage Class')
-                        ->label(false)
-                        ->color('info')
-                        ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
-                        ->icon(StudentResource::getNavigationIcon()),
+                Action::make('manageClass')
+                    ->label('Class')
+                    ->color('info')
+                    ->url(fn ($record) => route('filament.app.resources.school-classes.students', $record))
+                    ->icon(StudentResource::getNavigationIcon()),
 
-                    SchoolClassActions::cloneAction(),
-
-                    ViewAction::make()
-                        ->modalWidth(Width::Large)
-                        ->tooltip('View')
-                        ->label(false),
-
-                    EditAction::make()
-                        ->modalWidth(Width::Large)
-                        ->tooltip('Edit')
-                        ->label(false),
-
-                    DeleteAction::make()
-                        ->tooltip('Delete')
-                        ->label(false)
-                        ->modalSubmitAction(fn ($action) => $action->color('danger')),
-                ])
-                ->buttonGroup()
-                ->size(Size::Small)
+                SchoolClassActions::cloneAction(),
+                ViewAction::make()->modalWidth(Width::Large),
+                EditAction::make()->modalWidth(Width::Large),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 CreateAction::make()->modalWidth(Width::Large),

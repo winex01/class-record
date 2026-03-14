@@ -28,8 +28,6 @@ class SchoolClassActions
     {
         return
             Action::make('clone')
-            ->tooltip('Clone Class')
-            ->label(false)
             ->color('warning')
             ->icon('heroicon-o-document-duplicate')
             ->modalHeading(fn ($record) => 'Clone Class: ' . $record->name)
