@@ -13,7 +13,6 @@ class SchoolClassColumns
         return [
             Split::make([
                 TextColumn::make('name')
-                    ->label('Subject')
                     ->searchable(query: function ($query, $search) {
                         return $query->where(function ($q) use ($search) {
                             $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])

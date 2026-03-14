@@ -21,6 +21,25 @@ class SchoolClass extends Model
         'active' => 'boolean',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (SchoolClass $model) {
+            $model->sort = static::max('sort') + 1;
+        });
+
+        static::updating(function (SchoolClass $model) {
+            if ($model->isDirty('active')) {
+                if ($model->active) {
+                    // Move to top
+                    $model->sort = static::max('sort') + 1;
+                } else {
+                    // Move to top of inactive group
+                    $model->sort = static::where('active', false)->max('sort') ?? 0;
+                }
+            }
+        });
+    }
+
     public function students()
     {
         return $this->belongsToMany(Student::class)

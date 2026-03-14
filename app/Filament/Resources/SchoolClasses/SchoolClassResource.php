@@ -51,7 +51,7 @@ class SchoolClassResource extends Resource
     {
         return $table
             ->recordTitleAttribute('name')
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('sort', 'desc')
             ->columns(SchoolClassColumns::schema())
             ->recordActions([
                 Action::make('manageClass')
@@ -69,6 +69,7 @@ class SchoolClassResource extends Resource
                 CreateAction::make()->modalWidth(Width::Large),
                 DeleteBulkAction::make(),
             ])
+            ->reorderable('sort', direction: 'desc')
             ->recordUrl(fn ($record) => route('filament.app.resources.school-classes.students', $record));
     }
 

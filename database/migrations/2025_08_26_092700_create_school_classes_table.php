@@ -21,6 +21,7 @@ return new class extends Migration
             $table->json('year_section')->nullable();
             $table->text('description')->nullable();
             $table->boolean('active')->default(true);
+            $table->unsignedInteger('sort')->default(0);
             $table->timestamps();
         });
     }
