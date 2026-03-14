@@ -115,6 +115,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
                     ->modalCancelAction(false)
                     ->modalWidth(Width::FiveExtraLarge)
                     ->modalHeading('Student Final Grades')
+                    ->modalDescription(fn ($livewire) => 'Students final grades across all grading periods for ' . $livewire->getOwnerRecord()->name)
                     ->modalContent(fn ($livewire) => new HtmlString(
                         Blade::render(
                             '@livewire("final-grades", ["schoolClassId" => $schoolClassId])',
