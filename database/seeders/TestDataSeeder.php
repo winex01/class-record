@@ -66,24 +66,22 @@ class TestDataSeeder extends Seeder
 
     private function generateAssessment(SchoolClass $class, $assessmentTypeId, $count = 5, $maxScoreRange = '15-100')
     {
-        // create assessments
+        $names = collect($this->getAssessmentNames()[$assessmentTypeId] ?? []);
+
         for ($i = 1; $i <= $count; $i++) {
             $date = Carbon::today()->subDays($i);
 
             $maxScoreRangeArray = explode('-', $maxScoreRange);
-
             $maxScore = collect(range($maxScoreRangeArray[0], $maxScoreRangeArray[1], 5))->random();
 
-            // create assessment
             $assessment = $class->assessments()->create([
-                'user_id' => $class->user_id,
-                'name' => collect($this->getAssessmentNames())->random(),
-                'date' => $date,
+                'user_id'            => $class->user_id,
+                'name'               => $names->isNotEmpty() ? $names->random() : 'Assessment',
+                'date'               => $date,
                 'assessment_type_id' => $assessmentTypeId,
-                'max_score' => $maxScore,
+                'max_score'          => $maxScore,
             ]);
 
-            // attach students with random scores ≤ max_score
             $pivotData = $class->students->mapWithKeys(function ($student) use ($assessment) {
                 $maxScore = $assessment->max_score;
                 return [
@@ -100,25 +98,32 @@ class TestDataSeeder extends Seeder
     private function getAssessmentNames(): array
     {
         return [
-            // Simple
-            'Quiz', 'Long Test', 'Essay', 'Enumeration', 'Identification',
-            'True or False', 'Multiple Choice', 'Short Quiz', 'Seat Work',
-            'Board Work', 'Recitation', 'Oral Exam', 'Written Exam',
-
-            // Chapter-based
-            'Chapter 1 Quiz', 'Chapter 1 Test', 'Chapter 2 Quiz', 'Chapter 2 Test',
-            'Chapter 3 Long Test', 'Chapter 4 Quiz', 'Chapter 5 Exam',
-            'Unit 1 Assessment', 'Unit 2 Test', 'Unit 3 Quiz',
-
-            // Time-based
-            'Weekly Test', 'Weekend Quiz', 'Monthly Exam', 'Midterm Exam',
-            'Final Exam', 'Quarterly Exam', 'Periodic Test',
-
-            // Topic-based
-            'Fractions Quiz', 'Algebraic Expressions Test', 'Reading Comprehension',
-            'Poetry Analysis', 'Grammar Quiz', 'Vocabulary Test',
-            'Science Lab Report', 'Earth Science Quiz', 'History Exam',
-            'Map Reading Quiz', 'Current Events Test',
+            1 => [ // Quiz
+                'Short Quiz', 'Pop Quiz', 'Chapter 1 Quiz', 'Chapter 2 Quiz',
+                'Chapter 3 Quiz', 'Chapter 4 Quiz', 'Chapter 5 Quiz',
+                'Unit 1 Quiz', 'Unit 2 Quiz', 'Unit 3 Quiz',
+                'Weekly Quiz', 'Lesson Quiz', 'Topic Quiz',
+            ],
+            2 => [ // Exam
+                'Long Test', 'Midterm Exam', 'Final Exam', 'Quarterly Exam',
+                'Periodic Test', 'Unit 1 Exam', 'Unit 2 Exam',
+                'Chapter 1 Test', 'Chapter 2 Test', 'Chapter 3 Long Test',
+            ],
+            3 => [ // Homework
+                'Worksheet No. 1', 'Worksheet No. 2', 'Worksheet No. 3',
+                'Take-Home Activity', 'Practice Exercises', 'Drills No. 1',
+                'Drills No. 2', 'Drills No. 3', 'Review Sheet', 'Problem Set',
+            ],
+            4 => [ // Project
+                'Group Project', 'Individual Project', 'Diorama',
+                'Poster Making', 'Research Paper', 'Book Report',
+                'Portfolio', 'Model Making', 'Infographic', 'Multimedia Presentation',
+            ],
+            5 => [ // Oral
+                'Recitation', 'Oral Exam', 'Oral Recitation', 'Board Work',
+                'Class Participation', 'Oral Report', 'Show and Tell',
+                'Debate', 'Oral Defense', 'Role Play',
+            ],
         ];
     }
 }
