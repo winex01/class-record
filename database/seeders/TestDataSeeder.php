@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
+use Faker\Factory;
 use App\Enums\Gender;
 use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\SchoolClass;
-use App\Models\AssessmentType;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
-use Faker\Factory;
 
 class TestDataSeeder extends Seeder
 {
@@ -78,7 +77,7 @@ class TestDataSeeder extends Seeder
             // create assessment
             $assessment = $class->assessments()->create([
                 'user_id' => $class->user_id,
-                'name' => AssessmentType::findOrFail($assessmentTypeId)->name.' '. $i,
+                'name' => collect($this->getAssessmentNames())->random(),
                 'date' => $date,
                 'assessment_type_id' => $assessmentTypeId,
                 'max_score' => $maxScore,
@@ -95,6 +94,31 @@ class TestDataSeeder extends Seeder
             });
 
             $assessment->students()->attach($pivotData);
-        }// end quiz
+        }
+    }
+
+    private function getAssessmentNames(): array
+    {
+        return [
+            // Simple
+            'Quiz', 'Long Test', 'Essay', 'Enumeration', 'Identification',
+            'True or False', 'Multiple Choice', 'Short Quiz', 'Seat Work',
+            'Board Work', 'Recitation', 'Oral Exam', 'Written Exam',
+
+            // Chapter-based
+            'Chapter 1 Quiz', 'Chapter 1 Test', 'Chapter 2 Quiz', 'Chapter 2 Test',
+            'Chapter 3 Long Test', 'Chapter 4 Quiz', 'Chapter 5 Exam',
+            'Unit 1 Assessment', 'Unit 2 Test', 'Unit 3 Quiz',
+
+            // Time-based
+            'Weekly Test', 'Weekend Quiz', 'Monthly Exam', 'Midterm Exam',
+            'Final Exam', 'Quarterly Exam', 'Periodic Test',
+
+            // Topic-based
+            'Fractions Quiz', 'Algebraic Expressions Test', 'Reading Comprehension',
+            'Poetry Analysis', 'Grammar Quiz', 'Vocabulary Test',
+            'Science Lab Report', 'Earth Science Quiz', 'History Exam',
+            'Map Reading Quiz', 'Current Events Test',
+        ];
     }
 }
