@@ -30,8 +30,8 @@ class GradingSettingActions
         return
             Action::make('gradingSettingsAction')
             ->model(SchoolClass::class)
-            ->disabledForm(fn () => !$ownerRecord->active)
             ->label('Grading Settings')
+            ->disabledForm(fn () => !$ownerRecord->active)
             ->icon(Heroicon::OutlinedCog8Tooth)
             ->color('pink')
             ->modalWidth(Width::TwoExtraLarge)
@@ -177,7 +177,9 @@ class GradingSettingActions
             })
             ->modalSubmitActionLabel(function () use ($ownerRecord) {
                 return $ownerRecord->gradingComponents()->exists() ? 'Save Changes' : 'Save';
-            });
+            })
+            ->modalSubmitAction($ownerRecord?->active ? null : false)
+            ->modalCancelAction($ownerRecord?->active ? null : false);
     }
 
     public static function copyGradeComponentTemplateAction()

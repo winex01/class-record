@@ -5,6 +5,7 @@ namespace App\Filament\Traits;
 use App\Models\SchoolClass;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
+use Filament\Notifications\Actions\Action as NotificationAction;
 
 trait ManageActionVisibility
 {
@@ -14,6 +15,8 @@ trait ManageActionVisibility
             // filament
             'openFilters',
             'openColumnManager',
+            'submit',
+            'cancel',
 
             'clearAll',
             'settingsAction',
@@ -21,6 +24,11 @@ trait ManageActionVisibility
 
             'overview',
             'finalGrades',
+
+            // export downloads
+            'export',
+            'download_csv',
+            'download_xlsx',
 
             // manage students
             'attachSelectedStudents',
@@ -45,9 +53,13 @@ trait ManageActionVisibility
         ];
 
         Action::configureUsing(function (Action $action) use ($excludedActions) {
+            // \Log::info('Action: ' . $action->getName() . ' | Class: ' . get_class($action));
+
             if ($action instanceof ViewAction || in_array($action->getName(), $excludedActions)) {
                 return;
             }
+
+            // debug($action->getName(), get_class($action));
 
             $action->visible(function () {
                 $owner = method_exists($this, 'getOwnerRecord')
@@ -57,5 +69,6 @@ trait ManageActionVisibility
                 return (bool) $owner?->active;
             });
         });
+
     }
 }
