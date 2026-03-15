@@ -23,9 +23,4 @@ class Attendance extends Model
             ->withTimestamps()
             ->withPivot(['present']);
     }
-
-   public function getDateFormattedAttribute()
-    {
-        return $this->date->format('M d, Y');
-    }
 }
