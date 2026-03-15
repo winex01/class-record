@@ -22,7 +22,7 @@ class StudentColumns
                     $callback($query);
                 })
                 ->searchable(['last_name', 'first_name', 'middle_name', 'suffix_name']),
-            EnumColumn::make('gender')->enum(Gender::class),
+            TextColumn::make('gender'),
             DateColumn::make('birth_date'),
             TextColumn::make('email')
                 ->copyable() // copyable only work if SSL is enabled. for localhost test "herd secure class-record"

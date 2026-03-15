@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
-use App\Models\Student;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -11,15 +10,18 @@ use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DetachAction;
+use Filament\Actions\ExportAction;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DetachBulkAction;
 use App\Events\SchoolClassStudentsChanged;
+use Filament\Actions\Exports\Models\Export;
 use App\Filament\Widgets\RecentBirthdaysWidget;
 use App\Filament\Widgets\UpcomingBirthdaysWidget;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
+use App\Filament\Exports\SchoolClassStudentsExporter;
 use App\Filament\Resources\Students\Forms\StudentForm;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -101,5 +103,17 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                 DetachBulkAction::make()->color('warning')
                     ->after(fn ($record) => $this->dispatch('refreshCollapsibleTableWidget')),
             ]);
+    }
+
+    public function getHeaderActions(): array
+    {
+        return [
+            ExportAction::make()
+                ->color('primary')
+                ->label('Export Students')
+                ->exporter(SchoolClassStudentsExporter::class)
+                ->fileName(fn (Export $export): string => "{$this->getOwnerRecord()->year_section}-{$this->getOwnerRecord()->name} Students-{$export->getKey()}")
+
+        ];
     }
 }

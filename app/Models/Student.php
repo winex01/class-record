@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Gender;
 use App\Models\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +17,7 @@ class Student extends Model
 
     protected $casts = [
         'birth_date' => 'date',
+        'gender' => Gender::class,
     ];
 
     protected static function booted()
