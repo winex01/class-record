@@ -1,13 +1,12 @@
 <?php
 /*
+TODO:: export files
+TODO:: download app backup
+TODO:: licensed Payment
+
 TODO:: Grades: review computations on components and etc
 TODO:: check all table search if there is an error, including the modals and tables.
 TODO:: check all tables column sortable/order
-TODO:: import student
-TODO:: export student
-TODO:: download active classs in excel
-TODO:: download app backup
-TODO:: licensed Payment
 
 Code Convention
 Forms
