@@ -2,7 +2,6 @@
 
 namespace App\Filament\Exports;
 
-use App\Models\SchoolClass;
 use Illuminate\Support\Number;
 use OpenSpout\Writer\XLSX\Options;
 use App\Models\SchoolClassStudents;
@@ -37,7 +36,8 @@ class SchoolClassStudentsExporter extends Exporter
 
             ExportColumn::make('birth_date')
                 ->label('Birth Date')
-                ->state(fn (Model $record) => $record->birth_date?->format('M d, Y')),
+                ->state(fn (Model $record) => $record->birth_date?->format('M d, Y'))
+                ->enabledByDefault(false),
 
             ExportColumn::make('email')->enabledByDefault(false),
             ExportColumn::make('contact_number')->label('Contact')->enabledByDefault(false),
@@ -61,8 +61,8 @@ class SchoolClassStudentsExporter extends Exporter
             ->setFontBold()
             ->setFontSize(12)
             ->setCellAlignment(CellAlignment::CENTER)
-            ->setBackgroundColor(Color::rgb(16, 185, 129)) // emerald-500
-            ->setFontColor(Color::rgb(255, 255, 255));    // white text
+            ->setBackgroundColor(Color::rgb(124, 58, 237)) // violet-600
+            ->setFontColor(Color::rgb(255, 255, 255)); // white text
     }
 
     public function getXlsxCellStyle(): ?Style

@@ -100,6 +100,12 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                         )
                     )),
 
+                ExportAction::make()
+                    ->label('Export Students')
+                    ->color('purple')
+                    ->exporter(SchoolClassStudentsExporter::class)
+                    ->fileName(fn (Export $export): string => "{$this->getOwnerRecord()->year_section}-{$this->getOwnerRecord()->name} Students-{$export->getKey()}"),
+
                 DetachBulkAction::make()->color('warning')
                     ->after(fn ($record) => $this->dispatch('refreshCollapsibleTableWidget')),
             ]);
@@ -108,11 +114,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
     public function getHeaderActions(): array
     {
         return [
-            ExportAction::make()
-                ->color('primary')
-                ->label('Export Students')
-                ->exporter(SchoolClassStudentsExporter::class)
-                ->fileName(fn (Export $export): string => "{$this->getOwnerRecord()->year_section}-{$this->getOwnerRecord()->name} Students-{$export->getKey()}")
+
 
         ];
     }
