@@ -1,6 +1,11 @@
 <?php
 /*
 TODO:: export files
+    - Attendances
+    - Lessons (TBD)
+    - Assessments
+    - Fee Collections
+    - Grades
 TODO:: download app backup
 TODO:: licensed Payment
 TODO:: wrap this into .exe bundle
