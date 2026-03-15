@@ -12,6 +12,7 @@ class DateColumn extends TextColumn
         parent::setUp();
 
         $this
+            ->toggleable(isToggledHiddenByDefault: false)
             ->label(fn ($column): string => Str::headline($column->getName()))
             ->wrap()
             ->date()
