@@ -16,7 +16,6 @@ class SchoolClassLessonActions
         return
             Action::make('allAttachedFiles')
             ->label('All Attached Files')
-            ->icon('heroicon-o-arrow-down-tray')
             ->color('primary')
             ->modalHeading('All Attached Files')
             ->modalSubmitAction(false)
