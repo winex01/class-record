@@ -6,7 +6,9 @@ use Carbon\Carbon;
 use App\Models\Lesson;
 use App\Models\SchoolClass;
 use App\Models\FeeCollection;
+use App\Models\AssessmentType;
 use Illuminate\Database\Seeder;
+use SebastianBergmann\Type\TypeName;
 
 class SchoolClassDataSeeder extends Seeder
 {
@@ -61,37 +63,6 @@ class SchoolClassDataSeeder extends Seeder
         }
     }
 
-    private function generateAssessment(SchoolClass $class, $assessmentTypeId, $count = 5, $maxScoreRange = '15-100'): void
-    {
-        $names = collect($this->getAssessmentNames()[$assessmentTypeId] ?? []);
-
-        for ($i = 1; $i <= $count; $i++) {
-            $date = Carbon::today()->subDays($i);
-
-            $maxScoreRangeArray = explode('-', $maxScoreRange);
-            $maxScore = collect(range($maxScoreRangeArray[0], $maxScoreRangeArray[1], 5))->random();
-
-            $assessment = $class->assessments()->create([
-                'user_id'            => $class->user_id,
-                'name'               => $names->isNotEmpty() ? $names->random() : 'Assessment',
-                'date'               => $date,
-                'assessment_type_id' => $assessmentTypeId,
-                'max_score'          => $maxScore,
-            ]);
-
-            $pivotData = $class->students->mapWithKeys(function ($student) use ($assessment) {
-                $maxScore = $assessment->max_score;
-                return [
-                    $student->id => [
-                        'score' => collect(range((int)($maxScore * .75), $maxScore, 1))->random(),
-                    ],
-                ];
-            });
-
-            $assessment->students()->attach($pivotData);
-        }
-    }
-
     private function generateFeeCollections(SchoolClass $class): void
     {
         $feeCollections = collect([
@@ -114,24 +85,57 @@ class SchoolClassDataSeeder extends Seeder
         });
     }
 
+    private function generateAssessment(SchoolClass $class, $assessmentTypeId, $count = 5, $maxScoreRange = '15-100'): void
+    {
+        $names = collect($this->getAssessmentNames()[$assessmentTypeId] ?? []);
+
+        for ($i = 1; $i <= $count; $i++) {
+            $date = Carbon::today()->subDays($i);
+
+            $maxScoreRangeArray = explode('-', $maxScoreRange);
+            $maxScore = collect(range($maxScoreRangeArray[0], $maxScoreRangeArray[1], 5))->random();
+
+            $assType = AssessmentType::findOrFail($assessmentTypeId);
+            $typeName = $assType->name . ' ' . $i;
+
+            $assessment = $class->assessments()->create([
+                'user_id'            => $class->user_id,
+                'name' => $names->isNotEmpty() ? $names->random() . ' ' . $typeName : 'Assessment ' . $typeName,
+                'date'               => $date,
+                'assessment_type_id' => $assessmentTypeId,
+                'max_score'          => $maxScore,
+            ]);
+
+            $pivotData = $class->students->mapWithKeys(function ($student) use ($assessment) {
+                $maxScore = $assessment->max_score;
+                return [
+                    $student->id => [
+                        'score' => collect(range((int)($maxScore * .75), $maxScore, 1))->random(),
+                    ],
+                ];
+            });
+
+            $assessment->students()->attach($pivotData);
+        }
+    }
+
     private function getAssessmentNames(): array
     {
         return [
             1 => [ // Quiz
-                'Short Quiz', 'Pop Quiz', 'Chapter 1 Quiz', 'Chapter 2 Quiz',
-                'Chapter 3 Quiz', 'Chapter 4 Quiz', 'Chapter 5 Quiz',
-                'Unit 1 Quiz', 'Unit 2 Quiz', 'Unit 3 Quiz',
-                'Weekly Quiz', 'Lesson Quiz', 'Topic Quiz',
+                'Short', 'Pop', 'Chapter', 'Unit',
+                'Weekly', 'Lesson', 'Topic', 'Daily',
+                'Surprise', 'Cumulative', 'Review', 'Section',
             ],
             2 => [ // Exam
-                'Long Test', 'Midterm Exam', 'Final Exam', 'Quarterly Exam',
-                'Periodic Test', 'Unit 1 Exam', 'Unit 2 Exam',
-                'Chapter 1 Test', 'Chapter 2 Test', 'Chapter 3 Long Test',
+                'Long', 'Midterm', 'Final', 'Quarterly',
+                'Periodic', 'Unit', 'Chapter', 'Cumulative',
+                'Comprehensive', 'Term',
             ],
             3 => [ // Homework
-                'Worksheet No. 1', 'Worksheet No. 2', 'Worksheet No. 3',
-                'Take-Home Activity', 'Practice Exercises', 'Drills No. 1',
-                'Drills No. 2', 'Drills No. 3', 'Review Sheet', 'Problem Set',
+                'Worksheet', 'Take-Home Activity', 'Practice Exercises',
+                'Drills', 'Review Sheet', 'Problem Set', 'Study Guide',
+                'Reading Assignment', 'Answer Sheet', 'Activity Sheet',
             ],
             4 => [ // Project
                 'Group Project', 'Individual Project', 'Diorama',
