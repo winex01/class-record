@@ -7,10 +7,13 @@ use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ExportAction;
 use App\Filament\Fields\DatePicker;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Exports\Models\Export;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
+use App\Filament\Exports\SchoolClassAttendanceExporter;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassAttendanceActions;
@@ -53,6 +56,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                     ->modalWidth(Width::Medium),
 
                 SchoolClassAttendanceActions::overviewAction(),
+
                 DeleteBulkAction::make(),
             ])
             ->recordAction('takeAttendanceRelationManager');

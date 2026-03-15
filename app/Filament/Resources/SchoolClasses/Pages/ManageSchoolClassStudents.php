@@ -14,6 +14,7 @@ use Filament\Actions\ExportAction;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Blade;
 use Filament\Actions\DetachBulkAction;
+use Filament\Actions\ExportBulkAction;
 use App\Events\SchoolClassStudentsChanged;
 use Filament\Actions\Exports\Models\Export;
 use App\Filament\Widgets\RecentBirthdaysWidget;
@@ -100,22 +101,8 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
                         )
                     )),
 
-                ExportAction::make()
-                    ->label('Export Students')
-                    ->color('purple')
-                    ->exporter(SchoolClassStudentsExporter::class)
-                    ->fileName(fn (Export $export): string => "{$this->getOwnerRecord()->year_section}-{$this->getOwnerRecord()->name} Students-{$export->getKey()}"),
-
                 DetachBulkAction::make()->color('warning')
                     ->after(fn ($record) => $this->dispatch('refreshCollapsibleTableWidget')),
             ]);
-    }
-
-    public function getHeaderActions(): array
-    {
-        return [
-
-
-        ];
     }
 }
