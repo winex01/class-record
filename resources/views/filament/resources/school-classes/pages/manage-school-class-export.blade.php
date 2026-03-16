@@ -4,7 +4,7 @@
 
         <div class="mt-4">
             <x-filament::button type="submit" color="primary">
-                Export
+                Generate Export
             </x-filament::button>
         </div>
     </form>

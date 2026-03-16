@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
+use App\Models\SchoolClass;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Resources\Pages\Page;
@@ -20,10 +21,12 @@ class ManageSchoolClassExport extends Page implements HasForms
 
     protected static string $resource = SchoolClassResource::class;
     protected string $view = 'filament.resources.school-classes.pages.manage-school-class-export';
+    public ?array $data = [];
 
     public function mount(int | string $record): void
     {
-        $this->record = $this->resolveRecord($record);
+        $this->record = SchoolClass::findOrFail($record);
+        $this->form->fill();
     }
 
     public function getMaxContentWidth(): Width
@@ -56,7 +59,8 @@ class ManageSchoolClassExport extends Page implements HasForms
                             ])
                             ->default(['full_name', 'gender']),
                     ]),
-            ]);
+            ])
+            ->statePath('data');;
     }
 
     public function export(): void
