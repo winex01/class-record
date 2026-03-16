@@ -48,6 +48,7 @@ class ManageSchoolClassExport extends Page implements HasForms
                                 'xlsx' => 'Excel (.xlsx)',
                                 'csv'  => 'CSV (.csv)',
                             ])
+                            ->native(false)
                             ->required()
                             ->default('xlsx'),
 
@@ -64,16 +65,17 @@ class ManageSchoolClassExport extends Page implements HasForms
                             ->default(['full_name', 'gender']),
                     ]),
             ])
-            ->statePath('data');;
+            ->statePath('data');
     }
 
     public function export()
     {
         $data = $this->form->getState();
+        $yearSection = str_replace(',', '-', $this->record->year_section);
 
         return Excel::download(
             new SchoolClassExport($this->record, $data),
-            "{$this->record->name}.{$data['format']}"
+            "{$this->record->name}-{$yearSection}.{$data['format']}"
         );
     }
 }
