@@ -32,7 +32,7 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
     public function collection()
     {
         $dateCount = count($this->attendances);
-        $endCol = chr(ord('A') + 1 + $dateCount);
+        $endCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(2 + $dateCount);
 
         return $this->students->map(function ($student, $index) use ($dateCount, $endCol) {
             $rowNum = $index + 2;
@@ -50,8 +50,13 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
                 $row[$attendance->date->format('M d')] = $present ? 'P' : 'A';
             }
 
-            $row['Present'] = "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"P\")";
-            $row['Absent']  = "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"A\")";
+            if ($dateCount === 0) {
+                $row['Present'] = 0;
+                $row['Absent']  = 0;
+            } else {
+                $row['Present'] = "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"P\")";
+                $row['Absent']  = "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"A\")";
+            }
 
             return $row;
         });
