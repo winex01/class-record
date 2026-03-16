@@ -26,7 +26,7 @@ class StudentsSheet implements FromCollection, WithHeadings, WithStyles, ShouldA
             'birth_date'     => ['label' => 'Birth Date',   'value' => fn ($s) => $s->birth_date?->format('M d, Y')],
             'email'          => ['label' => 'Email',        'value' => fn ($s) => $s->email],
             'contact_number' => ['label' => 'Contact',      'value' => fn ($s) => $s->contact_number],
-        ])->only($data['columns'])->all();
+        ])->only($data['student_columns'])->all();
     }
 
     public function title(): string
@@ -71,6 +71,7 @@ class StudentsSheet implements FromCollection, WithHeadings, WithStyles, ShouldA
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
+                $event->sheet->getTabColor()->setARGB('10B981'); // emerald
                 $sheet = $event->sheet->getDelegate();
                 $highestRow = $sheet->getHighestRow();
 

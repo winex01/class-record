@@ -42,27 +42,17 @@ class ManageSchoolClassExport extends Page implements HasForms
             ->schema([
                 Section::make('Export Options')
                     ->schema([
-                        Select::make('format')
-                            ->label('File Format')
-                            ->options([
-                                'xlsx' => 'Excel (.xlsx)',
-                                'csv'  => 'CSV (.csv)',
-                            ])
-                            ->native(false)
-                            ->required()
-                            ->default('xlsx'),
-
-                        CheckboxList::make('columns')
-                            ->label('Columns to Include')
-                            ->options([
-                                'full_name'      => 'Student Name',
-                                'gender'         => 'Gender',
-                                'birth_date'     => 'Birth Date',
-                                'email'          => 'Email',
-                                'contact_number' => 'Contact Number',
-                            ])
-                            ->required()
-                            ->default(['full_name', 'gender']),
+                        CheckboxList::make('student_columns')
+                        ->label('Student Columns')
+                        ->options([
+                            'full_name'      => 'Student Name',
+                            'gender'         => 'Gender',
+                            'birth_date'     => 'Birth Date',
+                            'email'          => 'Email',
+                            'contact_number' => 'Contact Number',
+                        ])
+                        ->required()
+                        ->default(['full_name', 'gender', 'birth_date', 'email', 'contact_number']),
                     ]),
             ])
             ->statePath('data');
@@ -75,7 +65,7 @@ class ManageSchoolClassExport extends Page implements HasForms
 
         return Excel::download(
             new SchoolClassExport($this->record, $data),
-            "{$this->record->name}-{$yearSection}.{$data['format']}"
+            "{$this->record->name}-{$yearSection}.xlsx"
         );
     }
 }

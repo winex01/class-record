@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\SchoolClass;
 use App\Exports\Sheets\StudentsSheet;
+use App\Exports\Sheets\AttendanceSheet;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class SchoolClassExport implements WithMultipleSheets
@@ -17,6 +18,7 @@ class SchoolClassExport implements WithMultipleSheets
     {
         return [
             new StudentsSheet($this->schoolClass, $this->data),
+            new AttendanceSheet($this->schoolClass),
         ];
     }
 }
