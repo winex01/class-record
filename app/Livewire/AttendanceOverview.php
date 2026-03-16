@@ -89,12 +89,17 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
                     ->color('success')
                     ->alignCenter()
                     ->underline()
-                    ->state(fn ($record) => $record->attendances()->wherePivot('present', true)->count())
+                    ->state(fn ($record) => $record->attendances()
+                        ->wherePivot('present', true)
+                        ->where('attendances.school_class_id', $this->schoolClassId)
+                        ->count()
+                    )
                     ->sortable(query: function ($query, string $direction) {
                         return $query
                             ->withCount([
                                 'attendances as present_count' => function ($query) {
-                                    $query->where('attendance_student.present', true);
+                                    $query->where('attendance_student.present', true)
+                                        ->where('attendances.school_class_id', $this->schoolClassId);
                                 }
                             ])
                             ->orderBy('present_count', $direction);
@@ -114,12 +119,17 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
                     ->color('danger')
                     ->alignCenter()
                     ->underline()
-                    ->state(fn ($record) => $record->attendances()->wherePivot('present', false)->count())
+                    ->state(fn ($record) => $record->attendances()
+                        ->wherePivot('present', false)
+                        ->where('attendances.school_class_id', $this->schoolClassId)
+                        ->count()
+                    )
                     ->sortable(query: function ($query, string $direction) {
                         return $query
                             ->withCount([
                                 'attendances as absent_count' => function ($query) {
-                                    $query->where('attendance_student.present', false);
+                                    $query->where('attendance_student.present', false)
+                                        ->where('attendances.school_class_id', $this->schoolClassId);
                                 }
                             ])
                             ->orderBy('absent_count', $direction);
