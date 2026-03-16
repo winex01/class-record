@@ -12,12 +12,10 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Width;
-use App\Exports\SchoolClassExport;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Maatwebsite\Excel\Facades\Excel;
 use Filament\Support\Enums\Alignment;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Navigation\NavigationItem;
@@ -27,6 +25,7 @@ use App\Filament\Resources\SchoolClasses\Forms\SchoolClassForm;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
 use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassColumns;
+use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassExport;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassLessons;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassStudents;
@@ -114,6 +113,7 @@ class SchoolClassResource extends Resource
             'fee-collections' => ManageSchoolClassFeeCollections::route('/{record}/fee-collections'),
             'grades' => ManageSchoolClassGrades::route('/{record}/grades'),
             'lessons' => ManageSchoolClassLessons::route('/{record}/lessons'),
+            'export' => ManageSchoolClassExport::route('/{record}/export'),
         ];
     }
 
@@ -163,6 +163,11 @@ class SchoolClassResource extends Resource
                 ->badge(fn () => $record->grades()->count() ?: null, 'success')
                 ->badgeTooltip('Grading Periods')
                 ->isActiveWhen(fn () => $page instanceof ManageSchoolClassGrades),
+
+            NavigationItem::make('Exports')
+                ->url(ManageSchoolClassExport::getUrl(['record' => $record]))
+                ->icon(Heroicon::OutlinedArrowDownTray)
+                ->isActiveWhen(fn () => $page instanceof ManageSchoolClassExport),
         ];
     }
 }

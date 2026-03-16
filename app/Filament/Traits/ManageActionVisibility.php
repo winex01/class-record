@@ -5,7 +5,6 @@ namespace App\Filament\Traits;
 use App\Models\SchoolClass;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
-use Filament\Notifications\Actions\Action as NotificationAction;
 
 trait ManageActionVisibility
 {

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use Filament\Tables\Table;
-use App\Models\SchoolClass;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
