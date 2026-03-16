@@ -5,7 +5,9 @@ namespace App\Filament\Resources\SchoolClasses\Pages;
 use App\Models\SchoolClass;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
+use App\Exports\SchoolClassExport;
 use Filament\Resources\Pages\Page;
+use Maatwebsite\Excel\Facades\Excel;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Section;
@@ -46,6 +48,7 @@ class ManageSchoolClassExport extends Page implements HasForms
                                 'xlsx' => 'Excel (.xlsx)',
                                 'csv'  => 'CSV (.csv)',
                             ])
+                            ->required()
                             ->default('xlsx'),
 
                         CheckboxList::make('columns')
@@ -57,17 +60,20 @@ class ManageSchoolClassExport extends Page implements HasForms
                                 'email'          => 'Email',
                                 'contact_number' => 'Contact Number',
                             ])
+                            ->required()
                             ->default(['full_name', 'gender']),
                     ]),
             ])
             ->statePath('data');;
     }
 
-    public function export(): void
+    public function export()
     {
         $data = $this->form->getState();
 
-        // handle export with $data
-        dd($data);
+        return Excel::download(
+            new SchoolClassExport($this->record, $data),
+            "{$this->record->name}.{$data['format']}"
+        );
     }
 }
