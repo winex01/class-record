@@ -18,7 +18,7 @@ class SchoolClassExport implements WithMultipleSheets
     {
         return [
             new StudentsSheet($this->schoolClass, $this->data),
-            new AttendanceSheet($this->schoolClass),
+            new AttendanceSheet($this->schoolClass, $this->data),
         ];
     }
 }

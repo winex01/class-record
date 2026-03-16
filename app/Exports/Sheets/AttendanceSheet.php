@@ -14,14 +14,36 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize, WithTitle, WithEvents
 {
+    protected array $columnMap;
     protected $attendances;
     protected $students;
 
     public function __construct(
         protected SchoolClass $schoolClass,
+        protected array $data,
     ) {
-        $this->students = $schoolClass->students()->get();
+        $this->students    = $schoolClass->students()->get();
         $this->attendances = $schoolClass->attendances()->orderBy('date')->get();
+
+        $dateCount = count($this->attendances);
+        $endCol    = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(2 + $dateCount);
+        $hasDates = in_array('dates', $data['attendance_columns']);
+
+        $this->columnMap = collect([
+            'dates'   => ['label' => 'dates', 'dynamic' => true],
+            'present' => [
+                'label'   => 'Present',
+                'formula' => fn ($rowNum, $student) => $hasDates
+                    ? ($dateCount === 0 ? 0 : "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"✓\")")
+                    : ($this->attendances->filter(fn ($a) => $a->students->firstWhere('id', $student->id)?->pivot->present == true)->count() ?: "0"),
+            ],
+            'absent'  => [
+                'label'   => 'Absent',
+                'formula' => fn ($rowNum, $student) => $hasDates
+                    ? ($dateCount === 0 ? 0 : "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"✗\")")
+                    : ($this->attendances->filter(fn ($a) => $a->students->firstWhere('id', $student->id)?->pivot->present == false)->count() ?: "0"),
+            ],
+        ])->only($data['attendance_columns'])->all();
     }
 
     public function title(): string
@@ -31,10 +53,7 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
 
     public function collection()
     {
-        $dateCount = count($this->attendances);
-        $endCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(2 + $dateCount);
-
-        return $this->students->map(function ($student, $index) use ($dateCount, $endCol) {
+        return $this->students->map(function ($student, $index) {
             $rowNum = $index + 2;
 
             $row = [
@@ -42,20 +61,18 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
                 'Student Name' => "=Students!B{$rowNum}",
             ];
 
-            foreach ($this->attendances as $attendance) {
-                $present = $attendance->students
-                    ->firstWhere('id', $student->id)
-                    ?->pivot->present;
+            foreach ($this->columnMap as $key => $col) {
+                if ($key === 'dates') {
+                    foreach ($this->attendances as $attendance) {
+                        $present = $attendance->students
+                            ->firstWhere('id', $student->id)
+                            ?->pivot->present;
 
-                $row[$attendance->date->format('M d')] = $present ? '✓' : '✗';
-            }
-
-            if ($dateCount === 0) {
-                $row['Present'] = 0;
-                $row['Absent']  = 0;
-            } else {
-                $row['Present'] = "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"✓\")";
-                $row['Absent']  = "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"✗\")";
+                        $row[$attendance->date->format('M d')] = $present ? '✓' : '✗';
+                    }
+                } else {
+                    $row[$col['label']] = ($col['formula'])($rowNum, $student);
+                }
             }
 
             return $row;
@@ -66,12 +83,15 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
     {
         $headings = ['#', 'Student Name'];
 
-        foreach ($this->attendances as $attendance) {
-            $headings[] = $attendance->date->format('M d,') . "\n" . $attendance->date->format('Y');
+        foreach ($this->columnMap as $key => $col) {
+            if ($key === 'dates') {
+                foreach ($this->attendances as $attendance) {
+                    $headings[] = $attendance->date->format('M d,') . "\n" . $attendance->date->format('Y');
+                }
+            } else {
+                $headings[] = $col['label'];
+            }
         }
-
-        $headings[] = 'Present';
-        $headings[] = 'Absent';
 
         return $headings;
     }
@@ -85,7 +105,7 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
                 'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
                 'fill' => [
                     'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    'startColor' => ['rgb' => '2563EB'], // info
+                    'startColor' => ['rgb' => '2563EB'],
                 ],
             ],
         ];
@@ -95,44 +115,42 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $event->sheet->getTabColor()->setARGB('2563EB'); // info
-                $sheet = $event->sheet->getDelegate();
+                $event->sheet->getTabColor()->setARGB('2563EB');
+                $sheet      = $event->sheet->getDelegate();
                 $highestRow = $sheet->getHighestRow();
-                $dateCount = count($this->attendances);
+                $startColIndex = 3;
+                $endColIndex = 2 ;
 
-                $startColIndex = 3; // C
-                $endColIndex = 2 + $dateCount;
-
-                for ($row = 2; $row <= $highestRow; $row++) {
-                    // data validation dropdown for P/A columns
-                    for ($colIndex = $startColIndex; $colIndex <= $endColIndex; $colIndex++) {
-                        $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
-
-                        $validation = $sheet->getCell("{$colLetter}{$row}")->getDataValidation();
-                        $validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
-                        $validation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
-                        $validation->setAllowBlank(false);
-                        $validation->setShowDropDown(true);
-                        $validation->setShowInputMessage(true);
-                        $validation->setShowErrorMessage(true);
-                        $validation->setFormula1('"✓,✗"');
+                if (isset($this->columnMap['dates'])) {
+                    $endColIndex += count($this->attendances);
+                    for ($row = 2; $row <= $highestRow; $row++) {
+                        for ($colIndex = $startColIndex; $colIndex <= $endColIndex; $colIndex++) {
+                            $colLetter  = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+                            $validation = $sheet->getCell("{$colLetter}{$row}")->getDataValidation();
+                            $validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
+                            $validation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
+                            $validation->setAllowBlank(false);
+                            $validation->setShowDropDown(true);
+                            $validation->setShowInputMessage(true);
+                            $validation->setShowErrorMessage(true);
+                            $validation->setFormula1('"✓,✗"');
+                        }
                     }
+                }
 
-                    // Present column — emerald, bigger font
-                    $presentCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($endColIndex + 1);
+                $endColIndex++;
+
+                if (isset($this->columnMap['present'])) {
+                    $presentCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($endColIndex);
                     $sheet->getStyle("{$presentCol}2:{$presentCol}{$highestRow}")
-                        ->getFont()
-                        ->setSize(13)
-                        ->getColor()
-                        ->setARGB('10B981');
+                        ->getFont()->setSize(13)->getColor()->setARGB('10B981');
+                    $endColIndex++;
+                }
 
-                    // Absent column — red, bigger font
-                    $absentCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($endColIndex + 2);
+                if (isset($this->columnMap['absent'])) {
+                    $absentCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($endColIndex);
                     $sheet->getStyle("{$absentCol}2:{$absentCol}{$highestRow}")
-                        ->getFont()
-                        ->setSize(13)
-                        ->getColor()
-                        ->setARGB('DC2626');
+                        ->getFont()->setSize(13)->getColor()->setARGB('DC2626');
                 }
             },
         ];
