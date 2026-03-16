@@ -47,15 +47,15 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
                     ->firstWhere('id', $student->id)
                     ?->pivot->present;
 
-                $row[$attendance->date->format('M d')] = $present ? 'P' : 'A';
+                $row[$attendance->date->format('M d')] = $present ? '✓' : '✗';
             }
 
             if ($dateCount === 0) {
                 $row['Present'] = 0;
                 $row['Absent']  = 0;
             } else {
-                $row['Present'] = "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"P\")";
-                $row['Absent']  = "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"A\")";
+                $row['Present'] = "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"✓\")";
+                $row['Absent']  = "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"✗\")";
             }
 
             return $row;
@@ -115,7 +115,7 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
                         $validation->setShowDropDown(true);
                         $validation->setShowInputMessage(true);
                         $validation->setShowErrorMessage(true);
-                        $validation->setFormula1('"P,A"');
+                        $validation->setFormula1('"✓,✗"');
                     }
 
                     // Present column — emerald, bigger font
