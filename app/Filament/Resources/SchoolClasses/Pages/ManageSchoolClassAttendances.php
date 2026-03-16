@@ -45,7 +45,8 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ->recordActions([
                 SchoolClassAttendanceActions::takeAttendanceAction(),
                 EditAction::make()->modalWidth(Width::Medium),
-                DeleteAction::make(),
+                DeleteAction::make()
+                     ->recordTitle(fn ($record) => $record->date->format('M d, Y')),
             ])
             ->toolbarActions([
                 SchoolClassActions::createWithStudentsAction($this->getOwnerRecord())
