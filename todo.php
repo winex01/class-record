@@ -1,12 +1,6 @@
 <?php
 /*
-TODO:: export files on SchoolClass Resource us ing maatexcel
-    - Class Students
-    - Attendances
-    - Lessons (TBD)
-    - Assessments
-    - Fee Collections
-    - Grades
+TODO:: Manage Export sub menu
 TODO:: download app backup
 TODO:: licensed Payment
 TODO:: wrap this into .exe bundle

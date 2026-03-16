@@ -8,8 +8,10 @@ use Filament\Actions\Action;
  * NOTE: Commonly used as a suffix action on form fields to clear the current value.
  * Best suited for fields where the user can select or input a single value.
  *
+ * IMPORTANT: Add ->live() to the field for the clear button visibility to work correctly.
+ *
  * Confirmed working on:
- *   - Select::make()->suffixAction(ClearAction::make())
+ *   - Select::make()->live()->suffixAction(ClearAction::make())
  */
 class ClearAction extends Action
 {
