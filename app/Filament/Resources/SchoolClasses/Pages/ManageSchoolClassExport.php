@@ -58,4 +58,12 @@ class ManageSchoolClassExport extends Page implements HasForms
                     ]),
             ]);
     }
+
+    public function export(): void
+    {
+        $data = $this->form->getState();
+
+        // handle export with $data
+        dd($data);
+    }
 }
