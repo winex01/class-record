@@ -43,16 +43,38 @@ class ManageSchoolClassExport extends Page implements HasForms
                 Section::make('Export Options')
                     ->schema([
                         CheckboxList::make('student_columns')
-                        ->label('Student Columns')
-                        ->options([
-                            'full_name'      => 'Student Name',
-                            'gender'         => 'Gender',
-                            'birth_date'     => 'Birth Date',
-                            'email'          => 'Email',
-                            'contact_number' => 'Contact Number',
-                        ])
-                        ->required()
-                        ->default(['full_name', 'gender', 'birth_date', 'email', 'contact_number']),
+                            ->label('Student Columns')
+                            ->options([
+                                'full_name' => 'Student Name',
+                                'gender'         => 'Gender',
+                                'birth_date'     => 'Birth Date',
+                                'email'          => 'Email',
+                                'contact_number' => 'Contact Number',
+                            ])
+                            ->default([
+                                'full_name',
+                                'gender',
+                                'birth_date',
+                                'email',
+                                'contact_number',
+                            ])
+                            ->disableOptionWhen(fn ($value) => $value === 'full_name')
+                            ->in([
+                                'full_name',
+                                'gender',
+                                'birth_date',
+                                'email',
+                                'contact_number',
+                            ])
+                            ->afterStateHydrated(function ($state, callable $set) {
+                                if (! in_array('full_name', $state ?? [])) {
+                                    $set('student_columns', array_merge($state ?? [], ['full_name']));
+                                }
+                            })
+                            ->dehydrateStateUsing(function ($state) {
+                                return collect($state)->push('full_name')->unique()->values()->toArray();
+                            })
+                            ->required(),
                     ]),
             ])
             ->statePath('data');
