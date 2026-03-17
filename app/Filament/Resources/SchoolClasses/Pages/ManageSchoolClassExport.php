@@ -43,7 +43,7 @@ class ManageSchoolClassExport extends Page implements HasForms
             ->schema([
                 Section::make('Export Options')
                     ->schema([
-                        Grid::make(2)
+                        Grid::make(3)
                             ->schema([
                                 CheckboxList::make('student_columns')
                                     ->label('Student Columns')
@@ -94,6 +94,25 @@ class ManageSchoolClassExport extends Page implements HasForms
                                     ->afterStateHydrated(function ($state, callable $set) {
                                         if (! in_array('full_name', $state ?? [])) {
                                             $set('attendance_columns', array_merge($state ?? [], ['full_name']));
+                                        }
+                                    })
+                                    ->dehydrateStateUsing(function ($state) {
+                                        return collect($state)->push('full_name')->unique()->values()->toArray();
+                                    })
+                                    ->required()
+                                    ->columnSpan(1),
+
+                                CheckboxList::make('grade_columns')
+                                    ->label('Grade Columns')
+                                    ->options([
+                                        'full_name' => 'Student Name',
+                                    ])
+                                    ->default(['full_name'])
+                                    ->disableOptionWhen(fn ($value) => $value === 'full_name')
+                                    ->in(['full_name'])
+                                    ->afterStateHydrated(function ($state, callable $set) {
+                                        if (! in_array('full_name', $state ?? [])) {
+                                            $set('grade_columns', array_merge($state ?? [], ['full_name']));
                                         }
                                     })
                                     ->dehydrateStateUsing(function ($state) {
