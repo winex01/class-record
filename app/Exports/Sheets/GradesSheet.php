@@ -149,10 +149,14 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
             $num = 1;
             foreach ($assessments as $assessment) {
                 $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '3', $num++);
+                $sheet->getComment(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '3')
+                    ->getText()->createTextRun($assessment->name);
                 $col++;
             }
-            foreach (['TS', 'PS', 'WS'] as $label) {
-                $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '3', $label);
+            foreach (['TS' => 'Total Score', 'PS' => 'Percentage Score', 'WS' => 'Weighted Score'] as $key => $label) {
+                $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '3', $key);
+                $sheet->getComment(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '3')
+                    ->getText()->createTextRun($label);
                 $col++;
             }
         }
