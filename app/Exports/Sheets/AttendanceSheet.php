@@ -17,6 +17,7 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
     protected array $columnMap;
     protected $attendances;
     protected $students;
+    protected array $optionLists;
 
     public function __construct(
         protected SchoolClass $schoolClass,
@@ -25,22 +26,29 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
         $this->students    = $schoolClass->students()->get();
         $this->attendances = $schoolClass->attendances()->orderBy('date')->get();
 
+        $this->optionLists = [
+            'present' => '✓',
+            'absent'  => '✗',
+        ];
+
         $dateCount = count($this->attendances);
         $endCol    = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(2 + $dateCount);
-        $hasDates = in_array('dates', $data['attendance_columns']);
+        $hasDates  = in_array('dates', $data['attendance_columns']);
+        $present   = $this->optionLists['present'];
+        $absent    = $this->optionLists['absent'];
 
         $this->columnMap = collect([
             'dates'   => ['label' => 'dates', 'dynamic' => true],
             'present' => [
                 'label'   => 'Present',
                 'formula' => fn ($rowNum, $student) => $hasDates
-                    ? ($dateCount === 0 ? 0 : "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"✓\")")
+                    ? ($dateCount === 0 ? 0 : "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"{$present}\")")
                     : ($this->attendances->filter(fn ($a) => $a->students->firstWhere('id', $student->id)?->pivot->present == true)->count() ?: "0"),
             ],
             'absent'  => [
                 'label'   => 'Absent',
                 'formula' => fn ($rowNum, $student) => $hasDates
-                    ? ($dateCount === 0 ? 0 : "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"✗\")")
+                    ? ($dateCount === 0 ? 0 : "=COUNTIF(C{$rowNum}:{$endCol}{$rowNum},\"{$absent}\")")
                     : ($this->attendances->filter(fn ($a) => $a->students->firstWhere('id', $student->id)?->pivot->present == false)->count() ?: "0"),
             ],
         ])->only($data['attendance_columns'])->all();
@@ -57,8 +65,8 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
             $rowNum = $index + 2;
 
             $row = [
-                '#'            => "=Students!A{$rowNum}",
-                'Student Name' => "=Students!B{$rowNum}",
+                '#'            => "=".StudentsSheet::getTitle()."!A{$rowNum}",
+                'Student Name' => "=".StudentsSheet::getTitle()."!B{$rowNum}",
             ];
 
             foreach ($this->columnMap as $key => $col) {
@@ -68,7 +76,9 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
                             ->firstWhere('id', $student->id)
                             ?->pivot->present;
 
-                        $row[$attendance->date->format('M d')] = $present ? '✓' : '✗';
+                        $row[$attendance->date->format('M d')] = $present
+                            ? $this->optionLists['present']
+                            : $this->optionLists['absent'];
                     }
                 } else {
                     $row[$col['label']] = ($col['formula'])($rowNum, $student);
@@ -116,13 +126,14 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $event->sheet->getTabColor()->setARGB('2563EB');
-                $sheet      = $event->sheet->getDelegate();
-                $highestRow = $sheet->getHighestRow();
+                $sheet         = $event->sheet->getDelegate();
+                $highestRow    = $sheet->getHighestRow();
                 $startColIndex = 3;
-                $endColIndex = 2 ;
+                $endColIndex   = 2;
 
                 if (isset($this->columnMap['dates'])) {
                     $endColIndex += count($this->attendances);
+
                     for ($row = 2; $row <= $highestRow; $row++) {
                         for ($colIndex = $startColIndex; $colIndex <= $endColIndex; $colIndex++) {
                             $colLetter  = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
@@ -133,7 +144,7 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
                             $validation->setShowDropDown(true);
                             $validation->setShowInputMessage(true);
                             $validation->setShowErrorMessage(true);
-                            $validation->setFormula1('"✓,✗"');
+                            $validation->setFormula1('"' . $this->optionLists['present'] . ',' . $this->optionLists['absent'] . '"');
                         }
                     }
                 }
