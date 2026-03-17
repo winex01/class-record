@@ -172,7 +172,11 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
             $meta = $componentSummary[$gradingComponentId];
             $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col++) . '4', $meta['total_score']);
             $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col++) . '4', 100);
-            $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col++) . '4', $meta['weighted_score_label'] ?? '-');
+
+            $cell = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '4';
+            $sheet->setCellValue($cell, $meta['weighted_score'] / 100);
+            $sheet->getStyle($cell)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_PERCENTAGE);
+            $col++;
         }
     }
 
