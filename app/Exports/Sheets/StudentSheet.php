@@ -12,7 +12,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class StudentsSheet implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize, WithEvents, WithTitle
+class StudentSheet implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize, WithEvents, WithTitle
 {
     protected array $columnMap;
 
