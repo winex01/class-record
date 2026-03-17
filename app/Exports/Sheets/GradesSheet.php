@@ -18,14 +18,31 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
 {
     protected $students;
     protected GradeComputationService $gradeService;
+    protected bool $hasTransmutedGrade;
+    protected int $lastColIndex;
+    protected string $lastColLetter;
+    protected string $initialGradeColLetter;
 
     public function __construct(
         protected SchoolClass $schoolClass,
         protected array $data,
         protected Grade $grade,
     ) {
-        $this->students     = $schoolClass->students()->get();
-        $this->gradeService = new GradeComputationService($grade);
+        $this->students           = $schoolClass->students()->get();
+        $this->gradeService       = new GradeComputationService($grade);
+        $this->hasTransmutedGrade = $schoolClass->gradeTransmutations()->exists();
+
+        $assessmentsByComponent = $this->gradeService->assessmentsByComponent();
+        $totalCols = 0;
+        foreach ($assessmentsByComponent as $assessments) {
+            $totalCols += $assessments->count() + 3;
+        }
+        $totalCols += 1;
+        if ($this->hasTransmutedGrade) $totalCols += 1;
+
+        $this->lastColIndex           = 2 + $totalCols;
+        $this->lastColLetter          = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($this->lastColIndex);
+        $this->initialGradeColLetter  = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($this->lastColIndex - ($this->hasTransmutedGrade ? 1 : 0));
     }
 
     public function title(): string
@@ -35,7 +52,7 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
 
     public function collection()
     {
-        return collect([]); // empty — we write manually in AfterSheet
+        return collect([]);
     }
 
     public function styles(Worksheet $sheet)
@@ -49,7 +66,10 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
             AfterSheet::class => function (AfterSheet $event) {
                 $event->sheet->getTabColor()->setARGB('F59E0B');
                 $sheet = $event->sheet->getDelegate();
+
                 $this->buildHeaders($sheet);
+                $this->buildContent($sheet);
+                $this->buildStyles($sheet);
             },
         ];
     }
@@ -58,20 +78,8 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
     {
         $assessmentsByComponent = $this->gradeService->assessmentsByComponent();
         $componentSummary       = $this->gradeService->componentSummary();
-        $hasTransmutedGrade     = $this->schoolClass->gradeTransmutations()->exists();
 
-        // calculate total cols excluding A (#) and B (Student Name)
-        $totalCols = 0;
-        foreach ($assessmentsByComponent as $assessments) {
-            $totalCols += $assessments->count() + 3;
-        }
-        $totalCols += 1; // Initial Grade
-        if ($hasTransmutedGrade) $totalCols += 1;
-
-        $lastColIndex  = 2 + $totalCols; // A=1, B=2, components start at C=3
-        $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastColIndex);
-
-        // ── merge A1:A3 for # and B1:B4 for Student Name ─────────────────
+        // ── # and Student Name ───────────────────────────────────────────
         $sheet->mergeCells('A1:A3');
         $sheet->setCellValue('A1', '#');
         $sheet->getStyle('A1')->applyFromArray([
@@ -86,7 +94,8 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
             'font'      => ['bold' => true],
         ]);
 
-        // ── ROW 1: Info row starts from C ────────────────────────────────
+        // ── ROW 1: Info row ──────────────────────────────────────────────
+        $totalCols    = $this->lastColIndex - 2;
         $sectionWidth = (int) ceil($totalCols / 3);
 
         $col1Start = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(3);
@@ -94,121 +103,141 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
         $col2Start = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(3 + $sectionWidth);
         $col2End   = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(2 + $sectionWidth * 2);
         $col3Start = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(3 + $sectionWidth * 2);
-        $col3End   = $lastColLetter;
 
         $sheet->setCellValue("{$col1Start}1", 'Grading Period: ' . $this->grade->grading_period);
         $sheet->mergeCells("{$col1Start}1:{$col1End}1");
-        $sheet->getStyle("{$col1Start}1")->applyFromArray([
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            'font'      => ['bold' => true],
-        ]);
+        $sheet->getStyle("{$col1Start}1")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER], 'font' => ['bold' => true]]);
 
         $sheet->setCellValue("{$col2Start}1", 'Subject: ' . $this->schoolClass->name);
         $sheet->mergeCells("{$col2Start}1:{$col2End}1");
-        $sheet->getStyle("{$col2Start}1")->applyFromArray([
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            'font'      => ['bold' => true],
-        ]);
+        $sheet->getStyle("{$col2Start}1")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER], 'font' => ['bold' => true]]);
 
         $sheet->setCellValue("{$col3Start}1", 'Year & Section: ' . str_replace(',', ', ', $this->schoolClass->year_section ?? ''));
-        $sheet->mergeCells("{$col3Start}1:{$col3End}1");
-        $sheet->getStyle("{$col3Start}1")->applyFromArray([
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            'font'      => ['bold' => true],
-        ]);
+        $sheet->mergeCells("{$col3Start}1:{$this->lastColLetter}1");
+        $sheet->getStyle("{$col3Start}1")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER], 'font' => ['bold' => true]]);
 
-        // ── ROW 2: Component headers starts from C ───────────────────────
+        // ── ROW 2: Component headers ─────────────────────────────────────
         $col = 3;
         foreach ($assessmentsByComponent as $gradingComponentId => $assessments) {
             $colspan   = $assessments->count() + 3;
             $startCell = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '2';
             $endCell   = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + $colspan - 1) . '2';
-
-            $label = $componentSummary[$gradingComponentId]['component_label']
+            $label     = $componentSummary[$gradingComponentId]['component_label']
                 . ' (' . $componentSummary[$gradingComponentId]['weighted_score_label'] . ')';
 
             $sheet->setCellValue($startCell, $label);
             $sheet->mergeCells("{$startCell}:{$endCell}");
-
             $col += $colspan;
         }
 
         $initialColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-        $initialCol       = $initialColLetter . '2';
-        $sheet->setCellValue($initialCol, $hasTransmutedGrade ? 'Initial Grade' : 'Grade');
+        $sheet->setCellValue("{$initialColLetter}2", $this->hasTransmutedGrade ? 'Initial Grade' : 'Grade');
         $sheet->mergeCells("{$initialColLetter}2:{$initialColLetter}4");
-        $sheet->getStyle($initialCol)->applyFromArray([
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-        ]);
+        $sheet->getStyle("{$initialColLetter}2")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]]);
         $col++;
 
-        if ($hasTransmutedGrade) {
+        if ($this->hasTransmutedGrade) {
             $transmutedColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-            $transmutedCol       = $transmutedColLetter . '2';
-            $sheet->setCellValue($transmutedCol, 'Transmuted Grade');
+            $sheet->setCellValue("{$transmutedColLetter}2", 'Transmuted Grade');
             $sheet->mergeCells("{$transmutedColLetter}2:{$transmutedColLetter}4");
-            $sheet->getStyle($transmutedCol)->applyFromArray([
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            ]);
+            $sheet->getStyle("{$transmutedColLetter}2")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]]);
         }
 
-        // ── ROW 3: Assessment numbers + TS PS WS starts from C ──────────
+        // ── ROW 3: Assessment numbers + TS PS WS ────────────────────────
         $col = 3;
         foreach ($assessmentsByComponent as $assessments) {
             $num = 1;
             foreach ($assessments as $assessment) {
-                $cell = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '3';
-                $sheet->setCellValue($cell, $num++);
+                $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '3', $num++);
                 $col++;
             }
             foreach (['TS', 'PS', 'WS'] as $label) {
-                $cell = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '3';
-                $sheet->setCellValue($cell, $label);
+                $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '3', $label);
                 $col++;
             }
         }
 
-        // ── ROW 4: Highest Possible Score starts from C ──────────────────
+        // ── ROW 4: Highest Possible Score ───────────────────────────────
         $col = 3;
         $sheet->setCellValue('B4', 'Highest Possible Score');
         foreach ($assessmentsByComponent as $gradingComponentId => $assessments) {
             foreach ($assessments as $assessment) {
-                $cell = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '4';
-                $sheet->setCellValue($cell, $assessment->max_score);
+                $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '4', $assessment->max_score);
                 $col++;
             }
             $meta = $componentSummary[$gradingComponentId];
-            $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '4', $meta['total_score']); $col++;
-            $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '4', 100); $col++;
-            $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '4', $meta['weighted_score_label'] ?? '-'); $col++;
+            $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col++) . '4', $meta['total_score']);
+            $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col++) . '4', 100);
+            $sheet->setCellValue(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col++) . '4', $meta['weighted_score_label'] ?? '-');
         }
+    }
 
-        // ── Student rows starting at row 5 ──────────────────────────────
-        foreach ($this->students as $index => $student) {
-            $studentRowNum = $index + 2; // Students sheet starts at row 2
-            $thisRowNum    = $index + 5; // This sheet starts at row 5
-
-            $sheet->setCellValue("A{$thisRowNum}", "=Students!A{$studentRowNum}");
-            $sheet->setCellValue("B{$thisRowNum}", "=Students!B{$studentRowNum}");
-        }
-
-        // ── center align rows 2, 3, 4 except A and B ────────────────────
-        $sheet->getStyle("C2:{$lastColLetter}4")->applyFromArray([
+    protected function buildStyles($sheet): void
+    {
+        // center align rows 2, 3, 4 except A and B
+        $sheet->getStyle("C:{$this->lastColLetter}")->applyFromArray([
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
             ],
         ]);
 
-        // ── auto size columns ────────────────────────────────────────────
+        // auto size columns
         $sheet->getColumnDimension('A')->setAutoSize(true);
         $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension($this->initialGradeColLetter)->setAutoSize(true);
 
-        $initialGradeColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastColIndex - ($hasTransmutedGrade ? 1 : 0));
-        $sheet->getColumnDimension($initialGradeColLetter)->setAutoSize(true);
-
-        if ($hasTransmutedGrade) {
-            $sheet->getColumnDimension($lastColLetter)->setAutoSize(true);
+        if ($this->hasTransmutedGrade) {
+            $sheet->getColumnDimension($this->lastColLetter)->setAutoSize(true);
         }
     }
+
+    protected function buildContent($sheet): void
+    {
+        foreach ($this->students as $index => $student) {
+            $studentRowNum = $index + 2;
+            $thisRowNum    = $index + 5;
+
+            $sheet->setCellValue("A{$thisRowNum}", "=Students!A{$studentRowNum}");
+            $sheet->setCellValue("B{$thisRowNum}", "=Students!B{$studentRowNum}");
+
+            $col = 'C'; // init and reset to col to C every student
+            foreach ($this->gradeService->assessmentsByComponent() as $assessments) {
+                $componentStartCol = $col; // start column of every component
+                $componentLastCol = null;
+                foreach ($assessments as $assessment) {
+                    $assessmentStudent = $assessment->students
+                        ->firstWhere('id', $student->id);
+
+                    if ($assessmentStudent) {
+                        $score = $assessmentStudent->pivot->score ?? null;
+                        $sheet->setCellValue("{$col}{$thisRowNum}", $score);
+                        $componentLastCol = $col;
+                        $col++;
+                    }
+                }
+
+                if ($componentLastCol !== null) {
+                    // $this->gradeService->totalScore
+                    $sheet->setCellValue("{$col}{$thisRowNum}", "=SUM({$componentStartCol}{$thisRowNum}:{$componentLastCol}{$thisRowNum})");
+                }
+                $totalScoreCol = $col;
+                $col++;
+
+                // $this->gradeService->percentageScore
+                $sheet->setCellValue("{$col}{$thisRowNum}", "=ROUND(({$totalScoreCol}{$thisRowNum}/{$totalScoreCol}4)*{$col}4, 2)");
+                $percentageScoreCol = $col;
+                $col++;
+
+                // $this->gradeService->weightedScore
+                $sheet->setCellValue("{$col}{$thisRowNum}", "=ROUND({$percentageScoreCol}{$thisRowNum}*{$col}4, 2)");
+                $col++;
+
+            }// end foreach $this->gradeService->assessmentsByComponent()
+
+            // TODO:: Initial/Grade and Transmuted Grade
+
+            $thisRowNum++; // incrase row every student
+        }
+    }// end buildContent
 }
