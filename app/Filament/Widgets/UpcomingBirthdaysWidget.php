@@ -2,11 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\Gender;
 use App\Models\Student;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
-use App\Filament\Columns\EnumColumn;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Columns\ImageColumn;
 use Illuminate\Database\Eloquent\Model;
@@ -79,8 +77,7 @@ class UpcomingBirthdaysWidget extends CollapsibleTableWidget
                         };
                     }),
 
-                    EnumColumn::make('gender')
-                        ->enum(Gender::class)
+                    TextColumn::make('gender')
                         ->sortable(false)
                         ->description(fn ($record) => $record->birth_date->format('M d, Y'))
                         ->grow(false),
