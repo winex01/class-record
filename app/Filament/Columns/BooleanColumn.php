@@ -23,6 +23,7 @@ class BooleanColumn extends TextColumn
             ->toggleable(isToggledHiddenByDefault: false)
             ->width('1%')
             ->badge()
+            ->sortable()
             ->formatStateUsing(fn($state) => $state ? $this->trueLabel : $this->falseLabel)
             ->icon(fn($state) => $state ? $this->trueIcon : $this->falseIcon)
             ->color(fn($state) => $state ? $this->trueColor : $this->falseColor);

@@ -15,14 +15,15 @@ class RecordScoreRelationColumns
             ...SchoolClassStudentColumns::schema(),
 
             SelectColumn::make('group')
+                ->toggleable(isToggledHiddenByDefault: false)
                 ->options(function ($record) {
                     $baseOptions = GroupForm::selectOptions();
 
                     // Get current value and add it if it doesn't exist
                     $currentValue = $record->pivot->group ?? null;
-                        if ($currentValue && !array_key_exists($currentValue, $baseOptions)) {
-                            $baseOptions[$currentValue] = $currentValue;
-                        }
+                    if ($currentValue && !array_key_exists($currentValue, $baseOptions)) {
+                        $baseOptions[$currentValue] = $currentValue;
+                    }
 
                     return $baseOptions;
                 })
@@ -33,8 +34,9 @@ class RecordScoreRelationColumns
                         $record->pivot->save();
                     }
                 })
+                ->sortable(false)
                 ->visible($ownerRecord->can_group_students)
-                ->disabled(fn () => !$ownerRecord->schoolClass->active),
+                ->disabled(fn() => !$ownerRecord->schoolClass->active),
 
             TextInputColumn::make('score')
                 ->rules(['numeric', 'min:0', 'max:' . ($ownerRecord->max_score ?? 0)])
@@ -48,7 +50,7 @@ class RecordScoreRelationColumns
                 ->afterStateUpdated(function ($livewire) {
                     $livewire->dispatch('refreshCollapsibleTableWidget');
                 })
-                ->disabled(fn () => !$ownerRecord->schoolClass->active),
+                ->disabled(fn() => !$ownerRecord->schoolClass->active),
         ];
     }
 }

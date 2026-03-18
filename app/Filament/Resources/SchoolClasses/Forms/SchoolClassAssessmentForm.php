@@ -86,6 +86,8 @@ class SchoolClassAssessmentForm
                     }),
 
                 ToggleButtons::make('can_group_students')
+                    ->label('Grouping')
+                    ->belowContent('Allow Student Grouping')
             ])
             ->columnSpan(1)
         ];

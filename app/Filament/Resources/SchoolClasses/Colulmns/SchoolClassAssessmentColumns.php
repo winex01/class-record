@@ -49,8 +49,9 @@ class SchoolClassAssessmentColumns
                 ->description(fn ($record) => $record->myFile->name),
 
             BooleanColumn::make('can_group_students')
-                ->toggleable(isToggledHiddenByDefault:true)
-                ->label('Can group'),
+                ->label('Grouping')
+                ->toggleable(isToggledHiddenByDefault:true),
+
 
             'status' =>
             BooleanIconColumn::make('status')
