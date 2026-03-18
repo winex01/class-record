@@ -70,7 +70,7 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $event->sheet->getTabColor()->setARGB('F59E0B');
+                $event->sheet->getTabColor()->setARGB('FFede9fe');
                 $sheet = $event->sheet->getDelegate();
 
                 $this->buildHeaders($sheet);
@@ -202,8 +202,69 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
         $sheet->getColumnDimension('B')->setAutoSize(true);
         $sheet->getColumnDimension($this->initialGradeColLetter)->setAutoSize(true);
 
-        if ($this->hasTransmutedGrade) {
+        // ── Row 2 height ────────────────────────────────────────
+        $sheet->getRowDimension(2)->setRowHeight(35);
+
+        // ── Component header colors (alternating blue / purple) ──────────────
+        $assessmentsByComponent = $this->gradeService->assessmentsByComponent();
+        $componentSummary       = $this->gradeService->componentSummary();
+
+        $col        = 3;
+        $colorIndex = 1;
+        $oddColor  = 'FFe0f2fe'; // light blue
+        $evenColor = 'FFede9fe'; // light purple
+        foreach ($assessmentsByComponent as $gradingComponentId => $assessments) {
+            $colspan   = $assessments->count() + 3;
+            $startCol  = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $endCol    = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + $colspan - 1);
+            $bgColor   = $colorIndex % 2 !== 0 ? $oddColor : $evenColor;
+
+            // Row 2 - component header
+            $sheet->getStyle("{$startCol}2:{$endCol}2")->applyFromArray([
+                'fill' => [
+                    'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['argb' => $bgColor],
+                ],
+                'font' => [
+                    'bold'  => true,
+                    'color' => ['argb' => 'FF075985'],
+                ],
+            ]);
+
+            $col += $colspan;
+            $colorIndex++;
+        }
+
+        // ── Initial Grade / Grade header ─────────────────────────────────────
+        if ($this->hasGradeColumn) {
+            $initialColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->getStyle("{$initialColLetter}2:{$initialColLetter}4")->applyFromArray([
+                'fill' => [
+                    'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['argb' => 'FFFED7AA'], // light orange
+                ],
+                'font' => [
+                    'bold'  => true,
+                    'color' => ['argb' => 'FFEA580C'], // dark orange text
+                ],
+            ]);
+            $col++;
+        }
+
+        // ── Transmuted Grade header ───────────────────────────────────────────
+        if ($this->hasTransmutedColumn) {
             $sheet->getColumnDimension($this->lastColLetter)->setAutoSize(true);
+            $transmutedColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->getStyle("{$transmutedColLetter}2:{$transmutedColLetter}4")->applyFromArray([
+                'fill' => [
+                    'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['argb' => 'FFBFDBFE'], // light blue
+                ],
+                'font' => [
+                    'bold'  => true,
+                    'color' => ['argb' => 'FF1D4ED8'], // dark blue text
+                ],
+            ]);
         }
     }
 
