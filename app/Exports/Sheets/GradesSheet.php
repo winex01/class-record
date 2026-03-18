@@ -92,7 +92,7 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
         $componentSummary = $this->gradeService->componentSummary();
 
         // ── # and Student Name ───────────────────────────────────────────
-        $sheet->mergeCells('A1:A4');
+        $sheet->mergeCells('A1:A3');
         $sheet->setCellValue('A1', '#');
         $sheet->getStyle('A1')->applyFromArray([
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
