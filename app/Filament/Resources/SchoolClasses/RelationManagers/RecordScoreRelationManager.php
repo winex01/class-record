@@ -3,7 +3,10 @@
 namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 
 use Filament\Tables\Table;
+use App\Filament\Fields\Select;
+use Filament\Actions\BulkAction;
 use Filament\Tables\Grouping\Group;
+use App\Filament\Resources\Groups\Forms\GroupForm;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\SchoolClasses\Filters\RecordScoreRelationFilters;
@@ -25,6 +28,25 @@ class RecordScoreRelationManager extends RelationManager
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns(RecordScoreRelationColumns::schema($this->getOwnerRecord()))
             ->filters(RecordScoreRelationFilters::filters($this->getOwnerRecord()))
+            ->toolbarActions([
+                BulkAction::make('assign_group')
+                    ->label('Assign Group')
+                    ->icon('heroicon-o-user-group')
+                    ->form([
+                        Select::make('group')
+                            ->label('Group')
+                            ->options(GroupForm::selectOptions())
+                            ->required(),
+                    ])
+                    ->action(function ($records, array $data) {
+                        $records->each(function ($record) use ($data) {
+                            $record->pivot->group = $data['group'];
+                            $record->pivot->save();
+                        });
+                    })
+                    ->deselectRecordsAfterCompletion()
+                    ->visible($this->getOwnerRecord()->can_group_students && $this->getOwnerRecord()->schoolClass->active)
+            ])
             ->defaultGroup($this->getOwnerRecord()->can_group_students ? 'group' : null)
             ->groups(function () {
                 if (!$this->getOwnerRecord()->can_group_students) {
