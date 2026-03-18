@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SchoolClasses\RelationManagers;
 use Filament\Tables\Table;
 use App\Filament\Fields\Select;
 use Filament\Actions\BulkAction;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Grouping\Group;
 use App\Filament\Resources\Groups\Forms\GroupForm;
 use App\Filament\Resources\Students\StudentResource;
@@ -45,6 +46,7 @@ class RecordScoreRelationManager extends RelationManager
                         });
                     })
                     ->deselectRecordsAfterCompletion()
+                    ->modalWidth(Width::Medium)
                     ->visible($this->getOwnerRecord()->can_group_students && $this->getOwnerRecord()->schoolClass->active)
             ])
             ->defaultGroup($this->getOwnerRecord()->can_group_students ? 'group' : null)
