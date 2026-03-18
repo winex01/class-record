@@ -72,6 +72,7 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
             $grade->grading_period => new GradeComputationService($grade)
         ]);
 
+        $hasTransmutation = $this->schoolClass->gradeTransmutations()->exists();
         $columns = [];
 
         foreach ($grades as $grade) {
@@ -101,6 +102,12 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
                     $case = $sorted->map(fn($id, $index) => "WHEN {$id} THEN {$index}")->implode(' ');
 
                     return $query->orderByRaw("CASE id {$case} END");
+                })
+                 ->tooltip(function ($record) use ($gradeServices, $snakeCase, $hasTransmutation) {
+                    if ($hasTransmutation) {
+                        return 'Initial Grade: '.$gradeServices->get($snakeCase)->initialGrade($record->id);
+                    }
+                    return;
                 })
                 ->action(
                     Action::make('studentViewGrade' . $snakeCase)
