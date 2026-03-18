@@ -86,7 +86,7 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
         $componentSummary       = $this->gradeService->componentSummary();
 
         // ── # and Student Name ───────────────────────────────────────────
-        $sheet->mergeCells('A1:A3');
+        $sheet->mergeCells('A1:A4');
         $sheet->setCellValue('A1', '#');
         $sheet->getStyle('A1')->applyFromArray([
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -205,6 +205,9 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
         $sheet->getColumnDimension('A')->setAutoSize(true);
         $sheet->getColumnDimension('B')->setAutoSize(true);
         $sheet->getColumnDimension($this->initialGradeColLetter)->setAutoSize(true);
+
+        // ── Row 1 height ─────────────────────────────────────────────────────
+        $sheet->getRowDimension(1)->setRowHeight(30);
 
         // ── Row 2 height ─────────────────────────────────────────────────────
         $sheet->getRowDimension(2)->setRowHeight(35);
