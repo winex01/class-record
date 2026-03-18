@@ -13,6 +13,7 @@ class BooleanIconColumn extends IconColumn
         parent::setUp();
 
         $this
+            ->toggleable(isToggledHiddenByDefault:false)
             ->width('1%')
             ->alignCenter()
             ->trueIcon('heroicon-o-check-circle')

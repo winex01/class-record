@@ -29,6 +29,7 @@ class TakeAttendanceRelationManager extends RelationManager
                 ...SchoolClassStudentColumns::schema(),
 
                 ToggleColumn::make('present')
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->offColor('danger')
                     ->width('1%')
                     ->alignCenter()

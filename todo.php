@@ -1,7 +1,5 @@
 <?php
 /*
-TODO:: bulk action Grouping in Assessment Score relation manager modal
-TODO:: check all table columns and make sure its togglable
 TODO:: add in export:
     - Lessons
     - Fee Collections

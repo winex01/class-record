@@ -12,6 +12,7 @@ class TextInputColumn extends BaseTextInputColumn
         parent::setUp();
 
         $this
+            ->toggleable(isToggledHiddenByDefault: false)
             ->label(fn ($column): string => Str::headline($column->getName()))
             ->width('1%')
             ->sortable()
