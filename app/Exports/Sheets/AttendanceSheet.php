@@ -38,7 +38,7 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
         $absent    = $this->optionLists['absent'];
 
         $this->columnMap = collect([
-            'dates'   => ['label' => 'dates', 'dynamic' => true],
+            'dates'   => ['label' => 'dates'],
             'present' => [
                 'label'   => 'Present',
                 'formula' => fn ($rowNum, $student) => $hasDates

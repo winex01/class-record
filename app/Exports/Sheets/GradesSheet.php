@@ -22,6 +22,9 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
     protected int $lastColIndex;
     protected string $lastColLetter;
     protected string $initialGradeColLetter;
+    protected array $columns = [];
+    protected $hasGradeColumn = false;
+    protected $hasTransmutedColumn = false;
 
     public function __construct(
         protected SchoolClass $schoolClass,
@@ -31,14 +34,23 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
         $this->students           = $schoolClass->students()->get();
         $this->gradeService       = new GradeComputationService($grade);
         $this->hasTransmutedGrade = $schoolClass->gradeTransmutations()->exists();
+        $this->columns = $data['grade_columns'];
 
         $assessmentsByComponent = $this->gradeService->assessmentsByComponent();
         $totalCols = 0;
         foreach ($assessmentsByComponent as $assessments) {
             $totalCols += $assessments->count() + 3;
         }
-        $totalCols += 1;
-        if ($this->hasTransmutedGrade) $totalCols += 1;
+
+        if (in_array('initial_grade', $this->columns) || in_array('grade', $this->columns)) {
+            $this->hasGradeColumn = true;
+            $totalCols++;
+        }
+
+        if ($this->hasTransmutedGrade && in_array('transmuted_grade', $this->columns)) {
+            $this->hasTransmutedColumn = true;
+            $totalCols++;
+        }
 
         $this->lastColIndex           = 2 + $totalCols;
         $this->lastColLetter          = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($this->lastColIndex);
@@ -50,15 +62,9 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
         return $this->grade->grading_period;
     }
 
-    public function collection()
-    {
-        return collect([]);
-    }
+    public function collection() { return collect([]); }
 
-    public function styles(Worksheet $sheet)
-    {
-        return [];
-    }
+    public function styles(Worksheet $sheet) { return []; }
 
     public function registerEvents(): array
     {
@@ -97,7 +103,6 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
         // ── ROW 1: Info row ──────────────────────────────────────────────
         $totalCols    = $this->lastColIndex - 2;
         $sectionWidth = (int) ceil($totalCols / 3);
-
         $col1Start = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(3);
         $col1End   = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(2 + $sectionWidth);
         $col2Start = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(3 + $sectionWidth);
@@ -130,13 +135,15 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
             $col += $colspan;
         }
 
-        $initialColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-        $sheet->setCellValue("{$initialColLetter}2", $this->hasTransmutedGrade ? 'Initial Grade' : 'Grade');
-        $sheet->mergeCells("{$initialColLetter}2:{$initialColLetter}4");
-        $sheet->getStyle("{$initialColLetter}2")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]]);
-        $col++;
+        if ($this->hasGradeColumn) {
+            $initialColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->setCellValue("{$initialColLetter}2", $this->hasTransmutedGrade ? 'Initial Grade' : 'Grade');
+            $sheet->mergeCells("{$initialColLetter}2:{$initialColLetter}4");
+            $sheet->getStyle("{$initialColLetter}2")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]]);
+            $col++;
+        }
 
-        if ($this->hasTransmutedGrade) {
+        if ($this->hasTransmutedColumn) {
             $transmutedColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
             $sheet->setCellValue("{$transmutedColLetter}2", 'Transmuted Grade');
             $sheet->mergeCells("{$transmutedColLetter}2:{$transmutedColLetter}4");
@@ -243,7 +250,15 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
 
             }// end foreach $this->gradeService->assessmentsByComponent()
 
-            // TODO:: Initial/Grade and Transmuted Grade
+
+            if ($this->hasGradeColumn) {
+                // TODO:: grade or initial_grade
+
+            }
+
+            if ($this->hasTransmutedColumn) {
+                // TODO:: transmuted_grade
+            }
 
             $thisRowNum++; // incrase row every student
         }
