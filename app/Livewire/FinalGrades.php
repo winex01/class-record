@@ -132,7 +132,7 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
                                                 'students.photo',
                                             )
                                             ->where('students.id', $record->id)
-                                            ->get()->groupBy('gender');
+                                            ->get();
 
                                         $totalColumns       = $gradeService->assessmentsByComponent()->sum(fn($a) => $a->count() + 3) + 2;
                                         $hasTransmutedGrade = $schoolClass->gradeTransmutations()->exists();

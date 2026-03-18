@@ -108,89 +108,39 @@
             </thead>
 
             <tbody>
-                @foreach ($students as $gender => $studentByGender)
-                    <tr class="gender-divider">
-                        <td class="frozen-column gender-label">
-                            @if ($gender === \App\Enums\Gender::MALE->value)
-                                <div class="gender-badge-male">
-                                    <svg class="gender-icon" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M14 2v2h2.586l-3.537 3.537A6 6 0 1 0 14.83 9l3.17-3.17V8h2V2h-6zm-2 18a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>
-                                    </svg>
-                                    {{ $gender }}
-                                </div>
-                            @else
-                                <div class="gender-badge-female">
-                                    <svg class="gender-icon" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M12 2a7 7 0 1 0 7 7 7 7 0 0 0-7-7zm0 12a5 5 0 1 1 5-5 5 5 0 0 1-5 5zm1 2h-2v2H9v2h2v2h2v-2h2v-2h-2z"/>
-                                    </svg>
-                                    {{ $gender }}
-                                </div>
-                            @endif
-                        </td>
-                        <td colspan="{{ $totalColumns }}" class="gender-spacer"></td>
-                    </tr>
-
-                    @foreach ($studentByGender as $student)
-                        <tr class="student-row">
-                            <td class="frozen-column student-name">
-                                <div class="name-cell">
-                                    @if($student->photo)
-                                        <img src="{{ route('filament.app.student.photo', $student->id) }}"
-                                            alt="{{ $student->full_name }}"
-                                            class="avatar-image"
-                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    @endif
-                                    <div class="avatar-initials" @if($student->photo) style="display: none;" @endif>
-                                        {{ $student->initials }}
+                @if (isset($isGroupByGender) && $isGroupByGender)
+                    @foreach ($studentsGroupByGender as $gender => $studentByGender)
+                        <tr class="gender-divider">
+                            <td class="frozen-column gender-label">
+                                @if ($gender === \App\Enums\Gender::MALE->value)
+                                    <div class="gender-badge-male">
+                                        <svg class="gender-icon" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M14 2v2h2.586l-3.537 3.537A6 6 0 1 0 14.83 9l3.17-3.17V8h2V2h-6zm-2 18a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>
+                                        </svg>
+                                        {{ $gender }}
                                     </div>
-                                    <span title="{{ $student->complete_name }}">{{ $student->full_name }}</span>
-                                </div>
-                            </td>
-
-                            @foreach($gradeService->assessmentsByComponent() as $gradingComponentId => $assessments)
-                                @foreach($assessments as $assessment)
-                                    @php $score = $assessment->getScore($student->id); @endphp
-                                    <td class="score-cell" title="{{ $assessment->name }} Raw Score">
-                                        <span class="{{ $score !== null ? 'score-value' : 'score-empty' }}">
-                                            {{ $score ?? '-' }}
-                                        </span>
-                                    </td>
-                                @endforeach
-
-                                @php
-                                    $meta = $gradeService->componentSummary()[$gradingComponentId];
-                                    $TS   = $gradeService->totalScore($assessments, $student->id);
-                                    $PS   = $gradeService->percentageScore($TS, $meta['total_score']);
-                                    $WS   = $gradeService->weightedScore($PS, $meta['weighted_score']);
-                                @endphp
-
-                                <td class="summary-cell ts" title="{{ $meta['component_label'] }} Total Score">
-                                    {{ $TS }}
-                                </td>
-                                <td class="summary-cell ps" title="{{ $meta['component_label'] }} Percentage Score">
-                                    {{ number_format($PS, 2) }}
-                                </td>
-                                <td class="summary-cell ws" title="{{ $meta['component_label'] }} Weighted Score">
-                                    {{ number_format($WS, 2) }}
-                                </td>
-                            @endforeach
-
-                            @php $initialGrade = $gradeService->initialGrade($student->id); @endphp
-
-                            <td class="final-grade" title="{{ $hasTransmutedGrade ? 'Initial ' : null }} Grade">
-                                <div class="grade-badge initial">{{ number_format($initialGrade, 2) }}</div>
-                            </td>
-
-                            @if ($hasTransmutedGrade)
-                                <td class="final-grade" title="Transmuted Grade">
-                                    <div class="grade-badge transmuted">
-                                        {{ $gradeService->transmutedGrade($initialGrade) }}
+                                @else
+                                    <div class="gender-badge-female">
+                                        <svg class="gender-icon" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2a7 7 0 1 0 7 7 7 7 0 0 0-7-7zm0 12a5 5 0 1 1 5-5 5 5 0 0 1-5 5zm1 2h-2v2H9v2h2v2h2v-2h2v-2h-2z"/>
+                                        </svg>
+                                        {{ $gender }}
                                     </div>
-                                </td>
-                            @endif
+                                @endif
+                            </td>
+                            <td colspan="{{ $totalColumns }}" class="gender-spacer"></td>
                         </tr>
+
+                        @foreach ($studentByGender as $student)
+                            @include('filament.components.student-row')
+                        @endforeach
+
                     @endforeach
-                @endforeach
+                @else
+                    @foreach ($students as $student)
+                        @include('filament.components.student-row')
+                    @endforeach
+                @endif
             </tbody>
         </table>
     </div>
