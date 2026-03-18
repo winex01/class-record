@@ -137,7 +137,8 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
 
         if ($this->hasGradeColumn) {
             $initialColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-            $sheet->setCellValue("{$initialColLetter}2", $this->hasTransmutedGrade ? 'Initial Grade' : 'Grade');
+            $sheet->setCellValue("{$initialColLetter}2", $this->hasTransmutedGrade ? "Initial\nGrade" : 'Grade');
+            $sheet->getStyle("{$initialColLetter}2")->getAlignment()->setWrapText(true);
             $sheet->mergeCells("{$initialColLetter}2:{$initialColLetter}4");
             $sheet->getStyle("{$initialColLetter}2")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]]);
             $col++;
@@ -145,7 +146,8 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
 
         if ($this->hasTransmutedColumn) {
             $transmutedColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-            $sheet->setCellValue("{$transmutedColLetter}2", 'Transmuted Grade');
+            $sheet->setCellValue("{$transmutedColLetter}2", "Transmuted\nGrade");
+            $sheet->getStyle("{$transmutedColLetter}2")->getAlignment()->setWrapText(true);
             $sheet->mergeCells("{$transmutedColLetter}2:{$transmutedColLetter}4");
             $sheet->getStyle("{$transmutedColLetter}2")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]]);
         }
@@ -189,6 +191,8 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
 
     protected function buildStyles($sheet): void
     {
+        $lastDataRow = 4 + $this->students->count();
+
         // center align rows 2, 3, 4 except A and B
         $sheet->getStyle("C:{$this->lastColLetter}")->applyFromArray([
             'alignment' => [
@@ -202,24 +206,27 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
         $sheet->getColumnDimension('B')->setAutoSize(true);
         $sheet->getColumnDimension($this->initialGradeColLetter)->setAutoSize(true);
 
-        // ── Row 2 height ────────────────────────────────────────
+        // ── Row 2 height ─────────────────────────────────────────────────────
         $sheet->getRowDimension(2)->setRowHeight(35);
 
-        // ── Component header colors (alternating blue / purple) ──────────────
+        // ── Component header colors ───────────────────────────────────────────
         $assessmentsByComponent = $this->gradeService->assessmentsByComponent();
-        $componentSummary       = $this->gradeService->componentSummary();
 
-        $col        = 3;
-        $colorIndex = 1;
-        $oddColor  = 'FFe0f2fe'; // light blue
-        $evenColor = 'FFede9fe'; // light purple
+        $col           = 3;
+        $colorIndex    = 1;
+        $oddColor      = 'FFdbeafe'; // light blue
+        $evenColor     = 'FFede9fe'; // light purple
+        $oddFontColor  = 'FF1d4ed8'; // blue text
+        $evenFontColor = 'FF6d28d9'; // purple text
+
         foreach ($assessmentsByComponent as $gradingComponentId => $assessments) {
             $colspan   = $assessments->count() + 3;
             $startCol  = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
             $endCol    = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + $colspan - 1);
             $bgColor   = $colorIndex % 2 !== 0 ? $oddColor : $evenColor;
+            $fontColor = $colorIndex % 2 !== 0 ? $oddFontColor : $evenFontColor;
 
-            // Row 2 - component header
+            // ── Row 2 - component header ──────────────────────────────────────
             $sheet->getStyle("{$startCol}2:{$endCol}2")->applyFromArray([
                 'fill' => [
                     'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -227,7 +234,71 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
                 ],
                 'font' => [
                     'bold'  => true,
-                    'color' => ['argb' => 'FF075985'],
+                    'color' => ['argb' => $fontColor],
+                ],
+            ]);
+
+            // ── Row 3 - assessment number boxes ──────────────────────────────
+            foreach ($assessments as $i => $assessment) {
+                $cellCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + $i);
+                $sheet->getStyle("{$cellCol}3")->applyFromArray([
+                    'fill' => [
+                        'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => ['argb' => $bgColor],
+                    ],
+                    'font' => [
+                        'bold'  => true,
+                        'color' => ['argb' => $fontColor],
+                    ],
+                ]);
+            }
+
+            // ── TS, PS, WS columns ───────────────────────────────────────────
+            $tsCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + $assessments->count());
+            $psCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + $assessments->count() + 1);
+            $wsCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + $assessments->count() + 2);
+
+            // Row 3 TS, PS, WS - component bg + matching font color
+            $sheet->getStyle("{$tsCol}3")->applyFromArray([
+                'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => $bgColor]],
+                'font' => ['bold' => true, 'color' => ['argb' => 'FF16a34a']], // green
+            ]);
+            $sheet->getStyle("{$psCol}3")->applyFromArray([
+                'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => $bgColor]],
+                'font' => ['bold' => true, 'color' => ['argb' => 'FF7c3aed']], // purple
+            ]);
+            $sheet->getStyle("{$wsCol}3")->applyFromArray([
+                'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => $bgColor]],
+                'font' => ['bold' => true, 'color' => ['argb' => 'FFe11d48']], // red
+            ]);
+
+            // Row 4 to last data row - TS very light green
+            $sheet->getStyle("{$tsCol}4:{$tsCol}{$lastDataRow}")->applyFromArray([
+                'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFf7fef9']],
+                'font' => ['bold' => true, 'color' => ['argb' => 'FF16a34a']],
+            ]);
+
+            // Row 4 to last data row - PS very light purple
+            $sheet->getStyle("{$psCol}4:{$psCol}{$lastDataRow}")->applyFromArray([
+                'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFfdfaff']],
+                'font' => ['bold' => true, 'color' => ['argb' => 'FF7c3aed']],
+            ]);
+
+            // Row 4 to last data row - WS very light red/pink
+            $sheet->getStyle("{$wsCol}4:{$wsCol}{$lastDataRow}")->applyFromArray([
+                'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFfffafa']],
+                'font' => ['bold' => true, 'color' => ['argb' => 'FFe11d48']],
+            ]);
+
+            // ── Row 4 - Highest Possible Score bg ────────────────────────────
+            $sheet->getStyle("{$startCol}4:{$endCol}4")->applyFromArray([
+                'fill' => [
+                    'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['argb' => 'FFfef9c3'], // light yellow
+                ],
+                'font' => [
+                    'bold'  => true,
+                    'color' => ['argb' => 'FFa16207'], // yellow-700
                 ],
             ]);
 
@@ -235,17 +306,29 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
             $colorIndex++;
         }
 
-        // ── Initial Grade / Grade header ─────────────────────────────────────
+        // ── Row 4 - B column (Highest Possible Score label) ──────────────────
+        $sheet->getStyle('B4')->applyFromArray([
+            'fill' => [
+                'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FFfef9c3'],
+            ],
+            'font' => [
+                'bold'  => true,
+                'color' => ['argb' => 'FFa16207'],
+            ],
+        ]);
+
+        // ── Initial Grade / Grade header ──────────────────────────────────────
         if ($this->hasGradeColumn) {
             $initialColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-            $sheet->getStyle("{$initialColLetter}2:{$initialColLetter}4")->applyFromArray([
+            $sheet->getStyle("{$initialColLetter}2:{$initialColLetter}{$lastDataRow}")->applyFromArray([
                 'fill' => [
                     'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    'startColor' => ['argb' => 'FFFED7AA'], // light orange
+                    'startColor' => ['argb' => 'FFfffbf5'], // very light orange
                 ],
                 'font' => [
                     'bold'  => true,
-                    'color' => ['argb' => 'FFEA580C'], // dark orange text
+                    'color' => ['argb' => 'FFEA580C'],
                 ],
             ]);
             $col++;
@@ -255,14 +338,14 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
         if ($this->hasTransmutedColumn) {
             $sheet->getColumnDimension($this->lastColLetter)->setAutoSize(true);
             $transmutedColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-            $sheet->getStyle("{$transmutedColLetter}2:{$transmutedColLetter}4")->applyFromArray([
+            $sheet->getStyle("{$transmutedColLetter}2:{$transmutedColLetter}{$lastDataRow}")->applyFromArray([
                 'fill' => [
                     'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    'startColor' => ['argb' => 'FFBFDBFE'], // light blue
+                    'startColor' => ['argb' => 'FFf5f9ff'], // very light blue
                 ],
                 'font' => [
                     'bold'  => true,
-                    'color' => ['argb' => 'FF1D4ED8'], // dark blue text
+                    'color' => ['argb' => 'FF1D4ED8'],
                 ],
             ]);
         }
