@@ -90,14 +90,12 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
         $sheet->setCellValue('A1', '#');
         $sheet->getStyle('A1')->applyFromArray([
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            'font'      => ['bold' => true],
         ]);
 
         $sheet->mergeCells('B1:B3');
         $sheet->setCellValue('B1', 'Student Name');
         $sheet->getStyle('B1')->applyFromArray([
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            'font'      => ['bold' => true],
         ]);
 
         // ── ROW 1: Info row ──────────────────────────────────────────────
@@ -111,15 +109,15 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
 
         $sheet->setCellValue("{$col1Start}1", 'Grading Period: ' . $this->grade->grading_period);
         $sheet->mergeCells("{$col1Start}1:{$col1End}1");
-        $sheet->getStyle("{$col1Start}1")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER], 'font' => ['bold' => true]]);
+        $sheet->getStyle("{$col1Start}1")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]]);
 
         $sheet->setCellValue("{$col2Start}1", 'Subject: ' . $this->schoolClass->name);
         $sheet->mergeCells("{$col2Start}1:{$col2End}1");
-        $sheet->getStyle("{$col2Start}1")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER], 'font' => ['bold' => true]]);
+        $sheet->getStyle("{$col2Start}1")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]]);
 
         $sheet->setCellValue("{$col3Start}1", 'Year & Section: ' . str_replace(',', ', ', $this->schoolClass->year_section ?? ''));
         $sheet->mergeCells("{$col3Start}1:{$this->lastColLetter}1");
-        $sheet->getStyle("{$col3Start}1")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER], 'font' => ['bold' => true]]);
+        $sheet->getStyle("{$col3Start}1")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]]);
 
         // ── ROW 2: Component headers ─────────────────────────────────────
         $col = 3;
@@ -236,7 +234,7 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
                     'startColor' => ['argb' => $bgColor],
                 ],
                 'font' => [
-                    'bold'  => true,
+
                     'color' => ['argb' => $fontColor],
                 ],
             ]);
@@ -250,7 +248,7 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
                         'startColor' => ['argb' => $bgColor],
                     ],
                     'font' => [
-                        'bold'  => true,
+
                         'color' => ['argb' => $fontColor],
                     ],
                 ]);
@@ -264,33 +262,33 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
             // Row 3 TS, PS, WS - component bg + matching font color
             $sheet->getStyle("{$tsCol}3")->applyFromArray([
                 'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => $bgColor]],
-                'font' => ['bold' => true, 'color' => ['argb' => 'FF16a34a']], // green
+                'font' => ['color' => ['argb' => 'FF16a34a']], // green
             ]);
             $sheet->getStyle("{$psCol}3")->applyFromArray([
                 'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => $bgColor]],
-                'font' => ['bold' => true, 'color' => ['argb' => 'FF7c3aed']], // purple
+                'font' => ['color' => ['argb' => 'FF7c3aed']], // purple
             ]);
             $sheet->getStyle("{$wsCol}3")->applyFromArray([
                 'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => $bgColor]],
-                'font' => ['bold' => true, 'color' => ['argb' => 'FFe11d48']], // red
+                'font' => ['color' => ['argb' => 'FFe11d48']], // red
             ]);
 
             // Row 4 to last data row - TS very light green
             $sheet->getStyle("{$tsCol}4:{$tsCol}{$lastDataRow}")->applyFromArray([
                 'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFf7fef9']],
-                'font' => ['bold' => true, 'color' => ['argb' => 'FF16a34a']],
+                'font' => ['color' => ['argb' => 'FF16a34a']],
             ]);
 
             // Row 4 to last data row - PS very light purple
             $sheet->getStyle("{$psCol}4:{$psCol}{$lastDataRow}")->applyFromArray([
                 'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFfdfaff']],
-                'font' => ['bold' => true, 'color' => ['argb' => 'FF7c3aed']],
+                'font' => ['color' => ['argb' => 'FF7c3aed']],
             ]);
 
             // Row 4 to last data row - WS very light red/pink
             $sheet->getStyle("{$wsCol}4:{$wsCol}{$lastDataRow}")->applyFromArray([
                 'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFfffafa']],
-                'font' => ['bold' => true, 'color' => ['argb' => 'FFe11d48']],
+                'font' => ['color' => ['argb' => 'FFe11d48']],
             ]);
 
             // ── Row 4 - Highest Possible Score bg ────────────────────────────
@@ -300,7 +298,6 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
                     'startColor' => ['argb' => 'FFfef9c3'], // light yellow
                 ],
                 'font' => [
-                    'bold'  => true,
                     'color' => ['argb' => 'FFa16207'], // yellow-700
                 ],
             ]);
@@ -316,7 +313,6 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
                 'startColor' => ['argb' => 'FFfef9c3'],
             ],
             'font' => [
-                'bold'  => true,
                 'color' => ['argb' => 'FFa16207'],
             ],
         ]);
@@ -330,7 +326,6 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
                     'startColor' => ['argb' => 'FFfffbf5'], // very light orange
                 ],
                 'font' => [
-                    'bold'  => true,
                     'color' => ['argb' => 'FFEA580C'],
                 ],
             ]);
@@ -347,16 +342,21 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
                     'startColor' => ['argb' => 'FFf5f9ff'], // very light blue
                 ],
                 'font' => [
-                    'bold'  => true,
                     'color' => ['argb' => 'FF1D4ED8'],
                 ],
             ]);
         }
+
+        // ── Bold rows 1 2 3 4 ─────────────────────────────────────────────────
+        $sheet->getStyle("A1:{$this->lastColLetter}4")->applyFromArray([
+            'font' => ['bold' => true],
+        ]);
     }
 
     protected function buildContent($sheet): void
     {
         foreach ($this->students as $index => $student) {
+            $weightedScoreCol = [];
             $studentRowNum = $index + 2;
             $thisRowNum    = $index + 5;
 
@@ -393,18 +393,22 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
 
                 // $this->gradeService->weightedScore
                 $sheet->setCellValue("{$col}{$thisRowNum}", "=ROUND({$percentageScoreCol}{$thisRowNum}*{$col}4, 2)");
+                $weightedScoreCol[] = $col;
                 $col++;
 
             }// end foreach $this->gradeService->assessmentsByComponent()
 
 
             if ($this->hasGradeColumn) {
-                // TODO:: grade or initial_grade
-
+                $sheet->setCellValue("{$col}{$thisRowNum}", "=SUM(" . implode("{$thisRowNum},", $weightedScoreCol) . "{$thisRowNum})");
+                $col++;
             }
 
             if ($this->hasTransmutedColumn) {
-                // TODO:: transmuted_grade
+                $initialGradeFromService = $this->gradeService->initialGrade($student->id);
+                $transmutedGradeFromService = $this->gradeService->transmutedGrade($initialGradeFromService);
+                $sheet->setCellValue("{$col}{$thisRowNum}", $transmutedGradeFromService);
+                $col++;
             }
 
             $thisRowNum++; // incrase row every student
