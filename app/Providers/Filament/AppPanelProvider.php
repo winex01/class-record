@@ -37,6 +37,7 @@ class AppPanelProvider extends PanelProvider
             ->login()
             ->spa()
             ->defaultThemeMode(ThemeMode::Dark)
+            ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::Emerald,
                 'gray' => Color::Slate,

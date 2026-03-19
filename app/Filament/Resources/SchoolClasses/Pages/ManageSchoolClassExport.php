@@ -26,7 +26,7 @@ class ManageSchoolClassExport extends Page implements HasForms
     protected string $view = 'filament.resources.school-classes.pages.manage-school-class-export';
     public ?array $data = [];
 
-    public function mount(int | string $record): void
+    public function mount(int|string $record): void
     {
         $this->record = SchoolClass::findOrFail($record);
         $this->form->fill();
@@ -43,11 +43,21 @@ class ManageSchoolClassExport extends Page implements HasForms
             ->schema([
                 Section::make('Export Options')
                     ->schema([
-                        Grid::make(3)
+                        Section::make('Export Options')
                             ->schema([
-                                $this->checkboxStudentColumns(),
-                                $this->checkboxAttendanceCOlumns(),
-                                $this->checkboxxGradeColumns(),
+                                Grid::make([
+                                    'default' => 1,
+                                    'md' => 2,
+                                    'lg' => 3,
+                                    'xl' => 4,
+                                ])
+                                    ->schema([
+                                        $this->checkboxStudentColumns()->columnSpan(1),
+                                        $this->checkboxAttendanceCOlumns()->columnSpan(1),
+                                        // TODO:: add lesson
+                                        // TODO:: fee collection
+                                        $this->checkboxxGradeColumns()->columnSpan(1),
+                                    ]),
                             ]),
                     ]),
             ])
@@ -58,121 +68,118 @@ class ManageSchoolClassExport extends Page implements HasForms
     {
         return
             CheckboxList::make('student_columns')
-            ->label('Student Columns')
-            ->options([
-                'full_name'      => 'Student Name',
-                'gender'         => 'Gender',
-                'birth_date'     => 'Birth Date',
-                'email'          => 'Email',
-                'contact_number' => 'Contact Number',
-            ])
-            ->default([
-                'full_name',
-                'gender',
-                'birth_date',
-                'email',
-                'contact_number',
-            ])
-            ->disableOptionWhen(fn ($value) => $value === 'full_name')
-            ->in([
-                'full_name',
-                'gender',
-                'birth_date',
-                'email',
-                'contact_number',
-            ])
-            ->afterStateHydrated(function ($state, callable $set) {
-                if (! in_array('full_name', $state ?? [])) {
-                    $set('student_columns', array_merge($state ?? [], ['full_name']));
-                }
-            })
-            ->dehydrateStateUsing(function ($state) {
-                return collect($state)->push('full_name')->unique()->values()->toArray();
-            })
-            ->required()
-            ->columnSpan(1);
+                ->label('Student Columns')
+                ->options([
+                    'full_name' => 'Student Name',
+                    'gender' => 'Gender',
+                    'birth_date' => 'Birth Date',
+                    'email' => 'Email',
+                    'contact_number' => 'Contact Number',
+                ])
+                ->default([
+                    'full_name',
+                    'gender',
+                    'birth_date',
+                    'email',
+                    'contact_number',
+                ])
+                ->disableOptionWhen(fn($value) => $value === 'full_name')
+                ->in([
+                    'full_name',
+                    'gender',
+                    'birth_date',
+                    'email',
+                    'contact_number',
+                ])
+                ->afterStateHydrated(function ($state, callable $set) {
+                    if (!in_array('full_name', $state ?? [])) {
+                        $set('student_columns', array_merge($state ?? [], ['full_name']));
+                    }
+                })
+                ->dehydrateStateUsing(function ($state) {
+                    return collect($state)->push('full_name')->unique()->values()->toArray();
+                })
+                ->required();
     }
 
     public function checkboxAttendanceCOlumns()
     {
         return
             CheckboxList::make('attendance_columns')
-            ->label('Attendance Columns')
-            ->options([
-                'full_name' => 'Student Name',
-                'dates'     => 'Dates',
-                'present'   => 'Present',
-                'absent'    => 'Absent',
-            ])
-            ->default(['full_name', 'dates', 'present', 'absent'])
-            ->disableOptionWhen(fn ($value) => $value === 'full_name')
-            ->in(['full_name', 'dates', 'present', 'absent'])
-            ->afterStateHydrated(function ($state, callable $set) {
-                if (! in_array('full_name', $state ?? [])) {
-                    $set('attendance_columns', array_merge($state ?? [], ['full_name']));
-                }
-            })
-            ->dehydrateStateUsing(function ($state) {
-                return collect($state)->push('full_name')->unique()->values()->toArray();
-            })
-            ->required()
-            ->columnSpan(1);
+                ->label('Attendance Columns')
+                ->options([
+                    'full_name' => 'Student Name',
+                    'dates' => 'Dates',
+                    'present' => 'Present',
+                    'absent' => 'Absent',
+                ])
+                ->default(['full_name', 'dates', 'present', 'absent'])
+                ->disableOptionWhen(fn($value) => $value === 'full_name')
+                ->in(['full_name', 'dates', 'present', 'absent'])
+                ->afterStateHydrated(function ($state, callable $set) {
+                    if (!in_array('full_name', $state ?? [])) {
+                        $set('attendance_columns', array_merge($state ?? [], ['full_name']));
+                    }
+                })
+                ->dehydrateStateUsing(function ($state) {
+                    return collect($state)->push('full_name')->unique()->values()->toArray();
+                })
+                ->required();
     }
 
     public function checkboxxGradeColumns()
     {
         return
             CheckboxList::make('grade_columns')
-            ->label('Grade Columns')
-            ->options(function () {
-                $baseOptions = [
-                    'full_name' => 'Student Name',
-                ];
+                ->label('Grade Columns')
+                ->options(function () {
+                    $baseOptions = [
+                        'full_name' => 'Student Name',
+                    ];
 
-                if ($this->record?->gradeTransmutations()->exists()) {
-                    $baseOptions['initial_grade'] = 'Initial Grade';
-                    $baseOptions['transmuted_grade'] = 'Transmuted Grade';
-                } else {
-                    $baseOptions['grade'] = 'Grade';
-                }
+                    if ($this->record?->gradeTransmutations()->exists()) {
+                        $baseOptions['initial_grade'] = 'Initial Grade';
+                        $baseOptions['transmuted_grade'] = 'Transmuted Grade';
+                    } else {
+                        $baseOptions['grade'] = 'Grade';
+                    }
 
-                return $baseOptions;
-            })
-            ->default(function () {
-                $defaults = ['full_name'];
+                    return $baseOptions;
+                })
+                ->default(function () {
+                    $defaults = ['full_name'];
 
-                if ($this->record?->gradeTransmutations()->exists()) {
-                    $defaults[] = 'initial_grade';
-                    $defaults[] = 'transmuted_grade';
-                } else {
-                    $defaults[] = 'grade';
-                }
+                    if ($this->record?->gradeTransmutations()->exists()) {
+                        $defaults[] = 'initial_grade';
+                        $defaults[] = 'transmuted_grade';
+                    } else {
+                        $defaults[] = 'grade';
+                    }
 
-                return $defaults;
-            })
-            ->disableOptionWhen(fn ($value) => $value === 'full_name')
-            ->in(function () {
-                $valid = ['full_name'];
+                    return $defaults;
+                })
+                ->disableOptionWhen(fn($value) => $value === 'full_name')
+                ->in(function () {
+                    $valid = ['full_name'];
 
-                if ($this->record?->gradeTransmutations()->exists()) {
-                    $valid[] = 'initial_grade';
-                    $valid[] = 'transmuted_grade';
-                } else {
-                    $valid[] = 'grade';
-                }
+                    if ($this->record?->gradeTransmutations()->exists()) {
+                        $valid[] = 'initial_grade';
+                        $valid[] = 'transmuted_grade';
+                    } else {
+                        $valid[] = 'grade';
+                    }
 
-                return $valid;
-            })
-            ->afterStateHydrated(function ($state, callable $set) {
-                if (! in_array('full_name', $state ?? [])) {
-                    $set('grade_columns', array_merge($state ?? [], ['full_name']));
-                }
-            })
-            ->dehydrateStateUsing(function ($state) {
-                return collect($state)->push('full_name')->unique()->values()->toArray();
-            })
-            ->required()
-            ->columnSpan(1);
+                    return $valid;
+                })
+                ->afterStateHydrated(function ($state, callable $set) {
+                    if (!in_array('full_name', $state ?? [])) {
+                        $set('grade_columns', array_merge($state ?? [], ['full_name']));
+                    }
+                })
+                ->dehydrateStateUsing(function ($state) {
+                    return collect($state)->push('full_name')->unique()->values()->toArray();
+                })
+                ->required();
     }
 
     public function export()
