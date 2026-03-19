@@ -10,6 +10,7 @@ use App\Exports\SchoolClassExport;
 use Filament\Resources\Pages\Page;
 use Maatwebsite\Excel\Facades\Excel;
 use Filament\Schemas\Components\Grid;
+use Filament\Support\Enums\Alignment;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\CheckboxList;
@@ -74,29 +75,17 @@ class ManageSchoolClassExport extends Page implements HasForms
                 ->label('Fee Collection Columns')
                 ->options([
                     'full_name' => 'Student Name',
-                    'fee_collections' => 'Fee Collections (Name)',
-                    'amount' => 'Amount',
-                    'date' => 'Date',
-                    'description' => 'Description',
                     'paid' => 'Paid',
                     'remaining' => 'Remaining'
                 ])
                 ->default([
                     'full_name',
-                    'fee_collections',
-                    'amount',
-                    'date',
-                    // 'description',
                     'paid',
                     'remaining',
                 ])
                 ->disableOptionWhen(fn($value) => $value === 'full_name')
                 ->in([
                     'full_name',
-                    'fee_collections',
-                    'amount',
-                    'date',
-                    'description',
                     'paid',
                     'remaining',
                 ])

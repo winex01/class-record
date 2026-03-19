@@ -34,7 +34,7 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $event->sheet->getTabColor()->setARGB('FFF59E0B');
+                $event->sheet->getTabColor()->setARGB('FF6B7280'); // gray-500
                 $sheet = $event->sheet->getDelegate();
 
                 $this->buildHeaders($sheet);
@@ -155,11 +155,98 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
             $this->rowIndex++;
             $index++;
         }
+
+        // TODO:: total paid, total remaining/balance
     }
 
     protected function buildStyles($sheet): void
     {
         $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($this->lastCol - 1);
+        $lastDataRow = $this->rowIndex - 1;
+
+        // ── Alternating colors per fee collection (full height) ──────────
+        $colors = [
+            'FFF3F4F6', // gray-100
+            'FFFFFFFF', // white
+        ];
+
+        $col = 3;
+        $colorIndex = 0;
+
+        foreach ($this->feeCollections as $feeCollection) {
+            $subColCount = 0;
+            if (in_array('paid', $this->selectedColumns))
+                $subColCount++;
+            if (in_array('remaining', $this->selectedColumns))
+                $subColCount++;
+
+            $startColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $endColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + $subColCount - 1);
+
+            $sheet->getStyle("{$startColLetter}1:{$endColLetter}{$lastDataRow}")->applyFromArray([
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['argb' => $colors[$colorIndex % 2]],
+                ],
+            ]);
+
+            $col += $subColCount;
+            $colorIndex++;
+        }
+
+        // ── Font colors per column ────────────────────────────────────────
+        $col = 3;
+        foreach ($this->feeCollections as $feeCollection) {
+            $subColCount = 0;
+            if (in_array('amount', $this->selectedColumns))
+                $subColCount++;
+            if (in_array('date', $this->selectedColumns))
+                $subColCount++;
+            if (in_array('paid', $this->selectedColumns))
+                $subColCount++;
+            if (in_array('remaining', $this->selectedColumns))
+                $subColCount++;
+
+            $subCol = $col;
+
+            if (in_array('amount', $this->selectedColumns)) {
+                $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($subCol);
+                $sheet->getStyle("{$colLetter}2:{$colLetter}{$lastDataRow}")->applyFromArray([
+                    'font' => ['color' => ['argb' => 'FF16A34A']],
+                ]);
+                $subCol++;
+            }
+            if (in_array('date', $this->selectedColumns)) {
+                $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($subCol);
+                $sheet->getStyle("{$colLetter}2:{$colLetter}{$lastDataRow}")->applyFromArray([
+                    'font' => ['color' => ['argb' => 'FFDC2626']],
+                ]);
+                $subCol++;
+            }
+            if (in_array('paid', $this->selectedColumns)) {
+                $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($subCol);
+                $sheet->getStyle("{$colLetter}2:{$colLetter}{$lastDataRow}")->applyFromArray([
+                    'font' => ['color' => ['argb' => 'FF16A34A']],
+                ]);
+                $subCol++;
+            }
+            if (in_array('remaining', $this->selectedColumns)) {
+                $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($subCol);
+                $sheet->getStyle("{$colLetter}2:{$colLetter}{$lastDataRow}")->applyFromArray([
+                    'font' => ['color' => ['argb' => 'FFDC2626']],
+                ]);
+                $subCol++;
+            }
+
+            // ── Row 1 fee collection name → black ────────────────────────
+            $startColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $endColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + $subColCount - 1);
+            $sheet->getStyle("{$startColLetter}1:{$endColLetter}1")->applyFromArray([
+                'font' => ['color' => ['argb' => 'FF000000'], 'bold' => true],
+            ]);
+
+            $col += $subColCount;
+        }
 
         // ── Bold + center align rows 1-4 ─────────────────────────────────
         $sheet->getStyle("A1:{$lastColLetter}4")->applyFromArray([
