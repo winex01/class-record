@@ -161,9 +161,13 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
     {
         $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($this->lastCol - 1);
 
-        // ── Bold rows 1-4 ────────────────────────────────────────────────
+        // ── Bold + center align rows 1-4 ─────────────────────────────────
         $sheet->getStyle("A1:{$lastColLetter}4")->applyFromArray([
             'font' => ['bold' => true],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
         ]);
 
         // ── Auto width ───────────────────────────────────────────────────
