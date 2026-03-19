@@ -8,6 +8,7 @@ use Filament\Schemas\Schema;
 use Relaticle\Flowforge\Board;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Relaticle\Flowforge\Contracts\HasBoard;
@@ -65,6 +66,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                         ->hiddenLabel()->iconButton()
                         ->icon('heroicon-o-plus')
                         ->model(static::$model)
+                        ->modalWidth(Width::TwoExtraLarge)
                         ->after(function ($livewire) {
                             $livewire->form->saveRelationships();
                             $livewire->dispatch('refreshCollapsibleTableWidget');
@@ -74,8 +76,10 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
             ->cardActions([
                 SchoolClassLessonActions::downloadFilesAction(),
                 ViewAction::make()
+                    ->modalWidth(Width::TwoExtraLarge)
                     ->form(SchoolClassLessonForm::schema($this->getOwnerRecord())),
                 EditAction::make()
+                    ->modalWidth(Width::TwoExtraLarge)
                     ->form(SchoolClassLessonForm::schema($this->getOwnerRecord()))
                     ->after(function ($livewire) {
                         $livewire->form->saveRelationships();

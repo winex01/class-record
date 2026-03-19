@@ -15,7 +15,6 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Repeater\TableColumn;
 
 class SchoolClassLessonForm
@@ -25,60 +24,50 @@ class SchoolClassLessonForm
         return [
             Hidden::make('school_class_id')->default($ownerRecord->id),
             Hidden::make('status')
-            ->default(function ($livewire) {
-                if (!empty($livewire->mountedActions)) {
-                    $firstAction = $livewire->mountedActions[0];
-                    if (isset($firstAction['arguments']['column'])) {
-                        $column = $firstAction['arguments']['column'];
-                        return LessonStatus::tryFrom($column)?->value ?? LessonStatus::TOPICS->value;
+                ->default(function ($livewire) {
+                    if (!empty($livewire->mountedActions)) {
+                        $firstAction = $livewire->mountedActions[0];
+                        if (isset($firstAction['arguments']['column'])) {
+                            $column = $firstAction['arguments']['column'];
+                            return LessonStatus::tryFrom($column)?->value ?? LessonStatus::TOPICS->value;
+                        }
                     }
-                }
-                return LessonStatus::TOPICS->value;
-            }),
+                    return LessonStatus::TOPICS->value;
+                }),
 
-            Grid::make(2)
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextInput::make('title')
-                            ->required()
-                            ->maxLength(255),
-                        TagsInput::make('tags'),
-                        DatePicker::make('completion_date'),
-                        Repeater::make('checklist')
-                        ->table([
-                            TableColumn::make('Item'),
-                            TableColumn::make('Done')->width(1),
-                        ])
-                        ->schema([
-                            TextInput::make('item')->placeholder('Enter checklist item'),
-                            Toggle::make('done')->default(false)
-                        ])
-                        ->compact()
-                        ->minItems(0)
-                        ->defaultItems(0),
-                    ])
-                    ->columnSpan(1), // end Section 1
+            TextInput::make('title')->required()->maxLength(255),
+            Textarea::make('description')->rows(3),
+            TagsInput::make('tags'),
 
-                Section::make()
-                    ->schema([
-                        Textarea::make('description')
-                            ->columnSpanFull(),
-                        Select::make('myFiles')
-                            ->hint('Attach related files')
-                            ->multiple()
-                            ->preload(false)
-                            ->options(MyFile::pluck('name', 'id'))
-                            ->dehydrated(false)
-                            ->saveRelationshipsUsing(function ($component, $state, $record) {
-                                $record->myFiles()->sync($state ?? []);
-                            })
-                            ->loadStateFromRelationshipsUsing(function ($component, $record) {
-                                $component->state($record->myFiles->pluck('id')->toArray());
-                            })
-                            ->suffixAction(ClearAction::make()),
-                    ])->columnSpan(1), // end Section 2
-            ]), // end Grid
+            DatePicker::make('completion_date'),
+            Select::make('myFiles')
+                ->hint('Attach related files')
+                ->multiple()
+                ->preload(false)
+                ->options(MyFile::pluck('name', 'id'))
+                ->dehydrated(false)
+                ->saveRelationshipsUsing(function ($component, $state, $record) {
+                    $record->myFiles()->sync($state ?? []);
+                })
+                ->loadStateFromRelationshipsUsing(function ($component, $record) {
+                    $component->state($record->myFiles->pluck('id')->toArray());
+                })
+                ->suffixAction(ClearAction::make()),
+
+            Repeater::make('checklists')
+                ->table([
+                    TableColumn::make('Item'),
+                    TableColumn::make('Done')->width(1),
+                ])
+                ->schema([
+                    TextInput::make('item')->placeholder('Enter checklist item'),
+                    Toggle::make('done')->default(false)
+                ])
+                ->compact()
+                ->minItems(0)
+                ->defaultItems(0),
+
+
         ];
     }
 }

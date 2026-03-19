@@ -151,7 +151,7 @@ class MyCalendarWidget extends CalendarWidget
     {
         return [
             $this->defaultCreateAction(Note::class),
-            $this->defaultCreateAction(Task::class)->modalWidth(Width::Large),
+            $this->defaultCreateAction(Task::class)->modalWidth(Width::TwoExtraLarge),
             $this->defaultCreateAction(Meeting::class),
             $this->recurringCreateAction(Recurring::class)->modalWidth(Width::ExtraLarge),
         ];
@@ -263,7 +263,7 @@ class MyCalendarWidget extends CalendarWidget
     {
         return function ($record) {
             if ($record instanceof Task) {
-                return Width::Large;
+                return Width::TwoExtraLarge;
             }
 
             if ($record instanceof Recurring) {

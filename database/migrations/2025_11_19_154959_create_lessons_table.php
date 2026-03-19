@@ -27,7 +27,7 @@ return new class extends Migration
             // kanban searchable plugin can search tags regardless of case.
             $table->string('tags_search')->virtualAs('LOWER(tags)')->nullable();
             $table->date('completion_date')->nullable();
-            $table->json('checklist')->nullable();
+            $table->json('checklists')->nullable();
             $table->string('status');
             $table->flowforgePositionColumn()->default('1');
 

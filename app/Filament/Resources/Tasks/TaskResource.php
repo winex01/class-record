@@ -53,14 +53,14 @@ class TaskResource extends Resource
             ->recordTitleAttribute('name')
             ->columns(TaskColumns::schema())
             ->recordActions([
-                ViewAction::make()->modalWidth(Width::Large),
-                EditAction::make()->modalWidth(Width::Large),
+                ViewAction::make()->modalWidth(Width::TwoExtraLarge),
+                EditAction::make()->modalWidth(Width::TwoExtraLarge),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
                 CreateAction::make()
                     ->label('New Task')
-                    ->modalWidth(Width::Large),
+                    ->modalWidth(Width::TwoExtraLarge),
 
                 DeleteBulkAction::make(),
             ]);

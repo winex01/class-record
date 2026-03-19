@@ -5,9 +5,10 @@ namespace App\Filament\Resources\Tasks\Forms;
 use App\Filament\Fields\Textarea;
 use App\Filament\Fields\TagsInput;
 use App\Filament\Fields\TextInput;
-use App\Filament\Fields\ToggleButtons;
+use Filament\Forms\Components\Toggle;
 use App\Filament\Fields\DateTimePicker;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 
 class TaskForm
 {
@@ -19,6 +20,7 @@ class TaskForm
                 ->maxLength(255),
 
             Textarea::make('description')
+                ->rows(3)
                 ->placeholder('Optional...'),
 
             TagsInput::make('tags'),
@@ -34,20 +36,17 @@ class TaskForm
                 ->required(),
 
             Repeater::make('checklists')
-                ->schema([
-                    Textarea::make('name')
-                        ->placeholder('Subtask name')
-                        ->required()
-                        ->maxLength(255)
-                        ->columnSpan(2)
-                        ->rows(1),
-
-                    ToggleButtons::make('complete')
-                        ->columnSpan(1)
-                        ->icons(null)
+                ->table([
+                    TableColumn::make('Item'),
+                    TableColumn::make('Done')->width(1),
                 ])
-                ->defaultItems(0)
-                ->columns(3)
+                ->schema([
+                    TextInput::make('item')->placeholder('Enter checklist item'),
+                    Toggle::make('done')->default(false)
+                ])
+                ->compact()
+                ->minItems(0)
+                ->defaultItems(0),
         ];
     }
 }
