@@ -7,6 +7,7 @@ use App\Exports\Sheets\GradesSheet;
 use App\Exports\Sheets\LessonsSheet;
 use App\Exports\Sheets\StudentsSheet;
 use App\Exports\Sheets\AttendanceSheet;
+use App\Exports\Sheets\FeeCollectionsSheet;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class SchoolClassExport implements WithMultipleSheets
@@ -27,6 +28,7 @@ class SchoolClassExport implements WithMultipleSheets
             new StudentsSheet($this->schoolClass, $this->data),
             new AttendanceSheet($this->schoolClass, $this->data),
             new LessonsSheet($this->schoolClass, $this->data),
+            new FeeCollectionsSheet($this->schoolClass, $this->data),
 
             ...$gradeSheets,
 

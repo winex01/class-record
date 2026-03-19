@@ -1,0 +1,176 @@
+<?php
+
+namespace App\Exports\Sheets;
+
+use App\Models\SchoolClass;
+use App\Exports\Sheets\StudentsSheet;
+use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+
+class FeeCollectionsSheet implements WithTitle, WithEvents
+{
+    protected $students;
+    protected $feeCollections;
+    protected $selectedColumns;
+    protected int $rowIndex = 5; // 4 header rows
+    protected int $lastCol = 1;
+
+    public function __construct(
+        protected SchoolClass $schoolClass,
+        protected array $data,
+    ) {
+        $this->students = $schoolClass->students()->get();
+        $this->feeCollections = $schoolClass->feeCollections()->with('students')->get();
+        $this->selectedColumns = $this->data['fee_collection_columns'] ?? [];
+    }
+
+    public function title(): string
+    {
+        return 'Fee Collections';
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
+                $event->sheet->getTabColor()->setARGB('FFF59E0B');
+                $sheet = $event->sheet->getDelegate();
+
+                $this->buildHeaders($sheet);
+                $this->buildContent($sheet);
+                $this->buildStyles($sheet);
+            },
+        ];
+    }
+
+    protected function buildHeaders($sheet): void
+    {
+        // ── # and Student Name ───────────────────────────────────────────
+        $sheet->mergeCells('A1:A4');
+        $sheet->setCellValue('A1', '#');
+        $sheet->getStyle('A1')->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER)
+            ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+        $sheet->mergeCells('B1:B4');
+        $sheet->setCellValue('B1', 'Student Name');
+        $sheet->getStyle('B1')->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER)
+            ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+        $col = 3;
+
+        foreach ($this->feeCollections as $feeCollection) {
+            $startCol = $col;
+            $subColCount = 0;
+
+            if (in_array('paid', $this->selectedColumns))
+                $subColCount++;
+            if (in_array('remaining', $this->selectedColumns))
+                $subColCount++;
+
+            $endCol = $col + $subColCount - 1;
+
+            $startColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol);
+            $endColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($endCol);
+
+            // ── Row 1: Fee Collection name merged ────────────────────────
+            $sheet->mergeCells("{$startColLetter}1:{$endColLetter}1");
+            $sheet->setCellValue("{$startColLetter}1", $feeCollection->name);
+            $sheet->getStyle("{$startColLetter}1")->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+            // ── Row 2: Amount label / Date label ─────────────────────────
+            if (in_array('amount', $this->selectedColumns)) {
+                $sheet->setCellValue("{$startColLetter}2", 'Amount');
+            }
+            if (in_array('date', $this->selectedColumns)) {
+                $nextCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol + 1);
+                $sheet->setCellValue("{$nextCol}2", 'Date');
+            }
+
+            // ── Row 3: Amount value / Date value ─────────────────────────
+            if (in_array('amount', $this->selectedColumns)) {
+                $sheet->setCellValue("{$startColLetter}3", $feeCollection->isVoluntary ? 'Voluntary' : $feeCollection->amount);
+            }
+            if (in_array('date', $this->selectedColumns)) {
+                $nextCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol + 1);
+                $dateValue = $feeCollection->date?->format('M d,') . "\n" . $feeCollection->date?->format('Y');
+                $sheet->setCellValue("{$nextCol}3", $dateValue);
+                $sheet->getStyle("{$nextCol}3")->getAlignment()->setWrapText(true);
+            }
+
+            // ── Row 4: Paid / Remaining sub-headers ──────────────────────
+            if (in_array('paid', $this->selectedColumns)) {
+                $sheet->setCellValue("{$startColLetter}4", 'Paid');
+            }
+            if (in_array('remaining', $this->selectedColumns)) {
+                $remainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol + ($subColCount - 1));
+                $sheet->setCellValue("{$remainingColLetter}4", 'Remaining');
+            }
+
+            $col += $subColCount;
+        }
+
+        // track last col for buildStyles
+        $this->lastCol = $col;
+    }
+
+    protected function buildContent($sheet): void
+    {
+        $index = 1;
+
+        foreach ($this->students as $student) {
+            $col = 3;
+            $rowNum = $index + 1;
+
+            $sheet->setCellValue('A' . $this->rowIndex, "=" . StudentsSheet::getTitle() . "!A{$rowNum}");
+            $sheet->setCellValue('B' . $this->rowIndex, "=" . StudentsSheet::getTitle() . "!B{$rowNum}");
+
+            foreach ($this->feeCollections as $feeCollection) {
+                $pivotStudent = $feeCollection->students->firstWhere('id', $student->id);
+                $paid = $pivotStudent?->pivot->amount ?? 0;
+
+                $paidColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+                $remainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + 1);
+                $amountColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+
+                if (in_array('paid', $this->selectedColumns)) {
+                    $sheet->setCellValue("{$paidColLetter}{$this->rowIndex}", $paid > 0 ? $paid : '');
+                    $col++;
+                }
+
+                if (in_array('remaining', $this->selectedColumns)) {
+                    if ($feeCollection->isVoluntary) {
+                        // voluntary = no fixed amount, just show empty
+                        $sheet->setCellValue("{$remainingColLetter}{$this->rowIndex}", '');
+                    } else {
+                        $sheet->setCellValue("{$remainingColLetter}{$this->rowIndex}", "=IF({$amountColLetter}\$3-{$paidColLetter}{$this->rowIndex}<=0,\"\",{$amountColLetter}\$3-{$paidColLetter}{$this->rowIndex})");
+                    }
+                    $col++;
+                }
+            }
+
+            $this->rowIndex++;
+            $index++;
+        }
+    }
+
+    protected function buildStyles($sheet): void
+    {
+        $lastColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($this->lastCol - 1);
+
+        // ── Bold rows 1-4 ────────────────────────────────────────────────
+        $sheet->getStyle("A1:{$lastColLetter}4")->applyFromArray([
+            'font' => ['bold' => true],
+        ]);
+
+        // ── Auto width ───────────────────────────────────────────────────
+        for ($i = 1; $i < $this->lastCol; $i++) {
+            $sheet->getColumnDimension(
+                \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i)
+            )->setAutoSize(true);
+        }
+    }
+}

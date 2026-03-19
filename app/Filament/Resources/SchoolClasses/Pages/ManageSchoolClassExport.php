@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SchoolClasses\Pages;
 
 use App\Models\SchoolClass;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use App\Exports\SchoolClassExport;
@@ -41,26 +42,73 @@ class ManageSchoolClassExport extends Page implements HasForms
         return $form
             ->schema([
                 Section::make('Export Options')
+                    ->headerActions([
+                        Action::make('generateExport')
+                            ->label('Generate Export')
+                            ->icon('heroicon-o-arrow-down-tray')
+                            ->action(fn() => $this->export()),
+                    ])
                     ->schema([
-                        Section::make('Export Options')
+                        Grid::make([
+                            'default' => 1,
+                            'md' => 2,
+                            'lg' => 3,
+                            'xl' => 3,
+                        ])
                             ->schema([
-                                Grid::make([
-                                    'default' => 1,
-                                    'md' => 2,
-                                    'lg' => 3,
-                                    'xl' => 4,
-                                ])
-                                    ->schema([
-                                        $this->checkboxStudentColumns()->columnSpan(1),
-                                        $this->checkboxAttendanceCOlumns()->columnSpan(1),
-                                        // TODO:: fee collection
-                                        $this->checkboxLessonColumns()->columnSpan(1),
-                                        $this->checkboxxGradeColumns()->columnSpan(1),
-                                    ]),
+                                $this->checkboxStudentColumns()->columnSpan(1),
+                                $this->checkboxAttendanceCOlumns()->columnSpan(1),
+                                $this->checkboxLessonColumns()->columnSpan(1),
+                                $this->checkboxFeeCollectionColumns()->columnSpan(1),
+                                $this->checkboxxGradeColumns()->columnSpan(1),
                             ]),
                     ]),
             ])
             ->statePath('data');
+    }
+
+    public function checkboxFeeCollectionColumns()
+    {
+        return
+            CheckboxList::make('fee_collection_columns')
+                ->label('Fee Collection Columns')
+                ->options([
+                    'full_name' => 'Student Name',
+                    'fee_collections' => 'Fee Collections (Name)',
+                    'amount' => 'Amount',
+                    'date' => 'Date',
+                    'description' => 'Description',
+                    'paid' => 'Paid',
+                    'remaining' => 'Remaining'
+                ])
+                ->default([
+                    'full_name',
+                    'fee_collections',
+                    'amount',
+                    'date',
+                    // 'description',
+                    'paid',
+                    'remaining',
+                ])
+                ->disableOptionWhen(fn($value) => $value === 'full_name')
+                ->in([
+                    'full_name',
+                    'fee_collections',
+                    'amount',
+                    'date',
+                    'description',
+                    'paid',
+                    'remaining',
+                ])
+                ->afterStateHydrated(function ($state, callable $set) {
+                    if (!in_array('full_name', $state ?? [])) {
+                        $set('student_columns', array_merge($state ?? [], ['full_name']));
+                    }
+                })
+                ->dehydrateStateUsing(function ($state) {
+                    return collect($state)->push('full_name')->unique()->values()->toArray();
+                })
+                ->required();
     }
 
     public function checkboxLessonColumns()

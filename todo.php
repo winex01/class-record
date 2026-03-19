@@ -24,3 +24,23 @@ Actions
 Filters
     -StudentFilters.php
         ->genderFilter()
+
+
+<div class="mt-4">
+    <x-filament::button
+        type="submit"
+        color="primary"
+        wire:loading.attr="disabled"
+        wire:target="export"
+    >
+        <!-- Normal state -->
+        <span wire:loading.remove wire:target="export">
+            Generate Export
+        </span>
+
+        <!-- Loading state: spinner + text inline -->
+        <span wire:loading wire:target="export">
+            Generating...
+        </span>
+    </x-filament::button>
+</div>

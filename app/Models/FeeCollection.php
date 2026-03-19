@@ -17,6 +17,7 @@ class FeeCollection extends Model
 
     protected $casts = [
         'amount' => 'float',
+        'date' => 'date',
     ];
 
     public function students()
