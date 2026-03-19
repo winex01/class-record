@@ -8,7 +8,6 @@ use Filament\Support\Enums\Width;
 use App\Exports\SchoolClassExport;
 use Filament\Resources\Pages\Page;
 use Maatwebsite\Excel\Facades\Excel;
-use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Section;
@@ -54,14 +53,38 @@ class ManageSchoolClassExport extends Page implements HasForms
                                     ->schema([
                                         $this->checkboxStudentColumns()->columnSpan(1),
                                         $this->checkboxAttendanceCOlumns()->columnSpan(1),
-                                        // TODO:: add lesson
                                         // TODO:: fee collection
+                                        $this->checkboxLessonColumns()->columnSpan(1),
                                         $this->checkboxxGradeColumns()->columnSpan(1),
                                     ]),
                             ]),
                     ]),
             ])
             ->statePath('data');
+    }
+
+    public function checkboxLessonColumns()
+    {
+        return
+            CheckboxList::make('lesson_columns')
+                ->label('Lesson Columns')
+                ->options([
+                    'title' => 'Title',
+                    'description' => 'Description',
+                    'tags' => 'Tags',
+                    'completion_date' => 'Completion',
+                    'status' => 'Status',
+                    'checklists' => 'Checklists',
+                ])
+                ->default([
+                    'title',
+                    // 'description',
+                    'tags',
+                    'completion_date',
+                    'status',
+                    // 'checklists',
+                ])
+                ->required();
     }
 
     public function checkboxStudentColumns()

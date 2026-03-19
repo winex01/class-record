@@ -18,6 +18,7 @@ class Lesson extends Model
     protected $casts = [
         'tags' => 'array',
         'checklists' => 'array',
+        'completion_date' => 'date',
     ];
 
     public function myFiles()
