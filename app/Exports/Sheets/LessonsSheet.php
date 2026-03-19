@@ -107,6 +107,18 @@ class LessonsSheet implements WithTitle, WithEvents
             if (in_array('status', $this->selectedColumns)) {
                 $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
                 $sheet->setCellValue("{$colLetter}{$this->rowIndex}", $lesson->status);
+
+                $statusValues = implode(',', array_column(\App\Enums\LessonStatus::cases(), 'value'));
+
+                $validation = $sheet->getCell("{$colLetter}{$this->rowIndex}")->getDataValidation();
+                $validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
+                $validation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
+                $validation->setAllowBlank(false);
+                $validation->setShowDropDown(true);
+                $validation->setShowInputMessage(true);
+                $validation->setShowErrorMessage(true);
+                $validation->setFormula1("\"{$statusValues}\"");
+
                 $col++;
             }
 
@@ -119,16 +131,16 @@ class LessonsSheet implements WithTitle, WithEvents
                 $sheet->setCellValue("{$colLetter}{$this->rowIndex}", 'Checklist Items and Status');
                 $sheet->getStyle("{$colLetter}{$this->rowIndex}")->applyFromArray([
                     'font' => [
-                        'bold'  => true,
+                        'bold' => true,
                         'color' => ['argb' => 'FFFFFFFF'],
                     ],
                     'fill' => [
-                        'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => ['argb' => 'FF7C3AED'],
                     ],
                     'alignment' => [
                         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                        'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
                     ],
                 ]);
                 $this->rowIndex++;
@@ -138,11 +150,11 @@ class LessonsSheet implements WithTitle, WithEvents
                 $sheet->setCellValue("{$doneColLetter}{$this->rowIndex}", 'Done');
                 $sheet->getStyle("{$colLetter}{$this->rowIndex}:{$doneColLetter}{$this->rowIndex}")->applyFromArray([
                     'font' => [
-                        'bold'  => true,
+                        'bold' => true,
                         'color' => ['argb' => 'FF6D28D9'],
                     ],
                     'fill' => [
-                        'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => ['argb' => 'FFede9fe'],
                     ],
                 ]);
@@ -193,11 +205,11 @@ class LessonsSheet implements WithTitle, WithEvents
         // row 1 header styles
         $sheet->getStyle("A1:{$lastColLetter}1")->applyFromArray([
             'font' => [
-                'bold'  => true,
+                'bold' => true,
                 'color' => ['argb' => 'FFFFFFFF'],
             ],
             'fill' => [
-                'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startColor' => ['argb' => 'FF7C3AED'],
             ],
         ]);
@@ -205,7 +217,8 @@ class LessonsSheet implements WithTitle, WithEvents
         // auto width for all columns except description
         for ($i = 1; $i < $col; $i++) {
             $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
-            if ($colLetter === $descriptionColLetter) continue;
+            if ($colLetter === $descriptionColLetter)
+                continue;
             $sheet->getColumnDimension($colLetter)->setAutoSize(true);
         }
 
