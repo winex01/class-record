@@ -100,7 +100,7 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
             ])
             ->recordActions([
                 SchoolClassGradeActions::viewGradesAction($this->getOwnerRecord())
-                    ->modalWidth(Width::Full),
+                    ->modalWidth(Width::Screen),
                 ViewAction::make()->modalWidth(Width::TwoExtraLarge),
                 EditAction::make()->modalWidth(Width::TwoExtraLarge),
                 DeleteAction::make(),
