@@ -64,12 +64,8 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
         foreach ($this->feeCollections as $feeCollection) {
             $startCol = $col;
             $subColCount = 0;
-
-            if (in_array('paid', $this->selectedColumns))
-                $subColCount++;
-            if (in_array('remaining', $this->selectedColumns))
-                $subColCount++;
-
+            $subColCount++;
+            $subColCount++;
             $endCol = $col + $subColCount - 1;
 
             $startColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol);
@@ -82,33 +78,21 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
                 ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
             // ── Row 2: Amount label / Date label ─────────────────────────
-            if (in_array('amount', $this->selectedColumns)) {
-                $sheet->setCellValue("{$startColLetter}2", 'Amount');
-            }
-            if (in_array('date', $this->selectedColumns)) {
-                $nextCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol + 1);
-                $sheet->setCellValue("{$nextCol}2", 'Date');
-            }
+            $sheet->setCellValue("{$startColLetter}2", 'Amount');
+            $nextCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol + 1);
+            $sheet->setCellValue("{$nextCol}2", 'Date');
 
             // ── Row 3: Amount value / Date value ─────────────────────────
-            if (in_array('amount', $this->selectedColumns)) {
-                $sheet->setCellValue("{$startColLetter}3", $feeCollection->isVoluntary ? 'Voluntary' : $feeCollection->amount);
-            }
-            if (in_array('date', $this->selectedColumns)) {
-                $nextCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol + 1);
-                $dateValue = $feeCollection->date?->format('M d,') . "\n" . $feeCollection->date?->format('Y');
-                $sheet->setCellValue("{$nextCol}3", $dateValue);
-                $sheet->getStyle("{$nextCol}3")->getAlignment()->setWrapText(true);
-            }
+            $sheet->setCellValue("{$startColLetter}3", $feeCollection->isVoluntary ? 'Voluntary' : $feeCollection->amount);
+            $nextCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol + 1);
+            $dateValue = $feeCollection->date?->format('M d,') . "\n" . $feeCollection->date?->format('Y');
+            $sheet->setCellValue("{$nextCol}3", $dateValue);
+            $sheet->getStyle("{$nextCol}3")->getAlignment()->setWrapText(true);
 
             // ── Row 4: Paid / Remaining sub-headers ──────────────────────
-            if (in_array('paid', $this->selectedColumns)) {
-                $sheet->setCellValue("{$startColLetter}4", 'Paid');
-            }
-            if (in_array('remaining', $this->selectedColumns)) {
-                $remainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol + ($subColCount - 1));
-                $sheet->setCellValue("{$remainingColLetter}4", 'Remaining');
-            }
+            $sheet->setCellValue("{$startColLetter}4", 'Paid');
+            $remainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol + ($subColCount - 1));
+            $sheet->setCellValue("{$remainingColLetter}4", 'Remaining');
 
             $col += $subColCount;
         }
@@ -136,20 +120,16 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
                 $remainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + 1);
                 $amountColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
 
-                if (in_array('paid', $this->selectedColumns)) {
-                    $sheet->setCellValue("{$paidColLetter}{$this->rowIndex}", $paid > 0 ? $paid : '');
-                    $col++;
-                }
+                $sheet->setCellValue("{$paidColLetter}{$this->rowIndex}", $paid > 0 ? $paid : '');
+                $col++;
 
-                if (in_array('remaining', $this->selectedColumns)) {
-                    if ($feeCollection->isVoluntary) {
-                        // voluntary = no fixed amount, just show empty
-                        $sheet->setCellValue("{$remainingColLetter}{$this->rowIndex}", '');
-                    } else {
-                        $sheet->setCellValue("{$remainingColLetter}{$this->rowIndex}", "=IF({$amountColLetter}\$3-{$paidColLetter}{$this->rowIndex}<=0,\"\",{$amountColLetter}\$3-{$paidColLetter}{$this->rowIndex})");
-                    }
-                    $col++;
+                if ($feeCollection->isVoluntary) {
+                    // voluntary = no fixed amount, just show empty
+                    $sheet->setCellValue("{$remainingColLetter}{$this->rowIndex}", '');
+                } else {
+                    $sheet->setCellValue("{$remainingColLetter}{$this->rowIndex}", "=IF({$amountColLetter}\$3-{$paidColLetter}{$this->rowIndex}<=0,\"\",{$amountColLetter}\$3-{$paidColLetter}{$this->rowIndex})");
                 }
+                $col++;
             }
 
             $this->rowIndex++;
@@ -175,10 +155,8 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
 
         foreach ($this->feeCollections as $feeCollection) {
             $subColCount = 0;
-            if (in_array('paid', $this->selectedColumns))
-                $subColCount++;
-            if (in_array('remaining', $this->selectedColumns))
-                $subColCount++;
+            $subColCount++;
+            $subColCount++;
 
             $startColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
             $endColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + $subColCount - 1);
@@ -190,63 +168,36 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
                 ],
             ]);
 
+            // font color amount and amount value
+            $sheet->getStyle("{$startColLetter}2:{$startColLetter}3")->applyFromArray([
+                'font' => ['color' => ['argb' => '2563EB']], // blue
+            ]);
+
+            // font color date and date value
+            $sheet->getStyle("{$endColLetter}2:{$endColLetter}3")->applyFromArray([
+                'font' => ['color' => ['argb' => 'FF7C3AED']], // purple
+            ]);
+
+            // font color Paid and student cell values
+            $sheet->getStyle("{$startColLetter}4:{$startColLetter}{$lastDataRow}")->applyFromArray([
+                'font' => ['color' => ['argb' => 'FF16A34A']], // green
+            ]);
+
+            // font color Remaining and student cell values
+            $sheet->getStyle("{$endColLetter}4:{$endColLetter}{$lastDataRow}")->applyFromArray([
+                'font' => ['color' => ['argb' => 'FFDC2626']], // red
+            ]);
+
             $col += $subColCount;
             $colorIndex++;
         }
 
-        // ── Font colors per column ────────────────────────────────────────
-        $col = 3;
-        foreach ($this->feeCollections as $feeCollection) {
-            $subColCount = 0;
-            if (in_array('amount', $this->selectedColumns))
-                $subColCount++;
-            if (in_array('date', $this->selectedColumns))
-                $subColCount++;
-            if (in_array('paid', $this->selectedColumns))
-                $subColCount++;
-            if (in_array('remaining', $this->selectedColumns))
-                $subColCount++;
-
-            $subCol = $col;
-
-            if (in_array('amount', $this->selectedColumns)) {
-                $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($subCol);
-                $sheet->getStyle("{$colLetter}2:{$colLetter}{$lastDataRow}")->applyFromArray([
-                    'font' => ['color' => ['argb' => 'FF16A34A']],
-                ]);
-                $subCol++;
-            }
-            if (in_array('date', $this->selectedColumns)) {
-                $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($subCol);
-                $sheet->getStyle("{$colLetter}2:{$colLetter}{$lastDataRow}")->applyFromArray([
-                    'font' => ['color' => ['argb' => 'FFDC2626']],
-                ]);
-                $subCol++;
-            }
-            if (in_array('paid', $this->selectedColumns)) {
-                $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($subCol);
-                $sheet->getStyle("{$colLetter}2:{$colLetter}{$lastDataRow}")->applyFromArray([
-                    'font' => ['color' => ['argb' => 'FF16A34A']],
-                ]);
-                $subCol++;
-            }
-            if (in_array('remaining', $this->selectedColumns)) {
-                $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($subCol);
-                $sheet->getStyle("{$colLetter}2:{$colLetter}{$lastDataRow}")->applyFromArray([
-                    'font' => ['color' => ['argb' => 'FFDC2626']],
-                ]);
-                $subCol++;
-            }
-
-            // ── Row 1 fee collection name → black ────────────────────────
-            $startColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-            $endColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + $subColCount - 1);
-            $sheet->getStyle("{$startColLetter}1:{$endColLetter}1")->applyFromArray([
-                'font' => ['color' => ['argb' => 'FF000000'], 'bold' => true],
-            ]);
-
-            $col += $subColCount;
-        }
+        // center align cell value
+        $sheet->getStyle("C:{$lastColLetter}")->applyFromArray([
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+        ]);
 
         // ── Bold + center align rows 1-4 ─────────────────────────────────
         $sheet->getStyle("A1:{$lastColLetter}4")->applyFromArray([
@@ -263,5 +214,6 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
                 \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i)
             )->setAutoSize(true);
         }
+
     }
 }
