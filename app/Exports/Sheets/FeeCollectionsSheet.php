@@ -36,7 +36,7 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
             AfterSheet::class => function (AfterSheet $event) {
                 $event->sheet->getTabColor()->setARGB('FF6B7280'); // gray-500
                 $sheet = $event->sheet->getDelegate();
-
+                $sheet->freezePane('C5');
                 $this->buildHeaders($sheet);
                 $this->buildContent($sheet);
                 $this->buildStyles($sheet);
@@ -214,8 +214,6 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
                 \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i)
             )->setAutoSize(true);
         }
-
-        // TODO:: free column A and B to all sheet
 
     }
 }

@@ -127,6 +127,7 @@ class AttendanceSheet implements FromCollection, WithHeadings, WithStyles, Shoul
             AfterSheet::class => function (AfterSheet $event) {
                 $event->sheet->getTabColor()->setARGB('2563EB');
                 $sheet         = $event->sheet->getDelegate();
+                $sheet->freezePane('C2');
                 $highestRow    = $sheet->getHighestRow();
                 $startColIndex = 3;
                 $endColIndex   = 2;

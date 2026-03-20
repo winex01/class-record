@@ -37,6 +37,7 @@ class LessonsSheet implements WithTitle, WithEvents
             AfterSheet::class => function (AfterSheet $event) {
                 $event->sheet->getTabColor()->setARGB('FF7C3AED');
                 $sheet = $event->sheet->getDelegate();
+                $sheet->freezePane('C2');
 
                 $this->buildHeaders($sheet);
                 $this->buildContent($sheet);

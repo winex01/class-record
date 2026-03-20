@@ -78,6 +78,7 @@ class StudentsSheet implements FromCollection, WithHeadings, WithStyles, ShouldA
             AfterSheet::class => function (AfterSheet $event) {
                 $event->sheet->getTabColor()->setARGB('10B981'); // emerald
                 $sheet = $event->sheet->getDelegate();
+                $sheet->freezePane('C2');
                 $highestRow = $sheet->getHighestRow();
 
                 $headings = $this->headings();

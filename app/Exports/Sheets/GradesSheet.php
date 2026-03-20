@@ -78,6 +78,7 @@ class GradesSheet implements FromCollection, WithStyles, ShouldAutoSize, WithTit
             AfterSheet::class => function (AfterSheet $event) {
                 $event->sheet->getTabColor()->setARGB('FFFCD34D'); // amber-300
                 $sheet = $event->sheet->getDelegate();
+                $sheet->freezePane('C5');
 
                 $this->buildHeaders($sheet);
                 $this->buildContent($sheet);
