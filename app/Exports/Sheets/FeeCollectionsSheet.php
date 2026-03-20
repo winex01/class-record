@@ -215,5 +215,7 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
             )->setAutoSize(true);
         }
 
+        // TODO:: free column A and B to all sheet
+
     }
 }
