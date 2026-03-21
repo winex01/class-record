@@ -1,7 +1,6 @@
 <?php
 /*
 
-TODO:: download app backup
 TODO:: licensed Payment
 TODO:: wrap this into .exe bundle
 

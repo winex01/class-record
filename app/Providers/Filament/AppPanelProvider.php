@@ -11,8 +11,8 @@ use Filament\Pages\Dashboard;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Support\Facades\Route;
+use App\Filament\Widgets\BackupWidget;
 use Illuminate\Support\Facades\Storage;
-use Filament\Widgets\FilamentInfoWidget;
 use App\Filament\Widgets\MyCalendarWidget;
 use Filament\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckStudentBirthdays;
@@ -56,7 +56,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
+                BackupWidget::class,
                 MyCalendarWidget::class,
             ])
             ->middleware([
@@ -84,6 +84,14 @@ class AppPanelProvider extends PanelProvider
     private static function registerCustomRoutes(): void
     {
         Route::middleware(['auth'])->group(function () {
+            Route::get('/backup/download/{file}', function (string $file) {
+                $path = Storage::disk('local')->path(config('app.name') . '/' . $file);
+
+                abort_if(!file_exists($path), 404);
+
+                return response()->download($path);
+            })->name('backup.download');
+
             Route::get('/my-files/download/{myFileId}/{index}', function ($myFileId, $index) {
                 $myFile = MyFile::findOrFail($myFileId);
 

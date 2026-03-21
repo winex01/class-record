@@ -13,7 +13,8 @@
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10",
         "maatwebsite/excel": "^3.1",
-        "relaticle/flowforge": "4.0"
+        "relaticle/flowforge": "4.0",
+        "spatie/laravel-backup": "^10.2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
