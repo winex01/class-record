@@ -9,8 +9,9 @@ use Filament\Support\Enums\Width;
 use App\Exports\SchoolClassExport;
 use Filament\Resources\Pages\Page;
 use Maatwebsite\Excel\Facades\Excel;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
-use Filament\Support\Enums\Alignment;
+use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\CheckboxList;
@@ -36,6 +37,23 @@ class ManageSchoolClassExport extends Page implements HasForms
     public function getMaxContentWidth(): Width
     {
         return Width::Full;
+    }
+
+    // cache key per user per school class
+    protected function cacheKey(): string
+    {
+        return 'export_preferences_user_' . auth()->id() . '_class_' . $this->record->id;
+    }
+
+    protected function getCached(string $field, mixed $default): mixed
+    {
+        return Cache::get($this->cacheKey() . "_{$field}", $default);
+    }
+
+    protected function putCached(string $field, mixed $value): void
+    {
+        // store for 30 days
+        Cache::put($this->cacheKey() . "_{$field}", $value, now()->addDays(30));
     }
 
     public function form(Schema $form): Schema
@@ -68,178 +86,220 @@ class ManageSchoolClassExport extends Page implements HasForms
             ->statePath('data');
     }
 
-    public function checkboxFeeCollectionColumns()
+    protected function sheetToggle(string $key, string $label): Toggle
     {
-        return
-            CheckboxList::make('fee_collection_columns')
-                ->label('Fee Collection Columns')
-                ->options([
-                    'full_name' => 'Student Name',
-                    'total_paid' => 'Total Paid',
-                    'total_remaining' => 'Total Remaining'
-                ])
-                ->default([
-                    'full_name',
-                    'total_paid',
-                    'total_remaining',
-                ])
-                ->disableOptionWhen(fn($value) => $value === 'full_name')
-                ->in([
-                    'full_name',
-                    'total_paid',
-                    'total_remaining',
-                ])
-                ->afterStateHydrated(function ($state, callable $set) {
-                    if (!in_array('full_name', $state ?? [])) {
-                        $set('student_columns', array_merge($state ?? [], ['full_name']));
-                    }
-                })
-                ->dehydrateStateUsing(function ($state) {
-                    return collect($state)->push('full_name')->unique()->values()->toArray();
-                })
-                ->required();
-    }
-
-    public function checkboxLessonColumns()
-    {
-        return
-            CheckboxList::make('lesson_columns')
-                ->label('Lesson Columns')
-                ->options([
-                    'title' => 'Title',
-                    'description' => 'Description',
-                    'tags' => 'Tags',
-                    'completion_date' => 'Completion',
-                    'status' => 'Status',
-                    'checklists' => 'Checklists',
-                ])
-                ->default([
-                    'title',
-                    // 'description',
-                    'tags',
-                    'completion_date',
-                    'status',
-                    // 'checklists',
-                ])
-                ->required();
+        return Toggle::make("{$key}_enabled")
+            ->label($label)
+            ->default($this->getCached("{$key}_enabled", true))
+            ->inline(false)
+            ->dehydrated(true)
+            ->live()
+            ->afterStateUpdated(function ($state) use ($key) {
+                $this->putCached("{$key}_enabled", $state);
+            });
     }
 
     public function checkboxStudentColumns()
     {
-        return
-            CheckboxList::make('student_columns')
-                ->label('Student Columns')
-                ->options([
-                    'full_name' => 'Student Name',
-                    'gender' => 'Gender',
-                    'birth_date' => 'Birth Date',
-                    'email' => 'Email',
-                    'contact_number' => 'Contact Number',
-                ])
-                ->default([
-                    'full_name',
-                    'gender',
-                    'birth_date',
-                    'email',
-                    'contact_number',
-                ])
-                ->disableOptionWhen(fn($value) => $value === 'full_name')
-                ->in([
-                    'full_name',
-                    'gender',
-                    'birth_date',
-                    'email',
-                    'contact_number',
-                ])
-                ->afterStateHydrated(function ($state, callable $set) {
-                    if (!in_array('full_name', $state ?? [])) {
-                        $set('student_columns', array_merge($state ?? [], ['full_name']));
-                    }
-                })
-                ->dehydrateStateUsing(function ($state) {
-                    return collect($state)->push('full_name')->unique()->values()->toArray();
-                })
-                ->required();
+        return Section::make()
+            ->schema([
+                CheckboxList::make('student_columns')
+                    ->label('Students Sheet')
+                    ->options([
+                        'full_name'      => 'Student Name',
+                        'gender'         => 'Gender',
+                        'birth_date'     => 'Birth Date',
+                        'email'          => 'Email',
+                        'contact_number' => 'Contact Number',
+                    ])
+                    ->default($this->getCached('student_columns', [
+                        'full_name',
+                        'gender',
+                        'birth_date',
+                        'email',
+                        'contact_number',
+                    ]))
+                    ->disableOptionWhen(fn($value) => $value === 'full_name')
+                    ->in(['full_name', 'gender', 'birth_date', 'email', 'contact_number'])
+                    ->afterStateHydrated(function ($state, callable $set) {
+                        if (!in_array('full_name', $state ?? [])) {
+                            $set('student_columns', array_merge($state ?? [], ['full_name']));
+                        }
+                    })
+                    ->dehydrateStateUsing(function ($state) {
+                        return collect($state)->push('full_name')->unique()->values()->toArray();
+                    })
+                    ->afterStateUpdated(function ($state) {
+                        $this->putCached('student_columns', $state);
+                    })
+                    ->live()
+                    ->required(),
+            ])
+            ->compact();
     }
 
     public function checkboxAttendanceCOlumns()
     {
-        return
-            CheckboxList::make('attendance_columns')
-                ->label('Attendance Columns')
-                ->options([
-                    'full_name' => 'Student Name',
-                    'dates' => 'Dates',
-                    'present' => 'Present',
-                    'absent' => 'Absent',
-                ])
-                ->default(['full_name', 'dates', 'present', 'absent'])
-                ->disableOptionWhen(fn($value) => $value === 'full_name')
-                ->in(['full_name', 'dates', 'present', 'absent'])
-                ->afterStateHydrated(function ($state, callable $set) {
-                    if (!in_array('full_name', $state ?? [])) {
-                        $set('attendance_columns', array_merge($state ?? [], ['full_name']));
-                    }
-                })
-                ->dehydrateStateUsing(function ($state) {
-                    return collect($state)->push('full_name')->unique()->values()->toArray();
-                })
-                ->required();
+        return Section::make()
+            ->schema([
+                $this->sheetToggle('attendance', 'Attendance Sheet'),
+                CheckboxList::make('attendance_columns')
+                    ->label('Attendance Columns')
+                    ->options([
+                        'full_name' => 'Student Name',
+                        'dates'     => 'Dates',
+                        'present'   => 'Present',
+                        'absent'    => 'Absent',
+                    ])
+                    ->default($this->getCached('attendance_columns', ['full_name', 'dates', 'present', 'absent']))
+                    ->disableOptionWhen(fn($value) => $value === 'full_name')
+                    ->in(['full_name', 'dates', 'present', 'absent'])
+                    ->afterStateHydrated(function ($state, callable $set) {
+                        if (!in_array('full_name', $state ?? [])) {
+                            $set('attendance_columns', array_merge($state ?? [], ['full_name']));
+                        }
+                    })
+                    ->dehydrateStateUsing(function ($state) {
+                        return collect($state)->push('full_name')->unique()->values()->toArray();
+                    })
+                    ->afterStateUpdated(function ($state) {
+                        $this->putCached('attendance_columns', $state);
+                    })
+                    ->live()
+                    ->disabled(fn($get) => !$get('attendance_enabled'))
+                    ->required(fn($get) => (bool) $get('attendance_enabled')),
+            ])
+            ->compact();
+    }
+
+    public function checkboxLessonColumns()
+    {
+        return Section::make()
+            ->schema([
+                $this->sheetToggle('lesson', 'Lessons Sheet'),
+                CheckboxList::make('lesson_columns')
+                    ->label('Lesson Columns')
+                    ->options([
+                        'title'           => 'Title',
+                        'description'     => 'Description',
+                        'tags'            => 'Tags',
+                        'completion_date' => 'Completion',
+                        'status'          => 'Status',
+                        'checklists'      => 'Checklists',
+                    ])
+                    ->default($this->getCached('lesson_columns', [
+                        'title',
+                        'tags',
+                        'completion_date',
+                        'status',
+                    ]))
+                    ->afterStateUpdated(function ($state) {
+                        $this->putCached('lesson_columns', $state);
+                    })
+                    ->live()
+                    ->disabled(fn($get) => !$get('lesson_enabled'))
+                    ->required(fn($get) => (bool) $get('lesson_enabled')),
+            ])
+            ->compact();
+    }
+
+    public function checkboxFeeCollectionColumns()
+    {
+        return Section::make()
+            ->schema([
+                $this->sheetToggle('fee_collection', 'Fee Collections Sheet'),
+                CheckboxList::make('fee_collection_columns')
+                    ->label('Fee Collection Columns')
+                    ->options([
+                        'full_name'       => 'Student Name',
+                        'total_paid'      => 'Total Paid',
+                        'total_remaining' => 'Total Remaining',
+                    ])
+                    ->default($this->getCached('fee_collection_columns', [
+                        'full_name',
+                        'total_paid',
+                        'total_remaining',
+                    ]))
+                    ->disableOptionWhen(fn($value) => $value === 'full_name')
+                    ->in(['full_name', 'total_paid', 'total_remaining'])
+                    ->afterStateHydrated(function ($state, callable $set) {
+                        if (!in_array('full_name', $state ?? [])) {
+                            $set('fee_collection_columns', array_merge($state ?? [], ['full_name']));
+                        }
+                    })
+                    ->dehydrateStateUsing(function ($state) {
+                        return collect($state)->push('full_name')->unique()->values()->toArray();
+                    })
+                    ->afterStateUpdated(function ($state) {
+                        $this->putCached('fee_collection_columns', $state);
+                    })
+                    ->live()
+                    ->disabled(fn($get) => !$get('fee_collection_enabled'))
+                    ->required(fn($get) => (bool) $get('fee_collection_enabled')),
+            ])
+            ->compact();
     }
 
     public function checkboxxGradeColumns()
     {
-        return
-            CheckboxList::make('grade_columns')
-                ->label('Grade Columns')
-                ->options(function () {
-                    $baseOptions = [
-                        'full_name' => 'Student Name',
-                    ];
+        return Section::make()
+            ->schema([
+                $this->sheetToggle('grade', 'Grades Sheet'),
+                CheckboxList::make('grade_columns')
+                    ->label('Grade Columns')
+                    ->options(function () {
+                        $baseOptions = ['full_name' => 'Student Name'];
 
-                    if ($this->record?->gradeTransmutations()->exists()) {
-                        $baseOptions['initial_grade'] = 'Initial Grade';
-                        $baseOptions['transmuted_grade'] = 'Transmuted Grade';
-                    } else {
-                        $baseOptions['grade'] = 'Grade';
-                    }
+                        if ($this->record?->gradeTransmutations()->exists()) {
+                            $baseOptions['initial_grade']    = 'Initial Grade';
+                            $baseOptions['transmuted_grade'] = 'Transmuted Grade';
+                        } else {
+                            $baseOptions['grade'] = 'Grade';
+                        }
 
-                    return $baseOptions;
-                })
-                ->default(function () {
-                    $defaults = ['full_name'];
+                        return $baseOptions;
+                    })
+                    ->default(function () {
+                        $defaults = ['full_name'];
 
-                    if ($this->record?->gradeTransmutations()->exists()) {
-                        $defaults[] = 'initial_grade';
-                        $defaults[] = 'transmuted_grade';
-                    } else {
-                        $defaults[] = 'grade';
-                    }
+                        if ($this->record?->gradeTransmutations()->exists()) {
+                            $defaults[] = 'initial_grade';
+                            $defaults[] = 'transmuted_grade';
+                        } else {
+                            $defaults[] = 'grade';
+                        }
 
-                    return $defaults;
-                })
-                ->disableOptionWhen(fn($value) => $value === 'full_name')
-                ->in(function () {
-                    $valid = ['full_name'];
+                        return $this->getCached('grade_columns', $defaults);
+                    })
+                    ->disableOptionWhen(fn($value) => $value === 'full_name')
+                    ->in(function () {
+                        $valid = ['full_name'];
 
-                    if ($this->record?->gradeTransmutations()->exists()) {
-                        $valid[] = 'initial_grade';
-                        $valid[] = 'transmuted_grade';
-                    } else {
-                        $valid[] = 'grade';
-                    }
+                        if ($this->record?->gradeTransmutations()->exists()) {
+                            $valid[] = 'initial_grade';
+                            $valid[] = 'transmuted_grade';
+                        } else {
+                            $valid[] = 'grade';
+                        }
 
-                    return $valid;
-                })
-                ->afterStateHydrated(function ($state, callable $set) {
-                    if (!in_array('full_name', $state ?? [])) {
-                        $set('grade_columns', array_merge($state ?? [], ['full_name']));
-                    }
-                })
-                ->dehydrateStateUsing(function ($state) {
-                    return collect($state)->push('full_name')->unique()->values()->toArray();
-                })
-                ->required();
+                        return $valid;
+                    })
+                    ->afterStateHydrated(function ($state, callable $set) {
+                        if (!in_array('full_name', $state ?? [])) {
+                            $set('grade_columns', array_merge($state ?? [], ['full_name']));
+                        }
+                    })
+                    ->dehydrateStateUsing(function ($state) {
+                        return collect($state)->push('full_name')->unique()->values()->toArray();
+                    })
+                    ->afterStateUpdated(function ($state) {
+                        $this->putCached('grade_columns', $state);
+                    })
+                    ->live()
+                    ->disabled(fn($get) => !$get('grade_enabled'))
+                    ->required(fn($get) => (bool) $get('grade_enabled')),
+            ])
+            ->compact();
     }
 
     public function export()

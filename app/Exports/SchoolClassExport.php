@@ -19,19 +19,32 @@ class SchoolClassExport implements WithMultipleSheets
 
     public function sheets(): array
     {
-        $gradeSheets = $this->schoolClass->grades()
-            ->get()
-            ->map(fn ($grade) => new GradesSheet($this->schoolClass, $this->data, $grade))
-            ->toArray();
+        $sheets = [];
 
-        return [
-            new StudentsSheet($this->schoolClass, $this->data),
-            new AttendanceSheet($this->schoolClass, $this->data),
-            new LessonsSheet($this->schoolClass, $this->data),
-            new FeeCollectionsSheet($this->schoolClass, $this->data),
+        // Students sheet is always included (toggle is locked on)
+        $sheets[] = new StudentsSheet($this->schoolClass, $this->data);
 
-            ...$gradeSheets,
+        if ($this->data['attendance_enabled'] ?? true) {
+            $sheets[] = new AttendanceSheet($this->schoolClass, $this->data);
+        }
 
-        ];
+        if ($this->data['lesson_enabled'] ?? true) {
+            $sheets[] = new LessonsSheet($this->schoolClass, $this->data);
+        }
+
+        if ($this->data['fee_collection_enabled'] ?? true) {
+            $sheets[] = new FeeCollectionsSheet($this->schoolClass, $this->data);
+        }
+
+        if ($this->data['grade_enabled'] ?? true) {
+            $gradeSheets = $this->schoolClass->grades()
+                ->get()
+                ->map(fn($grade) => new GradesSheet($this->schoolClass, $this->data, $grade))
+                ->toArray();
+
+            array_push($sheets, ...$gradeSheets);
+        }
+
+        return $sheets;
     }
 }
