@@ -166,22 +166,34 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
             // ── Total Paid: =SUM(C5,E5,G5,...) ──────────────────────────
             if (in_array('total_paid', $this->selectedColumns)) {
                 $totalPaidColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-                $paidRefs = implode(',', array_map(
-                    fn($letter) => "{$letter}{$this->rowIndex}",
-                    $this->paidColLetters
-                ));
-                $sheet->setCellValue("{$totalPaidColLetter}{$this->rowIndex}", "=SUM({$paidRefs})");
+
+                if (!empty($this->paidColLetters)) {
+                    $paidRefs = implode(',', array_map(
+                        fn($letter) => "{$letter}{$this->rowIndex}",
+                        $this->paidColLetters
+                    ));
+                    $sheet->setCellValue("{$totalPaidColLetter}{$this->rowIndex}", "=SUM({$paidRefs})");
+                } else {
+                    $sheet->setCellValue("{$totalPaidColLetter}{$this->rowIndex}", 0);
+                }
+
                 $col++;
             }
 
             // ── Total Remaining: =SUM(D5,F5,H5,...) ─────────────────────
             if (in_array('total_remaining', $this->selectedColumns)) {
                 $totalRemainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-                $remainingRefs = implode(',', array_map(
-                    fn($letter) => "{$letter}{$this->rowIndex}",
-                    $this->remainingColLetters
-                ));
-                $sheet->setCellValue("{$totalRemainingColLetter}{$this->rowIndex}", "=SUM({$remainingRefs})");
+
+                if (!empty($this->remainingColLetters)) {
+                    $remainingRefs = implode(',', array_map(
+                        fn($letter) => "{$letter}{$this->rowIndex}",
+                        $this->remainingColLetters
+                    ));
+                    $sheet->setCellValue("{$totalRemainingColLetter}{$this->rowIndex}", "=SUM({$remainingRefs})");
+                } else {
+                    $sheet->setCellValue("{$totalRemainingColLetter}{$this->rowIndex}", 0);
+                }
+
                 $col++;
             }
 

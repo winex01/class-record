@@ -15,7 +15,8 @@ class SchoolClassExport implements WithMultipleSheets
     public function __construct(
         protected SchoolClass $schoolClass,
         protected array $data,
-    ) {}
+    ) {
+    }
 
     public function sheets(): array
     {
@@ -39,10 +40,13 @@ class SchoolClassExport implements WithMultipleSheets
         if ($this->data['grade_enabled'] ?? true) {
             $gradeSheets = $this->schoolClass->grades()
                 ->get()
+                ->filter(fn($grade) => $grade->is_complete)
                 ->map(fn($grade) => new GradesSheet($this->schoolClass, $this->data, $grade))
                 ->toArray();
 
-            array_push($sheets, ...$gradeSheets);
+            if (!empty($gradeSheets)) {
+                array_push($sheets, ...$gradeSheets);
+            }
         }
 
         return $sheets;
