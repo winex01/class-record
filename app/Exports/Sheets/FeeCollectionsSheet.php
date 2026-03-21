@@ -16,6 +16,10 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
     protected int $rowIndex = 5; // 4 header rows
     protected int $lastCol = 1;
 
+    // stores each fee collection's paid/remaining col letters for SUM
+    protected array $paidColLetters = [];
+    protected array $remainingColLetters = [];
+
     public function __construct(
         protected SchoolClass $schoolClass,
         protected array $data,
@@ -94,7 +98,35 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
             $remainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($startCol + ($subColCount - 1));
             $sheet->setCellValue("{$remainingColLetter}4", 'Remaining');
 
+            // track paid/remaining col letters for SUM formulas
+            $this->paidColLetters[] = $startColLetter;
+            $this->remainingColLetters[] = $remainingColLetter;
+
             $col += $subColCount;
+        }
+
+        // ── Total Paid column ────────────────────────────────────────────
+        if (in_array('total_paid', $this->selectedColumns)) {
+            $totalPaidColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->mergeCells("{$totalPaidColLetter}1:{$totalPaidColLetter}3");
+            $sheet->setCellValue("{$totalPaidColLetter}1", 'Total Paid');
+            $sheet->getStyle("{$totalPaidColLetter}1")->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER)
+                ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->setCellValue("{$totalPaidColLetter}4", 'Total');
+            $col++;
+        }
+
+        // ── Total Remaining column ───────────────────────────────────────
+        if (in_array('total_remaining', $this->selectedColumns)) {
+            $totalRemainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->mergeCells("{$totalRemainingColLetter}1:{$totalRemainingColLetter}3");
+            $sheet->setCellValue("{$totalRemainingColLetter}1", 'Total Remaining');
+            $sheet->getStyle("{$totalRemainingColLetter}1")->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER)
+                ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->setCellValue("{$totalRemainingColLetter}4", 'Balance');
+            $col++;
         }
 
         // track last col for buildStyles
@@ -124,7 +156,6 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
                 $col++;
 
                 if ($feeCollection->isVoluntary) {
-                    // voluntary = no fixed amount, just show empty
                     $sheet->setCellValue("{$remainingColLetter}{$this->rowIndex}", '');
                 } else {
                     $sheet->setCellValue("{$remainingColLetter}{$this->rowIndex}", "=IF({$amountColLetter}\$3-{$paidColLetter}{$this->rowIndex}<=0,\"\",{$amountColLetter}\$3-{$paidColLetter}{$this->rowIndex})");
@@ -132,11 +163,31 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
                 $col++;
             }
 
+            // ── Total Paid: =SUM(C5,E5,G5,...) ──────────────────────────
+            if (in_array('total_paid', $this->selectedColumns)) {
+                $totalPaidColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+                $paidRefs = implode(',', array_map(
+                    fn($letter) => "{$letter}{$this->rowIndex}",
+                    $this->paidColLetters
+                ));
+                $sheet->setCellValue("{$totalPaidColLetter}{$this->rowIndex}", "=SUM({$paidRefs})");
+                $col++;
+            }
+
+            // ── Total Remaining: =SUM(D5,F5,H5,...) ─────────────────────
+            if (in_array('total_remaining', $this->selectedColumns)) {
+                $totalRemainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+                $remainingRefs = implode(',', array_map(
+                    fn($letter) => "{$letter}{$this->rowIndex}",
+                    $this->remainingColLetters
+                ));
+                $sheet->setCellValue("{$totalRemainingColLetter}{$this->rowIndex}", "=SUM({$remainingRefs})");
+                $col++;
+            }
+
             $this->rowIndex++;
             $index++;
         }
-
-        // TODO:: total paid, total remaining/balance
     }
 
     protected function buildStyles($sheet): void
@@ -192,7 +243,33 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
             $colorIndex++;
         }
 
-        // center align cell value
+        // ── Total Paid column styles ─────────────────────────────────────
+        if (in_array('total_paid', $this->selectedColumns)) {
+            $totalPaidColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->getStyle("{$totalPaidColLetter}1:{$totalPaidColLetter}{$lastDataRow}")->applyFromArray([
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['argb' => 'FFD1FAE5'], // green-100
+                ],
+                'font' => ['bold' => true, 'color' => ['argb' => 'FF16A34A']], // green
+            ]);
+            $col++;
+        }
+
+        // ── Total Remaining column styles ────────────────────────────────
+        if (in_array('total_remaining', $this->selectedColumns)) {
+            $totalRemainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->getStyle("{$totalRemainingColLetter}1:{$totalRemainingColLetter}{$lastDataRow}")->applyFromArray([
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['argb' => 'FFFEE2E2'], // red-100
+                ],
+                'font' => ['bold' => true, 'color' => ['argb' => 'FFDC2626']], // red
+            ]);
+            $col++;
+        }
+
+        // ── Center align C onward ────────────────────────────────────────
         $sheet->getStyle("C:{$lastColLetter}")->applyFromArray([
             'alignment' => [
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
@@ -215,5 +292,34 @@ class FeeCollectionsSheet implements WithTitle, WithEvents
             )->setAutoSize(true);
         }
 
+        // ── Number format #,##0 (1,250 / 10,500) ────────────────────────
+        $numberFormat = '#,##0';
+        $col = 3;
+
+        foreach ($this->feeCollections as $feeCollection) {
+            $paidColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $remainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + 1);
+
+            // amount value row 3
+            $sheet->getStyle("{$paidColLetter}3")->getNumberFormat()->setFormatCode($numberFormat);
+
+            // paid and remaining data rows
+            $sheet->getStyle("{$paidColLetter}5:{$paidColLetter}{$lastDataRow}")->getNumberFormat()->setFormatCode($numberFormat);
+            $sheet->getStyle("{$remainingColLetter}5:{$remainingColLetter}{$lastDataRow}")->getNumberFormat()->setFormatCode($numberFormat);
+
+            $col += 2;
+        }
+
+        if (in_array('total_paid', $this->selectedColumns)) {
+            $totalPaidColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->getStyle("{$totalPaidColLetter}5:{$totalPaidColLetter}{$lastDataRow}")->getNumberFormat()->setFormatCode($numberFormat);
+            $col++;
+        }
+
+        if (in_array('total_remaining', $this->selectedColumns)) {
+            $totalRemainingColLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+            $sheet->getStyle("{$totalRemainingColLetter}5:{$totalRemainingColLetter}{$lastDataRow}")->getNumberFormat()->setFormatCode($numberFormat);
+            $col++;
+        }
     }
 }
