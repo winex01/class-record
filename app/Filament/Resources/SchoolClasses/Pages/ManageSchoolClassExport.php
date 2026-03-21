@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\CheckboxList;
+use App\Filament\Widgets\SubjectDetailsWidget;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -32,6 +33,15 @@ class ManageSchoolClassExport extends Page implements HasForms
     {
         $this->record = SchoolClass::findOrFail($record);
         $this->form->fill();
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            SubjectDetailsWidget::make([
+                'record' => $this->record,
+            ]),
+        ];
     }
 
     public function getMaxContentWidth(): Width
