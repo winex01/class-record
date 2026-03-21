@@ -75,19 +75,19 @@ class ManageSchoolClassExport extends Page implements HasForms
                 ->label('Fee Collection Columns')
                 ->options([
                     'full_name' => 'Student Name',
-                    'paid' => 'Paid',
-                    'remaining' => 'Remaining'
+                    'total_paid' => 'Total Paid',
+                    'total_remaining' => 'Total Remaining'
                 ])
                 ->default([
                     'full_name',
-                    'paid',
-                    'remaining',
+                    'total_paid',
+                    'total_remaining',
                 ])
                 ->disableOptionWhen(fn($value) => $value === 'full_name')
                 ->in([
                     'full_name',
-                    'paid',
-                    'remaining',
+                    'total_paid',
+                    'total_remaining',
                 ])
                 ->afterStateHydrated(function ($state, callable $set) {
                     if (!in_array('full_name', $state ?? [])) {
