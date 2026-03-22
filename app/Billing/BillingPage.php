@@ -25,6 +25,10 @@ class BillingPage extends Page implements HasForms, HasActions
     public function mount(): void
     {
         $this->app_id = BillingService::getAppId(auth()->user());
+
+        if (!BillingService::isSubscribed(auth()->user())) {
+            $this->mountAction('activate');
+        }
     }
 
     public function activateAction(): Action
@@ -34,10 +38,11 @@ class BillingPage extends Page implements HasForms, HasActions
             ->modalWidth(Width::Large)
             ->form([
                 TextInput::make('app_id')
-                    ->label('Your APP ID')
+                    ->label('APP ID')
                     ->default(fn() => $this->app_id)
                     ->readOnly()
-                    ->copyable(),
+                    ->copyable()
+                    ->belowContent('Copy your APP ID and send it to     admin to get your license file'),
 
                 FileUpload::make('license_file')
                     ->label('License File (.lic)')
