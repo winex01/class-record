@@ -23,4 +23,5 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /storage/debugbar/
+/storage/licenses/
 private.pem
