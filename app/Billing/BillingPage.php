@@ -35,67 +35,85 @@ class BillingPage extends Page implements HasForms, HasActions
     {
         return
             Action::make('activate')
-            ->label('Activate License')
-            ->modalWidth(Width::Large)
-            ->form([
-                TextInput::make('app_id')
-                    ->label('APP ID')
-                    ->default(fn() => $this->app_id)
-                    ->readOnly()
-                    ->copyable()
-                    ->belowContent('Copy your APP ID and send it to     admin to get your license file'),
+                ->label('Activate License')
+                ->modalWidth(Width::Large)
+                ->form([
+                    TextInput::make('app_id')
+                        ->label('APP ID')
+                        ->default(fn() => $this->app_id)
+                        ->readOnly()
+                        ->copyable()
+                        ->belowContent('Copy your APP ID and send it to the admin to get your license file'),
 
-                FileUpload::make('license_file')
-                    ->label('License File (.lic)')
-                    ->directory('licenses')
-                    ->maxSize(1024)
-                    ->required(),
+                    FileUpload::make('license_file')
+                        ->label('License File (.lic)')
+                        ->directory('licenses')
+                        ->maxSize(1024)
+                        ->required(),
 
-            ])
-            ->modalSubmitActionLabel('Activate')
-            ->action(function (array $data) {
-                $user = auth()->user();
-                $uploaded = storage_path('app/private/' . $data['license_file']);
+                ])
+                ->modalSubmitActionLabel('Activate')
+                ->action(function (array $data) {
+                    $user = auth()->user();
+                    $uploaded = storage_path('app/private/' . $data['license_file']);
 
-                $result = BillingService::verifyLicenseFile($uploaded, $user);
+                    $result = BillingService::verifyLicenseFile($uploaded, $user);
 
-                if (!$result['valid']) {
-                    Notification::make()
-                        ->title('Invalid License!')
-                        ->body($result['message'])
-                        ->danger()
-                        ->send();
+                    if (!$result['valid']) {
+                        if (file_exists($uploaded)) {
+                            unlink($uploaded);
+                        }
 
-                    $this->halt();
-                    return;
-                }
+                        Notification::make()
+                            ->title('Invalid License!')
+                            ->body($result['message'])
+                            ->danger()
+                            ->send();
 
-                License::updateOrCreate(
-                    ['user_id' => $user->id],
-                    [
+                        $this->halt();
+                        return;
+                    }
+
+                    $existing = License::where('signature', $result['signature'])->first();
+
+                    if ($existing) {
+                        if (file_exists($uploaded)) {
+                            unlink($uploaded);
+                        }
+
+                        Notification::make()
+                            ->title('License already activated!')
+                            ->warning()
+                            ->send();
+
+                        $this->halt();
+                        return;
+                    }
+
+                    License::create([
+                        'user_id' => $user->id,
                         'file_path' => $uploaded,
                         'app_id' => $result['app_id'],
                         'signature' => $result['signature'],
                         'expires_at' => $result['expires_at'],
-                    ]
-                );
+                    ]);
 
-                Notification::make()
-                    ->title('License activated successfully!')
-                    ->success()
-                    ->send();
-            })
-            ->after(function () {
-                $path = storage_path('app/private/licenses/');
+                    Notification::make()
+                        ->title('License activated successfully!')
+                        ->success()
+                        ->send();
+                })
+                ->after(function () {
+                    $path = storage_path('app/private/licenses/');
 
-                if (!is_dir($path))
-                    return;
+                    if (!is_dir($path))
+                        return;
 
-                foreach (glob($path . '*') as $file) {
-                    if (is_file($file) && !str_ends_with($file, '.lic')) {
-                        unlink($file);
+                    foreach (glob($path . '*') as $file) {
+                        if (is_file($file) && !str_ends_with($file, '.lic')) {
+                            unlink($file);
+                        }
                     }
-                }
-            });
+                });
     }
 }

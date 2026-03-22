@@ -37,18 +37,18 @@ DOc4FwTX89aV1xGIprZXmNJrrisMh6KPaxTdDcPhpppkymPZwLkcKjtcQGrB/9eY
 
     public static function verifyLicenseFile(string $path, User $user): array
     {
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             return ['valid' => false, 'message' => 'License file not found.'];
         }
 
         $license = json_decode(file_get_contents($path), true);
 
-        if (! $license) {
+        if (!$license) {
             return ['valid' => false, 'message' => 'Invalid license file.'];
         }
 
         $data = json_encode([
-            'app_id'     => $license['app_id'],
+            'app_id' => $license['app_id'],
             'expires_at' => $license['expires_at'],
         ]);
 
@@ -67,19 +67,21 @@ DOc4FwTX89aV1xGIprZXmNJrrisMh6KPaxTdDcPhpppkymPZwLkcKjtcQGrB/9eY
         }
 
         return [
-            'valid'      => true,
-            'app_id'     => $license['app_id'],
-            'signature'  => $license['signature'],
+            'valid' => true,
+            'app_id' => $license['app_id'],
+            'signature' => $license['signature'],
             'expires_at' => $license['expires_at'],
-            'message'    => 'License is valid.',
+            'message' => 'License is valid.',
         ];
     }
 
     public static function isSubscribed(User $user): bool
     {
-        $license = License::where('user_id', $user->id)->latest()->first();
+        $license = License::where('user_id', $user->id)
+            ->orderBy('expires_at', 'desc')
+            ->first();
 
-        if (! $license) {
+        if (!$license) {
             return false;
         }
 
