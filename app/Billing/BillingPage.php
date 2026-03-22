@@ -38,40 +38,38 @@ class BillingPage extends Page implements HasForms, HasActions
                     ->default(fn() => $this->app_id)
                     ->readOnly()
                     ->copyable(),
+
                 FileUpload::make('license_file')
                     ->label('License File (.lic)')
+                    ->directory('licenses')
                     ->maxSize(1024)
                     ->required(),
+
             ])
             ->modalSubmitActionLabel('Activate')
             ->action(function (array $data) {
                 $user = auth()->user();
-                $uploaded = storage_path('app/private/livewire-tmp/' . $data['license_file']);
+                $uploaded = storage_path('app/private/' . $data['license_file']);
 
                 $result = BillingService::verifyLicenseFile($uploaded, $user);
 
-                if (! $result['valid']) {
-                    if (file_exists($uploaded)) {
-                        unlink($uploaded);
-                    }
-
+                if (!$result['valid']) {
                     Notification::make()
                         ->title('Invalid License!')
                         ->body($result['message'])
                         ->danger()
                         ->send();
+
+                    $this->halt();
                     return;
                 }
-
-                $destination = storage_path('licenses/' . $user->id . '_license.lic');
-                rename($uploaded, $destination);
 
                 License::updateOrCreate(
                     ['user_id' => $user->id],
                     [
-                        'file_path'  => $destination,
-                        'app_id'     => $result['app_id'],
-                        'signature'  => $result['signature'],
+                        'file_path' => $uploaded,
+                        'app_id' => $result['app_id'],
+                        'signature' => $result['signature'],
                         'expires_at' => $result['expires_at'],
                     ]
                 );
@@ -80,8 +78,19 @@ class BillingPage extends Page implements HasForms, HasActions
                     ->title('License activated successfully!')
                     ->success()
                     ->send();
+            })
+            ->after(function () {
+                $path = storage_path('app/private/licenses/');
 
-                $this->redirect(request()->header('Referer'));
+                if (!is_dir($path))
+                    return;
+
+                foreach (glob($path . '*') as $file) {
+                    if (is_file($file) && !str_ends_with($file, '.lic')) {
+                        unlink($file);
+                    }
+                }
             });
+        ;
     }
 }

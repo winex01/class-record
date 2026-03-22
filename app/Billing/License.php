@@ -2,7 +2,6 @@
 
 namespace App\Billing;
 
-use App\Models\User;
 use App\Models\Concerns\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 
