@@ -58,7 +58,7 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                         $days = now()->diffInDays($record->expires_at, false);
 
                         if ($days < 0) {
-                            return 'danger'; // already expired (optional but recommended)
+                            return 'danger'; // already expired
                         }
 
                         if ($days < 2) {
@@ -72,7 +72,7 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                         return 'primary';
                     }),
 
-                DateColumn::make('created_at')->label('Activated At')->sortable()->color('info'),
+                DateColumn::make('created_at')->label('Activated At')->sortable()
             ])
             ->defaultSort('expires_at', 'desc')
             ->toolbarActions([
@@ -110,14 +110,11 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                         unlink($uploaded);
                     }
 
-                    Notification::make()
+                    return Notification::make()
                         ->title('Invalid License!')
                         ->body($result['message'])
                         ->danger()
                         ->send();
-
-                    $this->halt(); // TODO:: if first attemp is failed validation then the next is always failed invalid license!
-                    return;
                 }
 
                 $existing = License::where('signature', $result['signature'])->first();
@@ -127,13 +124,10 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                         unlink($uploaded);
                     }
 
-                    Notification::make()
+                    return Notification::make()
                         ->title('License already activated!')
                         ->warning()
                         ->send();
-
-                    $this->halt();
-                    return;
                 }
 
                 License::create([
