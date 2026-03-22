@@ -33,7 +33,8 @@ class BillingPage extends Page implements HasForms, HasActions
 
     public function activateAction(): Action
     {
-        return Action::make('activate')
+        return
+            Action::make('activate')
             ->label('Activate License')
             ->modalWidth(Width::Large)
             ->form([
@@ -96,6 +97,5 @@ class BillingPage extends Page implements HasForms, HasActions
                     }
                 }
             });
-        ;
     }
 }
