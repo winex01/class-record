@@ -83,9 +83,9 @@ class AppPanelProvider extends PanelProvider
             })
             ->userMenuItems([
                 MenuItem::make()
-                    ->label('Billing')
+                    ->label('License')
                     ->url(fn(): string => route('filament.app.tenant.billing'))
-                    ->icon('heroicon-o-credit-card'),
+                    ->icon('heroicon-o-key')
                 // 'logout' key stays at the bottom automatically
             ])
             ->tenantBillingProvider(new BillingServiceProvider())

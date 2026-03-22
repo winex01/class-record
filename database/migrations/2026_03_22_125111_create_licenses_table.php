@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-// TODO:: remove and transfer it to sqlite when in package
 return new class extends Migration {
     /**
      * Run the migrations.
@@ -17,8 +16,8 @@ return new class extends Migration {
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->string('file_path');
             $table->string('app_id');
+            $table->date('expires_at');
             $table->text('signature');
-            $table->timestamp('expires_at');
             $table->timestamps();
         });
     }
