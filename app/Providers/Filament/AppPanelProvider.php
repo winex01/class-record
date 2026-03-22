@@ -8,6 +8,7 @@ use App\Models\Student;
 use Filament\PanelProvider;
 use Filament\Enums\ThemeMode;
 use Filament\Pages\Dashboard;
+use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Support\Facades\Route;
@@ -80,7 +81,13 @@ class AppPanelProvider extends PanelProvider
             ->routes(function () {
                 static::registerCustomRoutes();
             })
-            // TODO:: creaet filament plugin for this
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Billing')
+                    ->url(fn(): string => route('filament.app.tenant.billing'))
+                    ->icon('heroicon-o-credit-card'),
+                // 'logout' key stays at the bottom automatically
+            ])
             ->tenantBillingProvider(new BillingServiceProvider())
             ->requiresTenantSubscription()
             ->databaseNotifications();
