@@ -12,6 +12,7 @@ use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Support\Facades\Route;
 use App\Filament\Widgets\BackupWidget;
+use App\Billing\BillingServiceProvider;
 use Illuminate\Support\Facades\Storage;
 use App\Filament\Widgets\MyCalendarWidget;
 use Filament\Http\Middleware\Authenticate;
@@ -78,6 +79,9 @@ class AppPanelProvider extends PanelProvider
             ->routes(function () {
                 static::registerCustomRoutes();
             })
+            // TODO:: creaet filament plugin for this
+            ->tenantBillingProvider(new BillingServiceProvider())
+            ->requiresTenantSubscription()
             ->databaseNotifications();
     }
 

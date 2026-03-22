@@ -48,4 +48,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function subscribed(): bool
+    {
+        // we'll implement this properly later
+        return false;
+    }
 }
