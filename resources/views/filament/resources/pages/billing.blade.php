@@ -1,6 +1,10 @@
+{{-- TODO:: into package --}}
 <x-filament-panels::page>
-    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Laboriosam quasi odio necessitatibus sunt
-    ipsam dicta rem ab repellat ipsum minima asperiores soluta reiciendis nulla, unde corrupti earum nostrum non dolorum.
+    <x-filament::section>
+        <div class="space-y-4">
+            {{ ($this->activateAction)(['app_id' => $this->app_id]) }}
+        </div>
+    </x-filament::section>
 
     <x-filament-actions::modals />
 </x-filament-panels::page>
