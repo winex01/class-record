@@ -10,4 +10,8 @@ class License extends Model
     use BelongsToUser;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'expires_at' => 'date',
+    ];
 }

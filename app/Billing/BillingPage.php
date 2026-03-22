@@ -50,7 +50,27 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                 DateColumn::make('expires_at')
                     ->label('Expires At')
                     ->sortable()
-                    ->color(fn($record) => now()->gt($record->expires_at) ? 'danger' : 'success'),
+                    ->color(function ($record) {
+                        if (!$record->expires_at) {
+                            return 'gray';
+                        }
+
+                        $days = now()->diffInDays($record->expires_at, false);
+
+                        if ($days < 0) {
+                            return 'danger'; // already expired (optional but recommended)
+                        }
+
+                        if ($days < 2) {
+                            return 'warning';
+                        }
+
+                        if ($days <= 30) {
+                            return 'info';
+                        }
+
+                        return 'primary';
+                    }),
 
                 DateColumn::make('created_at')->label('Activated At')->sortable()->color('info'),
             ])
@@ -96,7 +116,7 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                         ->danger()
                         ->send();
 
-                    $this->halt();
+                    $this->halt(); // TODO:: if first attemp is failed validation then the next is always failed invalid license!
                     return;
                 }
 

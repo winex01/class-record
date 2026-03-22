@@ -9,8 +9,8 @@ use Filament\PanelProvider;
 use Filament\Actions\Action;
 use Filament\Enums\ThemeMode;
 use Filament\Pages\Dashboard;
+use App\Billing\LicenseWidget;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
 use Illuminate\Support\Facades\Route;
 use App\Filament\Widgets\BackupWidget;
 use App\Billing\BillingServiceProvider;
@@ -58,7 +58,7 @@ class AppPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->widgets([
-                AccountWidget::class,
+                LicenseWidget::class,
                 BackupWidget::class,
                 MyCalendarWidget::class,
             ])
