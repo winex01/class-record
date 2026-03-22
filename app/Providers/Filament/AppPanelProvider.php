@@ -6,9 +6,9 @@ use Filament\Panel;
 use App\Models\MyFile;
 use App\Models\Student;
 use Filament\PanelProvider;
+use Filament\Actions\Action;
 use Filament\Enums\ThemeMode;
 use Filament\Pages\Dashboard;
-use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Support\Facades\Route;
@@ -82,11 +82,10 @@ class AppPanelProvider extends PanelProvider
                 static::registerCustomRoutes();
             })
             ->userMenuItems([
-                MenuItem::make()
+                Action::make('billing')
                     ->label('License')
                     ->url(fn(): string => route('filament.app.tenant.billing'))
-                    ->icon('heroicon-o-key')
-                // 'logout' key stays at the bottom automatically
+                    ->icon('heroicon-o-key'),
             ])
             ->tenantBillingProvider(new BillingServiceProvider())
             ->requiresTenantSubscription()
