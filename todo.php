@@ -1,7 +1,9 @@
 <?php
 /*
 
-TODO:: licensed Payment
+TODO:: fix dashboard widget
+    -remove signout widget from default filament
+    -add app_id and license expires_at display
 TODO:: wrap this into .exe bundle
 
 TODO:: Grades: review computations on components and etc
