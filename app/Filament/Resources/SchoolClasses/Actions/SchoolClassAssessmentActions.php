@@ -40,6 +40,7 @@ class SchoolClassAssessmentActions
             ->icon(StudentResource::getNavigationIcon())
             ->color('info')
             ->slideOver()
+            ->compact()
             ->relationManager(RecordScoreRelationManager::make())
             ->modalDescription(fn ($record) => new HtmlString(
                 view('filament.components.assessment-modal-heading', [

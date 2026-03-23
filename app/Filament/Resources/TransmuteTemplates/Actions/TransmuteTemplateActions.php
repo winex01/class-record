@@ -33,6 +33,7 @@ class TransmuteTemplateActions
             ->color('info')
             ->icon('heroicon-o-plus')
             ->slideOver()
+            ->compact()
             ->modalHeading(fn ($record) => $record->name)
             ->relationManager(TransmuteTemplateRangesRelationManager::make());
     }

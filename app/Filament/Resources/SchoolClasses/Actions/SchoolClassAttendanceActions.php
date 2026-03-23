@@ -20,6 +20,7 @@ class SchoolClassAttendanceActions
             ->icon(StudentResource::getNavigationIcon())
             ->color('info')
             ->slideOver()
+            ->compact()
             ->relationManager(TakeAttendanceRelationManager::make())
             ->modalHeading(fn ($record) => new HtmlString(
                 view('filament.components.attendance-modal-heading', [

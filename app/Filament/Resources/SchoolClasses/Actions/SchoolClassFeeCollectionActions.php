@@ -20,6 +20,7 @@ class SchoolClassFeeCollectionActions
             ->icon(StudentResource::getNavigationIcon())
             ->color('info')
             ->slideOver()
+            ->compact()
             ->relationManager(TakeFeeCollectionRelationManager::make())
             ->modalDescription(fn ($record) => new HtmlString(
                 view('filament.components.fee-collection-modal-heading', [
