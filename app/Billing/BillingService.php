@@ -37,11 +37,15 @@ DOc4FwTX89aV1xGIprZXmNJrrisMh6KPaxTdDcPhpppkymPZwLkcKjtcQGrB/9eY
 
     public static function verifyLicenseFile(string $path, User $user): array
     {
-        if (!file_exists($path)) {
+        $fullPath = str_starts_with($path, storage_path())
+            ? $path
+            : storage_path('app/private/' . $path);
+
+        if (!file_exists($fullPath)) {
             return ['valid' => false, 'message' => 'License file not found.'];
         }
 
-        $license = json_decode(file_get_contents($path), true);
+        $license = json_decode(file_get_contents($fullPath), true);
 
         if (!$license) {
             return ['valid' => false, 'message' => 'Invalid license file.'];

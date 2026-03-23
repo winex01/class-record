@@ -84,7 +84,7 @@ class AppPanelProvider extends PanelProvider
             })
             ->userMenuItems([
                 Action::make('billing')
-                    ->label('License')
+                    ->label('Licenses')
                     ->url(fn(): string => route('filament.app.tenant.billing'))
                     ->icon('heroicon-o-key'),
             ])

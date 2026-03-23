@@ -114,9 +114,10 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                         ->send();
                 }
 
-                RateLimiter::hit($key, 60); // 5 attempts per 60 seconds
+                RateLimiter::hit($key, 60);
 
-                $uploaded = storage_path('app/private/' . $data['license_file']);
+                $relativePath = $data['license_file'];
+                $uploaded = storage_path('app/private/' . $relativePath);
 
                 $result = BillingService::verifyLicenseFile($uploaded, $user);
 
@@ -147,7 +148,7 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
 
                 License::create([
                     'user_id' => $user->id,
-                    'file_path' => $uploaded,
+                    'file_path' => $relativePath,
                     'app_id' => $result['app_id'],
                     'signature' => $result['signature'],
                     'expires_at' => $result['expires_at'],
