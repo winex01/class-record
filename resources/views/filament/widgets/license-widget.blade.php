@@ -20,7 +20,7 @@
                 color="gray"
                 icon="heroicon-o-key"
             >
-                Manage
+                License
             </x-filament::button>
         </div>
     </x-filament::section>

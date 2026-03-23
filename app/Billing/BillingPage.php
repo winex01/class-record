@@ -14,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Actions\Contracts\HasActions;
+use Illuminate\Support\Facades\RateLimiter;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -95,12 +96,26 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                 FileUpload::make('license_file')
                     ->label('License File (.lic)')
                     ->directory('licenses')
-                    ->maxSize(1024)
+                    ->maxSize(10)
                     ->required(),
             ])
             ->modalSubmitActionLabel('Activate')
             ->action(function (array $data) {
                 $user = auth()->user();
+                $key = 'activate-license:' . $user->id;
+
+                if (RateLimiter::tooManyAttempts($key, 5)) {
+                    $seconds = RateLimiter::availableIn($key);
+
+                    return Notification::make()
+                        ->title('Too many attempts!')
+                        ->body("Please wait {$seconds} seconds before trying again.")
+                        ->danger()
+                        ->send();
+                }
+
+                RateLimiter::hit($key, 60); // 5 attempts per 60 seconds
+
                 $uploaded = storage_path('app/private/' . $data['license_file']);
 
                 $result = BillingService::verifyLicenseFile($uploaded, $user);
