@@ -2,6 +2,7 @@
 /*
 TODO:: dont hard code public.pem like put it in property but instead use the previous approach using files so its easy to change/replace
 TOOD:: add rate limit on activate license
+TODO:: remove SSL on locahost by HERD and check if APP_ID copyable still works if it no longer works find a work around or manually create suffix action to copy
 TODO:: remove artisan generate license and create different app for my generate license and monitor income
 TODO:: wrap this into .exe bundle
 
