@@ -28,8 +28,6 @@ class SchoolClassAttendanceColumns
                         ->modalWidth(Width::Large)
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)
-                        ->closeModalByClickingAway()
-                        ->closeModalByEscaping()
                         ->modalHeading(fn($record) => "Present Students on " . $record->date_formatted)
                         ->modalContent(fn($record) => new HtmlString(
                             Blade::render(
@@ -51,8 +49,6 @@ class SchoolClassAttendanceColumns
                         ->modalWidth(Width::Large)
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)
-                        ->closeModalByClickingAway()
-                        ->closeModalByEscaping()
                         ->modalHeading(fn($record) => "Absent Students on " . $record->date_formatted)
                         ->modalContent(fn($record) => new HtmlString(
                             Blade::render(
