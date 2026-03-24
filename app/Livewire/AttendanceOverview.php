@@ -67,14 +67,20 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
     public function table(Table $table): Table
     {
         $query = Student::query()
-            ->whereIn('id', SchoolClassResource::getStudents($this->schoolClassId));
+            ->whereIn('id', SchoolClassResource::getStudents($this->schoolClassId))
+            ->withCount([
+                'attendances as present_count' => fn($query) => $query
+                    ->where('attendance_student.present', true)
+                    ->where('attendances.school_class_id', $this->schoolClassId),
+                'attendances as absent_count' => fn($query) => $query
+                    ->where('attendance_student.present', false)
+                    ->where('attendances.school_class_id', $this->schoolClassId),
+            ]);
 
-        // Apply tab filtering based on activeTab
         if ($this->activeTab === 'perfect_attendance') {
-            // Students with ALL attendances marked as present (no absences)
             $query->whereDoesntHave('attendances', function ($q) {
-                $q->where('present', false); // No absent records
-            })->whereHas('attendances'); // But has at least one attendance record
+                $q->where('present', false);
+            })->whereHas('attendances');
         }
 
         return $table
@@ -83,66 +89,37 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
             ->columns([
                 ...SchoolClassStudentColumns::schema(),
 
-                TextColumn::make('present')
-                    ->searchable(false)
+                TextColumn::make('present_count')
                     ->label('Present')
+                    ->searchable(false)
                     ->color('success')
                     ->alignCenter()
                     ->underline()
-                    ->state(fn ($record) => $record->attendances()
-                        ->wherePivot('present', true)
-                        ->where('attendances.school_class_id', $this->schoolClassId)
-                        ->count()
-                    )
-                    ->sortable(query: function ($query, string $direction) {
-                        return $query
-                            ->withCount([
-                                'attendances as present_count' => function ($query) {
-                                    $query->where('attendance_student.present', true)
-                                        ->where('attendances.school_class_id', $this->schoolClassId);
-                                }
-                            ])
-                            ->orderBy('present_count', $direction);
-                    })
+                    ->sortable()
                     ->action(
                         Action::make('viewPresences')
-                            ->modalHeading(fn ($record) => $record->full_name . ' - Present Dates')
+                            ->modalHeading(fn($record) => $record->full_name . ' - Present Dates')
                             ->modalContent(self::studentAttendanceDatesModal(true))
                             ->modalSubmitAction(false)
                             ->modalCancelAction(false)
                             ->modalWidth(Width::Medium)
                     ),
 
-                TextColumn::make('absent')
-                    ->searchable(false)
+                TextColumn::make('absent_count')
                     ->label('Absent')
+                    ->searchable(false)
                     ->color('danger')
                     ->alignCenter()
                     ->underline()
-                    ->state(fn ($record) => $record->attendances()
-                        ->wherePivot('present', false)
-                        ->where('attendances.school_class_id', $this->schoolClassId)
-                        ->count()
-                    )
-                    ->sortable(query: function ($query, string $direction) {
-                        return $query
-                            ->withCount([
-                                'attendances as absent_count' => function ($query) {
-                                    $query->where('attendance_student.present', false)
-                                        ->where('attendances.school_class_id', $this->schoolClassId);
-                                }
-                            ])
-                            ->orderBy('absent_count', $direction);
-                    })
+                    ->sortable()
                     ->action(
-                    Action::make('viewAbsences')
-                        ->modalHeading(fn ($record) => $record->full_name . ' - Absent Dates')
-                        ->modalContent(self::studentAttendanceDatesModal(false))
-                        ->modalSubmitAction(false)
-                        ->modalCancelAction(false)
-                        ->modalWidth(Width::Medium)
+                        Action::make('viewAbsences')
+                            ->modalHeading(fn($record) => $record->full_name . ' - Absent Dates')
+                            ->modalContent(self::studentAttendanceDatesModal(false))
+                            ->modalSubmitAction(false)
+                            ->modalCancelAction(false)
+                            ->modalWidth(Width::Medium)
                     ),
-
             ])
             ->filters([
                 StudentFilters::gender()
@@ -155,7 +132,7 @@ class AttendanceOverview extends Component implements HasForms, HasTable, HasAct
 
     private static function studentAttendanceDatesModal(bool $isPresent)
     {
-        return fn ($record, $livewire) => new HtmlString(
+        return fn($record, $livewire) => new HtmlString(
             Blade::render(
                 '@livewire("student-attendance-dates", ["studentId" => $studentId, "schoolClassId" => $schoolClassId, "isPresent" => $isPresent])',
                 [
