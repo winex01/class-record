@@ -42,11 +42,14 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
 
     public function table(Table $table): Table
     {
+        $query = Student::query()
+            ->whereIn('id', SchoolClassResource::getStudents($this->schoolClassId))
+            ->withSum([
+                'feeCollections as total_paid' => fn($q) => $q->where('school_class_id', $this->schoolClassId),
+            ], 'fee_collection_student.amount');
+
         return $table
-            ->query(
-                Student::query()
-                    ->whereIn('id', SchoolClassResource::getStudents($this->schoolClassId))
-            )
+            ->query($query)
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
                 ...SchoolClassStudentColumns::schema(),
@@ -57,22 +60,9 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                     ->alignCenter()
                     ->underline()
                     ->placeholder('—')
-                    ->getStateUsing(function ($record) {
-                        $totalPaid = $record->feeCollections()
-                            ->where('school_class_id', $this->schoolClassId)
-                            ->sum('fee_collection_student.amount');
-
-                        return $totalPaid > 0 ? $totalPaid : null;
-                    })
+                    ->state(fn($record) => $record->total_paid > 0 ? $record->total_paid : null)
                     ->searchable(false)
-                    ->sortable(query: function (Builder $query, string $direction): Builder {
-                        return $query->withSum([
-                            'feeCollections as total_paid_sort' => function ($q) {
-                                $q->where('school_class_id', $this->schoolClassId);
-                            }
-                        ], 'fee_collection_student.amount')
-                        ->orderBy('total_paid_sort', $direction);
-                    })
+                    ->sortable()
                     ->summarize(
                         Summarizer::make()
                             ->label('Overall Total')
@@ -112,12 +102,12 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                                 $q->where('school_class_id', $this->schoolClassId);
                             }
                         ], 'amount')
-                        ->withSum([
-                            'feeCollections as total_paid_sort' => function ($q) {
-                                $q->where('school_class_id', $this->schoolClassId);
-                            }
-                        ], 'fee_collection_student.amount')
-                        ->orderByRaw("(total_due_sort - total_paid_sort) {$direction}");
+                            ->withSum([
+                                'feeCollections as total_paid_sort' => function ($q) {
+                                    $q->where('school_class_id', $this->schoolClassId);
+                                }
+                            ], 'fee_collection_student.amount')
+                            ->orderByRaw("(total_due_sort - total_paid_sort) {$direction}");
                     })
                     ->summarize(
                         Summarizer::make()
@@ -128,14 +118,14 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
 
                                 $totalDue = FeeCollection::query()
                                     ->where('school_class_id', $this->schoolClassId)
-                                    ->where('fee_collections.amount', '>', 0) // we add this it will not incldue the open contribution
+                                    ->where('fee_collections.amount', '>', 0)
                                     ->join('fee_collection_student', 'fee_collections.id', '=', 'fee_collection_student.fee_collection_id')
                                     ->whereIn('fee_collection_student.student_id', $studentIds)
                                     ->sum('fee_collections.amount');
 
                                 $totalPaid = FeeCollection::query()
                                     ->where('school_class_id', $this->schoolClassId)
-                                    ->where('fee_collections.amount', '>', 0) // dont include open contribution
+                                    ->where('fee_collections.amount', '>', 0)
                                     ->join('fee_collection_student', 'fee_collections.id', '=', 'fee_collection_student.fee_collection_id')
                                     ->whereIn('fee_collection_student.student_id', $studentIds)
                                     ->sum('fee_collection_student.amount');
@@ -146,7 +136,6 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
                             })
                     )
                     ->action(static::getStudentFeePaidAndBalance()),
-
             ])
             ->filters([
                 StudentFilters::gender()
@@ -160,18 +149,18 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
     public static function getStudentFeePaidAndBalance()
     {
         return Action::make('studentFeePaidAndBalance')
-                ->modalSubmitAction(false)
-                ->modalCancelAction(false)
-                ->modalWidth(Width::TwoExtraLarge)
-                ->modalHeading(fn ($record) => $record->full_name . ' - Fee Collections')
-                ->modalContent(fn ($record, $livewire) => new HtmlString(
-                    Blade::render(
-                        '@livewire("student-fee-collections", ["studentId" => $studentId, "schoolClassId" => $schoolClassId])',
-                        [
-                            'studentId' => $record->id,
-                            'schoolClassId' => $livewire->schoolClassId,
-                        ]
-                    )
-                ));
+            ->modalSubmitAction(false)
+            ->modalCancelAction(false)
+            ->modalWidth(Width::TwoExtraLarge)
+            ->modalHeading(fn($record) => $record->full_name . ' - Fee Collections')
+            ->modalContent(fn($record, $livewire) => new HtmlString(
+                Blade::render(
+                    '@livewire("student-fee-collections", ["studentId" => $studentId, "schoolClassId" => $schoolClassId])',
+                    [
+                        'studentId' => $record->id,
+                        'schoolClassId' => $livewire->schoolClassId,
+                    ]
+                )
+            ));
     }
 }

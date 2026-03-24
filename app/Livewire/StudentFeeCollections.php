@@ -17,7 +17,7 @@ use Filament\Schemas\Components\Section;
 use App\Livewire\Traits\RenderTableTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use App\Filament\Traits\ManageActionVisibility;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -52,14 +52,16 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
         return $table
             ->defaultSort('date', 'desc')
             ->query(
-            FeeCollection::query()
+                FeeCollection::query()
                     ->where('school_class_id', $this->schoolClassId)
                     ->whereHas('students', function ($query) {
                         $query->where('student_id', $this->studentId);
                     })
-                    ->with(['students' => function ($query) {
-                        $query->where('student_id', $this->studentId);
-                    }])
+                    ->with([
+                        'students' => function ($query) {
+                            $query->where('student_id', $this->studentId);
+                        }
+                    ])
             )
             ->columns($this->getColumns())
             ->emptyStateHeading('No Records')
@@ -105,7 +107,7 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                         ->using(function ($query) {
                             return FeeCollection::query()
                                 ->whereIn('id', $query->pluck('id'))
-                                ->with(['students' => fn ($q) => $q->where('students.id', $this->studentId)])
+                                ->with(['students' => fn($q) => $q->where('students.id', $this->studentId)])
                                 ->get()
                                 ->sum(function ($record) {
                                     $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
@@ -151,7 +153,7 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
                         ->using(function ($query) {
                             return FeeCollection::query()
                                 ->whereIn('id', $query->pluck('id'))
-                                ->with(['students' => fn ($q) => $q->where('students.id', $this->studentId)])
+                                ->with(['students' => fn($q) => $q->where('students.id', $this->studentId)])
                                 ->get()
                                 ->sum(function ($record) {
                                     $paidAmount = $record->students->first()?->pivot?->amount ?? 0;
@@ -167,89 +169,90 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
     protected function updateAmountAction()
     {
         return Action::make('updateAmountPaid')
-                ->disabled($this->isReadOnly)
-                ->form([
-                    Section::make()
-                        ->columns(3)
-                        ->schema([
-                            Placeholder::make('fee_amount')
-                                ->label('Amount')
-                                ->columnSpan(1)
-                                ->color('info')
-                                ->content(fn ($record) =>
-                                    $record->amount == 0
-                                        ? '—'
-                                        : '₱' . number_format($record->amount, 2)
-                                ),
+            ->disabled($this->isReadOnly)
+            ->form([
+                Section::make()
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('fee_amount')
+                            ->label('Amount')
+                            ->columnSpan(1)
+                            ->color('info')
+                            ->state(
+                                fn($record) => $record->amount == 0
+                                ? '—'
+                                : '₱' . number_format($record->amount, 2)
+                            ),
 
-                            Placeholder::make('amount_paid')
-                                ->label('Paid')
-                                ->columnSpan(1)
-                                ->color('success')
-                                ->content(function ($record, $get) {
-                                    $paid = $get('amount') ?? 0;
+                        TextEntry::make('amount_paid')
+                            ->label('Paid')
+                            ->columnSpan(1)
+                            ->color('success')
+                            ->state(function ($record, $get) {
+                                $paid = $get('amount') ?? 0;
 
-                                    return '₱' . number_format($paid, 2);
-                                }),
+                                return '₱' . number_format($paid, 2);
+                            }),
 
-                            Placeholder::make('balance')
-                                ->label('Balance')
-                                ->columnSpan(1)
-                                ->color('danger')
-                                ->content(function ($record, $get) {
-                                    if ($record->amount == 0) {
-                                        return '—';
-                                    }
+                        TextEntry::make('balance')
+                            ->label('Balance')
+                            ->columnSpan(1)
+                            ->color('danger')
+                            ->state(function ($record, $get) {
+                                if ($record->amount == 0) {
+                                    return '—';
+                                }
 
-                                    $paid = $get('amount') ?? 0;
-                                    $balance = $record->amount - $paid;
+                                $paid = $get('amount') ?? 0;
+                                $balance = $record->amount - $paid;
 
-                                    return '₱' . number_format($balance, 2);
-                                }),
-                        ]),
+                                return '₱' . number_format($balance, 2);
+                            }),
+                    ]),
 
-                    Section::make()
-                        ->schema([
-                            TextInput::make('amount')
-                                ->numeric()
-                                ->required()
-                                ->live()
-                                ->default(function ($record) {
-                                    return $record->students()
-                                        ->where('student_id', $this->studentId)
-                                        ->first()
-                                        ?->pivot
+                Section::make()
+                    ->schema([
+                        TextInput::make('amount')
+                            ->numeric()
+                            ->required()
+                            ->live()
+                            ->default(function ($record) {
+                                return $record->students()
+                                    ->where('student_id', $this->studentId)
+                                    ->first()
+                                    ?->pivot
                                         ?->amount;
-                                })
-                                ->placeholder(fn ($record) =>
-                                    $record->amount == 0
-                                        ? '₱'
-                                        : 'Fee ₱' . ($record->amount ?? 0)
-                                )
-                                ->rules(function ($record) {
-                                    $amount = $record->amount ?? 0;
+                            })
+                            ->placeholder(
+                                fn($record) =>
+                                $record->amount == 0
+                                ? '₱'
+                                : 'Fee ₱' . ($record->amount ?? 0)
+                            )
+                            ->rules(function ($record) {
+                                $amount = $record->amount ?? 0;
 
-                                    return $amount > 0
-                                        ? ['numeric', 'min:0', 'max:' . $amount]
-                                        : ['numeric', 'min:0'];
-                                }),
-                        ]),
-                ])
-                ->action(function ($livewire, $record, array $data) {
-                    // Update only the score
-                    $record->students()->updateExistingPivot($this->studentId, [
-                        'amount' => $data['amount'],
-                    ]);
+                                return $amount > 0
+                                    ? ['numeric', 'min:0', 'max:' . $amount]
+                                    : ['numeric', 'min:0'];
+                            }),
+                    ]),
+            ])
+            ->action(function ($livewire, $record, array $data) {
+                // Update only the score
+                $record->students()->updateExistingPivot($this->studentId, [
+                    'amount' => $data['amount'],
+                ]);
 
-                    $livewire->dispatch('refreshCollapsibleTableWidget');
+                $livewire->dispatch('refreshCollapsibleTableWidget');
 
-                    Notification::make()
-                        ->title('Amount updated successfully')
-                        ->success()
-                        ->send();
-                })
-                ->modalHeading('Update Fee Amount')
-                ->modalSubmitActionLabel('Save')
-                ->modalWidth(Width::Medium);
+                Notification::make()
+                    ->title('Amount updated successfully')
+                    ->success()
+                    ->send();
+            })
+            ->modalHeading('Update Fee Amount')
+            ->modalSubmitActionLabel('Save')
+            ->modalWidth(Width::Medium);
     }
 }

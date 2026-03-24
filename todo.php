@@ -1,5 +1,6 @@
 <?php
 /*
+TODO:: export: grade summary
 TODO:: wrap this into .exe bundle
 
 TODO:: Grades: review computations on components and etc
