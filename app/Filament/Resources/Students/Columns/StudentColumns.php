@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\Students\Columns;
 
-use App\Enums\Gender;
 use App\Filament\Columns\DateColumn;
-use App\Filament\Columns\EnumColumn;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Columns\ImageColumn;
 use App\Filament\Resources\Students\StudentResource;
@@ -25,15 +23,11 @@ class StudentColumns
             TextColumn::make('gender'),
             DateColumn::make('birth_date'),
             TextColumn::make('email')
-                ->copyable() // copyable only work if SSL is enabled. for localhost test "herd secure class-record"
-                ->copyMessage('Email Copied!')
-                ->copyMessageDuration(1500),
+                ->localCopyable(),
             'contact_number' =>
             TextColumn::make('contact_number')
                 ->label('Contact')
-                ->copyable() // copyable only work if SSL is enabled. for localhost test "herd secure class-record"
-                ->copyMessage('Contact Copied!')
-                ->copyMessageDuration(1500),
+                ->localCopyable()
         ];
     }
 }

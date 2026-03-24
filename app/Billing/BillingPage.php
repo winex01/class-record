@@ -6,11 +6,12 @@ use Filament\Pages\Page;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
+use App\Filament\Fields\TextInput;
 use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Forms\Components\TextInput;
+use App\Filament\Actions\CopyableAction;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Actions\Contracts\HasActions;
@@ -91,8 +92,9 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                     ->label('APP ID')
                     ->default(fn() => $this->app_id)
                     ->readOnly()
-                    ->copyable()
+                    ->suffixAction(CopyableAction::make())
                     ->belowContent('Copy your APP ID and send it to the admin to get your license file'),
+
                 FileUpload::make('license_file')
                     ->label('License File (.lic)')
                     ->directory('licenses')
