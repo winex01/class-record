@@ -29,12 +29,12 @@ class SchoolClassExport implements WithMultipleSheets
             $sheets[] = new AttendanceSheet($this->schoolClass, $this->data);
         }
 
-        if ($this->data['lesson_enabled'] ?? true) {
-            $sheets[] = new LessonsSheet($this->schoolClass, $this->data);
-        }
-
         if ($this->data['fee_collection_enabled'] ?? true) {
             $sheets[] = new FeeCollectionsSheet($this->schoolClass, $this->data);
+        }
+
+        if ($this->data['lesson_enabled'] ?? true) {
+            $sheets[] = new LessonsSheet($this->schoolClass, $this->data);
         }
 
         if ($this->data['grade_enabled'] ?? true) {

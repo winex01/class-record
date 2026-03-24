@@ -87,8 +87,8 @@ class ManageSchoolClassExport extends Page implements HasForms
                             ->schema([
                                 $this->checkboxStudentColumns()->columnSpan(1),
                                 $this->checkboxAttendanceCOlumns()->columnSpan(1),
-                                $this->checkboxLessonColumns()->columnSpan(1),
                                 $this->checkboxFeeCollectionColumns()->columnSpan(1),
+                                $this->checkboxLessonColumns()->columnSpan(1),
                                 $this->checkboxxGradeColumns()->columnSpan(1),
                             ]),
                     ]),
