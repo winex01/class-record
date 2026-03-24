@@ -18,9 +18,9 @@ class SchoolClassFeeCollectionColumns
             AmountColumn::make('amount')
                 ->sortable()
                 ->searchable()
-                ->color(fn ($record) => $record->is_voluntary ? 'gray' : 'info')
-                ->prefix(fn ($record) => $record->is_voluntary ? false : '₱')
-                ->state(fn ($record) => $record->is_voluntary ? 'Voluntary' : $record->amount),
+                ->color(fn($record) => $record->is_voluntary ? 'gray' : 'info')
+                ->prefix(fn($record) => $record->is_voluntary ? false : '₱')
+                ->state(fn($record) => $record->is_voluntary ? 'Voluntary' : $record->amount),
 
             DateColumn::make('date'),
 
@@ -28,43 +28,21 @@ class SchoolClassFeeCollectionColumns
                 ->toggleable(isToggledHiddenByDefault: true),
 
             'total' =>
-            AmountColumn::make('total')
-                ->color('primary')
-                ->state(fn ($record) => $record->students()->sum('amount'))
-                ->tooltip('Total Collected')
-                ->sortable(
-                    query: fn ($query, string $direction) =>
-                        $query->withSum('students as total', 'fee_collection_student.amount')
-                            ->orderBy('total', $direction)
-                )
-                ->searchable(
-                    query: fn ($query, string $search) =>
-                        $query->whereRaw(
-                            '(SELECT COALESCE(SUM(fee_collection_student.amount), 0)
-                            FROM fee_collection_student
-                            WHERE fee_collection_student.fee_collection_id = fee_collections.id) LIKE ?',
-                            ["%{$search}%"]
-                        )
-                ),
+                AmountColumn::make('total')
+                    ->color('primary')
+                    ->tooltip('Total Collected')
+                    ->sortable(),
 
             'status' =>
-            BooleanIconColumn::make('status')
-                ->state(fn ($record) => $record->is_completed)
-                ->tooltip(fn ($record) => $record->is_completed
-                    ? CompletedPendingStatus::COMPLETED->getLabel()
-                    : CompletedPendingStatus::PENDING->getLabel()
-                )
-                ->sortable(
-                    query: fn ($query, string $direction) => $query
-                        ->withExists([
-                            'students as has_unpaid' => fn ($q) => $q
-                                ->where(fn ($sub) => $sub
-                                    ->whereNull('fee_collection_student.amount')
-                                    ->orWhere('fee_collection_student.amount', '<', \DB::raw('fee_collections.amount'))
-                                )
-                        ])
-                        ->orderBy('has_unpaid', $direction)
-                )
+                BooleanIconColumn::make('has_unpaid')
+                    ->label('Status')
+                    ->state(fn($record) => !$record->has_unpaid)
+                    ->tooltip(
+                        fn($record) => !$record->has_unpaid
+                        ? CompletedPendingStatus::COMPLETED->getLabel()
+                        : CompletedPendingStatus::PENDING->getLabel()
+                    )
+                    ->sortable(),
         ];
     }
 }

@@ -9,6 +9,7 @@ use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Widgets\PendingFeesWidget;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
@@ -48,6 +49,22 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
             ->components(SchoolClassFeeCollectionForm::schema());
     }
 
+    public function getTableQuery(): Builder
+    {
+        return $this->getOwnerRecord()
+            ->feeCollections()
+            ->getQuery()
+            ->withSum('students as total', 'fee_collection_student.amount')
+            ->withExists([
+                'students as has_unpaid' => fn($q) => $q
+                    ->where(
+                        fn($sub) => $sub
+                            ->whereNull('fee_collection_student.amount')
+                            ->orWhere('fee_collection_student.amount', '<', \DB::raw('fee_collections.amount'))
+                    )
+            ]);
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -58,9 +75,9 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                 SchoolClassFeeCollectionActions::takeFeeAction(),
                 ViewAction::make()->modalWidth(Width::Large),
                 EditAction::make()->modalWidth(Width::Large)
-                    ->after(fn ($livewire) => $livewire->dispatch('refreshCollapsibleTableWidget')),
+                    ->after(fn($livewire) => $livewire->dispatch('refreshCollapsibleTableWidget')),
                 DeleteAction::make()
-                    ->after(fn ($livewire) => $livewire->dispatch('refreshCollapsibleTableWidget')),
+                    ->after(fn($livewire) => $livewire->dispatch('refreshCollapsibleTableWidget')),
             ])
             ->toolbarActions([
                 SchoolClassActions::createWithStudentsAction($this->getOwnerRecord())
@@ -68,8 +85,9 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
                     ->modalWidth(width: Width::Large),
                 SchoolClassFeeCollectionActions::overviewAction(),
                 DeleteBulkAction::make()
-                    ->after(fn ($livewire) => $livewire->dispatch('refreshCollapsibleTableWidget')),
+                    ->after(fn($livewire) => $livewire->dispatch('refreshCollapsibleTableWidget')),
             ])
-            ->recordAction('takeFeeCollectionRelationManager');;
+            ->recordAction('takeFeeCollectionRelationManager');
+        ;
     }
 }
