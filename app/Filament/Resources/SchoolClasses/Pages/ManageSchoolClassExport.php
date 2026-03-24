@@ -90,6 +90,7 @@ class ManageSchoolClassExport extends Page implements HasForms
                                 $this->checkboxFeeCollectionColumns()->columnSpan(1),
                                 $this->checkboxLessonColumns()->columnSpan(1),
                                 $this->checkboxxGradeColumns()->columnSpan(1),
+                                $this->checkboxFinalGradeColumns()->columnSpan(1),
                             ]),
                     ]),
             ])
@@ -308,6 +309,43 @@ class ManageSchoolClassExport extends Page implements HasForms
                     ->live()
                     ->disabled(fn($get) => !$get('grade_enabled'))
                     ->required(fn($get) => (bool) $get('grade_enabled')),
+            ])
+            ->compact();
+    }
+
+    public function checkboxFinalGradeColumns()
+    {
+        return Section::make()
+            ->schema([
+                $this->sheetToggle('final_grade', 'Final Grades Sheet'),
+                CheckboxList::make('final_grade_columns')
+                    ->label('Final Grade Columns')
+                    ->options([
+                        'full_name' => 'Student Name',
+                        'grading_period' => 'Grading Period',
+                        'final_grade' => 'Final Grade',
+                    ])
+                    ->default($this->getCached('final_grade_columns', [
+                        'full_name',
+                        'grading_period',
+                        'final_grade',
+                    ]))
+                    ->disableOptionWhen(fn($value) => $value === 'full_name')
+                    ->in(['full_name', 'grading_period', 'final_grade'])
+                    ->afterStateHydrated(function ($state, callable $set) {
+                        if (!in_array('full_name', $state ?? [])) {
+                            $set('final_grade_columns', array_merge($state ?? [], ['full_name']));
+                        }
+                    })
+                    ->dehydrateStateUsing(function ($state) {
+                        return collect($state)->push('full_name')->unique()->values()->toArray();
+                    })
+                    ->afterStateUpdated(function ($state) {
+                        $this->putCached('final_grade_columns', $state);
+                    })
+                    ->live()
+                    ->disabled(fn($get) => !$get('final_grade_enabled'))
+                    ->required(fn($get) => (bool) $get('final_grade_enabled')),
             ])
             ->compact();
     }
