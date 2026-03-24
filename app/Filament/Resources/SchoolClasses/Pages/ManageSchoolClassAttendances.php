@@ -9,6 +9,7 @@ use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\DatePicker;
 use Filament\Actions\DeleteBulkAction;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
@@ -35,6 +36,17 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
             ]);
     }
 
+    public function getTableQuery(): Builder
+    {
+        return $this->getOwnerRecord()
+            ->attendances()
+            ->getQuery()
+            ->withCount([
+                'students as present_count' => fn($query) => $query->where('attendance_student.present', true),
+                'students as absent_count' => fn($query) => $query->where('attendance_student.present', false),
+            ]);
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -46,7 +58,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
                 SchoolClassAttendanceActions::takeAttendanceAction(),
                 EditAction::make()->modalWidth(Width::Medium),
                 DeleteAction::make()
-                     ->recordTitle(fn ($record) => $record->date->format('M d, Y')),
+                    ->recordTitle(fn($record) => $record->date->format('M d, Y')),
             ])
             ->toolbarActions([
                 SchoolClassActions::createWithStudentsAction($this->getOwnerRecord())

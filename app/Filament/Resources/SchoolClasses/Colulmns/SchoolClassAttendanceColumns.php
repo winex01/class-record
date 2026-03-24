@@ -8,7 +8,6 @@ use Illuminate\Support\HtmlString;
 use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Database\Eloquent\Builder;
 
 class SchoolClassAttendanceColumns
 {
@@ -17,28 +16,22 @@ class SchoolClassAttendanceColumns
         return [
             DateColumn::make('date'),
 
-            TextColumn::make('present')
+            TextColumn::make('present_count')
+                ->label('Present')
                 ->searchable(false)
                 ->color('success')
                 ->alignCenter()
                 ->underline()
-                ->state(fn ($record) => $record->students()->wherePivot('present', true)->count())
-                ->sortable(query: function (Builder $query, string $direction): Builder {
-                    return $query
-                        ->withCount([
-                            'students as present_count' => function ($query) {
-                                $query->where('attendance_student.present', true);
-                            }
-                        ])
-                        ->orderBy('present_count', $direction);
-                })
+                ->sortable()
                 ->action(
-                Action::make('presentStudents')
+                    Action::make('presentStudents')
                         ->modalWidth(Width::Large)
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)
-                        ->modalHeading(fn ($record): string => "Present Students on " . $record->date_formatted)
-                        ->modalContent(fn ($record) => new HtmlString(
+                        ->closeModalByClickingAway()
+                        ->closeModalByEscaping()
+                        ->modalHeading(fn($record) => "Present Students on " . $record->date_formatted)
+                        ->modalContent(fn($record) => new HtmlString(
                             Blade::render(
                                 "@livewire('student-attendance-present-absent', ['attendance' => \$attendance, 'isPresent' => true])",
                                 ['attendance' => $record]
@@ -46,28 +39,22 @@ class SchoolClassAttendanceColumns
                         ))
                 ),
 
-            TextColumn::make('absent')
+            TextColumn::make('absent_count')
+                ->label('Absent')
                 ->searchable(false)
                 ->color('danger')
                 ->alignCenter()
                 ->underline()
-                ->state(fn ($record) => $record->students()->wherePivot('present', false)->count())
-                ->sortable(query: function (Builder $query, string $direction): Builder {
-                    return $query
-                        ->withCount([
-                            'students as absent_count' => function ($query) {
-                                $query->where('attendance_student.present', false);
-                            }
-                        ])
-                        ->orderBy('absent_count', $direction);
-                })
+                ->sortable()
                 ->action(
-                Action::make('absentStudents')
+                    Action::make('absentStudents')
                         ->modalWidth(Width::Large)
                         ->modalSubmitAction(false)
                         ->modalCancelAction(false)
-                        ->modalHeading(fn ($record) => "Absent Students on " . $record->date_formatted)
-                        ->modalContent(fn ($record) => new HtmlString(
+                        ->closeModalByClickingAway()
+                        ->closeModalByEscaping()
+                        ->modalHeading(fn($record) => "Absent Students on " . $record->date_formatted)
+                        ->modalContent(fn($record) => new HtmlString(
                             Blade::render(
                                 "@livewire('student-attendance-present-absent', ['attendance' => \$attendance, 'isPresent' => false])",
                                 ['attendance' => $record]
