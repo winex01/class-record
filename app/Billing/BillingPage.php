@@ -74,7 +74,7 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                         return 'primary';
                     }),
 
-                DateColumn::make('created_at')->label('Activated At')->sortable()
+                DateColumn::make('created_at')->label('Activation Date')->sortable()
             ])
             ->defaultSort('expires_at', 'desc')
             ->toolbarActions([
