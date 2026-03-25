@@ -50,7 +50,7 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                     ->copyable(),
 
                 DateColumn::make('expires_at')
-                    ->label('Expires At')
+                    ->label('Expiration Date')
                     ->sortable()
                     ->color(function ($record) {
                         if (!$record->expires_at) {

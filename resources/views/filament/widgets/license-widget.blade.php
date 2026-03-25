@@ -11,7 +11,7 @@
         <div class="flex items-center justify-between">
             <div class="space-y-1 text-sm text-gray-500 dark:text-gray-400">
                 <div class="-mt-3">APP ID: <span class="font-mono">{{ $this->getAppId() }}</span></div>
-                <div>Expires At: <span class="font-medium {{ $this->getExpiresAtColor() }}">{{ $this->getExpiresAt() }}</span></div>
+                <div>Active Until: <span class="font-medium {{ $this->getExpiresAtColor() }}">{{ $this->getExpiresAt() }}</span></div>
             </div>
 
             <x-filament::button
