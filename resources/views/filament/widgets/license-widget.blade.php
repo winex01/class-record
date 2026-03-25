@@ -10,7 +10,7 @@
 
         <div class="flex items-center justify-between">
             <div class="space-y-1 text-sm text-gray-500 dark:text-gray-400">
-                <div class="-mt-3">APP ID: <span class="font-mono">{{ $this->getAppId() }}</span></div>
+                <div class="-mt-3">App ID: <span class="font-mono">{{ $this->getAppId() }}</span></div>
                 <div>Active Until: <span class="font-medium {{ $this->getExpiresAtColor() }}">{{ $this->getExpiresAt() }}</span></div>
             </div>
 

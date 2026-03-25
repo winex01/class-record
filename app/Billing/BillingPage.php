@@ -46,7 +46,7 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
             ->query(License::query())
             ->columns([
                 TextColumn::make('app_id')
-                    ->label('APP ID')
+                    ->label('App ID')
                     ->copyable(),
 
                 DateColumn::make('expires_at')
@@ -89,7 +89,7 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
             ->modalWidth(Width::Large)
             ->form([
                 TextInput::make('app_id')
-                    ->label('APP ID')
+                    ->label('App ID')
                     ->default(fn() => $this->app_id)
                     ->readOnly()
                     ->suffixAction(CopyableAction::make())
