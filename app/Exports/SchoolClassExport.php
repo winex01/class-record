@@ -7,6 +7,7 @@ use App\Exports\Sheets\GradesSheet;
 use App\Exports\Sheets\LessonsSheet;
 use App\Exports\Sheets\StudentsSheet;
 use App\Exports\Sheets\AttendanceSheet;
+use App\Exports\Sheets\FinalGradesSheet;
 use App\Exports\Sheets\FeeCollectionsSheet;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
@@ -47,6 +48,10 @@ class SchoolClassExport implements WithMultipleSheets
             if (!empty($gradeSheets)) {
                 array_push($sheets, ...$gradeSheets);
             }
+        }
+
+        if ($this->data['final_grade_enabled'] ?? true) {
+            $sheets[] = new FinalGradesSheet($this->schoolClass, $this->data);
         }
 
         return $sheets;
