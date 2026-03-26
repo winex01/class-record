@@ -52,11 +52,8 @@ class User extends Authenticatable
     protected static function booted(): void
     {
         static::creating(function ($user) {
-            do {
-                $id = rand(1, 100);
-            } while (static::where('id', $id)->exists());
-
-            $user->id = $id;
+            $lastId = static::max('id') ?? 0;
+            $user->id = $lastId + rand(1, 100);
         });
     }
 }
