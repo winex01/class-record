@@ -22,6 +22,10 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@test.com',
         ]);
 
+        for ($i = 0; $i < rand(1, 10); $i++) {
+            User::factory()->create();
+        }
+
         $this->call(TestDataSeeder::class);
     }
 
