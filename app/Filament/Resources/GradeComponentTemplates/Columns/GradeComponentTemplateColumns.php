@@ -13,14 +13,12 @@ class GradeComponentTemplateColumns
 
             TextColumn::make('components')
                 ->listWithLineBreaks()
-                ->formatStateUsing(fn ($state) =>
+                ->formatStateUsing(
+                    fn($state) =>
                     "{$state['name']} ({$state['weighted_score']}%)"
                 )
                 ->searchable(query: function ($query, string $search) {
-                    $query->whereRaw(
-                        "LOWER(JSON_EXTRACT(components, '$')) LIKE ?",
-                        ['%' . strtolower($search) . '%']
-                    );
+                    $query->where('components', 'like', '%' . strtolower($search) . '%');
                 })
                 ->color(function ($state, $rowLoop) {
                     return match ($rowLoop->iteration % 5) {

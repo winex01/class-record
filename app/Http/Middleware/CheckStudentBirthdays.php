@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use App\Models\Student;
+use Illuminate\Http\Request;
 use App\Models\BirthdayNotification;
 use Filament\Notifications\Notification;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,11 +40,20 @@ class CheckStudentBirthdays
 
         // Get all students with birthdays between lookback date and today
         $allBirthdayStudents = Student::where(function ($query) use ($lookbackDate, $today) {
-                // Get month-day range for birthdays
-                $query->whereRaw('DATE_FORMAT(birth_date, "%m-%d") BETWEEN ? AND ?', [
-                    $lookbackDate->format('m-d'),
-                    $today->format('m-d')
-                ]);
+            // Get month-day range for birthdays
+                $driver = $query->getConnection()->getDriverName();
+
+                if ($driver === 'sqlite') {
+                    $query->whereRaw("strftime('%m-%d', birth_date) BETWEEN ? AND ?", [
+                        $lookbackDate->format('m-d'),
+                        $today->format('m-d')
+                    ]);
+                } else {
+                    $query->whereRaw('DATE_FORMAT(birth_date, "%m-%d") BETWEEN ? AND ?', [
+                        $lookbackDate->format('m-d'),
+                        $today->format('m-d')
+                    ]);
+                }
             })
             ->whereHas('schoolClasses', function ($query) {
                 $query->where('active', true);

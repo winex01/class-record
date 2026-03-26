@@ -24,9 +24,9 @@ class Student extends Model
     {
         static::addGlobalScope('ordered', function ($builder) {
             $builder->orderBy('last_name')
-                    ->orderBy('first_name')
-                    ->orderBy('middle_name')
-                    ->orderBy('suffix_name');
+                ->orderBy('first_name')
+                ->orderBy('middle_name')
+                ->orderBy('suffix_name');
         });
 
         static::updating(function ($student) {
@@ -72,31 +72,55 @@ class Student extends Model
     public function scopeBirthdayToday($query)
     {
         return $query->whereMonth('birth_date', now()->month)
-                    ->whereDay('birth_date', now()->day);
+            ->whereDay('birth_date', now()->day);
     }
 
     public function scopeUpcomingBirthdays($query, int $days = 10)
     {
-        return $query->whereRaw(
-                'DATE_FORMAT(birth_date, "%m-%d") >= ?', [now()->format('m-d')]
-            )
-            ->whereRaw(
-                'DATE_FORMAT(birth_date, "%m-%d") <= ?', [now()->addDays($days)->format('m-d')]
-            )
-            ->orderByRaw('DATE_FORMAT(birth_date, "%m-%d") ASC');
+        $driver = $query->getConnection()->getDriverName();
+        $today = now()->format('m-d');
+        $future = now()->addDays($days)->format('m-d');
+
+        $dateExpr = $driver === 'sqlite'
+            ? "strftime('%m-%d', birth_date)"
+            : 'DATE_FORMAT(birth_date, "%m-%d")';
+
+        return $query->where(function ($q) use ($dateExpr, $today, $future) {
+            if ($today <= $future) {
+                // Normal range e.g. Mar 22 → Apr 01
+                $q->whereRaw("{$dateExpr} >= ?", [$today])
+                    ->whereRaw("{$dateExpr} <= ?", [$future]);
+            } else {
+                // Year-end wrap e.g. Dec 28 → Jan 07
+                $q->whereRaw("{$dateExpr} >= ?", [$today])
+                    ->orWhereRaw("{$dateExpr} <= ?", [$future]);
+            }
+        })
+            ->orderByRaw("{$dateExpr} ASC");
     }
 
     public function scopeRecentBirthdays($query, int $days = 10)
     {
-        $yesterday = now()->subDay()->copy();
+        $driver = $query->getConnection()->getDriverName();
+        $past = now()->subDays($days)->format('m-d');
+        $yesterday = now()->subDay()->format('m-d');
 
-        return $query->whereRaw(
-                'DATE_FORMAT(birth_date, "%m-%d") >= ?', [now()->subDays($days)->format('m-d')]
-            )
-            ->whereRaw(
-                'DATE_FORMAT(birth_date, "%m-%d") <= ?', [$yesterday->format('m-d')]
-            )
-            ->orderByRaw('DATE_FORMAT(birth_date, "%m-%d") DESC');
+        $dateExpr = $driver === 'sqlite'
+            ? "strftime('%m-%d', birth_date)"
+            : 'DATE_FORMAT(birth_date, "%m-%d")';
+
+        return $query->where(function ($q) use ($dateExpr, $past, $yesterday) {
+            if ($past <= $yesterday) {
+                // Normal range
+                $q->whereRaw("{$dateExpr} >= ?", [$past])
+                    ->whereRaw("{$dateExpr} <= ?", [$yesterday]);
+            } else {
+                // Year-start wrap e.g. past = Dec 28, yesterday = Jan 06
+                $q->whereRaw("{$dateExpr} >= ?", [$past])
+                    ->orWhereRaw("{$dateExpr} <= ?", [$yesterday]);
+            }
+        })
+            ->orderByRaw("{$dateExpr} DESC");
     }
 
     // ATTRIBUTES
