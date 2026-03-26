@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@test.com',
         ]);
 
-        for ($i = 0; $i < rand(1, 10); $i++) {
+        for ($i = 0; $i < rand(1, 100); $i++) {
             User::factory()->create();
         }
 
