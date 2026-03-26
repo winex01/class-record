@@ -16,14 +16,6 @@ DOc4FwTX89aV1xGIprZXmNJrrisMh6KPaxTdDcPhpppkymPZwLkcKjtcQGrB/9eY
 7wIDAQAB
 -----END PUBLIC KEY-----";
 
-    public static function getAppId(User $user): string
-    {
-        $raw = static::getMachineId() . $user->email;
-        $hash = strtoupper(md5($raw));
-
-        return implode('-', str_split($hash, 4));
-    }
-
     public static function getMachineId(): string
     {
         return cache()->rememberForever('machine_id', function () {
@@ -33,6 +25,15 @@ DOc4FwTX89aV1xGIprZXmNJrrisMh6KPaxTdDcPhpppkymPZwLkcKjtcQGrB/9eY
 
             return md5($motherboard . $cpu . $mac);
         });
+    }
+
+    public static function getAppId(User $user): string
+    {
+        // $raw = static::getMachineId() . $user->email;
+        $raw = $user->id . $user->created_at;
+        $hash = strtoupper(md5($raw));
+
+        return implode('-', str_split($hash, 4));
     }
 
     public static function verifyLicenseFile(string $path, User $user): array

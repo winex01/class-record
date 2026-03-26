@@ -43,7 +43,7 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(License::query())
+            ->query(License::query()->where('app_id', BillingService::getAppId(auth()->user())))
             ->columns([
                 TextColumn::make('app_id')
                     ->label('App ID')
