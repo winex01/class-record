@@ -48,4 +48,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    protected static function booted(): void
+    {
+        static::creating(function ($user) {
+            do {
+                $id = rand(1, 100);
+            } while (static::where('id', $id)->exists());
+
+            $user->id = $id;
+        });
+    }
 }
