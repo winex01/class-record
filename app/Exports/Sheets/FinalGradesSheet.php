@@ -48,6 +48,7 @@ class FinalGradesSheet implements FromCollection, ShouldAutoSize, WithTitle, Wit
             AfterSheet::class => function (AfterSheet $event) {
                 $event->sheet->getTabColor()->setARGB('FF0F766E');
                 $sheet = $event->sheet->getDelegate();
+                $sheet->freezePane('C2');
 
                 $this->buildHeaders($sheet);
                 $this->buildContent($sheet);
