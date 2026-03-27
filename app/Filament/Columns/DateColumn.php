@@ -31,6 +31,17 @@ class DateColumn extends TextColumn
                             ->orWhereRaw("DATE_FORMAT({$name}, '%M %d, %Y') LIKE ?", ["%{$search}%"]);
                     }
                 });
+            })
+            ->tooltip(function ($record, $column) {
+                $driver = $record->getConnection()->getDriverName();
+                $name = $column->getName();
+                $value = $record->{$name};
+
+                if ($driver === 'sqlite') {
+                    return 'Search format: ' . \Carbon\Carbon::parse($value)->format('m/d/Y');
+                }
+
+                return null;
             });
     }
 }

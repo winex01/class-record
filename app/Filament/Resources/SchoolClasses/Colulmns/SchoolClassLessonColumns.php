@@ -18,7 +18,7 @@ class SchoolClassLessonColumns
                 ->size(TextSize::Small)
                 ->lineClamp(3)
                 ->html()
-                ->hidden(fn ($record) => empty($record->description))
+                ->hidden(fn($record) => empty($record->description))
                 ->extraAttributes(['style' => 'margin-top: -15px;']),
 
             TextEntry::make('tags')
@@ -27,7 +27,7 @@ class SchoolClassLessonColumns
                 ->separator(',')
                 ->color('primary')
                 ->size(TextSize::Small)
-                ->hidden(fn ($record) => empty($record->tags))
+                ->hidden(fn($record) => empty($record->tags))
                 ->extraAttributes(['style' => 'margin-top: -15px;']),
 
             TextEntry::make('completion_date')
@@ -36,8 +36,13 @@ class SchoolClassLessonColumns
                 ->icon('heroicon-o-calendar')
                 ->iconColor('primary')
                 ->size(TextSize::Small)
-                ->hidden(fn ($record) => empty($record->completion_date))
-                ->extraAttributes(['style' => 'margin-top: -15px;']),
+                ->hidden(fn($record) => empty($record->completion_date))
+                ->extraAttributes(['style' => 'margin-top: -15px;'])
+                ->tooltip(
+                    fn($record) => $record->completion_date
+                    ? 'Search format: ' . $record->completion_date->format('Y-m-d')
+                    : null
+                )
         ];
     }
 

@@ -1,9 +1,7 @@
 <?php
 /*
-
-TODO:: check all table search if there is an error, including the modals and tables.
-TODO:: check all tables column sortable/order
-
+TODO:: add filter for clumn that uses DateColumn also in sqlite it doesnt worked
+TODO:: add filteter for column starts_at and ends_at or the one that use DateTimeColumn
 
 DEPLOY REMINDERS:
 env

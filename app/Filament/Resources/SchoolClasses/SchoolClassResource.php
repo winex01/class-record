@@ -88,8 +88,8 @@ class SchoolClassResource extends Resource
                 }),
 
                 DeleteBulkAction::make(),
-            ])
-            ->reorderable('sort', direction: 'desc');
+            ]);
+            // ->reorderable('sort', direction: 'desc');
             // ->recordUrl(fn ($record) => route('filament.app.resources.school-classes.students', $record));
     }
 

@@ -41,12 +41,8 @@ class AssessmentRemindersWidget extends CollapsibleTableWidget
                 ->where('school_class_id', $this->ownerRecord->id)
                 ->whereNotNull('date')
                 ->withScoreStatus(false)
-                ->where(function ($query) {
-                    $query->where('date', '<=', now()->addDays(7))
-                        ->orWhere('date', '<', now()->today());
-                })
-                ->orderByRaw("CASE WHEN date < NOW() THEN 0 ELSE 1 END ASC")
-                ->orderBy('date', 'ASC')
+                ->where('date', '<=', now()->addDays(7))
+                ->orderBy('date', 'asc')
             )
             ->heading(false)
             ->searchable(false)

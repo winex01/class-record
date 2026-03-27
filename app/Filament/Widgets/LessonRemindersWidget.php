@@ -18,7 +18,7 @@ class LessonRemindersWidget extends CollapsibleTableWidget
 {
     protected static ?string $heading = '🔔 Lesson Reminders';
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public ?Model $ownerRecord = null;
 
@@ -46,17 +46,16 @@ class LessonRemindersWidget extends CollapsibleTableWidget
         return $table
             ->query(
                 Lesson::query()
-                ->where('school_class_id', $schoolClassId)
-                ->whereNotNull('completion_date')
-                ->where('status', '!=', LessonStatus::DONE->value) // ← exclude DONE globally
-                ->where(function ($query) {
-                    $query->whereBetween('completion_date', [now()->today(), now()->addDays(7)])
-                        ->orWhere(function ($q) {
-                            $q->where('completion_date', '<', now()->today());
-                        });
-                })
-                ->orderByRaw("CASE WHEN completion_date < NOW() THEN 0 ELSE 1 END ASC")
-                ->orderBy('completion_date', 'ASC')
+                    ->where('school_class_id', $schoolClassId)
+                    ->whereNotNull('completion_date')
+                    ->where('status', '!=', LessonStatus::DONE->value)
+                    ->where(function ($query) {
+                        $query->whereBetween('completion_date', [now()->today(), now()->addDays(7)])
+                            ->orWhere(function ($q) {
+                                $q->where('completion_date', '<', now()->today());
+                            });
+                    })
+                    ->orderBy('completion_date', 'asc')
             )
             ->heading(false)
             ->searchable(false)
@@ -69,10 +68,11 @@ class LessonRemindersWidget extends CollapsibleTableWidget
                     TextColumn::make('title')
                         ->sortable(false)
                         ->grow(true)
-                        ->color(fn ($record) =>
+                        ->color(
+                            fn($record) =>
                             Carbon::parse($record->completion_date)->startOfDay()->lt(now()->startOfDay())
-                                ? 'danger'
-                                : null
+                            ? 'danger'
+                            : null
                         )
                         ->description(function ($record) {
                             $days = (int) now()->startOfDay()->diffInDays(
@@ -80,9 +80,12 @@ class LessonRemindersWidget extends CollapsibleTableWidget
                                 false
                             );
 
-                            if ($days === 0) return '🔥 Due Today!';
-                            if ($days === 1) return '⚠️ Due Tomorrow!';
-                            if ($days > 1) return 'in ' . $days . ' days';
+                            if ($days === 0)
+                                return '🔥 Due Today!';
+                            if ($days === 1)
+                                return '⚠️ Due Tomorrow!';
+                            if ($days > 1)
+                                return 'in ' . $days . ' days';
 
                             return trans_choice(
                                 '🚨 :count day overdue|🚨 :count days overdue',
@@ -101,28 +104,32 @@ class LessonRemindersWidget extends CollapsibleTableWidget
                         ->enum(LessonStatus::class)
                         ->badge()
                         ->sortable(false)
-                        ->description(fn ($record) =>
+                        ->description(
+                            fn($record) =>
                             $record->completion_date
-                                ? Carbon::parse($record->completion_date)->format('M d, Y')
-                                : null
+                            ? Carbon::parse($record->completion_date)->format('M d, Y')
+                            : null
                         ),
 
                     TextColumn::make('myFiles.path')
                         ->label('Files')
                         ->sortable(false)
                         ->html()
-                        ->getStateUsing(fn ($record) => $record->myFiles
-                            ->flatMap(fn ($file) => collect($file->path)
-                                ->map(fn ($path, $index) =>
-                                    '<a href="' .
-                                        route('filament.app.myfile.download', ['myFileId' => $file->id, 'index' => $index]) .
-                                    '" class="text-info-500 hover:text-info-600 hover:underline inline" target="_blank">' .
-                                    basename($path) . '</a>'
+                        ->getStateUsing(
+                            fn($record) => $record->myFiles
+                                ->flatMap(
+                                    fn($file) => collect($file->path)
+                                        ->map(
+                                            fn($path, $index) =>
+                                            '<a href="' .
+                                            route('filament.app.myfile.download', ['myFileId' => $file->id, 'index' => $index]) .
+                                            '" class="text-info-500 hover:text-info-600 hover:underline inline" target="_blank">' .
+                                            basename($path) . '</a>'
+                                        )
                                 )
-                            )
-                            ->join('<span class="mx-1">, </span>')
+                                ->join('<span class="mx-1">, </span>')
                         )
-                        ->description(fn ($record) => $record->myFiles->pluck('name')->join(', '))
+                        ->description(fn($record) => $record->myFiles->pluck('name')->join(', '))
                 ]),
             ]);
     }
