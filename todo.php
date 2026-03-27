@@ -1,7 +1,6 @@
 <?php
 /*
-TODO:: add filter for clumn that uses DateColumn also in sqlite it doesnt worked
-TODO:: add filteter for column starts_at and ends_at or the one that use DateTimeColumn
+// TODO:: TBD bundle into .exe
 
 DEPLOY REMINDERS:
 env
