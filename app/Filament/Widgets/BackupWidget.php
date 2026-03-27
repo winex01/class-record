@@ -54,15 +54,12 @@ class BackupWidget extends Widget implements HasForms, HasActions
                         ->sortByDesc(fn($f) => Storage::disk('local')->lastModified($f))
                         ->first();
 
-                    $fullPath = Storage::disk('local')->path($latest);
-
                     Notification::make()
                         ->title('Backup Successful')
                         ->body('Download will start shortly.')
                         ->success()
                         ->send();
 
-                    // Trigger download
                     $this->js("window.location.href = '" . route('filament.app.backup.download', ['file' => basename($latest)]) . "'");
 
                 } catch (\Throwable $e) {

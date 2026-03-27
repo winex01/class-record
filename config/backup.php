@@ -89,9 +89,11 @@ return [
              *
              * For a complete list of available customization options, see https://github.com/spatie/db-dumper
              */
-            'databases' => [
-                env('DB_CONNECTION', 'mysql'),
-            ],
+            // 'databases' => [
+            //     env('DB_CONNECTION', 'mysql'),
+            // ],
+
+            'databases' => [], // sqlite
         ],
 
         /*
