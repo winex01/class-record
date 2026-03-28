@@ -21,6 +21,7 @@ use App\Http\Middleware\CheckStudentBirthdays;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -82,6 +83,12 @@ class AppPanelProvider extends PanelProvider
             ->routes(function () {
                 static::registerCustomRoutes();
             })
+            ->plugins([
+                AuthUIEnhancerPlugin::make()
+                    ->mobileFormPanelPosition('bottom')
+                    ->emptyPanelBackgroundImageUrl('images/login' . rand(1, 4) . '.jpg')
+
+            ])
             ->userMenuItems([
                 Action::make('billing')
                     ->label('Licenses')

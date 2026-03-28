@@ -1,6 +1,8 @@
-<?php
-/*
-// TODO:: TBD bundle into .exe
+<?php /*
+TODO:: create installation guide a text and a video
+ - install herd
+ - open herd and add project folder
+ - check launch herd on start up
 
 DEPLOY REMINDERS:
 env

@@ -6,6 +6,7 @@
 @source '../../../../vendor/guava/filament-modal-relation-managers/resources/**/*';
 @source '../../../../vendor/guava/calendar/resources/**/*';
 @source "../../../../vendor/relaticle/flowforge/resources/views/**/*.blade.php";
+@source '../../../../vendor/diogogpinto/filament-auth-ui-enhancer/resources/**/*.blade.php';
 
 
 /* ============================================================
