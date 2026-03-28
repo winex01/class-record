@@ -87,7 +87,6 @@ class AppPanelProvider extends PanelProvider
                 AuthUIEnhancerPlugin::make()
                     ->mobileFormPanelPosition('bottom')
                     ->emptyPanelBackgroundImageUrl('images/login' . rand(1, 4) . '.jpg')
-
             ])
             ->userMenuItems([
                 Action::make('billing')
