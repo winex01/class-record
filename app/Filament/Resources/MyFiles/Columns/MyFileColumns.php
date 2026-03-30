@@ -19,7 +19,7 @@ class MyFileColumns
                 ->getStateUsing(fn ($record) => collect($record->path)
                     ->map(fn ($path, $index) =>
                         '<a href="' .
-                            route('filament.app.myfile.download', ['myFileId' => $record->id, 'index' => $index]) . '" class="text-info-500 hover:text-info-600 hover:underline inline" target="_blank">' . basename($path)
+                            route('filament.app.myfile.download', ['myFileId' => $record->id, 'index' => $index]) . '" class="text-info-500 hover:text-info-600 hover:underline inline">' . basename($path)
                         . '</a>'
                     )
                     ->join('<span class="mx-1">, </span>')
