@@ -83,6 +83,7 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
                 ->alignCenter()
                 ->width('1%')
                 ->color('primary')
+                ->underline()
                 ->state(function ($record) use ($gradeServices, $snakeCase) {
                     return $gradeServices->get($snakeCase)->gradingPeriodGrade($record->id);
                 })
