@@ -46,14 +46,6 @@ class LicenseWidget extends Widget
 
         $days = now()->diffInDays($this->license->expires_at, false);
 
-        if ($days < 2) {
-            return 'text-warning-500';
-        }
-
-        if ($days <= 30) {
-            return 'text-info-500';
-        }
-
-        return 'text-primary-500';
+        return BillingService::trialCssColor($days);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Billing;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
+use App\Billing\BillingService;
 use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
 use App\Filament\Columns\DateColumn;
@@ -60,18 +61,18 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                         $days = now()->diffInDays($record->expires_at, false);
 
                         if ($days < 0) {
-                            return 'danger'; // already expired
-                        }
+                             return 'danger'; // already expired
+                         }
 
-                        if ($days < 2) {
-                            return 'warning';
-                        }
+                         if ($days < 2) {
+                             return 'warning';
+                         }
 
-                        if ($days <= 30) {
-                            return 'info';
-                        }
+                         if ($days <= 30) {
+                             return 'info';
+                         }
 
-                        return 'primary';
+                         return 'primary';
                     }),
 
                 DateColumn::make('created_at')->label('Activation Date')->sortable()
@@ -93,7 +94,11 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
                     ->default(fn() => $this->app_id)
                     ->readOnly()
                     ->suffixAction(CopyableAction::make())
-                    ->belowContent('Copy your APP ID and send it to the admin to get your license file'),
+                    ->belowContent(
+                        'Copy your APP ID and send it to us via: ' . config('app.admin_contact_1') .
+                        ' or email us at ' . config('app.admin_contact_2') .
+                        ' to get your license file.'
+                    ),
 
                 FileUpload::make('license_file')
                     ->label('License File (.lic)')

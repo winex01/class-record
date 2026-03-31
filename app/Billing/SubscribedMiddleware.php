@@ -11,7 +11,7 @@ class SubscribedMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!BillingService::isSubscribed(auth()->user())) {
+        if (!BillingService::isOnTrial(auth()->user()) && !BillingService::isSubscribed(auth()->user())) {
             return redirect()->route('filament.app.tenant.billing');
         }
 

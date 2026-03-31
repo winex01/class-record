@@ -15,6 +15,7 @@ dJd784g0+VMSnIQKKXhWUctGIIVEAn1rHVswJRq+2poLyoyQL+DUM4vjby55s6/i
 DOc4FwTX89aV1xGIprZXmNJrrisMh6KPaxTdDcPhpppkymPZwLkcKjtcQGrB/9eY
 7wIDAQAB
 -----END PUBLIC KEY-----";
+    const TRIAL_DAYS = 30;
 
     public static function getMachineId(): string
     {
@@ -93,5 +94,24 @@ DOc4FwTX89aV1xGIprZXmNJrrisMh6KPaxTdDcPhpppkymPZwLkcKjtcQGrB/9eY
         $result = static::verifyLicenseFile($license->file_path, $user);
 
         return $result['valid'];
+    }
+
+    public static function isOnTrial(User $user): bool
+    {
+        return $user->created_at->diffInDays(now()) <= self::TRIAL_DAYS;
+    }
+
+    public static function trialDaysRemaining(User $user): int
+    {
+        return max(0, self::TRIAL_DAYS - (int) $user->created_at->diffInDays(now()));
+    }
+
+    public static function trialCssColor(int $days): string
+    {
+        if ($days < 0) return 'text-gray-500';
+        if ($days < 2) return 'text-warning-500';
+        if ($days <= 29) return 'text-info-500';
+
+        return 'text-primary-500';
     }
 }
