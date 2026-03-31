@@ -1,8 +1,5 @@
 <?php /*
-TODO:: create installation guide a text and a video
- - install herd
- - open herd and add project folder
- - check launch herd on start up
+TODO:: i think we should remove the Grade Settings in ManageSchoolClassGrade but isntead put it in the new class subject
 
 DEPLOY REMINDERS:
 env
