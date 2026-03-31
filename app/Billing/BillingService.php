@@ -30,10 +30,8 @@ DOc4FwTX89aV1xGIprZXmNJrrisMh6KPaxTdDcPhpppkymPZwLkcKjtcQGrB/9eY
 
     public static function getAppId(User $user): string
     {
-        // $raw = static::getMachineId() . $user->email;
-        $raw = $user->id . $user->created_at;
+        $raw = $user->id . $user->created_at . config('app.key');
         $hash = strtoupper(md5($raw));
-
         return implode('-', str_split($hash, 4));
     }
 
