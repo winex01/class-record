@@ -1,9 +1,9 @@
 <?php
 
 return [
-
-    'admin_contact_1' => env('ADMIN_CONTACT_1', 'admin@example.com'),
-    'admin_contact_2' => env('ADMIN_CONTACT_2', 'admin@example.com'),
+    'contact_us' => explode(',', env('CONTACT_US', 'admin@admin.com')),
+    'monthly_plan'=> (int) env('MONTHLY_PLAN', 30),
+    'annual_plan'=> (int) env('ANNUAL_PLAN', 350),
 
     /*
     |--------------------------------------------------------------------------

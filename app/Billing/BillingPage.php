@@ -10,6 +10,7 @@ use Filament\Support\Enums\Width;
 use App\Filament\Fields\TextInput;
 use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
+use Filament\Schemas\Components\View;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use App\Filament\Actions\CopyableAction;
@@ -88,17 +89,15 @@ class BillingPage extends Page implements HasForms, HasActions, HasTable
         return Action::make('activate')
             ->label('Activate License')
             ->modalWidth(Width::Large)
-            ->form([
+            ->schema([
                 TextInput::make('app_id')
                     ->label('App ID')
                     ->default(fn() => $this->app_id)
                     ->readOnly()
                     ->suffixAction(CopyableAction::make())
-                    ->belowContent(
-                        'Copy your APP ID and send it to us via: ' . config('app.admin_contact_1') .
-                        ' or email us at ' . config('app.admin_contact_2') .
-                        ' to get your license file.'
-                    ),
+                    ->belowContent('Your App ID is required to activate your license. Please provide it when requesting a license file.'),
+
+                View::make('filament.components.billing-plan'),
 
                 FileUpload::make('license_file')
                     ->label('License File (.lic)')
