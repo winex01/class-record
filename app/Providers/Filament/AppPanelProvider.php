@@ -9,6 +9,7 @@ use Filament\PanelProvider;
 use Filament\Enums\ThemeMode;
 use Filament\Pages\Dashboard;
 use Filament\Support\Colors\Color;
+use Winex\Sentinel\SentinelProvider;
 use Illuminate\Support\Facades\Route;
 use App\Filament\Widgets\BackupWidget;
 use Illuminate\Support\Facades\Storage;
@@ -86,7 +87,7 @@ class AppPanelProvider extends PanelProvider
                     ->mobileFormPanelPosition('bottom')
                     ->emptyPanelBackgroundImageUrl('images/login' . rand(1, 4) . '.jpg')
             ])
-            ->tenantBillingProvider(new \Winex\Sentinel\SentinelProvider())
+            ->tenantBillingProvider(new SentinelProvider())
             ->requiresTenantSubscription()
             ->databaseNotifications();
     }
