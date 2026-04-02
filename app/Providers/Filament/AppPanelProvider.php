@@ -6,14 +6,11 @@ use Filament\Panel;
 use App\Models\MyFile;
 use App\Models\Student;
 use Filament\PanelProvider;
-use Filament\Actions\Action;
 use Filament\Enums\ThemeMode;
 use Filament\Pages\Dashboard;
-use App\Billing\LicenseWidget;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Route;
 use App\Filament\Widgets\BackupWidget;
-use App\Billing\BillingServiceProvider;
 use Illuminate\Support\Facades\Storage;
 use App\Filament\Widgets\MyCalendarWidget;
 use Filament\Http\Middleware\Authenticate;
@@ -21,6 +18,7 @@ use App\Http\Middleware\CheckStudentBirthdays;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
+use Winex\Sentinel\Filament\Widgets\SentinelWidget;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -60,7 +58,7 @@ class AppPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->widgets([
-                LicenseWidget::class,
+                SentinelWidget::class,
                 BackupWidget::class,
                 MyCalendarWidget::class,
             ])
@@ -88,13 +86,7 @@ class AppPanelProvider extends PanelProvider
                     ->mobileFormPanelPosition('bottom')
                     ->emptyPanelBackgroundImageUrl('images/login' . rand(1, 4) . '.jpg')
             ])
-            ->userMenuItems([
-                Action::make('billing')
-                    ->label('Licenses')
-                    ->url(fn(): string => route('filament.app.tenant.billing'))
-                    ->icon('heroicon-o-key'),
-            ])
-            ->tenantBillingProvider(new BillingServiceProvider())
+            ->tenantBillingProvider(new \Winex\Sentinel\SentinelProvider())
             ->requiresTenantSubscription()
             ->databaseNotifications();
     }

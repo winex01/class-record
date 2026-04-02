@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a5e182624aba45ae181a6b9d1ae64e15",
+    "content-hash": "fd8fcf1ac8feedd842cadc1c1e0ffc28",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -9396,6 +9396,38 @@
                 }
             ],
             "time": "2024-11-21T01:49:47+00:00"
+        },
+        {
+            "name": "winex/sentinel",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "../sentinel",
+                "reference": "1415169d3b316b13f09ac041be205c51082902c8"
+            },
+            "require": {
+                "filament/filament": "~5.0",
+                "laravel/framework": "^12.0",
+                "php": "^8.2"
+            },
+            "type": "laravel-package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Winex\\Sentinel\\SentinelServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Winex\\Sentinel\\": "src/"
+                }
+            },
+            "description": "Sentinel package for Laravel",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         }
     ],
     "packages-dev": [
@@ -12150,12 +12182,14 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "winex/sentinel": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
