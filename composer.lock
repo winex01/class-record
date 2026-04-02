@@ -9399,16 +9399,16 @@
         },
         {
             "name": "winex/sentinel",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/winex01/sentinel.git",
-                "reference": "e5b43287cd326c294b1bf4c36edb9b6517de581d"
+                "reference": "f95a16d8876b6df753f79efe20580e2d05c8ed72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/winex01/sentinel/zipball/e5b43287cd326c294b1bf4c36edb9b6517de581d",
-                "reference": "e5b43287cd326c294b1bf4c36edb9b6517de581d",
+                "url": "https://api.github.com/repos/winex01/sentinel/zipball/f95a16d8876b6df753f79efe20580e2d05c8ed72",
+                "reference": "f95a16d8876b6df753f79efe20580e2d05c8ed72",
                 "shasum": ""
             },
             "require": {
@@ -9430,12 +9430,15 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
             "description": "Sentinel package for Laravel",
             "support": {
                 "issues": "https://github.com/winex01/sentinel/issues",
-                "source": "https://github.com/winex01/sentinel/tree/v1.0.0"
+                "source": "https://github.com/winex01/sentinel/tree/v1.0.1"
             },
-            "time": "2026-04-02T13:44:12+00:00"
+            "time": "2026-04-02T16:55:54+00:00"
         }
     ],
     "packages-dev": [
