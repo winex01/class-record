@@ -58,6 +58,8 @@ class AppPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
+            ->tenantBillingProvider(new SentinelProvider())
+            ->requiresTenantSubscription()
             ->widgets([
                 SentinelWidget::class,
                 BackupWidget::class,
@@ -87,8 +89,6 @@ class AppPanelProvider extends PanelProvider
                     ->mobileFormPanelPosition('bottom')
                     ->emptyPanelBackgroundImageUrl('images/login' . rand(1, 4) . '.jpg')
             ])
-            ->tenantBillingProvider(new SentinelProvider())
-            ->requiresTenantSubscription()
             ->databaseNotifications();
     }
 

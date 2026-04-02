@@ -21,7 +21,16 @@ class BackupWidget extends Widget implements HasForms, HasActions
     use InteractsWithForms;
 
     protected string $view = 'filament.widgets.backup-widget';
-    protected int|string|array $columnSpan = 'half';
+
+    // protected int|string|array $columnSpan = 'half';
+    public function getColumnSpan(): int|string|array
+    {
+        if (class_exists(\Winex\Sentinel\SentinelService::class)) {
+            return 'half';
+        }
+
+        return 'full';
+    }
 
     public static function canView(): bool
     {

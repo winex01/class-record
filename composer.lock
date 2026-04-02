@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fd8fcf1ac8feedd842cadc1c1e0ffc28",
+    "content-hash": "68fb2cbbfa233aa4646fde01e8981e65",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -9399,11 +9399,17 @@
         },
         {
             "name": "winex/sentinel",
-            "version": "dev-master",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/winex01/sentinel.git",
+                "reference": "e5b43287cd326c294b1bf4c36edb9b6517de581d"
+            },
             "dist": {
-                "type": "path",
-                "url": "../sentinel",
-                "reference": "1415169d3b316b13f09ac041be205c51082902c8"
+                "type": "zip",
+                "url": "https://api.github.com/repos/winex01/sentinel/zipball/e5b43287cd326c294b1bf4c36edb9b6517de581d",
+                "reference": "e5b43287cd326c294b1bf4c36edb9b6517de581d",
+                "shasum": ""
             },
             "require": {
                 "filament/filament": "~5.0",
@@ -9423,11 +9429,13 @@
                     "Winex\\Sentinel\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "description": "Sentinel package for Laravel",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/winex01/sentinel/issues",
+                "source": "https://github.com/winex01/sentinel/tree/v1.0.0"
+            },
+            "time": "2026-04-02T13:44:12+00:00"
         }
     ],
     "packages-dev": [
@@ -12182,9 +12190,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "winex/sentinel": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
