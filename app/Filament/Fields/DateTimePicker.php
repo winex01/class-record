@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TimePicker as BaseTimePicker;
 
-class TimePicker extends BaseTimePicker
+class DateTimePicker extends BaseTimePicker
 {
     protected function setUp(): void
     {
