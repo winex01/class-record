@@ -5,11 +5,11 @@ namespace App\Providers;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
-use App\Filament\Fields\Select;
 use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DetachAction;
+use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DetachBulkAction;
@@ -57,8 +57,8 @@ class AppServiceProvider extends ServiceProvider
             $table->persistSortInSession();
 
             // Table styling
-            $table->striped();
-            $table->extremePaginationLinks();
+            // $table->striped();
+            // $table->extremePaginationLinks();
 
             // Actions configuration
             // $table->filtersTriggerAction(fn (Action $action) => $action->button()->label(__('Filters')));
@@ -69,7 +69,7 @@ class AppServiceProvider extends ServiceProvider
             $table->defaultDateTimeDisplayFormat('M d, Y h:i A'); // e.g. "Sep 30, 2025 05:30 PM"
 
             // Column toggle and filters configuration
-            $table->columnToggleFormMaxHeight('10000px');
+            $table->columnManagerMaxHeight('10000px');
             // $table->filtersFormMaxHeight('10000px'); // dont enable this it cause filter select to be shorter instead
 
             // Auto-apply (like Filament v3)
