@@ -16,7 +16,7 @@ class TagsInput extends BaseTagsInput
             ->separator(',')
             ->splitKeys(['Tab'])
             ->hint(function ($component) {
-                $lowerName = strtolower($component->getName());
+                $lowerName = strtolower(str($component->getName())->headline());
                 return 'Use Tab key or Enter key to add multiple ' . $lowerName;
             });
     }
