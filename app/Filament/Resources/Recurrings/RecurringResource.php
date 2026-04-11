@@ -15,9 +15,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\Recurrings\Forms\RecurringForm;
+use App\Filament\Resources\Recurrings\Schemas\RecurringForm;
 use App\Filament\Resources\Recurrings\Pages\ManageRecurrings;
-use App\Filament\Resources\Recurrings\Columns\RecurringColumns;
+use App\Filament\Resources\Recurrings\Tables\RecurringsTable;
 
 class RecurringResource extends Resource
 {
@@ -45,14 +45,14 @@ class RecurringResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(RecurringForm::schema());
+            ->components(RecurringForm::getFields());
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('name')
-            ->columns(RecurringColumns::schema())
+            ->columns(RecurringsTable::getColumns())
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::ExtraLarge),
                 EditAction::make()->modalWidth(Width::ExtraLarge),

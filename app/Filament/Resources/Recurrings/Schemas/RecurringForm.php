@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Recurrings\Forms;
+namespace App\Filament\Resources\Recurrings\Schemas;
 
 use App\Services\Helper;
 use App\Filament\Fields\Textarea;
@@ -16,7 +16,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 
 class RecurringForm
 {
-    public static function schema()
+    public static function getFields()
     {
         return [
             Tabs::make('Tabs')
