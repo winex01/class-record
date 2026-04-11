@@ -15,9 +15,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\Meetings\Forms\MeetingForm;
+use App\Filament\Resources\Meetings\Schemas\MeetingForm;
 use App\Filament\Resources\Meetings\Pages\ManageMeetings;
-use App\Filament\Resources\Meetings\Columns\MeetingColumns;
+use App\Filament\Resources\Meetings\Tables\MeetingsTable;
 
 class MeetingResource extends Resource
 {
@@ -44,14 +44,14 @@ class MeetingResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(MeetingForm::schema());
+            ->components(MeetingForm::getFields());
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('name')
-            ->columns(MeetingColumns::schema())
+            ->columns(MeetingsTable::getColumns())
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Medium),
                 EditAction::make()->modalWidth(Width::Medium),

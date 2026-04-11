@@ -25,7 +25,7 @@ use Guava\Calendar\ValueObjects\DateSelectInfo;
 use App\Filament\Resources\Notes\Forms\NoteForm;
 use App\Filament\Resources\Tasks\Forms\TaskForm;
 use Guava\Calendar\ValueObjects\EventResizeInfo;
-use App\Filament\Resources\Meetings\Forms\MeetingForm;
+use App\Filament\Resources\Meetings\Schemas\MeetingForm;
 use App\Filament\Resources\Recurrings\Forms\RecurringForm;
 
 class MyCalendarWidget extends CalendarWidget
@@ -235,7 +235,7 @@ class MyCalendarWidget extends CalendarWidget
             $this->viewAction()
                 ->schema(function ($record) {
                     if ($record instanceof Meeting) {
-                        return MeetingForm::schema();
+                        return MeetingForm::getFields();
                     }
 
                     if ($record instanceof Task) {

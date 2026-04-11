@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Meetings\Forms;
+namespace App\Filament\Resources\Meetings\Schemas;
 
 use App\Filament\Fields\Textarea;
 use App\Filament\Fields\TagsInput;
@@ -9,7 +9,7 @@ use App\Filament\Fields\DateTimePicker;
 
 class MeetingForm
 {
-    public static function schema()
+    public static function getFields()
     {
         return [
             TextInput::make('name')

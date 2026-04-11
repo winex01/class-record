@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\Meetings\Columns;
+namespace App\Filament\Resources\Meetings\Tables;
 
 use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Columns\DateTimeColumn;
 
-class MeetingColumns
+class MeetingsTable
 {
-    public static function schema()
+    public static function getColumns()
     {
         return [
             TextColumn::make('name'),
