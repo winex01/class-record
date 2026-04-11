@@ -11,7 +11,7 @@ use Filament\Actions\DeleteAction;
 use App\Filament\Columns\TextColumn;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
-use App\Filament\Resources\TransmuteTemplates\Forms\TransmuteTemplateRangesForm;
+use App\Filament\Resources\TransmuteTemplates\Schemas\TransmuteTemplateRangeForm;
 
 class TransmuteTemplateRangesRelationManager extends RelationManager
 {
@@ -20,7 +20,7 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components(TransmuteTemplateRangesForm::schema($this->getOwnerRecord()));
+            ->components(TransmuteTemplateRangeForm::getFields($this->getOwnerRecord()));
     }
 
     public function table(Table $table): Table
@@ -38,7 +38,7 @@ class TransmuteTemplateRangesRelationManager extends RelationManager
                     ->modalWidth(Width::Large)
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()->modalWidth(Width::Large),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

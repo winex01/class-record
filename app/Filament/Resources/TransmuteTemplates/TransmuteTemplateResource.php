@@ -14,7 +14,7 @@ use App\Filament\Columns\TextColumn;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\TransmuteTemplates\Forms\TransmuteTemplateForm;
+use App\Filament\Resources\TransmuteTemplates\Schemas\TransmuteTemplateForm;
 use App\Filament\Resources\TransmuteTemplates\Pages\ManageTransmuteTemplates;
 use App\Filament\Resources\TransmuteTemplates\Actions\TransmuteTemplateActions;
 
@@ -33,7 +33,7 @@ class TransmuteTemplateResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(TransmuteTemplateForm::schema());
+            ->components(TransmuteTemplateForm::getFields());
     }
 
     public static function table(Table $table): Table

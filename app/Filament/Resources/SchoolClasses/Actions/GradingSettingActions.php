@@ -19,7 +19,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use App\Filament\Actions\RemoveItemAction;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\TransmuteTemplates\TransmuteTemplateResource;
-use App\Filament\Resources\TransmuteTemplates\Forms\TransmuteTemplateRangesForm;
+use App\Filament\Resources\TransmuteTemplates\Schemas\TransmuteTemplateRangeForm;
 use App\Filament\Resources\GradeComponentTemplates\GradeComponentTemplateResource;
 use App\Filament\Resources\GradeComponentTemplates\Schemas\GradeComponentTemplateForm;
 
@@ -122,7 +122,7 @@ class GradingSettingActions
                                     TableColumn::make('Initial Max'),
                                     TableColumn::make('Grade'),
                                 ])
-                                ->schema(array_map(fn ($field) => $field->distinct(), TransmuteTemplateRangesForm::rangesField()))
+                                ->schema(array_map(fn ($field) => $field->distinct(), TransmuteTemplateRangeForm::getRangeFields()))
                                 ->afterStateHydrated(function (Repeater $component, $state) {
                                     if (is_array($state) && count($state) > 0) {
                                         // Sort by initial_max - DESCENDING

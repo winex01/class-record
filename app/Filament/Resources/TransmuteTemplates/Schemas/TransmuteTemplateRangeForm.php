@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\TransmuteTemplates\Forms;
+namespace App\Filament\Resources\TransmuteTemplates\Schemas;
 
 use App\Models\TransmuteTemplate;
 use App\Filament\Fields\TextInput;
 use App\Filament\Fields\NumericInput;
 use Filament\Schemas\Components\Grid;
 
-class TransmuteTemplateRangesForm
+class TransmuteTemplateRangeForm
 {
-    public static function schema(TransmuteTemplate $ownerRecord)
+    public static function getFields(TransmuteTemplate $ownerRecord)
     {
         return [
             Grid::make(3)
@@ -38,13 +38,13 @@ class TransmuteTemplateRangesForm
                         ),
                         default => $field,
                     },
-                    static::rangesField()
+                    static::getRangeFields()
                 ),
             ])
         ];
     }
 
-    public static function rangesField()
+    public static function getRangeFields()
     {
         return [
             NumericInput::make('initial_min')

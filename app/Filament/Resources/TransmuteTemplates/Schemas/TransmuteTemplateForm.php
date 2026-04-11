@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Resources\TransmuteTemplates\Forms;
+namespace App\Filament\Resources\TransmuteTemplates\Schemas;
 
 use App\Filament\Fields\TextInput;
 
 class TransmuteTemplateForm
 {
-    public static function schema(): array
+    public static function getFields(): array
     {
         return [
             TextInput::make('name')
