@@ -1,61 +1,145 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Class Record Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+After installation and signup, you'll automatically get a **30-day free trial**.
 
-## About Laravel
+> If your trial expires and you still want to continue using the system, just DM me — I can give you another free month. All I ask is you share this post. 🙏
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🔌 Offline System
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+No internet needed — you can use it anytime, anywhere.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 💻 Supported OS
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- Windows 10 & 11
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+> Not fully tested on all setups, but it should work fine. If you encounter any issues, just message me and I'll help you.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## ℹ️ What This System Is (and Is NOT)
 
-### Premium Partners
+This is **not** some magical system that does everything automatically.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+**What it does is:**
 
-## Contributing
+- Eliminate manual computations
+- Reduce repetitive tasks
+- Help organize your class records efficiently
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🏫 Class & Students
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**Easily create class subjects.**
 
-## Security Vulnerabilities
+**Clone classes to save time:**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Same students + same setup → just clone
+- Same setup, different students → clone and uncheck students
+- Same students with small changes → clone then adjust
 
-## License
+**Manage students easily:**
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Remove students via Detach button or bulk detach
+- Assign existing students (no need to re-encode)
+- Add new students if they don't exist yet
+
+> 💡 The **Students** tab shows all students across all classes — but you don't really need to use it often since everything is already handled inside class subjects.
+
+---
+
+## 📋 Attendance
+
+- Super easy to use
+- By default, all students are marked **Present**
+- Just toggle if a student is **Absent**
+
+---
+
+## 📝 Assessments
+
+- Create quizzes, projects, exams, etc.
+- Supports **group assessments** (thesis, group report, etc.)
+- Set **maximum score** to prevent over-input errors
+- Add **due dates** → get notified if:
+  - Near deadline
+  - Overdue
+
+---
+
+## 📚 Lessons Tracking
+
+Simple and visual tracking using columns:
+
+| Topics | In Progress | Done | Need Review |
+|--------|-------------|------|-------------|
+
+- Just **drag and drop** lessons between columns
+- Add completion dates to get reminders for overdue lessons
+
+---
+
+## 💰 Fee Collections
+
+Record student contributions with two types:
+
+- **No amount / 0** → voluntary
+- **With amount** → required payment
+
+**Status updates automatically:**
+
+- ✅ **Complete** → if all students paid
+- ⏳ **Pending** → if not yet complete
+
+---
+
+## 📊 Grades
+
+**Setup grading components:**
+
+- Written Works
+- Performance Tasks
+- Quarterly Assessments
+
+**Use:**
+
+- Templates (ready to use), or
+- Create your own templates
+
+**Transmuted Grades:**
+
+- Use default (DepEd-based), or
+- Customize your own
+
+**Create grading periods** (e.g., 1st Quarter). Assign assessments and the system will:
+
+- ✅ Automatically compute grades
+- ✅ No need for manual calculation
+
+**View:**
+
+- Detailed grade tables
+- Computations
+- Initial & final grades
+- Transmuted grades
+
+---
+
+## 📤 Export
+
+- Export to **Excel**
+- Uses formulas already
+- Ready to use — no need to configure
+
+---
+
+## ⚙️ More Features
+
+- **Status indicators** — so you won't forget missing records
+- **Table filters** available:
+  - Quick filters above table
+  - Advanced filters via funnel icon
