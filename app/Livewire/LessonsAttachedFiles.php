@@ -14,9 +14,9 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
-use App\Filament\Resources\MyFiles\Forms\MyFileForm;
+use App\Filament\Resources\MyFiles\Schemas\MyFileForm;
+use App\Filament\Resources\MyFiles\Tables\MyFilesTable;
 use App\Filament\Resources\MyFiles\Actions\MyFileActions;
-use App\Filament\Resources\MyFiles\Columns\MyFileColumns;
 
 class LessonsAttachedFiles extends Component implements HasForms, HasTable, HasActions
 {
@@ -45,11 +45,11 @@ class LessonsAttachedFiles extends Component implements HasForms, HasTable, HasA
                 MyFile::query()
                     ->whereHas('lessons', fn (Builder $query) => $query->whereIn('lessons.id', $lessonIds))
             )
-            ->columns(MyFileColumns::schema())
+            ->columns(MyFilesTable::getColumns())
             ->recordActions([
                 MyFileActions::viewAction()
                     ->modalCancelAction(false)
-                    ->schema(MyFileForm::schema())
+                    ->schema(MyFileForm::getFields())
             ])
             ->emptyStateHeading('No Records')
             ->emptyStateDescription('No attached files found.')

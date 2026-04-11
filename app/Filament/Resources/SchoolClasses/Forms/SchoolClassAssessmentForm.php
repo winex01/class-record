@@ -11,7 +11,7 @@ use App\Filament\Fields\TextInput;
 use App\Filament\Fields\DatePicker;
 use App\Filament\Fields\ToggleButtons;
 use Filament\Schemas\Components\Section;
-use App\Filament\Resources\MyFiles\Forms\MyFileForm;
+use App\Filament\Resources\MyFiles\Schemas\MyFileForm;
 use App\Filament\Resources\AssessmentTypes\Schemas\AssessmentTypeForm;
 
 class SchoolClassAssessmentForm
@@ -53,11 +53,11 @@ class SchoolClassAssessmentForm
                     ->relationship('myFile', 'name')
                     ->helperText('Optional')
                     ->nullable()
-                    ->createOptionForm(MyFileForm::schema())
+                    ->createOptionForm(MyFileForm::getFields())
                     ->createOptionAction(
                         fn (Action $action) => $action->modalWidth(Width::Medium),
                     )
-                    ->editOptionForm(MyFileForm::schema())
+                    ->editOptionForm(MyFileForm::getFields())
                     ->editOptionAction(function (Action $action) {
                         return $action
                             ->icon('heroicon-o-pencil')
@@ -71,7 +71,7 @@ class SchoolClassAssessmentForm
                             ->tooltip('View')
                             ->modalWidth(Width::Medium)
                             ->modalHeading(fn($record) => 'View ' . $record->myFile->name)
-                            ->schema(MyFileForm::schema())
+                            ->schema(MyFileForm::getFields())
                             ->fillForm(function () use ($state): array {
                                 if (!$state) {
                                     return [];

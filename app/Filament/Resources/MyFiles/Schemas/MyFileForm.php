@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\MyFiles\Forms;
+namespace App\Filament\Resources\MyFiles\Schemas;
 
 use App\Filament\Fields\TagsInput;
 use App\Filament\Fields\TextInput;
@@ -10,7 +10,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class MyFileForm
 {
-    public static function schema()
+    public static function getFields()
     {
         return [
             TextInput::make('name')->required(),

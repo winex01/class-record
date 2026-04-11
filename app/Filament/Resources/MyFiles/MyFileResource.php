@@ -13,10 +13,10 @@ use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\MyFiles\Forms\MyFileForm;
+use App\Filament\Resources\MyFiles\Schemas\MyFileForm;
 use App\Filament\Resources\MyFiles\Pages\ManageMyFiles;
+use App\Filament\Resources\MyFiles\Tables\MyFilesTable;
 use App\Filament\Resources\MyFiles\Actions\MyFileActions;
-use App\Filament\Resources\MyFiles\Columns\MyFileColumns;
 
 class MyFileResource extends Resource
 {
@@ -32,14 +32,14 @@ class MyFileResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(MyFileForm::schema());
+            ->components(MyFileForm::getFields());
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('name')
-            ->columns(MyFileColumns::schema())
+            ->columns(MyFilesTable::getColumns())
             ->recordActions([
                 MyFileActions::viewAction(),
                 EditAction::make()->modalWidth(Width::Medium),

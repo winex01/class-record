@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Resources\MyFiles\Columns;
+namespace App\Filament\Resources\MyFiles\Tables;
 
 use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 
-class MyFileColumns
+class MyFilesTable
 {
-    public static function schema()
+    public static function getColumns()
     {
         return [
             TextColumn::make('name'),
