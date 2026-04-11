@@ -35,7 +35,7 @@ class SubjectDetailsWidget extends Widget implements HasActions, HasForms
             ->label('Edit')
             ->link()
             ->icon('heroicon-m-pencil-square')
-            ->form(SchoolClassForm::schema())
+            ->schema(SchoolClassForm::schema())
             ->modalWidth(Width::Large)
             ->after(fn () => $this->dispatch('refreshTable'));
     }

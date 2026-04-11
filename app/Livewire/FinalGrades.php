@@ -113,7 +113,7 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
                 ->action(
                     Action::make('studentViewGrade' . $snakeCase)
                         ->modalHeading(fn ($record) => $record->full_name .' - '. $grade->grading_period)
-                        ->form(function () use ($grade) {
+                        ->schema(function () use ($grade) {
                             return [
                                 View::make('filament.components.grades')
                                     ->viewData(function ($get, $record) use ($grade) {

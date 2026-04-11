@@ -170,7 +170,7 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
     {
         return Action::make('updateAmountPaid')
             ->disabled($this->isReadOnly)
-            ->form([
+            ->schema([
                 Section::make()
                     ->columns(3)
                     ->schema([

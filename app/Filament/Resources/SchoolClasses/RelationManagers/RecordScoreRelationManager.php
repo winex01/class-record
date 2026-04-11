@@ -7,7 +7,7 @@ use App\Filament\Fields\Select;
 use Filament\Actions\BulkAction;
 use Filament\Support\Enums\Width;
 use Filament\Tables\Grouping\Group;
-use App\Filament\Resources\Groups\Forms\GroupForm;
+use App\Filament\Resources\Groups\Schemas\GroupForm;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\SchoolClasses\Filters\RecordScoreRelationFilters;
@@ -33,7 +33,7 @@ class RecordScoreRelationManager extends RelationManager
                 BulkAction::make('assign_group')
                     ->label('Assign Group')
                     ->icon('heroicon-o-user-group')
-                    ->form([
+                    ->schema([
                         Select::make('group')
                             ->label('Group')
                             ->options(GroupForm::selectOptions())

@@ -49,7 +49,7 @@ class LessonsAttachedFiles extends Component implements HasForms, HasTable, HasA
             ->recordActions([
                 MyFileActions::viewAction()
                     ->modalCancelAction(false)
-                    ->form(MyFileForm::schema())
+                    ->schema(MyFileForm::schema())
             ])
             ->emptyStateHeading('No Records')
             ->emptyStateDescription('No attached files found.')

@@ -63,7 +63,7 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                 // NOTE:: We do it this way bec. when use ->visible it only disabled it perhaps its because of the board plugin flowforge that i use.
                 ...($this->getOwnerRecord()->active ? [
                     CreateAction::make()
-                        ->form(SchoolClassLessonForm::schema($this->getOwnerRecord()))
+                        ->schema(SchoolClassLessonForm::schema($this->getOwnerRecord()))
                         ->hiddenLabel()->iconButton()
                         ->icon('heroicon-o-plus')
                         ->model(static::$model)
@@ -78,10 +78,10 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                 SchoolClassLessonActions::downloadFilesAction(),
                 ViewAction::make()
                     ->modalWidth(Width::TwoExtraLarge)
-                    ->form(SchoolClassLessonForm::schema($this->getOwnerRecord())),
+                    ->schema(SchoolClassLessonForm::schema($this->getOwnerRecord())),
                 EditAction::make()
                     ->modalWidth(Width::TwoExtraLarge)
-                    ->form(SchoolClassLessonForm::schema($this->getOwnerRecord()))
+                    ->schema(SchoolClassLessonForm::schema($this->getOwnerRecord()))
                     ->after(function ($livewire) {
                         $livewire->form->saveRelationships();
                         $livewire->dispatch('refreshCollapsibleTableWidget');

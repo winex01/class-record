@@ -71,7 +71,7 @@ class SchoolClassAssessmentForm
                             ->tooltip('View')
                             ->modalWidth(Width::Medium)
                             ->modalHeading(fn($record) => 'View ' . $record->myFile->name)
-                            ->form(MyFileForm::schema())
+                            ->schema(MyFileForm::schema())
                             ->fillForm(function () use ($state): array {
                                 if (!$state) {
                                     return [];
@@ -79,7 +79,7 @@ class SchoolClassAssessmentForm
 
                                 return MyFile::findOrFail($state)->toArray();
                             })
-                            ->disabledForm()
+                            ->disabledSchema()
                             ->modalSubmitAction(false)
                             ->modalCancelActionLabel('Close')
                             ->visible(fn () => filled($state));

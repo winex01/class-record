@@ -5,7 +5,7 @@ namespace App\Filament\Resources\SchoolClasses\Filters;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\Groups\Forms\GroupForm;
+use App\Filament\Resources\Groups\Schemas\GroupForm;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 
 class RecordScoreRelationFilters

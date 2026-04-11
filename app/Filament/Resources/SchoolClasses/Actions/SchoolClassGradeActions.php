@@ -29,7 +29,7 @@ class SchoolClassGradeActions
             ->modalDescription(new HtmlString(
                 '💡 <strong>Tip:</strong> Hold <kbd style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 2px 6px; border-radius: 3px; font-size: 0.75rem;">Shift</kbd> + scroll to navigate horizontally across all columns.'
             ))
-            ->form(function () use ($ownerRecord) {
+            ->schema(function () use ($ownerRecord) {
                 return [
                     Grid::make(10)
                     ->schema([

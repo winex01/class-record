@@ -39,7 +39,7 @@ class SchoolClassLessonActions
             ->modalWidth(Width::Medium)
             ->modalSubmitAction(false)
             ->modalCancelAction(false)
-            ->form([
+            ->schema([
                 View::make('filament.components.download-files')
                     ->viewData(function ($record) {
                         return ['myFiles' => $record->myFiles];

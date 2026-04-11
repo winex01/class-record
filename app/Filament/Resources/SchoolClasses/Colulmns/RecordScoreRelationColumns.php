@@ -4,7 +4,7 @@ namespace App\Filament\Resources\SchoolClasses\Colulmns;
 
 use App\Filament\Columns\SelectColumn;
 use App\Filament\Columns\TextInputColumn;
-use App\Filament\Resources\Groups\Forms\GroupForm;
+use App\Filament\Resources\Groups\Schemas\GroupForm;
 use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 
 class RecordScoreRelationColumns

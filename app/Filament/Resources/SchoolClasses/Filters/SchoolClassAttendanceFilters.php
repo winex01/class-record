@@ -13,7 +13,7 @@ class SchoolClassAttendanceFilters
     {
         return
             Filter::make('date')
-            ->form([
+            ->schema([
                 DatePicker::make('date_from')
                     ->label('From'),
                 DatePicker::make('date_to')

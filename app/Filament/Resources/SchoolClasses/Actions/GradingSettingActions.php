@@ -57,7 +57,7 @@ class GradingSettingActions
                         ->toArray(),
                 ];
             })
-            ->form(function () use ($ownerRecord) {
+            ->schema(function () use ($ownerRecord) {
                 return [
                     Tabs::make('Tabs')->tabs([
                         Tab::make('Grading Components')

@@ -31,7 +31,7 @@ class SchoolClassActions
             ->color('warning')
             ->icon('heroicon-o-document-duplicate')
             ->modalHeading(fn ($record) => 'Clone Class: ' . $record->name)
-            ->form([
+            ->schema([
                 CheckboxList::make('items_to_clone')
                     ->label('Select items to include in clone')
                     ->options([

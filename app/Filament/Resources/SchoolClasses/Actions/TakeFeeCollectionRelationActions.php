@@ -25,7 +25,7 @@ class TakeFeeCollectionRelationActions
                 $action
                 ->modalWidth(Width::Small)
                 ->modalFooterActionsAlignment(Alignment::Right)
-                ->form([
+                ->schema([
                     NumericInput::make('amount')
                         ->label('Amount')
                         ->minValue(0)

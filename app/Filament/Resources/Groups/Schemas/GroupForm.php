@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Groups\Forms;
+namespace App\Filament\Resources\Groups\Schemas;
 
 use App\Models\Group;
 

@@ -23,8 +23,8 @@ use Filament\Actions\Contracts\HasActions;
 use App\Filament\Traits\ManageActionVisibility;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
-use App\Filament\Resources\Groups\Forms\GroupForm;
 use Filament\Actions\Concerns\InteractsWithActions;
+use App\Filament\Resources\Groups\Schemas\GroupForm;
 use App\Filament\Resources\SchoolClasses\Filters\SchoolClassAssessmentFilters;
 use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassAssessmentColumns;
 
@@ -148,7 +148,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
     protected function updateStudentScore()
     {
         return Action::make('updateScore')
-                ->form([
+                ->schema([
                     TextInput::make('score')
                         ->label('Score')
                         ->numeric()
@@ -185,7 +185,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
     protected function updateStudentGroup()
     {
         return Action::make('updateGroup')
-                ->form([
+                ->schema([
                     Select::make('group')
                         ->label('Group')
                         ->options(function ($record) {
