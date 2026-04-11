@@ -21,7 +21,7 @@ use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\TransmuteTemplates\TransmuteTemplateResource;
 use App\Filament\Resources\TransmuteTemplates\Forms\TransmuteTemplateRangesForm;
 use App\Filament\Resources\GradeComponentTemplates\GradeComponentTemplateResource;
-use App\Filament\Resources\GradeComponentTemplates\Forms\GradeComponentTemplateForm;
+use App\Filament\Resources\GradeComponentTemplates\Schemas\GradeComponentTemplateForm;
 
 class GradingSettingActions
 {
@@ -190,7 +190,7 @@ class GradingSettingActions
             ->icon(icon: 'heroicon-o-document-duplicate')
             ->modalWidth(Width::Large)
             ->modalHeading('Grade Component Templates')
-            ->form([
+            ->schema([
                 Select::make('template_id')
                 ->label('Select Template')
                 ->options(GradeComponentTemplate::query()->orderBy('name')->pluck('name', 'id'))
@@ -204,7 +204,7 @@ class GradingSettingActions
                         ->modalWidth(Width::ExtraLarge)
                         ->modalHeading('Create Grade Component Template')
                         ->model(GradeComponentTemplate::class) // i added this
-                        ->form(GradeComponentTemplateForm::schema())
+                        ->schema(GradeComponentTemplateForm::getFields())
                         ->action(function (array $data, Select $component) {
                             // Create the new template
                             $template = GradeComponentTemplate::create($data);
@@ -256,7 +256,7 @@ class GradingSettingActions
             ->icon(icon: 'heroicon-o-document-duplicate')
             ->modalWidth(Width::Large)
             ->modalHeading('Transmute Templates')
-            ->form([
+            ->schema([
                 Select::make('template_id')
                 ->label('Select Template')
                 ->options(TransmuteTemplate::query()->pluck('name', 'id'))

@@ -16,9 +16,9 @@ use Filament\Support\Icons\Heroicon;
 use App\Models\GradeComponentTemplate;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\GradeComponentTemplates\Forms\GradeComponentTemplateForm;
+use App\Filament\Resources\GradeComponentTemplates\Schemas\GradeComponentTemplateForm;
 use App\Filament\Resources\GradeComponentTemplates\Pages\ManageGradeComponentTemplates;
-use App\Filament\Resources\GradeComponentTemplates\Columns\GradeComponentTemplateColumns;
+use App\Filament\Resources\GradeComponentTemplates\Tables\GradeComponentTemplatesTable;
 
 class GradeComponentTemplateResource extends Resource
 {
@@ -35,14 +35,14 @@ class GradeComponentTemplateResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(GradeComponentTemplateForm::schema());
+            ->components(GradeComponentTemplateForm::getFields());
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('name')
-            ->columns(GradeComponentTemplateColumns::schema())
+            ->columns(GradeComponentTemplatesTable::getColumns())
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::ExtraLarge),
                 EditAction::make()->modalWidth(Width::ExtraLarge),

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\GradeComponentTemplates\Forms;
+namespace App\Filament\Resources\GradeComponentTemplates\Schemas;
 
 use App\Filament\Fields\TextInput;
 use Filament\Schemas\Components\Grid;
@@ -8,7 +8,7 @@ use Filament\Forms\Components\Repeater;
 
 class GradeComponentTemplateForm
 {
-    public static function schema(): array
+    public static function getFields(): array
     {
         return [
             TextInput::make('name')

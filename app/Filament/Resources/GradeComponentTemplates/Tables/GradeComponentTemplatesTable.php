@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Resources\GradeComponentTemplates\Columns;
+namespace App\Filament\Resources\GradeComponentTemplates\Tables;
 
 use App\Filament\Columns\TextColumn;
 
-class GradeComponentTemplateColumns
+class GradeComponentTemplatesTable
 {
-    public static function schema(): array
+    public static function getColumns(): array
     {
         return [
             TextColumn::make('name'),
