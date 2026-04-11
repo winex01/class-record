@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Students\Forms;
+namespace App\Filament\Resources\Students\Schemas;
 
 use App\Enums\Gender;
 use App\Filament\Fields\Select;
@@ -11,7 +11,7 @@ use Filament\Forms\Components\FileUpload;
 
 class StudentForm
 {
-    public static function schema()
+    public static function getFields()
     {
         return [
             FileUpload::make('photo')

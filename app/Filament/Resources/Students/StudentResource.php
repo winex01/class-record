@@ -14,9 +14,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\Students\Forms\StudentForm;
+use App\Filament\Resources\Students\Schemas\StudentForm;
 use App\Filament\Resources\Students\Pages\ManageStudents;
-use App\Filament\Resources\Students\Columns\StudentColumns;
+use App\Filament\Resources\Students\Tables\StudentsTable;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 
 class StudentResource extends Resource
@@ -37,14 +37,14 @@ class StudentResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(StudentForm::schema());
+            ->components(StudentForm::getFields());
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('full_name')
-            ->columns(StudentColumns::schema())
+            ->columns(StudentsTable::getColumns())
             ->filters([StudentFilters::gender()])
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Large),

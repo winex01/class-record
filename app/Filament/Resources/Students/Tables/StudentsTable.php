@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\Students\Columns;
+namespace App\Filament\Resources\Students\Tables;
 
 use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Columns\ImageColumn;
 use App\Filament\Resources\Students\StudentResource;
 
-class StudentColumns
+class StudentsTable
 {
-    public static function schema()
+    public static function getColumns()
     {
         return [
             ImageColumn::make('photo'),

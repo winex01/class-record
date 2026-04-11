@@ -19,7 +19,7 @@ use App\Filament\Widgets\UpcomingBirthdaysWidget;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\Students\StudentResource;
-use App\Filament\Resources\Students\Forms\StudentForm;
+use App\Filament\Resources\Students\Schemas\StudentForm;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\SchoolClasses\Filters\SchoolClassStudentFilters;
@@ -55,7 +55,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components(StudentForm::schema());
+            ->components(StudentForm::getFields());
     }
 
     public function table(Table $table): Table
