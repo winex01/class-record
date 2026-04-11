@@ -15,7 +15,7 @@ use App\Filament\Columns\TextColumn;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\AssessmentTypes\Forms\AssessmentTypeForm;
+use App\Filament\Resources\AssessmentTypes\Schemas\AssessmentTypeForm;
 use App\Filament\Resources\AssessmentTypes\Pages\ManageAssessmentTypes;
 
 class AssessmentTypeResource extends Resource
@@ -33,7 +33,7 @@ class AssessmentTypeResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(AssessmentTypeForm::schema());
+            ->components(AssessmentTypeForm::getFields());
     }
 
     public static function table(Table $table): Table

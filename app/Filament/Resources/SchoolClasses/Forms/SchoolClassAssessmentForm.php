@@ -12,7 +12,7 @@ use App\Filament\Fields\DatePicker;
 use App\Filament\Fields\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use App\Filament\Resources\MyFiles\Forms\MyFileForm;
-use App\Filament\Resources\AssessmentTypes\Forms\AssessmentTypeForm;
+use App\Filament\Resources\AssessmentTypes\Schemas\AssessmentTypeForm;
 
 class SchoolClassAssessmentForm
 {
@@ -29,8 +29,8 @@ class SchoolClassAssessmentForm
                 Select::make('assessment_type_id')
                     ->relationship('assessmentType', 'name')
                     ->required()
-                    ->createOptionForm(AssessmentTypeForm::schema())
-                    ->editOptionForm(AssessmentTypeForm::schema()),
+                    ->createOptionForm(AssessmentTypeForm::getFields())
+                    ->editOptionForm(AssessmentTypeForm::getFields()),
 
                 TextInput::make('max_score')
                     ->helperText('Highest points')
