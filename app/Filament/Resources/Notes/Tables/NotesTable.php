@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\Notes\Columns;
+namespace App\Filament\Resources\Notes\Tables;
 
 use App\Filament\Columns\TagsColumn;
 use App\Filament\Columns\TextColumn;
 use App\Filament\Columns\DateTimeColumn;
 
-class NoteColumns
+class NotesTable
 {
-    public static function schema()
+    public static function getColumns()
     {
         return [
             TextColumn::make('note'),

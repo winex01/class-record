@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Notes\Forms;
+namespace App\Filament\Resources\Notes\Schemas;
 
 use App\Filament\Fields\Textarea;
 use App\Filament\Fields\TagsInput;
@@ -8,7 +8,7 @@ use App\Filament\Fields\DateTimePicker;
 
 class NoteForm
 {
-    public static function schema()
+    public static function getFields()
     {
         return [
             Textarea::make('note')

@@ -15,9 +15,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\Notes\Forms\NoteForm;
+use App\Filament\Resources\Notes\Schemas\NoteForm;
 use App\Filament\Resources\Notes\Pages\ManageNotes;
-use App\Filament\Resources\Notes\Columns\NoteColumns;
+use App\Filament\Resources\Notes\Tables\NotesTable;
 
 class NoteResource extends Resource
 {
@@ -44,14 +44,14 @@ class NoteResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(NoteForm::schema());
+            ->components(NoteForm::getFields());
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('note')
-            ->columns(NoteColumns::schema())
+            ->columns(NotesTable::getColumns())
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Medium),
                 EditAction::make()->modalWidth(Width::Medium),
