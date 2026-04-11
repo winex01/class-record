@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\CheckboxList;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Filament\Resources\SchoolClasses\Forms\SchoolClassForm;
+use App\Filament\Resources\SchoolClasses\Schemas\SchoolClassForm;
 
 class SchoolClassActions
 {
@@ -44,10 +44,10 @@ class SchoolClassActions
                     ->required()
                     ->columns(2),
 
-                SchoolClassForm::schema()['name']->default(fn ($record) => $record->name),
-                SchoolClassForm::schema()['year_section']->default(fn ($record) => $record->year_section ?? []),
-                SchoolClassForm::schema()['date_start']->default(fn ($record) => $record->date_start),
-                SchoolClassForm::schema()['date_end']->default(fn ($record) => $record->date_end),
+                SchoolClassForm::getFields()['name']->default(fn ($record) => $record->name),
+                SchoolClassForm::getFields()['year_section']->default(fn ($record) => $record->year_section ?? []),
+                SchoolClassForm::getFields()['date_start']->default(fn ($record) => $record->date_start),
+                SchoolClassForm::getFields()['date_end']->default(fn ($record) => $record->date_end),
 
             ])
             ->action(function (array $data, $record) {

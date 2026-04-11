@@ -20,7 +20,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassStudentTable;
 
 class AssessmentOverview extends Component implements HasForms, HasTable, HasActions
 {
@@ -45,7 +45,7 @@ class AssessmentOverview extends Component implements HasForms, HasTable, HasAct
                     ->whereIn('id', SchoolClassResource::getStudents($this->schoolClassId))
             )
             ->defaultSort(StudentResource::defaultNameSort('asc'))
-            ->columns(SchoolClassStudentColumns::schema())
+            ->columns(SchoolClassStudentTable::getColumns())
             ->filters([
                 StudentFilters::gender()
             ])

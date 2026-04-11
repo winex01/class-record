@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Forms;
+namespace App\Filament\Resources\SchoolClasses\Schemas;
 
 use App\Filament\Fields\Textarea;
 use App\Filament\Fields\TextInput;
@@ -9,7 +9,7 @@ use App\Filament\Fields\NumericInput;
 
 class SchoolClassFeeCollectionForm
 {
-    public static function schema()
+    public static function getFields()
     {
         return [
             TextInput::make('name')

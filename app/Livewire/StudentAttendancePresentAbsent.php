@@ -15,7 +15,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Filters\StudentFilters;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassStudentTable;
 
 class StudentAttendancePresentAbsent extends Component implements HasForms, HasTable, HasActions
 {
@@ -44,7 +44,7 @@ class StudentAttendancePresentAbsent extends Component implements HasForms, HasT
         return $table
             ->query(Student::query()->whereIn('id', $studentIds))
             ->defaultSort(StudentResource::defaultNameSort('asc'))
-            ->columns(SchoolClassStudentColumns::schema())
+            ->columns(SchoolClassStudentTable::getColumns())
             ->filters([
                 StudentFilters::gender()
             ])

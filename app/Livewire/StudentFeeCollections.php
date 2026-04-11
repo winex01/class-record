@@ -23,7 +23,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Tables\Columns\Summarizers\Summarizer;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassFeeCollectionColumns;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassFeeCollectionTable;
 
 class StudentFeeCollections extends Component implements HasForms, HasTable, HasActions
 {
@@ -72,7 +72,7 @@ class StudentFeeCollections extends Component implements HasForms, HasTable, Has
 
     protected function getCOlumns()
     {
-        $columns = SchoolClassFeeCollectionColumns::schema();
+        $columns = SchoolClassFeeCollectionTable::getColumns();
         unset($columns['total']);
         unset($columns['status']);
 

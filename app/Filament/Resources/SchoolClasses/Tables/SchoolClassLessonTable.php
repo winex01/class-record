@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Colulmns;
+namespace App\Filament\Resources\SchoolClasses\Tables;
 
 use App\Enums\LessonStatus;
 use Relaticle\Flowforge\Column;
 use Filament\Support\Enums\TextSize;
 use Filament\Infolists\Components\TextEntry;
 
-class SchoolClassLessonColumns
+class SchoolClassLessonTable
 {
     public static function cardSchema(): array
     {

@@ -11,16 +11,15 @@ use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
-use Filament\Tables\Filters\Filter;
 use Relaticle\Flowforge\Contracts\HasBoard;
 use App\Filament\Widgets\LessonRemindersWidget;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use Relaticle\Flowforge\Concerns\InteractsWithBoard;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Filament\Resources\SchoolClasses\Forms\SchoolClassLessonForm;
+use App\Filament\Resources\SchoolClasses\Schemas\SchoolClassLessonForm;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassLessonTable;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassLessonActions;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassLessonColumns;
 
 class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
 {
@@ -56,14 +55,14 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
             ->recordTitleAttribute('title')
             ->columnIdentifier('status')
             ->positionIdentifier('position')
-            ->columns(SchoolClassLessonColumns::boardSchema())
-            ->cardSchema(fn(Schema $schema) => $schema->components(SchoolClassLessonColumns::cardSchema()))
+            ->columns(SchoolClassLessonTable::boardSchema())
+            ->cardSchema(fn(Schema $schema) => $schema->components(SchoolClassLessonTable::cardSchema()))
             ->searchable(['title', 'description', 'tags_search', 'completion_date']) // tags_search = virtual col
             ->columnActions([
                 // NOTE:: We do it this way bec. when use ->visible it only disabled it perhaps its because of the board plugin flowforge that i use.
                 ...($this->getOwnerRecord()->active ? [
                     CreateAction::make()
-                        ->schema(SchoolClassLessonForm::schema($this->getOwnerRecord()))
+                        ->schema(SchoolClassLessonForm::getFields($this->getOwnerRecord()))
                         ->hiddenLabel()->iconButton()
                         ->icon('heroicon-o-plus')
                         ->model(static::$model)
@@ -78,10 +77,10 @@ class ManageSchoolClassLessons extends ManageRelatedRecords implements HasBoard
                 SchoolClassLessonActions::downloadFilesAction(),
                 ViewAction::make()
                     ->modalWidth(Width::TwoExtraLarge)
-                    ->schema(SchoolClassLessonForm::schema($this->getOwnerRecord())),
+                    ->schema(SchoolClassLessonForm::getFields($this->getOwnerRecord())),
                 EditAction::make()
                     ->modalWidth(Width::TwoExtraLarge)
-                    ->schema(SchoolClassLessonForm::schema($this->getOwnerRecord()))
+                    ->schema(SchoolClassLessonForm::getFields($this->getOwnerRecord()))
                     ->after(function ($livewire) {
                         $livewire->form->saveRelationships();
                         $livewire->dispatch('refreshCollapsibleTableWidget');

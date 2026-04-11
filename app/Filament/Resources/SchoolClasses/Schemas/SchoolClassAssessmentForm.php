@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Forms;
+namespace App\Filament\Resources\SchoolClasses\Schemas;
 
 use App\Models\MyFile;
 use Filament\Actions\Action;
@@ -16,7 +16,7 @@ use App\Filament\Resources\AssessmentTypes\Schemas\AssessmentTypeForm;
 
 class SchoolClassAssessmentForm
 {
-    public static function schema()
+    public static function getFields()
     {
         return [
             Section::make()

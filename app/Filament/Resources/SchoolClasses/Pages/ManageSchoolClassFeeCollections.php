@@ -15,10 +15,10 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
-use App\Filament\Resources\SchoolClasses\Forms\SchoolClassFeeCollectionForm;
+use App\Filament\Resources\SchoolClasses\Schemas\SchoolClassFeeCollectionForm;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassFeeCollectionTable;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassFeeCollectionActions;
 use App\Filament\Resources\SchoolClasses\Filters\SchoolClassFeeCollectionFilters;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassFeeCollectionColumns;
 
 class ManageSchoolClassFeeCollections extends ManageRelatedRecords
 {
@@ -46,7 +46,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components(SchoolClassFeeCollectionForm::schema());
+            ->components(SchoolClassFeeCollectionForm::getFields());
     }
 
     public function getTableQuery(): Builder
@@ -70,7 +70,7 @@ class ManageSchoolClassFeeCollections extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('name')
             ->defaultSort('created_at', 'desc')
-            ->columns(SchoolClassFeeCollectionColumns::schema())
+            ->columns(SchoolClassFeeCollectionTable::getColumns())
             ->recordActions([
                 SchoolClassFeeCollectionActions::takeFeeAction(),
                 ViewAction::make()->modalWidth(Width::Large),

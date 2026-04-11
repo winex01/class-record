@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Forms;
+namespace App\Filament\Resources\SchoolClasses\Schemas;
 
 use App\Models\MyFile;
 use App\Enums\LessonStatus;
@@ -13,13 +13,12 @@ use App\Filament\Fields\DatePicker;
 use App\Filament\Actions\ClearAction;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 
 class SchoolClassLessonForm
 {
-    public static function schema(SchoolClass $ownerRecord)
+    public static function getFields(SchoolClass $ownerRecord)
     {
         return [
             Hidden::make('school_class_id')->default($ownerRecord->id),
@@ -66,8 +65,6 @@ class SchoolClassLessonForm
                 ->compact()
                 ->minItems(0)
                 ->defaultItems(0),
-
-
         ];
     }
 }

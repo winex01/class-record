@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Colulmns;
+namespace App\Filament\Resources\SchoolClasses\Tables;
 
 use App\Filament\Resources\Students\Tables\StudentsTable;
 
 
-class SchoolClassStudentColumns
+class SchoolClassStudentTable
 {
-    public static function schema($defaultShownColumns = ['photo', 'full_name', 'gender'])
+    public static function getColumns($defaultShownColumns = ['photo', 'full_name', 'gender'])
     {
         $columns = StudentsTable::getColumns();
 

@@ -14,9 +14,9 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassAttendanceTable;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassAttendanceActions;
 use App\Filament\Resources\SchoolClasses\Filters\SchoolClassAttendanceFilters;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassAttendanceColumns;
 
 class ManageSchoolClassAttendances extends ManageRelatedRecords
 {
@@ -52,7 +52,7 @@ class ManageSchoolClassAttendances extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('date')
             ->defaultSort('date', 'desc')
-            ->columns(SchoolClassAttendanceColumns::schema())
+            ->columns(SchoolClassAttendanceTable::getColumns())
             ->filters([SchoolClassAttendanceFilters::dateRange()])
             ->recordActions([
                 SchoolClassAttendanceActions::takeAttendanceAction(),

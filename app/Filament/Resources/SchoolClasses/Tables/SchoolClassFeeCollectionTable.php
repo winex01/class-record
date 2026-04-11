@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Colulmns;
+namespace App\Filament\Resources\SchoolClasses\Tables;
 
 use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
@@ -8,9 +8,9 @@ use App\Enums\CompletedPendingStatus;
 use App\Filament\Columns\AmountColumn;
 use App\Filament\Columns\BooleanIconColumn;
 
-class SchoolClassFeeCollectionColumns
+class SchoolClassFeeCollectionTable
 {
-    public static function schema()
+    public static function getColumns()
     {
         return [
             TextColumn::make('name'),

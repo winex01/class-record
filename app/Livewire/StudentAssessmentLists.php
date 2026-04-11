@@ -25,8 +25,8 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Groups\Schemas\GroupForm;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassAssessmentTable;
 use App\Filament\Resources\SchoolClasses\Filters\SchoolClassAssessmentFilters;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassAssessmentColumns;
 
 class StudentAssessmentLists extends Component implements HasForms, HasTable, HasActions
 {
@@ -92,7 +92,7 @@ class StudentAssessmentLists extends Component implements HasForms, HasTable, Ha
 
     protected function getCOlumns()
     {
-        $columns = SchoolClassAssessmentColumns::schema();
+        $columns = SchoolClassAssessmentTable::getColumns();
         unset($columns['status']);
 
         return [

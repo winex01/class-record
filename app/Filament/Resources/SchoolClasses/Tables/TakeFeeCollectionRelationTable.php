@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Colulmns;
+namespace App\Filament\Resources\SchoolClasses\Tables;
 
 use App\Models\FeeCollection;
 use App\Filament\Columns\TextInputColumn;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassStudentTable;
 
-class TakeFeeCollectionRelationColumns
+class TakeFeeCollectionRelationTable
 {
-    public static function schema(FeeCollection $ownerRecord)
+    public static function getColumns(FeeCollection $ownerRecord)
     {
         return [
-            ...SchoolClassStudentColumns::schema(),
+            ...SchoolClassStudentTable::getColumns(),
 
             TextInputColumn::make('amount')
                 ->rules(function () use ($ownerRecord) {

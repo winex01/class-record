@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Forms;
+namespace App\Filament\Resources\SchoolClasses\Schemas;
 
 use Illuminate\Support\Carbon;
 use App\Filament\Fields\Textarea;
@@ -11,7 +11,7 @@ use App\Filament\Fields\ToggleButtons;
 
 class SchoolClassForm
 {
-    public static function schema()
+    public static function getFields()
     {
         return [
             'name' =>

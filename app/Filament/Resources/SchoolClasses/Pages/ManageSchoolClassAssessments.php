@@ -13,10 +13,10 @@ use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Widgets\AssessmentRemindersWidget;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
-use App\Filament\Resources\SchoolClasses\Forms\SchoolClassAssessmentForm;
+use App\Filament\Resources\SchoolClasses\Schemas\SchoolClassAssessmentForm;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassAssessmentTable;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassAssessmentActions;
 use App\Filament\Resources\SchoolClasses\Filters\SchoolClassAssessmentFilters;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassAssessmentColumns;
 
 class ManageSchoolClassAssessments extends ManageRelatedRecords
 {
@@ -44,7 +44,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components(SchoolClassAssessmentForm::schema())
+            ->components(SchoolClassAssessmentForm::getFields())
             ->columns(2);
     }
 
@@ -53,7 +53,7 @@ class ManageSchoolClassAssessments extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('name')
             ->defaultSort('created_at', 'desc')
-            ->columns(SchoolClassAssessmentColumns::schema())
+            ->columns(SchoolClassAssessmentTable::getColumns())
             ->filters([SchoolClassAssessmentFilters::types()])
             ->recordActions([
                 SchoolClassAssessmentActions::recordScoreAction(),

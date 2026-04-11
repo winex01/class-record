@@ -10,8 +10,8 @@ use Filament\Tables\Grouping\Group;
 use App\Filament\Resources\Groups\Schemas\GroupForm;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Resources\SchoolClasses\Tables\RecordScoreRelationTable;
 use App\Filament\Resources\SchoolClasses\Filters\RecordScoreRelationFilters;
-use App\Filament\Resources\SchoolClasses\Colulmns\RecordScoreRelationColumns;
 
 class RecordScoreRelationManager extends RelationManager
 {
@@ -27,7 +27,7 @@ class RecordScoreRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('full_name')
             ->defaultSort(StudentResource::defaultNameSort('asc'))
-            ->columns(RecordScoreRelationColumns::schema($this->getOwnerRecord()))
+            ->columns(RecordScoreRelationTable::getColumns($this->getOwnerRecord()))
             ->filters(RecordScoreRelationFilters::filters($this->getOwnerRecord()))
             ->toolbarActions([
                 BulkAction::make('assign_group')

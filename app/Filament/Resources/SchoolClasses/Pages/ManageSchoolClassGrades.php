@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use App\Filament\Traits\ManageSchoolClassInitTrait;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Filament\Resources\SchoolClasses\Forms\SchoolClassGradeForm;
+use App\Filament\Resources\SchoolClasses\Schemas\SchoolClassGradeForm;
 use App\Filament\Resources\SchoolClasses\Actions\GradingSettingActions;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassGradeActions;
 
@@ -45,13 +45,13 @@ class ManageSchoolClassGrades extends ManageRelatedRecords
     #[On('mountGradingSettings')]
     public function openGradingSettings(): void
     {
-        $this->mountTableAction('gradingSettingsAction');
+        $this->mountAction('gradingSettingsAction');
     }
 
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components(SchoolClassGradeForm::schema($this->getOwnerRecord()));
+            ->components(SchoolClassGradeForm::getFields($this->getOwnerRecord()));
     }
 
     public static function getEloquentQuery(): Builder

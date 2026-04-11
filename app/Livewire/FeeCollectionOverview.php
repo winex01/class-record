@@ -23,7 +23,7 @@ use Filament\Tables\Columns\Summarizers\Summarizer;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassStudentTable;
 
 class FeeCollectionOverview extends Component implements HasForms, HasTable, HasActions
 {
@@ -52,7 +52,7 @@ class FeeCollectionOverview extends Component implements HasForms, HasTable, Has
             ->query($query)
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
-                ...SchoolClassStudentColumns::schema(),
+                ...SchoolClassStudentTable::getColumns(),
 
                 TextColumn::make('total_paid')
                     ->color('success')

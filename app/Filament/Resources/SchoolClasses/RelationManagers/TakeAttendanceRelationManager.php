@@ -7,7 +7,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use App\Filament\Resources\Students\StudentResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use App\Filament\Resources\Students\Filters\StudentFilters;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassStudentTable;
 use App\Filament\Resources\SchoolClasses\Actions\TakeAttendanceRelationActions;
 use App\Filament\Resources\SchoolClasses\Filters\TakeAttendanceRelationFilters;
 
@@ -26,7 +26,7 @@ class TakeAttendanceRelationManager extends RelationManager
             ->recordTitleAttribute('full_name')
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
-                ...SchoolClassStudentColumns::schema(),
+                ...SchoolClassStudentTable::getColumns(),
 
                 ToggleColumn::make('present')
                     ->toggleable(isToggledHiddenByDefault: false)

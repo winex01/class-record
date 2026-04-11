@@ -22,8 +22,8 @@ use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Schemas\StudentForm;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassStudentTable;
 use App\Filament\Resources\SchoolClasses\Filters\SchoolClassStudentFilters;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
 
 class ManageSchoolClassStudents extends ManageRelatedRecords
 {
@@ -63,7 +63,7 @@ class ManageSchoolClassStudents extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('full_name')
             ->defaultSort(StudentResource::defaultNameSort('asc'))
-            ->columns(SchoolClassStudentColumns::schema(['photo', 'full_name', 'gender', 'birth_date', 'email']))
+            ->columns(SchoolClassStudentTable::getColumns(['photo', 'full_name', 'gender', 'birth_date', 'email']))
             ->filters([StudentFilters::gender()])
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::Large),

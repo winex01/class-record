@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Colulmns;
+namespace App\Filament\Resources\SchoolClasses\Tables;
 
 use App\Filament\Columns\SelectColumn;
 use App\Filament\Columns\TextInputColumn;
 use App\Filament\Resources\Groups\Schemas\GroupForm;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassStudentTable;
 
-class RecordScoreRelationColumns
+class RecordScoreRelationTable
 {
-    public static function schema($ownerRecord)
+    public static function getColumns($ownerRecord)
     {
         return [
-            ...SchoolClassStudentColumns::schema(),
+            ...SchoolClassStudentTable::getColumns(),
 
             SelectColumn::make('group')
                 ->toggleable(isToggledHiddenByDefault: false)

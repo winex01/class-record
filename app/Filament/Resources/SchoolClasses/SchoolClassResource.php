@@ -21,10 +21,10 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\Students\StudentResource;
-use App\Filament\Resources\SchoolClasses\Forms\SchoolClassForm;
+use App\Filament\Resources\SchoolClasses\Schemas\SchoolClassForm;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassTable;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClasses;
 use App\Filament\Resources\SchoolClasses\Actions\SchoolClassActions;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassColumns;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassExport;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassGrades;
 use App\Filament\Resources\SchoolClasses\Pages\ManageSchoolClassLessons;
@@ -47,7 +47,7 @@ class SchoolClassResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(SchoolClassForm::schema());
+            ->components(SchoolClassForm::getFields());
     }
 
     public static function table(Table $table): Table
@@ -55,7 +55,7 @@ class SchoolClassResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->defaultSort('sort', 'desc')
-            ->columns(SchoolClassColumns::schema())
+            ->columns(SchoolClassTable::getColumns())
             ->recordActions([
                 Action::make('manageClass')
                     ->label('Manage')

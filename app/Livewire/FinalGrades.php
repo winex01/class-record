@@ -23,7 +23,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Filters\StudentFilters;
 use App\Filament\Resources\SchoolClasses\SchoolClassResource;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassStudentTable;
 
 class FinalGrades extends Component implements HasForms, HasTable, HasActions
 {
@@ -50,7 +50,7 @@ class FinalGrades extends Component implements HasForms, HasTable, HasActions
             ->query($query)
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
-                ...SchoolClassStudentColumns::schema(),
+                ...SchoolClassStudentTable::getColumns(),
                 ...$this->columnsSchema(),
             ])
             ->filters([

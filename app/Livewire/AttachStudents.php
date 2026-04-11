@@ -12,7 +12,6 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
 use App\Livewire\Traits\RenderTableTrait;
-use App\Events\SchoolClassStudentsChanged;
 use Filament\Actions\Contracts\HasActions;
 use App\Filament\Traits\ManageActionVisibility;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -20,7 +19,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Students\Filters\StudentFilters;
-use App\Filament\Resources\SchoolClasses\Colulmns\SchoolClassStudentColumns;
+use App\Filament\Resources\SchoolClasses\Tables\SchoolClassStudentTable;
 
 class AttachStudents extends Component implements HasForms, HasTable, HasActions
 {
@@ -62,7 +61,7 @@ class AttachStudents extends Component implements HasForms, HasTable, HasActions
             ->recordTitleAttribute('full_name')
             ->defaultSort(StudentResource::defaultNameSort('asc'))
             ->columns([
-                ...SchoolClassStudentColumns::schema(),
+                ...SchoolClassStudentTable::getColumns(),
             ])
             ->filters([StudentFilters::gender()])
             ->bulkActions([$this->attachSelectedStudents()])

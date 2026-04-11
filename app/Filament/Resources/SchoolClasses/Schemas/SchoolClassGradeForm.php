@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Forms;
+namespace App\Filament\Resources\SchoolClasses\Schemas;
 
 use App\Models\Grade;
 use App\Models\Assessment;
@@ -14,7 +14,7 @@ use Filament\Forms\Components\CheckboxList;
 
 class SchoolClassGradeForm
 {
-    public static function schema(SchoolClass $ownerRecord)
+    public static function getFields(SchoolClass $ownerRecord)
     {
         return [
             TextInput::make('grading_period')
@@ -45,11 +45,11 @@ class SchoolClassGradeForm
                 },
             ]),
 
-            static::gradeGradingComponentsRepeaterField($ownerRecord),
+            static::getGradeGradingComponentsRepeaterField($ownerRecord),
         ];
     }
 
-    public static function gradeGradingComponentsRepeaterField(SchoolClass $ownerRecord)
+    public static function getGradeGradingComponentsRepeaterField(SchoolClass $ownerRecord)
     {
         return
             Repeater::make('gradeGradingComponents')

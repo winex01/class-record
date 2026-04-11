@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\SchoolClasses\Colulmns;
+namespace App\Filament\Resources\SchoolClasses\Tables;
 
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
@@ -9,9 +9,9 @@ use App\Filament\Columns\DateColumn;
 use App\Filament\Columns\TextColumn;
 use Illuminate\Support\Facades\Blade;
 
-class SchoolClassAttendanceColumns
+class SchoolClassAttendanceTable
 {
-    public static function schema()
+    public static function getColumns()
     {
         return [
             DateColumn::make('date'),
