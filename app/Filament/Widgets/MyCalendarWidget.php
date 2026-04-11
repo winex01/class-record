@@ -22,9 +22,9 @@ use Guava\Calendar\ValueObjects\CalendarEvent;
 use Guava\Calendar\ValueObjects\DateClickInfo;
 use Guava\Calendar\ValueObjects\EventDropInfo;
 use Guava\Calendar\ValueObjects\DateSelectInfo;
-use App\Filament\Resources\Tasks\Forms\TaskForm;
 use Guava\Calendar\ValueObjects\EventResizeInfo;
 use App\Filament\Resources\Notes\Schemas\NoteForm;
+use App\Filament\Resources\Tasks\Schemas\TaskForm;
 use App\Filament\Resources\Meetings\Schemas\MeetingForm;
 use App\Filament\Resources\Recurrings\Forms\RecurringForm;
 
@@ -239,7 +239,7 @@ class MyCalendarWidget extends CalendarWidget
                     }
 
                     if ($record instanceof Task) {
-                        return TaskForm::schema();
+                        return TaskForm::getFields();
                     }
 
                     if ($record instanceof Note) {

@@ -15,9 +15,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\Tasks\Forms\TaskForm;
+use App\Filament\Resources\Tasks\Schemas\TaskForm;
 use App\Filament\Resources\Tasks\Pages\ManageTasks;
-use App\Filament\Resources\Tasks\Columns\TaskColumns;
+use App\Filament\Resources\Tasks\Tables\TasksTable;
 
 class TaskResource extends Resource
 {
@@ -44,14 +44,14 @@ class TaskResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(TaskForm::schema());
+            ->components(TaskForm::getFields());
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('name')
-            ->columns(TaskColumns::schema())
+            ->columns(TasksTable::getColumns())
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::TwoExtraLarge),
                 EditAction::make()->modalWidth(Width::TwoExtraLarge),

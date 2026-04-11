@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Tasks\Forms;
+namespace App\Filament\Resources\Tasks\Schemas;
 
 use App\Filament\Fields\Textarea;
 use App\Filament\Fields\TagsInput;
@@ -12,7 +12,7 @@ use Filament\Forms\Components\Repeater\TableColumn;
 
 class TaskForm
 {
-    public static function schema()
+    public static function getFields()
     {
         return [
             TextInput::make('name')
